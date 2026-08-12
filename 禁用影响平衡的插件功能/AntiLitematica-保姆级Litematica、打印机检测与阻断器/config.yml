@@ -1,0 +1,290 @@
+# =====================================================================
+# AntiLitematica 配置文件
+# 配置版本（由 ConfigMigrator 自动管理，请勿编辑）
+# =====================================================================
+config_version: 3
+
+# -------------------------------------------------------------------
+# 1. 全局设置
+# -------------------------------------------------------------------
+# 总开关。设为 false 将禁用所有插件功能。
+enabled: true
+
+# -------------------------------------------------------------------
+# 2. 语言和消息
+# -------------------------------------------------------------------
+# 服务器默认语言（当自动语言检测无法匹配时的后备语言）。
+# 可选：zh_CN / en_US / zh_TW
+# 语言文件存储在 lang/ 文件夹中。
+lang: 'zh_CN'
+
+# 自动检测每位玩家的客户端语言。
+# 启用后，消息将以玩家自己的语言显示
+#（例如中国玩家看到中文，德国玩家看到德语）。
+# 如果玩家语言不可用，则回退到 'locale' 设置。
+auto_locale: true
+
+# 消息内容在 messages.yml 中 - 编辑该文件以自定义消息。
+# 插件会为每种语言查找 messages_<语言>.yml 文件。
+# 使用 /antilitematica reload 重新加载消息配置
+
+# -------------------------------------------------------------------
+# 3. 检测
+# -------------------------------------------------------------------
+detection:
+  enabled: true
+  # 要监控的插件通道（小写，精确匹配）。
+  # Litematica 1.21.11+ 通过 Servux 集成使用 `servux:litematics` 通道。
+  channels:
+    - 'servux:litematics'
+  # 保持此列表简短以减少误报。
+
+  # 主动拦截 servux:litematics 数据包（阻止投影数据同步）。
+  block_servux: true
+
+  # 检测时执行的命令（当 action=COMMANDS 时使用）。
+  # 占位符：%player% %uuid% %reason% %channel% %why%
+  commands: []
+  # 执行命令后是否踢出玩家。
+  kick_after_commands: true
+
+  # ProtocolLib 信号：即使 Servux 同步被禁用，也能捕捉 Litematica 行为。
+  signals:
+    servux_metadata:
+      enabled: true # VarInt 类型=2 且 NBT["version"] 包含 "litematica"
+
+    easy_place:
+      enabled: true # 异常的命中向量表明使用了 EasyPlace 协议
+      rel_min: -0.5
+      rel_max: 1.5
+      cancel_packet: false
+
+    nbt_query:
+      enabled: true # 调试 NBT 查询（方块实体 / 实体标签）
+      allow_op: true
+      cancel_packet: true
+
+  # 检测命中时的操作：LOG / KICK / BAN / COMMANDS
+  action: 'LOG'
+  # 处罚原因（用于 BAN / COMMANDS 的占位符）
+  reason: '检测到被禁止的客户端模组（Litematica）。'
+
+# -------------------------------------------------------------------
+# 4. 反快速建造
+# -------------------------------------------------------------------
+anti_printer:
+  enabled: true
+  apply_to_creative: true
+
+  # 强制服务端光线追踪：玩家必须看着他们放置的方块。
+  enforce_raytrace: false
+  reach_survival: 5.0
+  reach_creative: 6.0
+  extra_reach_allowance: 0.25
+
+  # 放置速率限制（方块/秒）。设为 0 以禁用。
+  max_blocks_per_second: 35
+
+  # 检测连续放置相同类型方块（机器人会放置完全相同的方块）。
+  detect_consecutive_same_type: false
+  consecutive_same_type_threshold: 6
+
+  # 检测无视角变化的放置（人类会微调准星，机器人不会）。
+  detect_no_look_change: false
+  no_look_change_threshold: 5
+
+  # 时间窗口内的违规追踪
+  violations:
+    window_ms: 8000
+    kick_at: 8
+
+# -------------------------------------------------------------------
+# 5. 命令守卫
+# -------------------------------------------------------------------
+# 阻止快速执行命令（例如从原理图快速粘贴时滥用 /setblock）。
+command_guard:
+  enabled: true
+  # 要阻止的命令（前缀匹配，不区分大小写）
+  blocked_commands:
+    - '/setblock'
+  # 永不阻止的命令（例外，优先级高于 blocked_commands）
+  allowed_commands:
+    - '/msg'
+    - '/tell'
+    - '/r'
+  max_per_window: 8
+  window_ms: 3000
+  violations:
+    window_ms: 8000
+    kick_at: 5
+
+# -------------------------------------------------------------------
+# 6. 阶梯处罚
+# -------------------------------------------------------------------
+graduated_punishment:
+  enabled: true
+
+  # 计算违规次数的时间窗口（分钟）
+  window_minutes: 60
+
+  # 存储方式：sqlite / mysql / memory
+  # sqlite  - 数据存储在 violations.db 文件中（默认）
+  # mysql   - 数据存储在 MySQL/MariaDB 中（需要下面的 mysql 配置）
+  # memory  - 仅保存在内存中（重启后丢失，仅用于测试）
+  storage: sqlite
+
+  # MySQL 配置（仅当 storage: mysql 时使用）
+  mysql:
+    host: 'localhost'
+    port: 3306
+    database: 'antilitematica'
+    user: 'root'
+    password: ''
+
+  # 处罚等级（根据违规次数按顺序执行）
+  levels:
+    1:
+      action: warn
+      duration: '0'
+      reason: '使用投影模组 - 警告 (1/3)'
+      broadcast: false
+      staff_alert: true
+    2:
+      action: tempban
+      duration: '30m'
+      reason: '多次使用投影模组 - 临时封禁 (2/3)'
+      broadcast: true
+      staff_alert: true
+    3:
+      action: ban
+      duration: '0'
+      reason: '屡次使用投影模组 - 永久封禁 (3/3)'
+      broadcast: true
+      staff_alert: true
+
+  # 超过最大等级时的操作
+  exceed_max:
+    action: ban
+    duration: '0'
+    reason: '违规次数过多 - 永久封禁'
+
+  # 封禁插件优先级（按顺序尝试）
+  ban_plugins:
+    - 'LiteBans'
+    - 'AdvancedBan'
+    - 'EssentialsX'
+
+# -------------------------------------------------------------------
+# 7. 反作弊集成
+# -------------------------------------------------------------------
+integration:
+  enabled: false
+  # 可选：grim / vulcan / matrix / none
+  type: 'none'
+  violation_level: 10
+  check_prefix: 'AntiLitematica'
+
+# -------------------------------------------------------------------
+# 8. 违规白名单
+# -------------------------------------------------------------------
+whitelist:
+  enabled: false
+  # LOG_ONLY：仅记录，不处罚
+  # NORMAL：  完全绕过所有检测
+  mode: 'LOG_ONLY'
+  # 玩家名称（不区分大小写，存储为小写）
+  players: []
+
+# -------------------------------------------------------------------
+# 8b. 世界忽略列表
+# -------------------------------------------------------------------
+# 在这些世界中的玩家将完全不会被检测。
+# 适用于建筑/创造世界，使用原理图是合理的。
+world_whitelist:
+  enabled: false
+  worlds: []
+
+# -------------------------------------------------------------------
+# 9. 通知
+# -------------------------------------------------------------------
+
+# 9a. Discord Webhook
+discord:
+  enabled: false
+  webhook_url: ''
+  username: 'AntiLitematica'
+  embed_title: '检测到被禁止的客户端'
+  embed_color: 16711680
+  notify_on_detection: true
+  notify_on_punish: true
+  # 代理（可选）
+  # proxy_host: "127.0.0.1"
+  # proxy_port: 7890
+  # proxy_username: ""
+  # proxy_password: ""
+
+# 9b. OneBot 11（QQ 机器人）
+onebot:
+  enabled: false
+  http_url: 'http://localhost:5700'
+  access_token: ''
+  group_id: 0
+
+# -------------------------------------------------------------------
+# 10. Web 仪表板
+# -------------------------------------------------------------------
+web_dashboard:
+  enabled: false
+  port: 25418
+  password: 'admin'
+  locale: 'zh_CN'
+
+# -------------------------------------------------------------------
+# 11. 动态阈值
+# -------------------------------------------------------------------
+dynamic_threshold:
+  enabled: false
+  check_interval_seconds: 30
+  tps:
+    high: 19.5
+    low: 16.0
+  players:
+    high: 50
+    low: 5
+  multiplier:
+    min: 1.0
+    max: 2.0
+
+# -------------------------------------------------------------------
+# 12. 检测日志
+# -------------------------------------------------------------------
+detection_log:
+  enabled: true
+  file: 'detections.log'
+
+# -------------------------------------------------------------------
+# 12b. 统计和清理
+# -------------------------------------------------------------------
+stats:
+  # 启用检测统计追踪（每日计数、命中率）
+  enabled: true
+  # 自动清理：保留违规记录的天数（0 = 永久保留）
+  record_retention_days: 30
+  # 自动清理：保留统计数据的天数（0 = 永久保留）
+  stats_retention_days: 90
+
+# -------------------------------------------------------------------
+# 13. 自动更新（GitHub Release 下载）
+# -------------------------------------------------------------------
+auto_build:
+  enabled: false
+  output_path: ''
+  nightly_time: '03:00'
+  auto_reload: false
+  post_build_command: ''
+
+# -------------------------------------------------------------------
+# 14. 指标
+# -------------------------------------------------------------------
+bstats:
+  enabled: true
