@@ -16,7 +16,7 @@ v24.0 主要更新：回滚性能提升约 80%、新增 8 个 API 查询方法�
 ## 关键配置 (`plugins/CoreProtect/config.yml`)
 
 ```yaml
-use-mysql: false # 使用 SQLite 本地存储
+use-mysql: true # 使用 MySQL（按下方"MySQL 数据库配置"章节设置；false 则使用 SQLite 本地存储）
 language: zh-CN # 中文语言
 api-enabled: true # 启用 API
 default-radius: 10 # 默认回滚半径
@@ -54,6 +54,60 @@ player-sessions: true # 记录登录登出
 username-changes: true # 记录改名
 worldedit: true # 记录 WorldEdit 操作
 ```
+
+## MySQL 数据库配置（推荐生产环境）
+
+SQLite 适合小型服务器，但数据量增长后查询和回滚速度会明显下降。生产环境建议改用 MySQL，具体步骤如下。
+
+### 第一步：创建 MySQL 数据库和用户
+
+1. 使用 root 登录 MySQL：
+
+   ```bash
+   mysql -u root -p
+   ```
+
+2. 创建数据库（建议使用 `utf8mb4` 编码）：
+
+   ```sql
+   CREATE DATABASE coreprotect CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+   ```
+
+3. 创建专用用户并授权（请将 `strong_password_here` 替换为强密码）：
+
+   ```sql
+   CREATE USER 'coreprotect'@'localhost' IDENTIFIED BY 'strong_password_here';
+   GRANT ALL PRIVILEGES ON coreprotect.* TO 'coreprotect'@'localhost';
+   FLUSH PRIVILEGES;
+   ```
+
+   > 如果 Minecraft 服务器与 MySQL 不在同一台机器，请将 `'localhost'` 替换为服务器 IP。
+
+### 第二步：修改 CoreProtect 配置文件
+
+1. 停止服务器，用编辑器打开 `plugins/CoreProtect/config.yml`。
+2. 修改数据库设置为如下内容，填入第一步创建的数据库信息：
+
+   ```yaml
+   use-mysql: true # 启用 MySQL
+   table-prefix: co_ # 表前缀，多插件共用数据库时用于区分，保持默认即可
+   mysql-host: localhost # MySQL 地址
+   mysql-port: 3306 # MySQL 端口
+   mysql-database: coreprotect # 数据库名
+   mysql-username: coreprotect # 数据库用户名
+   mysql-password: strong_password_here # 数据库密码
+   ```
+
+### 第三步：迁移现有数据（仅原用 SQLite 时需要）
+
+- **Patreon 版**：启动服务器后，在服务器**控制台**（非游戏内聊天框）执行 `/co migrate-db mysql`，等待迁移完成。
+- **免费版**：使用 sqlite3 导出再导入 MySQL，完整步骤见 `CoreProtect插件：玩家的行为数据库过大/2.1.将CoreProtect从SQLite切换到MySQL`。
+
+> 数据库迁移涉及数据安全，操作前请务必备份服务器文件，尤其是 `plugins/CoreProtect/database.db`。
+
+### 第四步：验证
+
+启动服务器，进入游戏用 `/co lookup` 查询历史记录，确认旧数据完整、新数据正常记录。确认无误后可删除旧的 `plugins/CoreProtect/database.db` 释放磁盘空间。
 
 ## 常用命令
 
