@@ -4,6 +4,9 @@
 
 **官方网站**: https://coreprotect.net | **GitHub**: https://github.com/PlayPro/CoreProtect
 
+**官方文档**: https://docs.coreprotect.net/
+**下载**: https://modrinth.com/plugin/coreprotect/versions
+
 ## 功能说明
 
 CoreProtect 是 Minecraft 最知名的方块记录插件，能记录服务器中几乎所有的方块操作、容器交互、实体杀戮和聊天命令，并支持精确到单个方块的**回滚和还原**操作。此版本为 **CoreProtect Community Edition (CE)**，开源免费。
