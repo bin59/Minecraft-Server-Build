@@ -1,0 +1,626 @@
+# 以下是 Residence 的全局设置。
+Global:
+  # 拥有 residence.versioncheck 权限节点的玩家登录时会收到新版本提示
+  versionCheck: true
+  # 加载 Residence 语言文件夹中的 <language>.yml 文件
+  # 所有 Residence 文本均来自该文件。（尚未完成）
+  Language: Chinese
+  # 木锄是 Residence 的默认选区工具。
+  SelectionToolId: WOODEN_HOE
+  Selection:
+    # 设置为 true 后，所有选区将从基岩延伸到天空，忽略 Y 坐标
+    IgnoreY: false
+    # 设置为 true 时，在已有领地内的选区将从该领地的底部到顶部
+    # 设置为 false 时，在已有领地内的选区将保持原样
+    IgnoreYInSubzone: false
+    # 定义创建领地时下界的高度。主要用于 /res select vert 或 /res auto 等将领地扩展到指定高度的命令
+    # 该值不能高于 319 或低于 1
+    netherHeight: 128
+    # 设置为 true 后，玩家只需支付 x*z 方块的费用，忽略高度
+    # 这将使领地价格最多降低 319 倍，因此请在启用此功能前调整方块单价
+    NoCostForYBlocks: false
+    # 启用或禁用 Residence 插件与 WorldEdit 的集成
+    WorldEditIntegration: true
+  # 决定使用哪种工具查看领地信息，默认为线（String）。
+  # 装备该工具后点击领地内的位置即可显示领地信息。
+  InfoToolId: STRING
+  Optimizations:
+    # 启用后，将加载每个世界文件的数据，即使世界当前不存在但可能稍后加载
+    # 通常仅在安装了 Multiverse 等可在服务器运行期间加载世界的插件时有用
+    LoadEveryWorld: true
+    # 启用后，将避免在启动时显示额外的反馈信息
+    CleanerStartupLog: true
+    # 这将略微改变 groups 文件中 CanTeleport 部分的行为，将服务器所有者纳入检查
+    # 当此项为 false 且 CanTeleport 为 false 时，玩家只能传送到自己的领地，无法传送到其他玩家的领地
+    # 当此项为 true 且 CanTeleport 为 false 时，玩家将完全无法传送到任何领地
+    # 请注意，这仅适用于 /res tp 之类的命令
+    CanTeleportIncludeOwner: false
+    # 你的主领地世界的名称。通常为普通起始世界 "world"。注意大小写
+    DefaultWorld: world
+    DisabledWorlds:
+      # 插件被禁用的世界列表
+      # 确保世界名称的大小写正确
+      # 如果白名单（WhiteList）中包含任何条目，则此部分将被完全忽略
+      BlackList: []
+      # 插件被启用的世界列表
+      # 确保世界名称的大小写正确
+      # 如果白名单（WhiteList）中包含任何条目，则黑名单（BlackList）部分将被完全忽略
+      WhiteList: []
+      # 禁用所包含世界中的所有监听器
+      DisableListeners: true
+      # 禁用所包含世界中的所有命令使用
+      DisableCommands: true
+      # 禁用所包含世界中的领地创建
+      DisableResidenceCreation: true
+    # 领地标志阻止拾取物品后的拾取延迟（秒）
+    # 建议保持在 10 秒左右以减少不必要的检查
+    ItemPickUpDelay: 10
+    AutomaticResidenceCreation:
+      # 设置为 true 时，/res auto 命令将检查新区域是否与其他领地重叠
+      # 设为 false 可获得一些性能提升，但新领地可能会与旧领地重叠
+      CheckCollision: true
+      # 自动创建领地时检测形状不规则的领地
+      # 这将在创建前告知玩家领地形状是非规则长方体
+      Ratio:
+        Inform: true
+        Confirmation: true
+        # 定义领地被视为形状不规则时的比例值
+        # 值为 3 表示长方体的一条边至少是另一条边的 3 倍
+        Value: 3
+      # 启用后将切换到旧的领地面积计算方法
+      # 旧方法效率低得多，因此不建议在领地面积超过 100 时使用
+      OldMethod: false
+      # 使用自动创建领地命令时，若同名领地已存在，定义新领地名称的递增格式
+      IncrementFormat: _[number]
+      Size:
+        # 启用后，将尝试按定义的边界创建区域
+        Enabled: false
+        # 1 到 100 之间的值，以百分比定义根据玩家权限组创建领地的大小
+        Percentage: 50
+        # 以方块为单位的值。前面的百分比决定大致大小，此项可用于避免出现过小的领地
+        # 例如，玩家拥有 30x30 领地权限且 Percentage 为 50% 时，将使用 20（默认）而不是 15 方块大小
+        # 请注意，这不会覆盖玩家实际可拥有的最大/最小领地大小
+        Min: 5
+        # 以方块为单位的值。前面的百分比决定大致大小，此项可用于避免出现过大的领地
+        # 例如，玩家拥有 500x500 领地权限且 Percentage 为 50% 时，将使用 100（默认）而不是 250 方块大小
+        # 请注意，这不会覆盖玩家实际可拥有的最大/最小领地大小
+        Max: 100
+    GlobalChat:
+      # 启用或禁用通过包含玩家主领地名称来修改聊天内容
+      Enabled: false
+      # 修改聊天以添加聊天标题。如果你使用聊天管理插件，可以在聊天格式中添加 {residence} 标签并禁用此选项。
+      SelfModify: true
+      Format: '&c[&e%1&c]'
+    # 设置为 true 时，任何传送到玩家没有 tp 标志的领地的行为都会被拒绝
+    # 这可以防止通过 Essentials /tpa 等第三方插件将玩家传送到领地
+    BlockAnyTeleportation: true
+    KickLocation:
+      # 设置为 true 后，当玩家将其他玩家踢出领地时，对方将被传送到此位置而不是被传送到领地外
+      Use: false
+      World: world
+      X: 0.5
+      Y: 63.0
+      Z: 0.5
+      # 小于 0 - 头朝上，大于 0 - 头朝下。范围 -90 到 90
+      Pitch: 0.0
+      # 头部左右位置。范围 -180 到 180
+      Yaw: 0.0
+    FlyLandLocation:
+      # 当玩家因 fly 标志导致飞行状态被关闭，且周围没有可落地的实心地面时使用
+      World: world
+      X: 0.5
+      Y: 63.0
+      Z: 0.5
+      # 小于 0 - 头朝上，大于 0 - 头朝下。范围 -90 到 90
+      Pitch: 0.0
+      # 头部左右位置。范围 -180 到 180
+      Yaw: 0.0
+    InfoCommand:
+      # 设置为 true 后，使用 /res info 查看领地信息时只显示名称列表，悬停即可看到标志列表
+      ShortInformation: true
+      # 设置为 true 时，flags.yml 中设置的默认领地标志将从 info 命令输出中排除且不显示
+      # 如果标志状态与默认不同，则会显示
+      ExcludeDefaultFlags: false
+    Vote:
+      # 玩家可投票的范围，默认为 0 到 10 分
+      RangeFrom: 0
+      RangeTo: 10
+      # 若为 true，玩家只能对商店点赞，而不能进行评分投票
+      OnlyLike: false
+    ConsoleLogs:
+      # 若为 true，通过 GUI 进行的标志更改将记录在控制台中
+      ShowFlagChanges: true
+    Intervals:
+      # 拥有相应标志的领地中，治疗/喂食玩家的间隔（秒）
+      # 数值越大越节省服务器资源
+      # 如果要完全禁用特定检查，请设为 0。在未使用特定标志时推荐
+      Heal: 1
+      Feed: 5
+      SafeZone: 3
+    # 如果领地未设置 pvp true 标志，则包含以下任一效果的药水将被忽略
+    NegativePotionEffects:
+      - blindness
+      - confusion
+      - harm
+      - hunger
+      - poison
+      - slow
+      - slow_digging
+      - weakness
+      - wither
+    NegativeLingeringPotions:
+      - slowness
+      - instant_damage
+      - poison
+      - slowness
+    # 定义 wspeed1 和 wspeed2 标志的速度。范围为 0 到 5
+    WalkSpeed:
+      '1': 0.5
+      '2': 2.0
+  # 每个领地允许放置的领地相关告示牌（如出售、租用、租赁告示牌）的最大数量
+  Signs:
+    MaxPerResidence: 5
+  # 移动检查之间的间隔（毫秒）。
+  # 减小此值会增加服务器负载。
+  # 增大此值将允许玩家在移动受限区域中走得更远才被传送出去。
+  MoveCheckInterval: 500
+  Tp:
+    # 传送间隔（秒）。
+    # 设为 0 以禁用
+    TeleportDelay: 3
+    # 玩家传送到领地时在标题消息区域显示附加消息
+    TeleportTitleMessage: true
+    # 不允许使用 /res tp 传送的世界列表
+    # 仅阻止传送到这些世界，不阻止从这些世界传送出去
+    BlockedWorlds:
+      - SomeWorldNames
+  RandomTeleportation:
+    Worlds:
+      # 使用此功能的世界名称。添加其他世界名称以启用随机传送
+      world_the_end:
+        Enabled: true
+        # 传送的最大坐标，设置为 1000 时，玩家会被传送到 -1000 到 1000 之间
+        MaxCoord: 1000
+        # 若 maxcoord 为 1000、mincoord 为 500，则玩家会被传送到 -1000 到 -500 和 500 到 1000 之间
+        MinCoord: 500
+        CenterX: 0
+        CenterZ: 0
+      world_nether:
+        Enabled: true
+        MaxCoord: 1000
+        MinCoord: 500
+        CenterX: 0
+        CenterZ: 0
+      world:
+        Enabled: true
+        MaxCoord: 1000
+        MinCoord: 500
+        CenterX: 0
+        CenterZ: 0
+    # 强制玩家等待多长时间后才能再次使用命令。
+    Cooldown: 5
+    # 尝试寻找正确传送位置的次数。
+    # 保持较低数值，因为玩家可以在延迟后再次尝试
+    MaxTries: 20
+  # 领地保存的间隔（分钟）。
+  SaveInterval: 10
+  Backup:
+    AutoCleanUp:
+      # 是否自动删除主备份文件夹中超过指定天数的备份文件
+      Use: false
+      Days: 30
+    # 是否通过在领地主文件夹的 backup 文件夹中创建 zip 文件来备份
+    # 这不会影响 save 文件夹中创建的常规备份文件
+    UseZip: true
+    IncludeFiles:
+      Worlds: true
+      forsale: true
+      leases: true
+      permlists: true
+      rent: true
+      flags: true
+      groups: true
+      config: true
+  AutoCleanUp:
+    # 高度实验性功能：服务器启动时清理离线超过 x 天的玩家的领地。
+    # 玩家可以使用 residence.cleanbypass 权限节点绕过此功能
+    Use: false
+    # 玩家需要离线多长时间才会删除其领地
+    Days: 60
+    # 启用后，如果无法确定领地所有者，将向控制台输出一些基本信息
+    DetailsOnUnknown: false
+    # 对服务器负担极大，再生过程中会造成卡顿
+    # 是否重新生成旧领地区域
+    # 这需要安装 WorldEdit
+    Regenerate: false
+    # 要纳入检查列表的世界
+    Worlds:
+      - world
+    # 启用后，将把领地转移给指定用户而不是删除
+    # 指定用户将被排除在清理操作之外
+    TrasnferToUser: false
+    # 接收被移除领地的用户名
+    UserName: Server_Land
+  Lwc:
+    # 移除领地时删除所有指定对象的 LWC 保护
+    OnDelete: true
+    # 购买领地时删除所有指定对象的 LWC 保护
+    OnBuy: true
+    # 取消租用领地时删除所有指定对象的 LWC 保护
+    OnUnrent: true
+    # 要移除保护的方块列表
+    MaterialList:
+      - CHEST
+      - TRAPPED_CHEST
+      - furnace
+      - dispenser
+  AntiGreef:
+    # 领地之间需要保留的方块距离
+    # 这将防止领地紧挨着创建
+    # 如果新旧领地的所有者相同，则此距离限制不会生效
+    # 设为 0 或空列表以禁用此功能
+    # 如果想在所有世界使用相同限制，请使用 'all'
+    # 如果只想在特定世界使用此限制，请使用具体的世界名称
+    # 具体世界名称将覆盖 'all' 值
+    RangeGaps:
+      - all-8
+    TNT:
+      # 设置为 true 时，允许 TNT 和 TNT 矿车在领地外 62（默认）层以下爆炸
+      # 这将允许使用 TNT 采矿和更原版化的玩法
+      ExplodeBelow: false
+      level: 62
+    Creeper:
+      # 设置为 true 时，允许苦力怕在领地外 62（默认）层以下爆炸
+      # 这将使游戏玩法更贴近真实
+      # 要使此功能正常工作，需要禁用世界中的苦力怕爆炸。可在 flags 文件的 global world 部分进行设置
+      ExplodeBelow: false
+      level: 62
+    Flow:
+      # 开始阻止岩浆和水流动的层数
+      # 这在领地内不生效
+      Level: 63
+      # 设为 true 时，领地外的岩浆流动将被阻止
+      NoLavaFlow: false
+      # 设为 true 时，领地外的水流将被阻止
+      NoWaterFlow: false
+      Worlds:
+        - world
+    Place:
+      # 开始阻止放置岩浆和水的层数
+      # 这在领地内不生效
+      Level: 63
+      # 设为 true 时，玩家无法在领地外放置岩浆
+      NoLavaPlace: false
+      # 设为 true 时，玩家无法在领地外放置水
+      NoWaterPlace: false
+      Worlds:
+        - world
+    BlockFall:
+      # 设为 true 时，下落的方块若落入不同区域将被删除
+      Use: true
+      # 开始阻止方块下落的层数
+      # 这在领地内外均不生效
+      Level: 62
+      Worlds:
+        - world
+    ResCleaning:
+      # 设为 true 时，玩家移除领地后，下列所有方块将被替换为空气方块
+      # 防止在破坏目标附近创建领地后移除的有效方法
+      # 注意！较大的领地区域在清理时会给服务器带来较大负载。因此，如果普通玩家拥有巨大领地，请勿使用此功能。最大限制为 1500 万个方块
+      Use: false
+      # 从哪一层开始替换方块
+      Level: 63
+      # 要替换的方块列表
+      # 默认仅替换水和岩浆
+      Blocks:
+        - WATER
+        - LAVA
+      Worlds:
+        - world
+    Flags:
+      # 设为 true 时，当领地内除所有者外还有其他玩家时，列表中的标志将受保护不被更改
+      # 例如防止有人邀请他人后将 pvp 标志改为 true 来击杀对方
+      Prevent: true
+      list:
+        - pvp
+  # 当权限插件无法附加或未使用权限插件时使用的默认组。
+  DefaultGroup: default
+  # 启用 / 禁用租约系统。
+  UseLeaseSystem: false
+  # 设置租约或租用到期日期的显示格式
+  # 正确用法详见 http://www.tutorialspoint.com/java/java_date_time.htm
+  DateFormat: E yyyy.MM.dd 'at' hh:mm:ss a zzz
+  # 设置租约或租用到期日期的显示格式（短格式）
+  # 正确用法详见 http://www.tutorialspoint.com/java/java_date_time.htm
+  DateFormatShort: MM.dd hh:mm
+  # 设置显示日期所用的时区，当服务器所在国家与主要玩家群体不同时很有用
+  # 完整时区列表见 http://www.mkyong.com/java/java-display-list-of-timezone-with-gmt/
+  TimeZone: Asia/Shanghai
+  # 启用 / 禁用移除领地时返还金钱。
+  ResMoneyBack: false
+  # 启用 / 禁用移除领地时从领地银行返还金钱。
+  ResBankBack: true
+  # 领地租约检查的间隔（分钟）（如果启用了租约）。
+  LeaseCheckInterval: 10
+  # 只要玩家有足够金钱就自动续签租约；如果经济系统被禁用，此设置不生效。
+  LeaseAutoRenew: true
+  # 是否与此配置一起使用权限系统。
+  EnablePermissions: true
+  # 启用 / 禁用 Residence 的经济系统（支持 iConomy、MineConomy、Essentials、BOSEconomy 和 RealEconomy）。
+  EnableEconomy: false
+  # 定义何时收费。仅在启用经济系统时有效
+  ChargeWhen:
+    # 创建领地时收费，包括 /res create 和 /res auto
+    Creating: true
+    # 领地面积扩展时收费
+    Expanding: true
+    # 添加区域时收费
+    AreaAdd: true
+  # 默认为 Auto，将先通过 Vault API 查找默认经济引擎，失败时再尝试其他受支持的经济引擎
+  # 可定义自定义经济引擎以直接访问经济系统
+  # 支持的变量：Vault、iConomy、Essentials、RealEconomy、CMIEconomy、None
+  Type: Auto
+  # 启用后，如果领地位于待租或待售状态，聊天中会出现额外消息，告知玩家如何租用/购买领地及基本信息。
+  ExtraEnterMessage: true
+  Sell:
+    # 设为 true 将允许出售子领地。不过建议保持为 false
+    Subzone: false
+  # 启用或禁用租用系统
+  EnableRentSystem: false
+  Rent:
+    # 如果子领地仍被某人租用，则阻止移除领地/子领地
+    PreventRemoval: true
+    # 设为 true 时，领地租金可从领地银行中扣除续租
+    DeductFromBank: false
+    # 设为 true 时，领地租金可从领地银行中扣除续租，若余额不足则从玩家身上扣除剩余部分
+    # 这将覆盖 DeductFromBank 的行为
+    DeductFromBankThenPlayer: false
+    Inform:
+      # 在租用时间即将结束时通知玩家
+      OnEnding: true
+      # 距租用结束前多长时间（分钟）开始通知
+      Before: 1440
+      # 玩家登录后等待多长时间（秒）再通知租用即将到期
+      Delay: 60
+    DefaultValues:
+      # 领地挂出租时的默认值
+      AllowRenewing: true
+      StayInMarket: true
+      AllowAutoPay: true
+      # 设为 true 时，如果玩家在租用时未设置自动支付，将使用此值
+      PlayerAutoPay: true
+    Schematics:
+      # 实验性功能！！！设为 true 时，领地将被恢复为 backup 标志设置为 true 时的状态
+      # 出于安全原因，只有拥有 residence.backup 权限节点的玩家才能设置 backup 标志
+      RestoreAfterRentEnds: true
+      # 设为 true 时，仅在将 backup 设置为 true 时保存区域状态
+      # 设为 false 时，每次租用前都会保存区域状态，以始终保持最新的区域外观
+      # 请注意，设为 false 时服务器负载会略增，因为每次有人租用时都需要保存区域
+      SaveOnFlagChange: true
+  Bank:
+    # 定义领地银行可容纳的最大金额
+    # 设为 0 将取消限制
+    Capacity: 0.0
+  # 领地租用到期检查的间隔（分钟）（如果启用了租用系统）。
+  RentCheckInterval: 10
+  Messages:
+    # 定义领地进入/离开/移动拒绝等消息的发送位置。可选值：ActionBar、TitleBar、ChatBox
+    # TitleBar 可使用 %subtitle% 变量定义第二行
+    GeneralMessages: ActionBar
+  ActionBar:
+    ShowOnSelection: true
+  # 启用或禁用领地聊天频道。
+  ResidenceChatEnable: true
+  # 领地聊天的颜色。
+  ResidenceChatColor: DARK_PURPLE
+  # 启用后，拥有 chat 标志权限的玩家无需加入领地聊天即可收听
+  ResidenceChatListening: false
+  # 领地聊天前缀的最大长度（包含颜色代码）
+  ResidenceChatPrefixLength: 16
+  # 是否忽略常规权限标志，仅允许 OP 和拥有 'residence.admin' 权限的组修改领地。
+  AdminOnlyCommands: false
+  # 设为 true 使服务器 OP 成为管理员。
+  AdminOPs: true
+  # 设为 true 时，如果管理员是 OP 或拥有 residence.admin 权限节点，则无需使用 /resadmin 命令即可访问管理命令。
+  AdminFullAccess: false
+  # 你用于多世界的插件名称，如果没有多世界插件，可以安全地忽略此项。
+  # 它只用于检查多世界插件是否在 Residence 之前启用，以确保其他世界的领地能正确加载。
+  MultiWorldPlugin: Multiverse-Core
+  # 设为 true 将使子领地继承父领地的标志。
+  ResidenceFlagsInherit: true
+  # 设为 false 将允许租用者修改租用的领地。
+  PreventRentModify: true
+  # 设为 true 时，如果子领地所有者与父领地所有者不同，将阻止删除子领地。
+  PreventSubZoneRemoval: true
+  # 设为 false 时，即使保存文件中检测到错误，领地仍会继续加载。
+  StopOnSaveFault: true
+  ResidenceNameRegex: '[^a-zA-Z0-9\-\_]'
+  # 设为 true 时，每次 Residence 进行租用到期检查或租约到期检查都会向控制台发送消息。
+  ShowIntervalMessages: false
+  # 设为 true 时，新玩家在地面放置箱子时会收到教程消息。
+  ShowNoobMessage: true
+  # 设为 true 时，如果玩家没有领地，将在其放置的箱子周围创建领地。
+  # 如果玩家仍没有领地，每次服务器重启后仅触发一次
+  NewPlayer:
+    Use: false
+    # 设为 true 时，领地免费创建
+    # 设为 false 时，将从玩家身上扣除金钱（如果他有）
+    Free: true
+    # 从放置的箱子向两侧延伸的范围。设为 5 时，领地总宽度为 5+5+1 = 11 格
+    Range:
+      X: 5
+      Y: 5
+      Z: 5
+  # 实验性 - 以下设置是方块 ID 列表，用于在装有模组时作为 'container' 和 'use' 标志检查的一部分。
+  CustomContainers: []
+  CustomBothClick: []
+  CustomRightClick: []
+  Visualizer:
+    # 启用后，玩家将看到标记选区边界的粒子效果
+    Use: true
+    # 为玩家绘制粒子效果的范围（方块）
+    # 不要超过 30，因为玩家最多只能看到 16 格
+    Range: 16
+    # 粒子效果显示时长（毫秒，5000 = 5 秒）
+    ShowFor: 10000
+    # 每隔多少 tick 更新一次玩家的粒子效果
+    updateInterval: 5
+    # 行之间粒子效果的间距（方块）
+    RowSpacing: 1.0
+    # 列之间粒子效果的间距（方块）
+    CollumnSpacing: 1.0
+    # 定义需要跳过的粒子数量
+    # 这将产生动态粒子效果，提升选区的整体观感
+    # 增加此数值可以降低更新频率
+    SkipBy: 15
+    # 每个玩家可显示的边框粒子最大数量
+    FrameCap: 500
+    # 每个玩家可显示的侧面粒子最大数量
+    SidesCap: 2000
+    # 粒子效果名称。可选：explode, largeexplode, hugeexplosion, fireworksSpark, splash, wake, crit, magicCrit
+    #  smoke, largesmoke, spell, instantSpell, mobSpell, mobSpellAmbient, witchMagic, dripWater, dripLava, angryVillager, happyVillager, townaura
+    #  note, portal, enchantmenttable, flame, lava, footstep, cloud, reddust, snowballpoof, snowshovel, slime, heart, barrier
+    #  droplet, take, mobappearance
+
+    # 如果使用基于 Spigot 的服务器，可以使用不同的粒子：
+    # click2, click1, bow_fire, door_toggle, iron_door_toggle, trapdoor_toggle, iron_trapdoor_toggle, fence_gate_toggle, door_close, iron_door_close, trapdoor_close, iron_trapdoor_close, fence_gate_close, extinguish, record_play, ghast_shriek, ghast_shoot, blaze_shoot, zombie_chew_wooden_door, zombie_chew_iron_door, zombie_destroy_door, smoke, step_sound, potion_break, instant_potion_break, ender_signal, mobspawner_flames, brewing_stand_brew, chorus_flower_grow, chorus_flower_death, portal_travel, endereye_launch, firework_shoot, villager_plant_grow, dragon_breath, anvil_break, anvil_use, anvil_land, enderdragon_shoot, wither_break_block, wither_shoot, zombie_infect, zombie_converted_villager, bat_takeoff, end_gateway_spawn, enderdragon_growl, phantom_bite, zombie_converted_to_drowned, husk_converted_to_zombie, grindstone_use, book_page_turn, smithing_table_use, pointed_dripstone_land, pointed_dripstone_drip_lava_into_cauldron, pointed_dripstone_drip_water_into_cauldron, skeleton_converted_to_stray, composter_fill_attempt, lava_interact, redstone_torch_burnout, end_portal_frame_fill, dripping_dripstone, bone_meal_use, ender_dragon_destroy_block, sponge_dry, electric_spark, copper_wax_on, copper_wax_off, oxidised_copper_scrape, wither_spawned, ender_dragon_death, end_portal_created_in_overworld, sound_stop_jukebox_song, crafter_craft, crafter_fail, shoot_white_smoke, bee_growth, turtle_egg_placement, smash_attack, particles_sculk_charge, particles_sculk_shriek, particles_and_sound_brush_block_complete, particles_egg_crack, gust_dust, trial_spawner_spawn, trial_spawner_spawn_mob_at, trial_spawner_detect_player, trial_spawner_eject_item, vault_activate, vault_deactivate, vault_eject_item, spawn_cobweb, trial_spawner_detect_player_ominous, trial_spawner_become_ominous, trial_spawner_spawn_item, sound_with_charge_shot
+    Selected:
+      Frame: dust:125,150,150
+      Sides: dust:150,255,200
+    Overlap:
+      Frame: dust:255,0,255
+      Sides: dust:255,100,100
+    # 玩家进入领地时显示粒子效果。仅适用于主领地区域
+    EnterAnimation: true
+  # 玩家被推回时显示粒子效果
+  BounceAnimation: true
+  GUI:
+    # 启用或禁用标志 GUI
+    Enabled: true
+    # 标志为 true 时使用的物品 ID 和数据
+    setTrue: GREEN_WOOL
+    # 标志为 false 时使用的物品 ID 和数据
+    setFalse: RED_WOOL
+    # 标志为移除时使用的物品 ID 和数据
+    setRemove: LIGHT_GRAY_WOOL
+  # 默认 = false。启用后，带有 nomobs 标志的领地会定期清除怪物。
+  # 这对服务器负载较大，仅在确实需要此功能时启用
+  AutoMobRemoval:
+    Use: false
+    # 每隔多少秒检查领地内的怪物。保持合理数值
+    Interval: 5
+  EnforceAreaInsideArea: false
+  EnableSpout: false
+  EnableLeaseMoneyAccount: true
+  # 设为 true 将启用对 kCauldron 服务器的部分兼容。由于不正确的兼容性，操作栏消息和选区可视化将自动禁用
+  Couldroncompatibility: false
+DynMap:
+  # 启用或禁用 DynMap 支持
+  Use: true
+  # 设为 true 时，默认在 DynMap 窗口中隐藏领地区域
+  # 仍可通过左上角提供的 DynMap 选项启用领地显示
+  HideByDefault: false
+  # 显示或隐藏领地标志
+  ShowFlags: true
+  # 启用后，默认标志将不包含在领地概览中
+  ExcludeDefaultFlags: true
+  # 设为 true 时，带有 hidden 标志的领地将从 DynMap 中隐藏
+  HideHidden: true
+  Layer:
+    # 启用 3D 区域
+    3dRegions: true
+    # 显示子领地的深度
+    SubZoneDepth: 2
+  Border:
+    # 边框颜色。从该页面选择颜色 http://www.w3schools.com/colors/colors_picker.asp
+    Color: '#FF0000'
+    # 透明度。0.3 表示仅显示 30% 的颜色
+    Opacity: 0.3
+    # 边框粗细
+    Weight: 3
+  Fill:
+    Opacity: 0.3
+    Color: '#FFFF00'
+    ForRent: '#33cc33'
+    Rented: '#99ff33'
+    ForSale: '#0066ff'
+  # 仅显示此列表中的区域
+  VisibleRegions: []
+  # 即使游戏内未隐藏，也会在地图上隐藏该区域
+  HiddenRegions: []
+Pl3xMap:
+  # 启用或禁用 Pl3xMap 支持
+  Use: true
+  # 设为 true 时，默认在 Pl3xMap 窗口中隐藏领地区域
+  # 仍可通过左上角提供的 Pl3xMap 选项启用领地显示
+  HideByDefault: false
+  # 显示或隐藏领地标志
+  ShowFlags: true
+  # 启用后，默认标志将不包含在领地概览中
+  ExcludeDefaultFlags: true
+  # 设为 true 时，带有 hidden 标志的领地将从 Pl3xMap 中隐藏
+  HideHidden: true
+  Layer:
+    # 显示子领地的深度
+    SubZoneDepth: 2
+  Border:
+    # 边框颜色。从该页面选择颜色 http://www.w3schools.com/colors/colors_picker.asp
+    Color: '#FF0000'
+    # 透明度。0.3 表示仅显示 30% 的颜色
+    Opacity: 0.3
+    # 边框粗细
+    Weight: 3
+  Fill:
+    Opacity: 0.3
+    Color: '#FF0000'
+    ForRent: '#33cc33'
+    Rented: '#99ff33'
+    ForSale: '#0066ff'
+  # 仅显示此列表中的区域
+  VisibleRegions: []
+  # 即使游戏内未隐藏，也会在地图上隐藏该区域
+  HiddenRegions: []
+# 开发中
+Raid:
+  # 决定是否要为服务器启用袭击功能
+  # 领地遭受袭击时，即使领地设置了 move false 标志，攻击者也可以在领地内移动
+  Enabled: false
+  # 袭击开始前的等待时间（秒）
+  # 这将允许防守者返回领地做好防御准备
+  PreTimer: 120
+  # 袭击持续的时间（秒）
+  # 在此期间，攻击者可以窃取财物并击杀防守者
+  Timer: 120
+  # 领地免疫下一次袭击的时间（秒）
+  # 默认为 79200 秒（即 22 小时），服务器重启后可能会重置
+  Cooldown: 79200
+  # 玩家免疫下一次袭击的时间（秒）
+  # 如果玩家拥有多个领地，这可以防止玩家再次被袭击
+  # 默认为 79200 秒（即 22 小时），服务器重启后可能会重置
+  PlayerCooldown: 79200
+  Allow:
+    Attacker:
+      # 即使领地设置了 destroy false，也允许在受袭领地内破坏方块
+      # 这仅适用于袭击期间内的攻击者
+      blockBreak: true
+      # 即使领地设置了 place false，也允许在受袭领地内放置方块
+      # 这仅适用于袭击期间内的攻击者
+      blockPlace: true
+    Defender:
+      # 即使领地设置了 destroy false，也允许在受袭领地内破坏方块
+      # 这仅适用于袭击期间内的防守者
+      blockBreak: true
+      # 即使领地设置了 place false，也允许在受袭领地内放置方块
+      # 这仅适用于袭击期间内的防守者
+      blockPlace: true
+      # 允许传送到受袭领地，包括 /res tp 和其他第三方传送命令
+      # 这仅适用于袭击期间内的防守者
+      # 请注意，攻击者没有此选项，将被阻止传送到受袭领地内部
+      Teleport: false
+      # 允许在袭击期间使用容器（如箱子）
+      # 这仅适用于袭击期间内的防守者
+      # 保持为 false 可能会阻止玩家将物品转移到未受袭的其他领地
+      # 袭击期间，攻击者可以访问你领地内的任何容器
+      containerUsage: false
+  # 设为 false 时，同一队伍（攻击方或防守方）的玩家不会互相造成伤害
+  FriendlyFire: true
