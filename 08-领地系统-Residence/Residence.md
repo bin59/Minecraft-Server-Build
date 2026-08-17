@@ -57,6 +57,44 @@ Global:
   Sell.Subzone: false                     # 子区域出售
 ```
 
+## flags.yml 权限配置文件
+
+全局默认权限，主要定义了游戏世界和领地的默认行为规则。以下是该文件的核心配置总结：
+
+### 🌍 全局世界规则 (Global Flags)
+
+这部分定义了玩家**不在任何领地内**时的世界默认行为。
+
+- **核心保护**：默认**禁止**玩家建造 (`build: false`)、使用 (`use: false`) 和破坏 (`destroy: false`) 方块。
+- **PVP 与伤害**：默认**开启**玩家对战 (`pvp: true`) 和生物伤害 (`damage: false` - _注：此处原文为false，意为禁止生物伤害，但pvp为true_)。
+- **爆炸与火灾**：默认**允许**TNT 爆炸 (`tnt: true`) 和火焰蔓延 (`firespread: false` - _注：此处原文为false，意为禁止火焰蔓延_)，但禁止苦力怕爆炸 (`creeper: false`)。
+
+### 🚩 权限标志管理 (FlagPermission)
+
+定义了哪些权限标志（Flags）默认对所有玩家组开放，除非在组权限中特别拒绝。
+
+- **玩家管理**：允许玩家管理自己的领地，如设置传送点 (`tp: true`)、修改旗帜 (`admin: true`)、使用领地银行 (`bank: true`)。
+- **功能使用**：允许使用床 (`bed: true`)、酿造台 (`brew: true`)、附魔台 (`enchant: true`) 等大部分功能性方块。
+- **特殊限制**：禁止玩家飞行 (`fly: false`) 和保留物品栏 (`keepinv: false`)。
+
+### 🏠 领地默认权限 (ResidenceDefault)
+
+当玩家创建一个新的领地时，该领地会自动应用以下默认权限：
+
+- **基础操作**：默认**禁止**建造 (`build: false`)、破坏 (`destroy: false`)、使用容器 (`container: false`) 和 PVP (`pvp: true` - _注：此处原文为true，意为开启PVP_)。
+- **生物与动物**：禁止生物生成 (`nomobs: true`)，禁止动物繁殖 (`animalkilling: false`) 和剪羊毛 (`shear: false`)。
+- **特殊保护**：禁止TNT爆炸 (`tnt: true` - _注：此处原文为true，意为允许TNT_)，禁止活塞推动方块 (`pistonprotection: true`)。
+
+### 👤 创建者与租客权限 (CreatorDefault & RentedDefault)
+
+- **领地创建者**：在自己创建的领地内拥有所有权限，包括建造、破坏、使用、PVP、传送等（全为 `true`）。
+- **领地租客**：拥有与创建者几乎相同的完整权限，包括管理权限 (`admin: true`)。
+
+### 🎨 界面与列表配置
+
+- **GUI 图标**：定义了在游戏内领地管理界面（GUI）中，每个权限标志对应的显示物品（如 `build` 对应砖块 `BRICKS`，`tnt` 对应 TNT 方块）。
+- **物品列表**：定义了一个名为 `DefaultList` 的物品黑名单，包含 `LAVA`（岩浆）、`WATER`（水）等，可用于限制特定物品的使用或放置。
+
 ## 常用命令
 
 ### 领地创建与管理
