@@ -1,73 +1,181 @@
-# 6. 经济系统 — Vault
+这份教程专为你的服务器定制，重点解决 `Residence` 报错问题，并补充了 `LuckPerms` 权限配置。
 
-**文件**: 内置于 `plugins/Vault/` 目录 | **版本**: 1.6.2
+### 📦 Vault + EssentialsX 部署配置指南
 
-## 功能说明
+> **适用环境**：已安装 `LuckPerms` 和 `Residence` 的服务器
+> **服务端版本**：Paper / Spigot / Purpur 1.21.11
+> **目标**：修复 `Could not determine economy` 报错，开启领地买卖/租赁功能
 
-Vault 2.0 是一个内建经济系统，同时兼容 Vault API。它提供货币余额、玩家间转账、贷款系统等功能。与传统的需要外部 Vault.jar 不同，此版本是自包含的经济插件。
+---
 
-## 关键配置 (`plugins/Vault/config.yml`)
+### 一、 核心原理与安装顺序
 
-```yaml
-plugin_version: 1.6.2
-language: en
+你的服务器现状是：有“管家”（Residence）和“门禁系统”（LuckPerms），但缺了“银行”（EssentialsX）和“通讯线路”（Vault）。
 
-currency:
-  symbol: $              # 货币符号
-  position: suffix       # 符号位置（后缀）
-  space: true            # 符号与数字间有空格
-  format: auto           # 自动格式化
+**依赖关系图：**
 
-storage:
-  use_mysql: false       # 使用文件存储（非 MySQL）
-
-offline-uuid-fallback: true  # 离线 UUID 回退
-
-pay_limits:
-  min: 1                 # 最小支付金额
-  max: 100000            # 最大支付金额
-
-loans:
-  enabled: true          # 启用贷款系统
-  max_active_per_player: 1   # 每人最多 1 笔贷款
-  min_amount: 1          # 最小贷款金额
-  max_amount: 100000     # 最大贷款金额
-  max_installments: 60   # 最多 60 期
-  default_interval_hours: 24  # 默认还款间隔(小时)
-  max_missed_payments: 3     # 最多逾期 3 次
-  defaulted_effects:
-    enabled: true
-    effects:
-      - SLOW:1           # 违约惩罚：缓慢 I
-      - SLOW_DIGGING:1   # 违约惩罚：挖掘疲劳 I
+```text
+Residence (领地插件)
+   ⬇️ 调用经济API
+Vault (中间件/桥梁)  <-- 必须先装 EssentialsX，Vault 才能连上它
+   ⬇️ 提供经济数据
+EssentialsX (经济核心)
 ```
 
-## 常用命令
+**⚠️ 关键安装顺序：**
 
-### 玩家命令
+1.  **先装 EssentialsX**（建立银行）
+2.  **再装 Vault**（铺设线路）
+3.  **最后重启**（Residence 会自动检测到线路通了）
 
-| 命令 | 说明 |
-|---|---|
-| `/balance` | 查看余额 |
-| `/pay <玩家> <金额>` | 转账给玩家 |
-| `/pay` | 打开支付菜单 |
-| `/vault loan` | 打开贷款菜单 |
+---
 
-### 管理命令
+### 二、 EssentialsX 安装与配置（经济核心）
 
-| 命令 | 说明 |
-|---|---|
-| `/eco give <玩家> <金额>` | 给予金钱 |
-| `/eco take <玩家> <金额>` | 扣除金钱 |
-| `/vault reload` | 重载配置 |
-| `/vaultop` | 查看财富排行榜 |
+#### 1. 下载与安装
 
-## PlaceholderAPI 变量
+- **EssentialsX (必须)**: [SpigotMC 下载](https://www.spigotmc.org/resources/essentialsx.9089/)
+- **EssentialsXSpawn (推荐)**: [SpigotMC 下载](https://www.spigotmc.org/resources/essentialsxspawn.20939/) (提供 `/spawn` 和出生点设置功能)
 
-| 变量 | 说明 |
-|---|---|
-| `%vault_balance%` | 原始余额数字 |
-| `%vault_balance_formatted%` | 格式化余额 |
-| `%vault_currency_symbol%` | 货币符号 ($) |
-| `%vault_top%` | 财富排行前 10 |
-| `%vault_top_1%` ~ `%vault_top_10%` | 各排名余额 |
+**操作：** 将下载的 `.jar` 文件放入 `plugins` 文件夹，**暂时不要重启**。
+
+#### 2. 基础配置 (`config.yml`)
+
+首次启动后会生成配置文件。停止服务器，编辑 `plugins/Essentials/config.yml`：
+
+```yaml
+# --- 经济系统设置 ---
+economy:
+  # 必须设为 true，Residence 才能读取到钱
+  enabled: true
+
+  # 货币符号，建议与 Residence 保持一致
+  currency-symbol: '¥'
+
+  # 货币名称（单数/复数），Residence 会读取这个
+  currency-name: '金币'
+
+# --- 新手初始资金 ---
+# 新玩家进服送多少钱
+starting-balance: 0
+
+# --- 其他常用设置 ---
+# 死亡是否掉落经验
+keep-levels-on-death: false
+
+# 是否允许玩家转账
+pay-exempt: []
+```
+
+#### 3. 验证经济系统
+
+重启服务器后，进入游戏输入：
+
+- `/bal`：查看余额（应显示 `¥0.00`）
+- `/pay <玩家名> 10`：测试转账
+
+---
+
+### 三、 Vault 安装与配置（关键桥梁）
+
+#### 1. 版本选择（针对 1.21.11）
+
+由于你的服务端是 **1.21.11**，原版 Vault 可能显示“过时”，但通常可用。为了最佳兼容性，推荐使用更新版：
+
+- **推荐版本 (Vault Updated)**: [GitHub 下载 (Roydogman/Vault-Updated)](https://github.com/Roydogman/Vault-Updated)
+  - _优势：专为 1.20+ 编译，完美支持 LuckPerms 和现代服务端。_
+- **原版 Vault**: [SpigotMC 下载](https://www.spigotmc.org/resources/vault.34315/)
+  - _注意：如果安装后报错，请换用上面的推荐版本。_
+
+#### 2. 安装步骤
+
+1.  将 `Vault.jar` 放入 `plugins` 文件夹。
+2.  **重启服务器**。
+
+#### 3. 验证是否成功 (关键步骤)
+
+查看控制台启动日志，必须看到以下两行才算成功：
+
+```text
+[Vault] [Economy] Essentials Economy: Found
+[Vault] [Permission] SuperPermissions: Loaded as LuckPermsSuperPermissionBridge
+```
+
+- 如果看到 `Essentials Economy: Found`，说明 **Residence 的报错将消失**。
+- 如果看到 `LuckPerms...`，说明权限系统已连接。
+
+---
+
+### 四、 与 Residence 联动配置
+
+安装完上述插件后，Residence 会自动开启经济功能。你需要检查并配置权限。
+
+#### 1. 检查 Residence 配置
+
+编辑 `plugins/Residence/config.yml`：
+
+```yaml
+Economy:
+  # 必须开启，否则无法买卖领地
+  EnableEconomy: true
+
+  # 货币名称，建议与 EssentialsX 保持一致
+  CurrencyName: '金币'
+```
+
+#### 2. LuckPerms 权限配置
+
+由于你使用 LuckPerms，需要手动赋予玩家使用经济指令和领地经济指令的权限。
+
+**给默认组 (default) 添加基础经济权限：**
+
+```bash
+# 基础经济指令
+lp group default permission set essentials.balance
+lp group default permission set essentials.pay
+lp group default permission set essentials.money
+
+# Residence 经济相关权限 (买卖/租赁)
+lp group default permission set residence.rent true
+lp group default permission set residence.unrent true
+lp group default permission set residence.sell true
+lp group default permission set residence.buy true
+lp group default permission set residence.price true
+```
+
+**给管理员组 (admin) 添加无限金钱权限 (可选)：**
+
+```bash
+lp group admin permission set essentials.money.unlimited true
+```
+
+---
+
+### 五、 功能测试
+
+在游戏内进行以下测试，确保一切正常：
+
+| 测试项目         | 指令                     | 预期结果                     |
+| :--------------- | :----------------------- | :--------------------------- |
+| **查看余额**     | `/bal`                   | 显示 `¥0.00` (或对应金额)    |
+| **设置领地价格** | `/res price 领地名 1000` | 提示“领地价格已设置为 1000”  |
+| **购买领地**     | `/res buy 领地名`        | 扣除 1000 金币，领地归属变更 |
+| **租赁领地**     | `/res rent 领地名`       | 扣除租金，获得租期           |
+
+---
+
+### 六、 常见问题排查
+
+1.  **Residence 依然报错 `Could not determine economy`**
+    - **原因**：Vault 没找到 EssentialsX。
+    - **解决**：检查 `plugins` 文件夹里是否有 `EssentialsX.jar`，确保先启动了 EssentialsX，再启动 Vault。查看日志是否有 `Essentials Economy: Found`。
+
+2.  **提示 `No economy system found`**
+    - **原因**：EssentialsX 的经济模块被关掉了。
+    - **解决**：检查 `plugins/Essentials/config.yml` 中的 `economy: enabled: true`。
+
+3.  **玩家无法使用 `/res sell`**
+    - **原因**：LuckPerms 权限不足。
+    - **解决**：执行 `lp group default permission set residence.sell true`。
+
+按照此流程操作，你的服务器经济系统和领地插件即可完美联动。
