@@ -1,0 +1,117 @@
+# 故意写坏的测试配置：用于验证 ConfigProbe 的平台覆盖检查能否抓错。
+# 每个菜单项都对应一种应当被检测出的缺陷。此文件不随插件打包。
+
+trigger-item:
+  material: COMPASS
+  name: '&6快捷菜单'
+
+menus:
+
+  bad:
+    title: '&c缺陷测试'
+    size: 27
+
+    items:
+      # 缺陷1：只配基岩端命令 → Java 玩家点了不执行任何指令（应告警）
+      only-bedrock:
+        material: ENDER_PEARL
+        display-name: '&b只有基岩'
+        slot: 10
+        actions:
+          - '[close]'
+          - '[bedrock-player] warpgui'
+
+      # 缺陷2：只配 Java 端命令 → 基岩玩家点了不执行任何指令（应告警）
+      only-java:
+        material: COMPASS
+        display-name: '&a只有 Java'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[java-player] warp'
+
+      # 缺陷3：[menu] 指向不存在的菜单（应报 ERROR）
+      dead-menu:
+        material: BOOK
+        display-name: '&e死链'
+        slot: 12
+        actions:
+          - '[menu] nonexistent_menu'
+
+      # 缺陷4：材质名无效（应报 ERROR）
+      bad-material:
+        material: NOT_A_REAL_MATERIAL
+        display-name: '&c坏材质'
+        slot: 13
+        actions:
+          - '[player] home'
+
+      # 缺陷5：slot 越界（27 格菜单写 slot 40，应报 ERROR）
+      out-of-range:
+        material: STONE
+        display-name: '&c越界'
+        slot: 40
+        actions:
+          - '[player] home'
+
+      # 缺陷6：与缺陷5之外的项槽位冲突（两个都用 slot 14，应报 ERROR）
+      conflict-a:
+        material: STONE
+        display-name: '&c冲突A'
+        slot: 14
+        actions:
+          - '[player] home'
+
+      conflict-b:
+        material: STONE
+        display-name: '&c冲突B'
+        slot: 14
+        actions:
+          - '[player] home'
+
+      # 对照组1：两端都覆盖（正确写法，不应告警）
+      good-both:
+        material: CHEST
+        display-name: '&a正确示范'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[bedrock-player] warpgui'
+          - '[java-player] warp'
+
+      # 对照组2：无条件命令（两端通用，不应告警）
+      good-universal:
+        material: CHEST
+        display-name: '&a无条件'
+        slot: 16
+        actions:
+          - '[close]'
+          - '[player] home'
+
+      # 对照组3：只有 close/message 无命令（不应触发覆盖告警）
+      good-nocmd:
+        material: PAPER
+        display-name: '&a纯提示'
+        slot: 17
+        actions:
+          - '[message] &7这是一条提示'
+          - '[close]'
+
+      # 对照组4：基岩走专属表单 + Java 端有 message 指引（有意的降级设计，不应告警）
+      # 这是本次精修判据的关键用例：[message] 算有效反馈，[close] 不算
+      good-degrade:
+        material: ENDER_EYE
+        display-name: '&a基岩专属+文字指引'
+        slot: 18
+        actions:
+          - '[close]'
+          - '[bedrock-player] tpgui'
+          - '[message] &7使用 &e/tpa 玩家名 &7发送传送请求'
+
+      # 缺陷7：只有 close 一个动作（两端都无有效反馈，应各告警一次）
+      only-close:
+        material: STONE
+        display-name: '&c只关界面'
+        slot: 19
+        actions:
+          - '[close]'

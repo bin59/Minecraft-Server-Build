@@ -1,0 +1,25 @@
+name: QuickMenu
+version: 1.0.0
+main: com.nangua.quickmenu.QuickMenuPlugin
+api-version: '1.21'
+author: 南瓜国际服
+description: 双轨快捷菜单 - Java 玩家箱子 GUI，基岩玩家原生 Form 表单
+softdepend:
+  - floodgate
+  - Geyser-Spigot
+  - PlaceholderAPI
+  - Essentials
+
+commands:
+  qm:
+    description: 打开快捷菜单
+    usage: /qm [open <菜单>|give <玩家>|reload]
+    aliases: [quickmenu]
+
+permissions:
+  quickmenu.use:
+    description: 允许打开快捷菜单
+    default: true
+  quickmenu.admin:
+    description: 允许使用管理功能（reload / give）
+    default: op

@@ -1,0 +1,497 @@
+############################################################
+# QuickMenu — 双轨快捷菜单配置文件
+#
+# Java 玩家 → 箱子 GUI（下方 items 定义图标与槽位）
+# 基岩玩家 → 原生 Form 表单（按 items 顺序生成按钮）
+#
+# 修改后执行 /qm reload 即时生效，无需重启服务器
+############################################################
+
+# ==================== 基础设置 ====================
+
+# 调试模式：开启后在控制台输出菜单分发、表单点击等详细日志
+debug: false
+
+# 玩家直接输入 /qm 时打开的默认菜单 id
+default-menu: main
+
+# ==================== 平台策略 ====================
+
+platform:
+  # 基岩玩家是否优先使用原生 Form 表单（强烈建议 true）
+  # 设为 false 则基岩玩家也用箱子界面，但会遇到 Geyser 的已知缺陷：
+  # 物品可被拖出掉地、移动端高亮异常、触屏只能左键等
+  bedrock-native-form: true
+
+  # Java 玩家是否使用箱子 GUI
+  java-chest-gui: true
+
+# ==================== 触发物品 ====================
+
+trigger-item:
+  # 物品材质，使用 Bukkit Material 名称（大写）
+  # 常见选择：COMPASS(指南针) / NETHER_STAR / CLOCK / BOOK / NAME_TAG
+  material: COMPASS
+
+  # 物品显示名（支持 & 颜色码）
+  name: '&6&l快捷菜单'
+
+  # 物品描述（支持 & 颜色码）
+  lore:
+    - '&7右键打开快捷菜单'
+    - '&8Java 玩家看到箱子界面'
+    - '&8基岩玩家看到原生表单'
+
+  # 是否让物品发光（使用附魔光效，不产生任何实际属性加成）
+  glowing: true
+
+  # 玩家进服时是否自动发放该物品
+  # 基岩服建议 true —— 手机玩家翻物品栏比打指令快
+  give-on-join: true
+
+  # 发放到背包的第几个格子（0-35，8 为快捷栏最后一格）
+  # 设为 -1 表示自动寻找空位
+  give-slot: 8
+
+  # 严格匹配模式：true 时只有本插件发放的物品才能触发菜单
+  # （通过 PersistentDataContainer 标记识别，玩家自制同名物品无效）
+  # 设为 false 则按材质+名称匹配，便于用 /give 自制触发物品
+  strict-match: true
+
+# ==================== 音效 ====================
+
+sound:
+  # 点击菜单项时的音效名（使用字符串形式，跨版本升级不会失效）
+  # 留空字符串 '' 表示不播放音效
+  click: 'ui.button.click'
+  click-volume: 0.6
+  click-pitch: 1.0
+
+# ==================== 消息文本 ====================
+
+messages:
+  no-permission: '&c你没有权限使用快捷菜单'
+  no-admin-permission: '&c你需要管理员权限'
+  menu-not-found: '&c菜单 &e{menu} &c不存在'
+  player-not-found: '&c找不到玩家 &e{player}'
+  specify-player: '&c控制台执行时必须指定玩家名'
+  inventory-full: '&c{player} 的背包已满'
+  give-success: '&a已发放快捷菜单物品给 &e{player}'
+  reload-success: '&a配置已重载，共加载 &e{count} &a个菜单'
+  no-menus: '&c尚未加载任何菜单'
+  console-not-allowed: '&c该命令只能由玩家执行'
+  unknown-subcommand: '&c未知子命令，使用 /qm 查看帮助'
+  chest-gui-disabled: '&c箱子菜单已被禁用'
+  item-drop-denied: '&c快捷菜单物品不能丢弃，使用 /qm 即可打开菜单'
+
+############################################################
+# 菜单定义
+#
+# 每个菜单的字段说明：
+#   title           界面标题（两端通用，支持 & 颜色码）
+#   bedrock-content 基岩表单标题下方的说明文字（留空则用 title）
+#   size            箱子界面容量，必须是 9 的倍数，范围 9~54
+#   back-menu       上级菜单 id，配置后会显示返回按钮
+#   filler          箱子界面空白处的填充物品
+#   items           菜单项列表
+#
+# 每个菜单项的字段说明：
+#   material      物品材质（仅 Java 箱子界面使用）
+#   display-name  物品显示名（两端通用）
+#   lore          物品描述行（仅 Java 箱子界面使用）
+#   slot          所在格子序号，从 0 开始（仅 Java 箱子界面使用）
+#                 例：9 格界面为 0-8；27 格为 0-26；54 格为 0-53
+#   glowing       是否发光
+#   permission    需要的权限节点，留空表示所有人可见
+#                 无权限的项会被跳过，基岩端按钮序号自动重排
+#   button-label  基岩表单按钮文本（可选）
+#                 留空则自动使用 display-name 并去除颜色码
+#                 注意：原生表单按钮不支持 & 颜色码，会显示为乱码
+#   actions       点击后执行的动作列表，见下方说明
+#
+# actions 动作类型：
+#   [player] 命令      以玩家身份执行（受权限系统约束），不含斜杠
+#   [console] 命令     以控制台身份执行（无视权限），不含斜杠
+#   [menu] 菜单id      打开另一个菜单
+#   [message] 文本     发送消息，支持 & 颜色码
+#   [close]            关闭界面/表单
+#   不带前缀的命令      等同于 [player]
+#
+# ⚠️ 基岩端按钮文本不要写颜色码，插件会自动去除 display-name 的颜色码
+############################################################
+
+menus:
+
+  # ==================== 主菜单 ====================
+  main:
+    title: '&6&l南瓜国际服 &8» &f快捷菜单'
+    bedrock-content: '&7请选择你要使用的功能'
+    size: 27
+    filler:
+      material: BLACK_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      # ---------- 传送功能 ----------
+      teleport:
+        material: ENDER_PEARL
+        display-name: '&b&l传送功能'
+        lore:
+          - '&7前往传送点、申请传送到玩家'
+          - '&8点击查看子菜单'
+        slot: 10
+        glowing: true
+        actions:
+          - '[menu] teleport'
+
+      # ---------- 家园 ----------
+      home:
+        material: RED_BED
+        display-name: '&a&l我的家园'
+        lore:
+          - '&7回家、设置家、查看家列表'
+          - '&8点击查看子菜单'
+        slot: 12
+        glowing: true
+        actions:
+          - '[menu] home'
+
+      # ---------- 工具包 ----------
+      kit:
+        material: CHEST
+        display-name: '&e&l工具包'
+        lore:
+          - '&7领取新手包、每日奖励'
+          - '&8点击查看子菜单'
+        slot: 14
+        actions:
+          - '[menu] kit'
+
+      # ---------- 经济 ----------
+      economy:
+        material: GOLD_INGOT
+        display-name: '&6&l经济中心'
+        lore:
+          - '&7查余额、财富榜、转账'
+          - '&8点击查看子菜单'
+        slot: 16
+        actions:
+          - '[menu] economy'
+
+      # ---------- 个人设置 ----------
+      settings:
+        material: NAME_TAG
+        display-name: '&d&l个人设置'
+        lore:
+          - '&7修改昵称、查看个人信息'
+          - '&8点击查看子菜单'
+        slot: 21
+        actions:
+          - '[menu] settings'
+
+      # ---------- 服务器信息 ----------
+      info:
+        material: BOOK
+        display-name: '&9&l服务器信息'
+        lore:
+          - '&7在线人数、服务器时间'
+          - '&7查看规则与公告'
+        slot: 23
+        actions:
+          - '[menu] info'
+
+  # ==================== 传送子菜单 ====================
+  teleport:
+    title: '&b&l传送功能'
+    bedrock-content: '&7选择传送方式'
+    size: 27
+    back-menu: main
+    filler:
+      material: BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      warps:
+        material: COMPASS
+        display-name: '&b公共传送点列表'
+        lore:
+          - '&7查看所有可用传送点'
+          - '&8基岩端打开原生传送点表单'
+        slot: 10
+        # 两端分发：基岩走 BedrockPlayerSupport 的原生表单（带列表选择），
+        # Java 走 EssentialsX 的普通指令。
+        # 若两端都写 [player] warpgui，Java 玩家会因指令不存在而无反应。
+        actions:
+          - '[close]'
+          - '[bedrock-player] warpgui'
+          - '[java-player] warp'
+
+      tpa:
+        material: ENDER_EYE
+        display-name: '&a申请传送到玩家'
+        lore:
+          - '&7向其他玩家发送传送请求'
+          - '&e需要对方同意'
+          - '&8基岩端可从列表选人'
+        slot: 12
+        # 基岩端：打开 BPS 的选人表单，点一下就发出请求
+        # Java 端：给出指令用法提示（/tpa 必须带玩家名参数，无法直接执行）
+        # [message] 是两端通用动作，基岩玩家也会看到提示，属可接受的冗余
+        actions:
+          - '[close]'
+          - '[bedrock-player] tpgui'
+          - '[message] &7使用 &e/tpa 玩家名 &7发送传送请求'
+          - '[message] &7或输入 &e/传送 玩家名'
+
+      tpahere:
+        material: BEACON
+        display-name: '&a请求玩家来到我这里'
+        lore:
+          - '&7让对方传送到你的位置'
+          - '&c需要管理员权限'
+        slot: 14
+        permission: essentials.tpahere
+        actions:
+          - '[close]'
+          - '[message] &7使用 &e/tpahere 玩家名'
+
+      back:
+        material: CLOCK
+        display-name: '&e返回上一个位置'
+        lore:
+          - '&7传送或死亡后可用'
+        slot: 16
+        actions:
+          - '[close]'
+          - '[player] back'
+
+      spawn:
+        material: GRASS_BLOCK
+        display-name: '&f回到出生点'
+        lore:
+          - '&7传送到服务器主世界出生点'
+        slot: 22
+        actions:
+          - '[close]'
+          - '[player] spawn'
+
+  # ==================== 家园子菜单 ====================
+  home:
+    title: '&a&l我的家园'
+    bedrock-content: '&7家园管理'
+    size: 27
+    back-menu: main
+    filler:
+      material: GREEN_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      listhomes:
+        material: PAPER
+        display-name: '&a查看我的家列表'
+        lore:
+          - '&7列出所有已设置的家'
+          - '&8基岩端打开原生家园表单，点选即传送'
+        slot: 11
+        # 基岩端：BPS 的家园列表表单，选中即回家（比看列表再打指令更顺）
+        # Java 端：EssentialsX 的列表指令
+        actions:
+          - '[close]'
+          - '[bedrock-player] homegui'
+          - '[java-player] homes'
+
+      sethome:
+        material: RED_BED
+        display-name: '&e在当前位置设置家'
+        lore:
+          - '&7将设为默认家'
+          - '&8输入 /sethome 名称 可命名'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] sethome'
+
+      gohome:
+        material: OAK_DOOR
+        display-name: '&b传送回家'
+        lore:
+          - '&7回到默认家'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[player] home'
+
+  # ==================== 工具包子菜单 ====================
+  kit:
+    title: '&e&l工具包'
+    bedrock-content: '&7选择要领取的工具包'
+    size: 27
+    back-menu: main
+    filler:
+      material: YELLOW_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      starter:
+        material: IRON_SWORD
+        display-name: '&a新手工具包'
+        lore:
+          - '&7铁制工具套装 + 食物'
+          - '&8冷却 24 小时'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] kit starter'
+
+      daily:
+        material: GOLDEN_APPLE
+        display-name: '&e每日奖励'
+        lore:
+          - '&7每天可领一次'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] kit daily'
+
+      vipkit:
+        material: DIAMOND_SWORD
+        display-name: '&6VIP 专属工具包'
+        lore:
+          - '&7钻石装备 + 附魔'
+          - '&c仅 VIP 可领取'
+        slot: 15
+        permission: essentials.kit.vip
+        glowing: true
+        actions:
+          - '[close]'
+          - '[player] kit vip'
+
+  # ==================== 经济子菜单 ====================
+  economy:
+    title: '&6&l经济中心'
+    bedrock-content: '&7经济功能'
+    size: 27
+    back-menu: main
+    filler:
+      material: ORANGE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      balance:
+        material: GOLD_NUGGET
+        display-name: '&6查看我的余额'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] balance'
+
+      baltop:
+        material: NETHERITE_INGOT
+        display-name: '&e财富排行榜'
+        lore:
+          - '&7查看全服最富有的玩家'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] baltop'
+
+      pay:
+        material: EMERALD
+        display-name: '&a转账给玩家'
+        lore:
+          - '&7输入 &e/pay 玩家名 金额'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[message] &7转账格式：&e/pay 玩家名 金额'
+
+  # ==================== 个人设置子菜单 ====================
+  settings:
+    title: '&d&l个人设置'
+    bedrock-content: '&7个人设置'
+    size: 27
+    back-menu: main
+    filler:
+      material: MAGENTA_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      nick:
+        material: NAME_TAG
+        display-name: '&d修改昵称'
+        lore:
+          - '&7输入 &e/nick 新昵称'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[message] &7修改昵称：&e/nick 你想要的昵称'
+
+      whois:
+        material: PLAYER_HEAD
+        display-name: '&b查看我的信息'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] whois'
+
+      rules:
+        material: WRITABLE_BOOK
+        display-name: '&f服务器规则'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[player] rules'
+
+      msg:
+        material: PAPER
+        display-name: '&d给玩家发私信'
+        lore:
+          - '&7选择在线玩家并发送消息'
+          - '&8基岩端打开原生私信表单，免打玩家名'
+        slot: 17
+        # 手机/手柄玩家手打他人 ID 极易出错，BPS 的私信表单可从列表选人。
+        # Java 端 EssentialsX 没有等价的选人界面，故给出指令用法提示。
+        actions:
+          - '[close]'
+          - '[bedrock-player] msggui'
+          - '[message] &7私信格式：&e/msg 玩家名 消息内容'
+
+  # ==================== 服务器信息子菜单 ====================
+  info:
+    title: '&9&l服务器信息'
+    bedrock-content: '&7服务器信息'
+    size: 27
+    back-menu: main
+    filler:
+      material: LIGHT_BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      list:
+        material: PAINTING
+        display-name: '&a在线玩家列表'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] list'
+
+      motd:
+        material: OAK_SIGN
+        display-name: '&e服务器公告'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] motd'
+
+      # 基岩端表单专属说明按钮，Java 端也能看到
+      crossplay:
+        material: SUNFLOWER
+        display-name: '&6关于互通服'
+        lore:
+          - '&7本服支持 Java 版与基岩版互通'
+          - '&8基岩版通过 Geyser + Floodgate 接入'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[message] &6南瓜国际服 &7支持 Java / 基岩双端互通'
+          - '[message] &7基岩版玩家可直接使用 &e/tpa &7&7/home &7等指令'

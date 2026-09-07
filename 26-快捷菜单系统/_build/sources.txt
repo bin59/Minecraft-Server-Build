@@ -1,0 +1,15 @@
+plugin-src/src/main/java/com/nangua/quickmenu/command/QuickMenuCommand.java
+plugin-src/src/main/java/com/nangua/quickmenu/config/ConfigLoader.java
+plugin-src/src/main/java/com/nangua/quickmenu/config/PluginSettings.java
+plugin-src/src/main/java/com/nangua/quickmenu/gui/BedrockFormRenderer.java
+plugin-src/src/main/java/com/nangua/quickmenu/gui/ChestMenuRenderer.java
+plugin-src/src/main/java/com/nangua/quickmenu/gui/MenuHolder.java
+plugin-src/src/main/java/com/nangua/quickmenu/listener/MenuClickListener.java
+plugin-src/src/main/java/com/nangua/quickmenu/listener/TriggerItemListener.java
+plugin-src/src/main/java/com/nangua/quickmenu/menu/Action.java
+plugin-src/src/main/java/com/nangua/quickmenu/menu/ActionExecutor.java
+plugin-src/src/main/java/com/nangua/quickmenu/menu/ActionType.java
+plugin-src/src/main/java/com/nangua/quickmenu/menu/Menu.java
+plugin-src/src/main/java/com/nangua/quickmenu/menu/MenuItem.java
+plugin-src/src/main/java/com/nangua/quickmenu/menu/MenuManager.java
+plugin-src/src/main/java/com/nangua/quickmenu/QuickMenuPlugin.java

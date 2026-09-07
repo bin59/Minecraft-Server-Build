@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  QuickMenu 插件 Maven 构建配置
+
+  ⚠️ 本文件为可选。本机若无 Maven，直接用 build.ps1 即可构建，无需本文件。
+     提供本文件的目的是：让你在 IntelliJ IDEA / Eclipse 中导入工程，
+     获得代码补全与即时编译错误提示，改完菜单逻辑后可直接重新构建。
+
+  依赖版本已锁定为实测可用组合：
+    - spigot-api 1.21.11-R0.1-SNAPSHOT （对应 Leaf 1.21.11 核心）
+    - floodgate api 2.2.5-SNAPSHOT
+    - cumulus 1.1.2 （不可换成 2.0.0-SNAPSHOT，缺 FormBuilder 旧路径会编译失败）
+
+  构建命令：
+    mvn clean package
+  产物位置：
+    target/QuickMenu-1.0.0.jar
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.nangua</groupId>
+    <artifactId>QuickMenu</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>QuickMenu</name>
+    <description>双轨快捷菜单 - Java 玩家箱子 GUI，基岩玩家原生 Form 表单</description>
+
+    <properties>
+        <!-- Leaf 1.21.11 运行于 Java 21，编译目标与之一致 -->
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <repositories>
+        <!-- Spigot API -->
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+        </repository>
+        <!-- Floodgate API 与 Cumulus -->
+        <repository>
+            <id>opencollab-main</id>
+            <url>https://repo.opencollab.dev/main/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!--
+          全部使用 provided / compileOnly 语义：
+          这些依赖在运行时由服务器核心（Paper/Leaf）与已安装的
+          Floodgate 插件提供，绝不能打进插件 jar，否则会类冲突。
+        -->
+
+        <!-- 服务端 API：编译期需要，运行时由核心提供 -->
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.21.11-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Floodgate API：提供 isFloodgatePlayer / sendForm 等能力 -->
+        <dependency>
+            <groupId>org.geysermc.floodgate</groupId>
+            <artifactId>api</artifactId>
+            <version>2.2.5-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Cumulus：基岩原生表单（SimpleForm / ModalForm / CustomForm） -->
+        <dependency>
+            <groupId>org.geysermc.cumulus</groupId>
+            <artifactId>cumulus</artifactId>
+            <version>1.1.2</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- 仅用于消除 spigot-api 中 @Contract 注解的编译警告 -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <!-- 产物固定命名，便于部署脚本引用 -->
+        <finalName>${project.artifactId}-${project.version}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>config.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <!-- 开启全部 lint 检查，serial 噪音除外 -->
+                        <arg>-Xlint:all,-serial,-deprecation</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
