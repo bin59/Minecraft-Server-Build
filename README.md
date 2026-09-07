@@ -25,6 +25,7 @@
 - [十二、已知问题](#十二已知问题)
 - [十三、安全基线](#十三安全基线)
 - [十四、资源链接](#十四资源链接)
+- [十五、架构分析与优化总结](#十五架构分析与优化总结)
 
 ---
 
@@ -103,7 +104,21 @@
 | 12   | 离线背包         | [12-离线背包查看-OpenInv/](12-离线背包查看-OpenInv/OpenInv.md)                                                                     | 查看/编辑离线玩家背包           |
 | 20   | 创世神           | [20.创世神WorldEdit/](20.创世神WorldEdit/创世神WorldEdit.md)                                                                       | WorldEdit 安装与常用指令        |
 
-### 3.3 依赖库与辅助组件
+### 3.3 新增功能组件（22-26）
+
+| # | 章节 | 路径 | 说明 |
+|---|---|---|---|
+| 22 | 语音聊天 | [22-Simple Voice Chat/](22-Simple Voice Chat/Simple Voice Chat.md) | 近距离语音，含 UDP 端口与内网穿透方案 |
+| 23 | 区块预生成 | [23-chunky区块加载优化/](23-chunky区块加载优化/chunky区块加载优化.md) | 预生成世界，根治跑图卡顿 |
+| 24 | 指令整合（含完整配置） | [24-EssentialsX多功能指令整合/](24-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) | 传送/家园/经济/管理 150+ 命令；`config.yml` / `kits.yml` / 中文别名 / LP 权限示例 |
+| 25 | 基岩 GUI 表单 | [25-BedrockPlayerSupport基岩版GUI表单界面/](25-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 基岩玩家免敲指令的表单界面 |
+| 26 | **快捷菜单（自研插件）** | [26-快捷菜单系统/](26-快捷菜单系统/快捷菜单系统-QuickMenu.md) | **整合全部插件的快捷菜单：玩家线 10 套 + 管理线 10 套（权限门控），Java 箱子 GUI + 基岩原生 Form，含成品 jar 与源码** |
+| 26.1 | └ 成品插件包 | [dist/QuickMenu-1.0.0.jar](26-快捷菜单系统/dist/QuickMenu-1.0.0.jar) | 编译验证通过的部署产物（53.7 KB，含 20 套菜单配置） |
+| 26.2 | └ 源码与构建脚本 | [plugin-src/](26-快捷菜单系统/plugin-src/) · [build.ps1](26-快捷菜单系统/build.ps1) | 15 个源文件；无需 Maven 的一键构建 |
+| 26.3 | └ 权限授予清单 | [§10 权限清单](26-快捷菜单系统/快捷菜单系统-QuickMenu.md#10-luckperms-权限授予清单) | 菜单用到的 60+ 权限节点，按玩家 / VIP / 管理 / 服主分组 |
+| 05 | 权限方案（重点） | [05-权限管理系统-LuckPerms/](05-权限管理系统-LuckPerms/权限组设计方案.md) | **完整权限组设计、导入脚本、节点速查** |
+
+### 3.4 依赖库与辅助组件
 
 | #   | 章节       | 路径                                                    | 说明                      |
 | --- | ---------- | ------------------------------------------------------- | ------------------------- |
@@ -111,7 +126,7 @@
 | 14  | 核心依赖库 | [14-核心依赖库-CMILib/](14-核心依赖库-CMILib/CMILib.md) | 多插件共享的底层库        |
 | 15  | 统计系统   | [15-统计系统-bStats/](15-统计系统-bStats/bStats.md)     | 匿名使用统计（可关闭）    |
 
-### 3.4 运维与部署
+### 3.5 运维与部署
 
 | #    | 章节             | 路径                                                                               | 说明                                   |
 | ---- | ---------------- | ---------------------------------------------------------------------------------- | -------------------------------------- |
@@ -120,29 +135,12 @@
 | 18   | 命令速查         | [18-常用管理命令速查/](18-常用管理命令速查/README.md)                              | 各插件高频管理命令                     |
 | 19   | MCSM 控制面板    | [19-MCSM控制面板/](19-MCSM控制面板/MCSM控制面板.md)                                | Windows 部署、分布式节点、导入已有目录 |
 | 19.1 | └ 链接已有文件夹 | [链接到已有文件夹.md](19-MCSM控制面板/链接到已有文件夹.md)                         | 不迁移文件直接接管旧服务端             |
-| 21   | 玩家信息展示     | [21-玩家信息收集与展示/](21-玩家信息收集与展示/0.玩家信息收集与展示.md)            | TAB / Plan / 全息榜等选型对比          |
-| 21.1 | └ TAB 配置       | [2.TAB信息展示.md](21-玩家信息收集与展示/2.TAB信息展示.md)                         | TAB 列表与动画配置                     |
-| 21.2 | └ TAB 完整示例   | [2.1.TAB配置完整示例.md](21-玩家信息收集与展示/2.1.TAB配置完整示例.md)             | 可直接粘贴的配置模板                   |
-| 21.3 | └ Plan 联动      | [Plan 和 TAB 联动配置示例.md](<21-玩家信息收集与展示/Plan 和 TAB 联动配置示例.md>) | 数据面板与 TAB 联动                    |
+| 21   | 玩家信息展示     | [21-玩家信息收集与展示/](21-玩家信息收集与展示/0.玩家信息收集与展示.md)                                                                 | TAB / Plan / 全息榜等选型对比             |
+| 21.1 | └ TAB 配置       | [2.TAB信息展示.md](21-玩家信息收集与展示/2.TAB信息展示.md)                                                                               | TAB 列表与动画配置                        |
+| 21.2 | └ 炫彩多层称号   | [3.LuckPerms + TAB + PlaceholderAPI 实现炫彩多层称号效果.md](<21-玩家信息收集与展示/3.LuckPerms + TAB + PlaceholderAPI 实现炫彩多层称号效果.md>) | 前缀后缀叠加、渐变称号实战        |
+| 21.3 | └ Plan 数据分析  | [1.Plan (Player Analytics).md](<21-玩家信息收集与展示/1.Plan (Player Analytics).md>)                                                   | 玩家行为分析面板                          |
 
-### 3.5 云服务器与外围服务
-
-| #   | 章节           | 路径                                                            | 说明                             |
-| --- | -------------- | --------------------------------------------------------------- | -------------------------------- |
-| C0  | 总览           | [云服务器配置/00\_总览.md](云服务器配置/00_总览.md)             | 云主机信息、域名、端口、凭据清单 |
-| C1  | Caddy          | [01_Caddy.md](云服务器配置/01_Caddy.md)                         | 全站 HTTPS 反代与路由表          |
-| C2  | MCSM 面板      | [02_MCSM面板.md](云服务器配置/02_MCSM面板.md)                   | 面板实例清单与 API 调用          |
-| C3  | NapCat         | [03_NapCat.md](云服务器配置/03_NapCat.md)                       | QQ 机器人框架双实例              |
-| C4  | EasyBot        | [04_EasyBot.md](云服务器配置/04_EasyBot.md)                     | 群服互通主程序部署               |
-| C5  | 网易租赁服     | [05\_网易租赁服.md](云服务器配置/05_网易租赁服.md)              | NeOmega 基岩租赁服接入           |
-| C6  | 网站与数据库   | [06\_网站与数据库.md](云服务器配置/06_网站与数据库.md)          | 主站、MySQL、邮件、备份          |
-| C7  | QQ 官方机器人  | [07_QQ官方机器人.md](云服务器配置/07_QQ官方机器人.md)           | 官方 Bot 消息推送                |
-| C8  | 监控系统       | [08\_监控系统.md](云服务器配置/08_监控系统.md)                  | 双通道告警                       |
-| C9  | 系统与权限     | [09\_系统与权限.md](云服务器配置/09_系统与权限.md)              | 用户体系、SSH、目录权限、Swap    |
-| C10 | SQLite → MySQL | [10_SQLite转MySQL工具.md](云服务器配置/10_SQLite转MySQL工具.md) | 数据迁移工具                     |
-| C11 | Caddy 压缩优化 | [11_Caddy压缩优化.md](云服务器配置/11_Caddy压缩优化.md)         | Gzip/Zstd 提速                   |
-
-### 3.6 附录与专题
+### 3.7 附录与专题
 
 | 章节           | 路径                                                                                                                     | 说明               |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------ |
@@ -164,13 +162,14 @@
 
 ### 4.1 总览速查
 
-| 类别                  | 数量 | 说明                                      |
-| --------------------- | ---- | ----------------------------------------- |
-| 服务端核心            | 1    | Leaf 1.21.11-174                          |
-| Java Agent / 外置登录 | 2    | YggdrasilOfficialProxy + authlib-injector |
-| 已安装插件            | 12   | 见 [4.4](#44-已安装插件)                  |
-| 外部程序              | 4    | NapCat / EasyBot 主程序 / MCSM / Caddy    |
-| 规划 / 备选           | 5    | 见 [4.6](#46-规划--备选插件)              |
+| 类别                  | 数量 | 说明                                                          |
+| --------------------- | ---- | ------------------------------------------------------------- |
+| 服务端核心            | 1    | Leaf 1.21.11-174                                              |
+| Java Agent / 外置登录 | 2    | YggdrasilOfficialProxy + authlib-injector                     |
+| 已安装插件            | 12   | 见 [4.4](#44-已安装插件)                                      |
+| 新增功能插件          | 4    | EssentialsX / Chunky / Simple Voice Chat / BedrockPlayerSupport |
+| 外部程序              | 4    | NapCat / EasyBot 主程序 / MCSM / Caddy                        |
+| 规划 / 备选           | 4    | 见 [4.7](#47-规划--备选插件)                                  |
 
 ### 4.2 服务端核心
 
@@ -279,7 +278,65 @@ config/
 | spark         | [13-性能分析-spark](13-性能分析-spark/spark.md)                                  |
 | bStats        | [15-统计系统-bStats](15-统计系统-bStats/bStats.md)                               |
 
-### 4.5 外部程序（非插件）
+### 4.5 新增功能组件（22-26 章节）
+
+这五个组件把服务器从「能玩」推进到「好玩、好管」，且彼此强耦合，建议**成套部署**。
+
+| # | 组件 | 版本 | 文件 / 端口 | 分类 | 状态 |
+|---|---|---|---|---|---|
+| 1 | **EssentialsX** | 最新（支持 1.21.11） | `plugins/EssentialsX*.jar` | 传送 / 家园 / 经济 / 管理 150+ 命令 | 📥 新增 |
+| 2 | **Chunky** | 最新（1.13~1.21.11） | `plugins/Chunky.jar` | 区块预生成，根治跑图卡顿 | 📥 新增 |
+| 3 | **Simple Voice Chat** | 最新（支持插件端） | `plugins/voicechat/` + **UDP 24454** | 近距离语音聊天 | 📥 新增 |
+| 4 | **BedrockPlayerSupport** | v2.1.0+ | `plugins/BedrockPlayerSupport.jar` | 基岩版 GUI 表单（免敲指令） | 📥 新增 |
+| 5 | **QuickMenu**（自研） | v1.0.0 | `plugins/QuickMenu-1.0.0.jar` | 物品右键菜单：Java 箱子 GUI + 基岩原生 Form | 📥 新增 |
+
+#### 4.5.1 五者的协作关系
+
+```
+EssentialsX  ──► 提供命令底座（/home /tpa /kit /warp /ban …）
+     ▲
+     │ 底层调用
+     │
+BedrockPlayerSupport ──► 把 EssentialsX 的命令包装成基岩版表单
+     （/homegui → /home；/tpgui → /tpa；/kitgui → /kit）
+
+Chunky ──► 预生成世界，让 EssentialsX 的传送体验不卡
+Simple Voice Chat ──► 独立 UDP 通道，与上面三者无耦合
+```
+
+> **关键点**：BedrockPlayerSupport 只是 GUI 前端，**必须**先装 EssentialsX 才有意义；
+> 且玩家仍需持有对应 EssentialsX 权限（如 `essentials.home`），GUI 才不会点了报错。
+
+#### 4.5.2 关键配置
+
+| 组件 | 配置文件 | 必改项 |
+|---|---|---|
+| EssentialsX | `plugins/Essentials/config.yml` | `use-bukkit-permissions: true`（交给 LuckPerms）；`currency-symbol: '¥'`；`locale: zh`；`command-cooldowns`；`sethome-multiple` |
+| EssentialsX | `plugins/Essentials/kits.yml` | 定义 `starter` / `daily` / `vip` 工具包 |
+| Chunky | `plugins/Chunky/config.yml` | 一般无需改；用命令操作即可 |
+| Simple Voice Chat | `plugins/voicechat/voicechat-server.properties` | `port=24454`；`bind_address=0.0.0.0`（云服务器）；`voice_host=<公网IP>`；`force_voice_chat=false` |
+| BedrockPlayerSupport | `plugins/BedrockPlayerSupport/config.yml` | `language: zh_CN`；`bedrock-only: true`；各 GUI 开关 |
+
+> 完整配置示例见 [`24-EssentialsX多功能指令整合（功能说明与完整配置）.md`](24-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md)。
+
+#### 4.5.3 端口与网络要求
+
+| 端口 | 协议 | 用途 | 备注 |
+|---|---|---|---|
+| **24454** | **UDP** | Simple Voice Chat 语音 | ⚠️ 云厂商安全组默认只开 TCP，**必须手动加 UDP 规则** |
+
+> 语音在内网穿透场景下，frp 必须写 `type = "udp"`，不能是 `tcp`。
+
+#### 4.5.4 安装注意事项
+
+| 组件 | 注意点 |
+|---|---|
+| EssentialsX | ① 硬依赖 **Vault**；② 与 Residence 都有传送命令，注意命令冲突；③ `use-bukkit-permissions: true` 才会读 LuckPerms |
+| Chunky | ① 预生成时 TPS 会掉，**务必在低峰期跑**；② 每并行任务预留 ≥2GB 堆内存；③ 磁盘占用高时可换 Chunksmith（2%~5% vs 95%~100%） |
+| Simple Voice Chat | ① **服务端与客户端都需装同版本**；② 是"模组"但提供 Bukkit 插件版，放 `plugins/`；③ 基岩玩家需额外装 SimpleVoice-Geyser 才能用网页端语音 |
+| BedrockPlayerSupport | ① 依赖 Geyser + Floodgate；② 自动注册功能需 AuthMe，**本服无登录插件，应关闭**；③ `/phomegui` 需 HuskHomes，本服用 EssentialsX 故不可用 |
+
+### 4.6 外部程序（非插件）
 
 这些程序独立运行，通过 WebSocket / HTTP 与 MC 服务端通信。
 
@@ -307,13 +364,14 @@ NapCat (WS :3001)  ←──  EasyBot 主程序 (Bridge :26990 / Web :5000)  ←
 
 > 跨机部署时，仅需把插件端 `config.yml` 的 `service.url` 改为 EasyBot 主机的 IP 或域名，并放行 TCP 26990。
 
-### 4.6 规划 / 备选插件
+### 4.7 规划 / 备选插件
 
 以下组件在本仓库中已有调研文档，但**尚未确认为当前服务器已安装**。安装前请先在测试服验证。
 
 | 组件                        | 版本           | 用途                            | 前置依赖            | 文档                                                                                                       | 状态                   |
 | --------------------------- | -------------- | ------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- |
-| **WorldEdit**               | 最新（1.21.x） | 创世神，批量方块编辑            | 无                  | [20.创世神WorldEdit](20.创世神WorldEdit/创世神WorldEdit.md)                                                | 📋 规划                |
+| **AntiLitematica**          | 最新           | 阻断投影「快速放置」与打印机    | **ProtocolLib**     | [部署文档](禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) | 📋 建议                |
+| **ProtocolLib**             | 最新           | 数据包级开发库                  | 无                  | —                                                                                                          | 📋 AntiLitematica 前置 |
 | **TAB**                     | 5.5.0          | 自定义 TAB 列表、前缀后缀、动画 | 建议 PlaceholderAPI | [21 玩家信息展示](21-玩家信息收集与展示/2.TAB信息展示.md)                                                  | 📋 规划                |
 | **Plan (Player Analytics)** | 5.6 build 2965 | 玩家行为分析 + Web 仪表盘       | 无                  | [1.Plan](<21-玩家信息收集与展示/1.Plan (Player Analytics).md>)                                             | 📋 规划                |
 | **AntiLitematica**          | 最新           | 阻断投影「快速放置」与打印机    | **ProtocolLib**     | [部署文档](禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) | 📋 建议                |
@@ -380,6 +438,7 @@ MC 端 `plugins/EasyBot/config.yml` 的 `service.url` 从 `127.0.0.1` 改为电�
 | --------- | ---------- | ------------------------- | ----------- | ------------- |
 | **55551** | TCP        | Java 版游戏主端口         | `0.0.0.0`   | ✅ 是         |
 | **19132** | UDP        | 基岩版游戏端口（Geyser）  | `0.0.0.0`   | ✅ 是         |
+| **24454** | UDP        | Simple Voice Chat 语音    | `0.0.0.0`   | ✅ 是（需手动放行 UDP） |
 | **25555** | TCP (HTTP) | OPanel Web 管理面板       | `0.0.0.0`   | ⚠️ 建议仅内网 |
 | **25576** | TCP        | OPanel MCDR Socket        | `127.0.0.1` | ❌ 否         |
 | **14502** | TCP (HTTP) | authlib-injector 本地代理 | `127.0.0.1` | ❌ 否         |
@@ -672,33 +731,43 @@ java -Xmx4G -Xms1G ^
 
 | 插件           | 硬依赖                          | 软依赖 / 集成                      |
 | -------------- | ------------------------------- | ---------------------------------- |
-| CMILib         | —                               | 被 Residence 等调用                |
-| Vault          | —                               | 经济 API 提供方                    |
-| LuckPerms      | —                               | 为 Vault 提供权限组信息            |
-| ViaVersion     | —                               | 与 Geyser 协同处理基岩协议         |
-| Geyser-Spigot  | —                               | 与 Floodgate **共用 `key.pem`**    |
-| Floodgate      | Geyser（可选）                  | 与 ViaVersion 协同                 |
-| CoreProtect    | —                               | 可选 MySQL                         |
-| Residence      | **CMILib**                      | 可选 Vault（领地出租 / 出售）      |
-| SkinsRestorer  | —                               | 经 authlib-injector 走外置皮肤 API |
-| OpenInv        | —                               | —                                  |
-| EasyBot        | **EasyBot 主程序**（WS :26990） | 与 Floodgate 协同识别基岩玩家      |
-| OPanel         | —                               | 内置 Web 前端                      |
-| spark          | —                               | —                                  |
-| bStats         | —                               | 被多数插件内嵌                     |
-| AntiLitematica | **ProtocolLib**                 | —                                  |
-| TAB            | —                               | PlaceholderAPI                     |
+| CMILib                | —                               | 被 Residence 等调用                |
+| Vault                 | —                               | 经济 API 提供方                    |
+| LuckPerms             | —                               | 为 Vault 提供权限组信息            |
+| ViaVersion            | —                               | 与 Geyser 协同处理基岩协议         |
+| Geyser-Spigot         | —                               | 与 Floodgate **共用 `key.pem`**    |
+| Floodgate             | Geyser（可选）                  | 与 ViaVersion 协同                 |
+| CoreProtect           | —                               | 可选 MySQL                         |
+| Residence             | **CMILib**                      | 可选 Vault（领地出租 / 出售）      |
+| SkinsRestorer         | —                               | 经 authlib-injector 走外置皮肤 API |
+| OpenInv               | —                               | —                                  |
+| EasyBot               | **EasyBot 主程序**（WS :26990） | 与 Floodgate 协同识别基岩玩家      |
+| OPanel                | —                               | 内置 Web 前端                      |
+| spark                 | —                               | —                                  |
+| bStats                | —                               | 被多数插件内嵌                     |
+| **EssentialsX**       | **Vault**                       | 建议 LuckPerms；与 Residence 有命令重叠 |
+| **Chunky**            | —                               | 无耦合，纯运维工具                 |
+| **Simple Voice Chat** | —                               | 无耦合，独立 UDP 通道              |
+| **BedrockPlayerSupport** | **Geyser + Floodgate**       | **EssentialsX**（提供底层命令）    |
+| AntiLitematica        | **ProtocolLib**                 | —                                  |
+| TAB                   | —                               | PlaceholderAPI                     |
 
 ### 9.2 安装顺序（重要）
 
 ```
 ①  CMILib        ②  Vault         ③  LuckPerms     ④  ViaVersion
 ⑤  Geyser-Spigot ⑥  floodgate     ⑦  CoreProtect   ⑧  Residence
-⑨  SkinsRestorer ⑩  OpenInv       ⑪  EasyBot       ⑫  OPanel
-⑬  spark
+⑨  EssentialsX   ⑩  SkinsRestorer ⑪  OpenInv       ⑫  EasyBot
+⑬  OPanel        ⑭  spark         ⑮  Chunky        ⑯  Simple Voice Chat
+⑰  BedrockPlayerSupport
 ```
 
-> Geyser 必须在 Floodgate **之前**放置，以便生成并共享 `key.pem`。
+三条硬性顺序：
+
+1. **Geyser 必须先于 Floodgate** — 以便生成并共享 `key.pem`
+2. **Vault + LuckPerms 必须先于 EssentialsX** — 否则经济与权限无法解析
+3. **EssentialsX 必须先于 BedrockPlayerSupport** — GUI 只是底层命令的前端包装
+
 > 首次安装按此顺序可减少一轮重启；Bukkit 启动时会自行解析依赖，顺序错误不会导致插件失效。
 
 ---
@@ -768,6 +837,50 @@ java -Xmx4G -Xms1G ^
 /ebot reload                        # 重载 EasyBot 并重连 Bridge
 ```
 
+#### EssentialsX（传送 / 家园 / 经济）
+
+```bash
+/sethome <名称>                     # 设置家
+/home [名称]                        # 回家
+/tpa <玩家> /tpaccept /tpdeny       # 请求传送 / 接受 / 拒绝
+/back                               # 返回上一位置
+/warp <名称>                        # 传送到公共点
+/bal /pay <玩家> <金额> /baltop     # 余额 / 转账 / 财富榜
+/kit <名称>                         # 领取工具包
+/essentials reload                  # 热重载（无需重启）
+```
+
+#### Chunky（区块预生成）
+
+```bash
+/chunky world world                 # 选择世界
+/chunky shape square                # 方形 / circle 圆形
+/chunky spawn                       # 中心设为出生点
+/chunky radius 3000                 # 半径（单位：方块）
+/chunky start                       # 开始
+/chunky progress                    # 查看进度
+/chunky pause /continue /cancel     # 暂停 / 继续 / 取消
+/chunky quiet 30                    # 静默间隔（省 ~15% CPU）
+/chunky trim                        # ☠️ 删除选区外区块，不可恢复
+```
+
+> ⚠️ 预生成时 TPS 会掉，务必在**低峰期**跑，TPS < 18 时 `/chunky pause`。
+
+#### Simple Voice Chat
+
+```bash
+/voicechat invite <玩家>            # 邀请进群聊
+/voicechat mute <玩家>              # 静音某人
+```
+
+#### BedrockPlayerSupport（基岩 GUI）
+
+```bash
+/tpgui      # 传送到玩家      /homegui  # 家园列表
+/warpgui    # 传送点列表      /kitgui   # 工具包
+/msggui     # 发送私信        /phomegui # 公共家园（需 HuskHomes）
+```
+
 > 完整速查见 [18-常用管理命令速查](18-常用管理命令速查/README.md)。
 
 ### 10.2 备份策略
@@ -779,14 +892,17 @@ java -Xmx4G -Xms1G ^
 | 权限数据    | `plugins\LuckPerms\luckperms-h2-v2.mv.db`     | 每周     | 或 `/lp export` 导出       |
 | CoreProtect | `plugins\CoreProtect\database.db` 或 MySQL 库 | 每周     | `mysqldump`                |
 | 领地数据    | `plugins\Residence\**\*.yml`                  | 每周     | 打包                       |
+| 家园 / 经济 | `plugins\Essentials\userdata\**`              | 每周     | 打包                       |
+| 权限快照    | `plugins\LuckPerms\` 导出文件                 | 每次改权限 | `/lp export <名称>`      |
 
 > **注意**：热备份（不停服）可能导致区块数据与数据库不一致。CoreProtect 若已迁 MySQL，请用 `mysqldump --single-transaction`。
 
 ### 10.3 监控与告警
 
-- **游戏内**：`/spark tps`、`/spark health`
-- **云主机**：[08\_监控系统.md](云服务器配置/08_监控系统.md) 提供双通道（QQ + 邮件）告警
-- **Web**：OPanel 面板实时查看
+- **游戏内**：`/spark tps`、`/spark health`、`/spark profiler`
+- **进程与文件**：[MCSM 面板](19-MCSM控制面板/MCSM控制面板.md) — 控制台、崩溃自动重启、计划任务备份
+- **Web 实时**：[OPanel](11-Web管理面板-OPanel/OPanel.md) 面板
+- **告警通道**：可复用 [EasyBot](10-QQ机器人联动-EasyBot/EasyBot.md) 的 QQ 通道推送异常；系统级监控建议用云厂商云监控或 Prometheus + Alertmanager
 
 ### 10.4 例行维护
 
@@ -814,6 +930,11 @@ java -Xmx4G -Xms1G ^
 | **Java 版无法登录（认证失败）** | ① authlib-injector 是否注入 ② Yggdrasil 认证服务 :32217 是否可达 ③ `online-mode` | [02 外置登录](02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md)                                                                                  |
 | **皮肤不显示**                  | ① SkinsRestorer 配置 ② authlib-injector 是否拦截了 SkinProvider                  | [09 SkinsRestorer](09-皮肤管理-SkinsRestorer/SkinsRestorer.md)                                                                                                   |
 | **玩家用投影/打印机作弊**       | 安装 AntiLitematica（需 ProtocolLib）                                            | [禁用影响平衡的插件功能](禁用影响平衡的插件功能/1.禁用影响平衡的插件功能.md)                                                                                     |
+| **语音连不上 / 显示断开图标**   | ① 安全组是否放行 **UDP 24454**（不是 TCP）② `voice_host` 是否填公网 IP ③ 客户端与服务端 SVC 版本是否一致 | [22 Simple Voice Chat](22-Simple%20Voice%20Chat/Simple%20Voice%20Chat.md)                                                              |
+| **EssentialsX 命令提示无权限**  | ① `use-bukkit-permissions` 是否为 true ② LuckPerms 是否给了 `essentials.*` 对应节点 ③ `/essentials reload` | [权限组设计方案](05-权限管理系统-LuckPerms/权限组设计方案.md)                                                                        |
+| **基岩玩家点 GUI 表单报错**     | ① EssentialsX 是否安装 ② 玩家是否同时持有对应 EssentialsX 权限（GUI 只是前端） | [25 BedrockPlayerSupport](25-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md)                          |
+| **预生成时服务器卡爆**          | ① 立即 `/chunky pause` ② 缩小半径分批跑 ③ 提高 `/chunky quiet` 静默间隔 | [23 Chunky](23-chunky区块加载优化/chunky区块加载优化.md)                                                                              |
+| **玩家家 / 领地数量不对**       | ① `essentials.sethome.multiple.<n>` 取最大值 ② `residence.group.<名>` 与 `groups.yml` 组名是否小写一致 | [权限组设计方案 §4](05-权限管理系统-LuckPerms/权限组设计方案.md#四essentialsx-家园数量与-residence-领地组映射)                        |
 
 ---
 
@@ -867,11 +988,14 @@ java -Xmx4G -Xms1G ^
 ### 13.3 网络最小化原则
 
 ```
-公网可访问：  55551/TCP   19132/UDP   80/443（Caddy）
+公网可访问：  55551/TCP   19132/UDP   24454/UDP(语音)   80/443（Caddy）
 仅内网/VPN：  25555(OPanel)  5000(EasyBot UI)  24444(MCSM Daemon)  3306(MySQL)
 绝不暴露：    25576(OPanel Socket)  14502(authlib)  32217(Yggdrasil)  25575(RCON)
 按需放行：    26990(EasyBot Bridge，仅跨机场景)
 ```
+
+> ⚠️ **24454 是 UDP**：腾讯云 / 阿里云安全组默认只放行 TCP，语音端口必须手动新建一条 **UDP** 入站规则，
+> 否则玩家名旁会一直显示"插头断开"图标。
 
 ---
 
@@ -904,14 +1028,12 @@ java -Xmx4G -Xms1G ^
 | ProtocolLib   | https://www.spigotmc.org/resources/protocollib.1997/   |
 | WorldEdit     | https://modrinth.com/plugin/worldedit                  |
 | TAB           | https://www.spigotmc.org/resources/tab-1-7-1-21.57806/ |
-| Plan          | https://modrinth.com/plugin/plan                       |
-
-| 插件                     | 官方下载页面                                                                                          | 说明                                             |
-| ------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| **EssentialsX**          | [EssentialsX 官方下载页](https://essentialsx.net/downloads)                                           | 需下载 EssentialsX 核心 + Chat + Spawn 模块      |
-| **Geyser-Spigot**        | [Geyser 官方下载页](https://geysermc.org/download)                                                    | 选择 Spigot 版本（作为插件安装）                 |
-| **Floodgate**            | [Floodgate 官方下载页](https://geysermc.org/download)                                                 | 与 Geyser 同一下载页，选择 Floodgate-Spigot 版本 |
-| **BedrockPlayerSupport** | [BedrockPlayerSupport SpigotMC 页面](https://www.spigotmc.org/resources/bedrockplayersupport.114738/) | 作者 DongShao，当前最新版 v2.1.1                 |
+| **EssentialsX**          | https://essentialsx.net/downloads                      | 核心 + Chat + Spawn 模块           |
+| **Chunky**               | https://modrinth.com/plugin/chunky                     | 区块预生成                         |
+| **Simple Voice Chat**    | https://modrinth.com/mod/simple-voice-chat             | 选 Bukkit/插件版                   |
+| **BedrockPlayerSupport** | https://www.spigotmc.org/resources/bedrockplayersupport.114738/ | 作者 DongShao，v2.1.0+  |
+| **Geyser-Spigot**        | https://geysermc.org/download                          | 选 Spigot 版本                     |
+| **Floodgate**            | https://geysermc.org/download                          | 与 Geyser 同页，选 Floodgate-Spigot |
 
 ---
 
@@ -926,14 +1048,105 @@ java -Xmx4G -Xms1G ^
 
 ---
 
+## 十五、架构分析与优化总结
+
+> 本章是对整套方案的**横向评估**：架构是否合理、瓶颈在哪、现在缺什么、下一步该做什么。
+
+### 15.1 架构分层评估
+
+当前架构可以清晰地拆成五层，每层的职责边界都比较干净：
+
+| 层 | 组件 | 职责 | 评价 |
+|---|---|---|---|
+| **L1 服务端核心** | Leaf 1.21.11 | 世界/实体/tick | ✅ 选型正确。Leaf 是 Paper 分支，性能优于 Paper 且插件全兼容，迁移零成本 |
+| **L2 认证与协议** | YggdrasilOfficialProxy + authlib-injector / Geyser + Floodgate / ViaVersion | 让玩家"进得来" | ✅ 设计精巧。用字节码注入统一了 SkinsRestorer、Geyser、Floodgate 三条认证链路，避免各插件各自为战 |
+| **L3 玩法与保护** | Residence / CoreProtect / Vault / SkinsRestorer | 核心生存体验 | ⚠️ **经济层不完整**：Vault 只有 API、没有实现，装 EssentialsX 前 `/bal` 这类命令是空的 |
+| **L4 管理与可观测** | LuckPerms / OPanel / spark / OpenInv | 让服主管得住 | ⚠️ **权限层目前是断的**：LuckPerms 主 JAR 缺失，等于整层不生效 |
+| **L5 外部集成** | EasyBot + NapCat / MCSM / Caddy | QQ 联动与运维 | ✅ 三层解耦（NapCat→主程序→插件），跨机部署只需改一处地址 |
+
+**总体判断**：L1/L2/L5 设计良好且已落地；L3 缺经济实现；**L4 权限层当前完全失效，是最严重的短板**。
+
+### 15.2 关键风险与瓶颈
+
+| 风险 | 等级 | 说明 | 影响 |
+|---|---:|---|---|
+| **LuckPerms 主 JAR 缺失** | 🔴 P0 | 权限系统整体不加载，所有玩家等同 default | 无法分级管理、无法限制命令、OP 之外的管理手段全部失效 |
+| **经济系统无实现** | 🟡 P1 | Vault 只是 API 层，需要有插件提供经济实现 | `/bal` `/pay` `/baltop` 全部不可用；Residence 领地买卖也无法计价 |
+| **CoreProtect SQLite 膨胀** | 🟡 P1 | 50 人规模的方块记录写入量很大，SQLite 单文件会持续膨胀并拖慢查询 | 后期 `/co lookup` 可能卡住主线程 |
+| **未预生成世界** | 🟡 P1 | 玩家跑图时实时生成区块，直接掉 TPS | 尤其影响基岩版手机玩家（对卡顿敏感） |
+| **基岩玩家无 GUI** | 🟡 P1 | 基岩客户端敲 `/tpa` `/sethome` 极其不便 | 双端互通的体验只做了一半 |
+| **语音 UDP 未放行** | 🟡 P1 | 云厂商安全组默认只开 TCP | 语音功能装了也连不上 |
+| **OPanel 暴露风险** | 🟠 P2 | 默认绑 `0.0.0.0:25555`，accessKey 一旦泄露等于服务器被接管 | 建议改绑 127.0.0.1 + 反代 |
+| **region 文件夹膨胀** | 🟠 P2 | 跑图产生的无用区块长期累积 | 存档体积线性增长、备份变慢 |
+| **版本号未锁定** | 🔵 P3 | CMILib / Residence / OpenInv 等记录为「最新」 | 无法精确复现当前环境 |
+
+### 15.3 本轮新增组件的收益分析
+
+| 组件 | 解决的问题 | 收益 | 成本 / 副作用 |
+|---|---|---|---|
+| **EssentialsX** | 经济无实现；传送/家园缺失 | 一次性补齐 150+ 命令 + 经济实现，是**性价比最高**的一步 | 与 Residence 有命令重叠，需靠权限和别名区分；需重新设计权限组 |
+| **Chunky** | 跑图卡顿 | 预生成后跑图几乎零卡顿，**收益立竿见影** | 生成时占用大量 CPU/磁盘 IO；磁盘占用高（可换 Chunksmith） |
+| **Simple Voice Chat** | 缺少语音 | 提升社交粘性，不用外挂 Discord/YY | 需玩家装同版本客户端模组；**基岩玩家需额外方案**（SimpleVoice-Geyser 网页端） |
+| **BedrockPlayerSupport** | 基岩玩家体验差 | 把互通服"能用"变成"好用" | 依赖 EssentialsX；自动注册需 AuthMe（本服应关闭） |
+
+> **结论**：EssentialsX 是这一批里**必须先装**的——它既是经济实现，又是后三个组件（尤其 BedrockPlayerSupport）的依赖底座。
+
+### 15.4 落地优先级建议
+
+| 优先级 | 动作 | 理由 |
+|---:|---|---|
+| **1** | 补齐 `LuckPerms-Bukkit-*.jar` | 不解决这个，后面所有权限配置都无效 |
+| **2** | 安装 EssentialsX + Vault 联动 | 补齐经济与基础命令，同时是 BPS 的前置 |
+| **3** | 导入 [权限组设计方案](05-权限管理系统-LuckPerms/权限组设计方案.md) | 有了 EssentialsX 才有意义；一次成型避免反复改 |
+| **4** | 用 Chunky 预生成主世界半径 3000 | 直接解决最大的体验问题（跑图卡顿） |
+| **5** | 安装 BedrockPlayerSupport | 基岩玩家体验收口 |
+| **6** | Simple Voice Chat + 放行 UDP 24454 | 锦上添花，但端口容易踩坑，放后面单独验证 |
+| **7** | CoreProtect 迁 MySQL | 数据量上来后再做，过早迁移增加维护成本 |
+| **8** | region 裁剪 + OPanel 改绑内网 | 例行维护项，可周期性做 |
+
+### 15.5 配置一致性检查清单
+
+新增 EssentialsX 后，有几处配置必须互相对齐，否则会出现"配了但不生效"：
+
+| 配置项 | 位置 | 必须与什么一致 |
+|---|---|---|
+| `use-bukkit-permissions: true` | `plugins/Essentials/config.yml` | 必须为 true，否则 EssentialsX 不读 LuckPerms |
+| `essentials.sethome.multiple.<n>` | LuckPerms 权限节点 | 与 `config.yml` 的 `sethome-multiple` 一致（权限优先） |
+| `residence.group.<组名>` | LuckPerms 权限节点 | 与 `plugins/Residence/groups.yml` 的**小写**组名一致 |
+| `vault-group-use-displaynames: true` | `plugins/LuckPerms/config.yml` | 让聊天前缀显示显示名而非组名 |
+| `primary-group-calculation: parents-by-weight` | `plugins/LuckPerms/config.yml` | 与各组 `setweight` 配套，决定前缀显示哪个 |
+| `online-mode: true` | `server.properties` | 外置登录与 Floodgate 的前提，不能改 |
+| `connection-throttle: 4000` | `spigot.yml` | 基岩互通需要较高值 |
+| `bind_address` / `voice_host` | `plugins/voicechat/voicechat-server.properties` | 云服务器必须设 `0.0.0.0` 与公网 IP |
+
+### 15.6 演进路线图
+
+```
+阶段一（补齐地基）          阶段二（体验优化）        阶段三（规模化）
+─────────────────────      ─────────────────────    ─────────────────────
+✅ LuckPerms 主 JAR        ✅ Chunky 预生成世界      ☐ CoreProtect → MySQL
+✅ EssentialsX + 经济      ✅ BedrockPlayerSupport   ☐ AntiLitematica 反作弊
+✅ 完整权限组方案          ✅ Simple Voice Chat      ☐ TAB + PlaceholderAPI
+✅ Residence 组映射        ✅ 语音 UDP 放行          ☐ Plan 数据分析面板
+                           ☐ region 定期裁剪         ☐ BlueMap 3D 地图
+                                                    ☐ Velocity 多服（若需要）
+```
+
+> 当前正处在**阶段一收尾 / 阶段二开始**的位置。权限方案已成型，剩下的是执行与验证。
+
+---
+
 ## 维护记录
 
 | 日期       | 变更                                                                                                                                                     |
 | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-09 | 初始文档生成（基于 `C:\mc_serve\1.21.11-test` 实际配置）                                                                                                 |
-| 2026-08-11 | 补充云服务器配置章节（Caddy / MCSM / NapCat / 监控）                                                                                                     |
+| 2026-08-11 | 补充云服务器配置章节（Caddy / MCSM / NapCat / 监控）—— ⚠️ 该目录已于 2026-09-04 从本仓库移除，相关链接已清理 |
 | 2026-09-01 | 重写 README 为完整运维手册：新增组件清单、端口表、部署流程、依赖矩阵、安全基线；敏感信息改为占位符；同步整理插件清单                                     |
 | 2026-09-01 | 将原 `插件清单.md`（附录 A）合并进 README 第四章组件清单，下载源并入资源链接，目录文件说明并入第七章，已知问题独立成第十二章；删除重复文件 `插件清单.md` |
+| 2026-09-04 | 新增 22-25 章节（Simple Voice Chat / Chunky / EssentialsX / BedrockPlayerSupport）；组件清单追加 4.5 新增功能组件；依赖矩阵与安装顺序补充硬性顺序；端口表与网络最小化原则加入 UDP 24454；运维命令、备份策略、故障排查同步扩充；新增第十五章架构分析与优化总结 |
+| 2026-09-04 | 新增 [05-权限管理系统-LuckPerms](05-权限管理系统-LuckPerms/权限组设计方案.md) 完整权限方案：`config.yml` + 权限组设计 + 导入脚本 + 节点速查，覆盖全部已装与新增插件 |
+| 2026-09-08 | 新增 26 章「快捷菜单系统」：交付自研 QuickMenu 插件（含编译验证通过的 jar、15 个源文件、无需 Maven 的 build.ps1 构建脚本、7 套示例菜单配置）；Java 端箱子 GUI + 基岩端原生 Form 双轨分发；同步修正 24 章因文档合并而失效的两处链接 |
 
 ---
 

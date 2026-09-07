@@ -1,0 +1,198 @@
+############################################################
+#  #  LuckPerms 主配置文件
+#  文件位置：plugins/LuckPerms/config.yml
+#
+#  适用环境：Leaf 1.21.11 / Java 21 / LuckPerms v5.4.x (Bukkit)
+#  配套文档：权限组设计方案.md | 权限导入脚本.txt | 权限节点速查.md
+#
+#  ⚠️ 使用说明
+#  1. 本文件只保留与本机环境相关的关键项，未列出的配置项会在首次启动时
+#     由 LuckPerms 自动补写为默认值，无需手动填写全部数百个选项。
+#  2. LuckPerms 会保留本文件中的未知键但不生效，因此版本升级后多余的
+#     旧键不会报错，可安全保留；缺失的键会自动补默认值。
+#  3. 修改后执行 /lp reload 热重载，或重启服务器。
+#  4. 修改 storage-method 前务必先备份 plugins/LuckPerms/ 整个目录。
+############################################################
+
+# ==================== 服务器标识 ====================
+
+# 服务器名称。单服环境保持 global；若将来做多服（BungeeCord/Velocity）
+# 并为每个子服单独设权限，则改为各子服名称（如 survival、lobby）。
+# 本服为单端，保持 global。
+server: global
+
+# 是否启用虚拟线程（需要 LuckPerms 5.4.130+ 且 Java 21+）
+# 旧版 LuckPerms 无此项，会被忽略，不影响启动。
+use-virtual-threads: false
+
+
+# ==================== 同步与热重载 ====================
+
+# 自动同步间隔（分钟）。-1 = 关闭自动同步。
+# 单服环境无需定时同步，保持 -1；权限变更会立即生效。
+sync-minutes: -1
+
+# 监控配置文件变更并自动重载（改完文件不用敲命令）
+watch-files: true
+
+# 跨服消息服务：auto / none / sql / redis / rabbitmq
+# 单服环境保持 auto 即可（会自动降级为 none）。
+messaging-service: auto
+
+# 是否自动把权限变更推送到其他服务器（单服无影响）
+auto-push-updates: true
+
+# 是否把全局（global 上下文）的权限变更也推送出去
+push-global-updates: false
+
+
+# ==================== 存储方式 ====================
+
+# 可选值：h2（默认，本地文件） / sqlite / mysql / mariadb / postgresql / yaml / json / hocon / mongodb
+#
+# 本服当前使用 h2：数据文件为 plugins/LuckPerms/luckperms-h2-v2.mv.db
+# 单服 + 50 人规模，h2 完全够用，不建议改 MySQL（反而增加故障点）。
+#
+# 只有在以下情况才建议改 MySQL：
+#   - 做多服（BungeeCord/Velocity）需要共享权限数据
+#   - 需要外部程序（如官网）读写权限数据
+#
+# 迁移方式（切勿手改本项后直接重启）：
+#   /lp export <文件名>        # 先导出备份
+#   /lp migration mysql ...    # 执行内置迁移命令，改完再重启
+storage-method: h2
+
+
+# 远程数据库连接配置（仅当 storage-method 为 mysql/mariadb/postgresql 时生效）
+# ⚠️ 保持 false/留空不影响当前 h2 模式；如需启用请对照官方生成的默认文件核对键名
+#    （不同 LuckPerms 版本此处键名略有差异，如 prefix / table_prefix）。
+#
+# data:
+#   address: 127.0.0.1:3306        # 数据库地址:端口
+#   database: luckperms            # 库名（需提前手动创建）
+#   username: '<数据库用户名>'      # 专用账号，不要用 root
+#   password: '<数据库密码>'        # ⚠️ 勿提交到公开仓库
+#   pool-size: 10                  # 连接池大小
+#   prefix: 'luckperms_'           # 表名前缀（部分版本为 table_prefix）
+#   properties:
+#     useSSL: false
+#     characterEncoding: utf8mb4
+#     serverTimezone: Asia/Shanghai
+
+
+# ==================== 权限计算规则 ====================
+
+# 主组（primary group）的计算方式
+#   parents-by-weight        按继承父组中权重最高的（推荐，配合 setweight 使用）
+#   all-parents-by-weight    同权重时全部计入
+#   parents-by-first         取第一个继承的父组
+#   stored                   用 /lp user <玩家> setprimarygroup 手动指定
+#
+# 本服前缀（[VIP] / [管理] 等）依赖主组正确解析，故用 parents-by-weight。
+primary-group-calculation: parents-by-weight
+
+# 继承树的遍历算法
+#   depth-first-pre-order    深度优先（推荐，子组覆盖父组）
+#   breadth-first            广度优先
+inheritance-traversal-algorithm: depth-first-pre-order
+
+# 重复添加临时权限时的行为
+#   accumulate  时长累加（推荐）
+#   replace     时长覆盖
+#   deny        拒绝添加
+temporary-add-behaviour: accumulate
+
+# Bukkit 是否按参数细分命令权限（如 minecraft.command.gamemode.survival）
+# 关闭可减少权限树体积，本服保持 false。
+argument-based-command-permissions: false
+
+
+# ==================== 权限应用开关 ====================
+
+# 是否应用通配符权限（如 essentials.*）
+apply-wildcards: true
+
+# 是否应用正则权限（如 ^essentials\.(home|sethome)$）
+apply-regex: true
+
+# 是否应用简写权限（如 essentials.home 自动包含其子权限）
+apply-shorthand: true
+
+# 是否应用 Bukkit 插件在 plugin.yml 中声明的子权限
+apply-bukkit-child-permissions: true
+
+# 是否应用 Bukkit 插件声明的默认权限
+apply-bukkit-default-permissions: true
+
+# 是否应用通过 Attachment（附加权限）动态授予的权限
+apply-bukkit-attachment-permissions: true
+
+
+# ==================== OP 处理 ====================
+
+# 是否根据权限自动授予/撤销 OP
+# ⚠️ 本服设为 false：OP 只给服主，管理员一律走 LuckPerms 权限节点，
+#    避免 OP 绕过 Residence/CoreProtect 的权限校验。
+auto-op: false
+
+# 是否启用 OP 机制（ops.json 仍然生效）
+enable-ops: true
+
+# OP 是否可以使用所有 LuckPerms 命令
+# 保持 true 以便服主在极端情况下（权限被改坏）仍能自救。
+commands-allow-op: true
+
+
+# ==================== 日志 ====================
+
+# 权限变更时是否通知在线的有权玩家（方便管理组互相看到改动）
+log-notify: true
+
+# 调试日志。排查权限不生效时可临时开启，用完务必关掉（日志量很大）。
+debug-logging: false
+
+
+# ==================== Vault 集成 ====================
+# 影响 Vault 向下游插件（EssentialsX 经济、Residence 出租、TAB 等）
+# 报告"玩家的权限组 / 前缀 / 后缀"的方式。
+
+vault:
+  # 是否让 Vault 查询使用独立的服务器名（多服才用），单服保持 false
+  use-vault-server: false
+  # use-vault-server 为 true 时生效
+  vault-server: global
+
+  # 查询组时是否包含 global 上下文的组
+  vault-include-global: true
+
+  # 是否忽略世界维度（单服保持 false）
+  vault-ignore-world: false
+
+  # Vault 返回的组名是否使用 LuckPerms 的显示名（displayname）
+  # 保持 true，这样聊天前缀显示的是 &8[&c管理&8] 而不是组名 admin
+  vault-group-use-displaynames: true
+
+  # NPC / 假人使用的默认组
+  vault-npc-group: default
+
+  # 是否允许不安全的查询（绕过上下文检查）。保持 false。
+  vault-unsafe-lookups: false
+
+  # Vault 是否只返回主组（排除继承的其他组）
+  # 保持 false：EssentialsX 的 sethome-multiple 等需要按组名匹配
+  vault-primary-group-only: false
+
+  # Vault 调试日志，排错时临时开启
+  vault-debug: false
+
+
+# ==================== 名称重写 ====================
+
+# 世界名重写。多服用；单服留空。
+world-rewrite: {}
+
+# 组名重写。用于把外部插件传来的组名映射到 LuckPerms 组名。
+# 例：某些插件把 VIP 写成 vip+，可在此映射：
+# group-name-rewrite:
+#   'vip+': 'vip'
+group-name-rewrite: {}

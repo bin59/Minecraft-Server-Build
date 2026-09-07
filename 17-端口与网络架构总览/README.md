@@ -69,4 +69,4 @@ Yggdrasil 认证 (:32217) ←── authlib-injector (:14502) ←──→ Leaf 
 └──────────────────────────────────────┘
 ```
 
-> 详见 [EasyBot 文档](../10-QQ机器人联动/EasyBot.md#easybot-与-mc-服务器在不同电脑的情况) 中的跨电脑部署完整说明。
+> 详见 [EasyBot 文档](../10-QQ机器人联动-EasyBot/EasyBot.md#easybot-与-mc-服务器在不同电脑的情况) 中的跨电脑部署完整说明。

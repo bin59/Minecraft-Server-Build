@@ -419,9 +419,9 @@ Global:
   # 这些是应用于任何分组的领地创建者的默认标志。
   CreatorDefault:
     animalkilling: true
-    build: false
+    build: true
     container: true
-    destroy: false
+    destroy: true
     harvest: true
     hook: true
     ignite: true
