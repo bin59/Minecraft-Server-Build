@@ -1,0 +1,13 @@
+com\mc\spaceportal\teleport\TeleportService.class
+com\mc\spaceportal\gui\PortalGuiListener.class
+com\mc\spaceportal\gui\PortalGui$Holder$Type.class
+com\mc\spaceportal\portal\PortalSession.class
+com\mc\spaceportal\SpacePortalPlugin.class
+com\mc\spaceportal\effect\PortalEffectTask.class
+com\mc\spaceportal\effect\EffectController.class
+com\mc\spaceportal\gui\PortalGui$Holder.class
+com\mc\spaceportal\gui\PortalGui.class
+com\mc\spaceportal\portal\Portal.class
+com\mc\spaceportal\portal\PortalManager.class
+com\mc\spaceportal\command\PortalCommand.class
+com\mc\spaceportal\listener\PortalListener.class

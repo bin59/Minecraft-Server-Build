@@ -1,0 +1,2210 @@
+############################################################
+# QuickMenu — 双轨快捷菜单配置文件（全插件整合版）
+#
+# Java 玩家 → 箱子 GUI（下方 items 定义图标与槽位）
+# 基岩玩家 → 原生 Form 表单（按 items 顺序生成按钮）
+#
+# 修改后执行 /qm reload 即时生效，无需重启服务器
+#
+# ============================================================
+# 菜单总览（20 套，分「玩家」与「管理」两条线）
+# ============================================================
+#
+# 【玩家线】所有人可见，default-menu 指向 main
+#   main          主菜单（一级入口）
+#   teleport      传送功能     EssentialsX + BedrockPlayerSupport
+#   home          我的家园     EssentialsX + BedrockPlayerSupport
+#   residence     我的领地     Residence
+#   economy       经济中心     EssentialsX + Vault
+#   kit           工具包       EssentialsX
+#   skin          皮肤管理     SkinsRestorer
+#   social        社交设置     EssentialsX + EasyBot
+#   info          服务器信息   EssentialsX
+#   voice         语音聊天     Simple Voice Chat
+#
+# 【管理线】入口在 main 菜单，靠 permission: quickmenu.admin 门控，
+#           普通玩家看不到、也点不到；管理员也可直接 /qm open admin
+#   admin           管理面板（一级入口）
+#   admin-player    玩家管理     OpenInv + EssentialsX
+#   admin-punish    处罚管理     EssentialsX
+#   admin-teleport  传送管理     EssentialsX
+#   admin-residence 领地管理     Residence
+#   admin-inspect   审计回滚     CoreProtect
+#   admin-world     世界管理     Chunky + WorldEdit + 原版
+#   admin-server    服务器监控   spark + Geyser + ViaVersion + EasyBot
+#   admin-perm      权限管理     LuckPerms
+#   admin-qm        菜单管理     QuickMenu 自身
+#
+# ============================================================
+# 重要：为什么大量菜单项是「文字指引」而不是直接执行
+# ============================================================
+# 本插件只有「按钮列表」，没有输入框，无法在玩家点击后询问「对谁执行」。
+# 因此凡是需要带玩家名 / 领地名 / 金额等参数的指令（如 /kick 玩家名），
+# 统一做成：关闭界面 + 发送指令用法提示，让管理员手动补参数。
+# 这类项在 lore 里都标了「需手动补充参数」。
+# 不需要参数的（如 /fly /heal /spark tps）则直接执行。
+############################################################
+
+# ==================== 基础设置 ====================
+
+# 调试模式：开启后在控制台输出菜单分发、表单点击等详细日志
+debug: false
+
+# 玩家直接输入 /qm 时打开的默认菜单 id
+default-menu: main
+
+# ==================== 平台策略 ====================
+
+platform:
+  # 基岩玩家是否优先使用原生 Form 表单（强烈建议 true）
+  # 设为 false 则基岩玩家也用箱子界面，但会遇到 Geyser 的已知缺陷：
+  # 物品可被拖出掉地、移动端高亮异常、触屏只能左键等
+  bedrock-native-form: true
+
+  # Java 玩家是否使用箱子 GUI
+  java-chest-gui: true
+
+# ==================== 触发物品 ====================
+
+trigger-item:
+  # 物品材质，使用 Bukkit Material 名称（大写）
+  # 注意：不要与 WorldEdit 导航魔杖（默认指南针 COMPASS）冲突，
+  # 触发物品使用时钟 CLOCK，右键行为互不干扰
+  material: CLOCK
+
+  # 物品显示名（支持 & 颜色码）
+  name: '&6&l快捷菜单'
+
+  # 物品描述（支持 & 颜色码）
+  lore:
+    - '&7右键打开快捷菜单'
+    - '&8Java 玩家看到箱子界面'
+    - '&8基岩玩家看到原生表单'
+    - '&8管理员可在菜单内进入管理面板'
+
+  # 是否让物品发光（使用附魔光效，不产生任何实际属性加成）
+  glowing: true
+
+  # 玩家进服时是否自动发放该物品
+  # 基岩服建议 true —— 手机玩家翻物品栏比打指令快
+  give-on-join: true
+
+  # 发放到背包的第几个格子（0-35，8 为快捷栏最后一格）
+  # 设为 -1 表示自动寻找空位
+  give-slot: 8
+
+  # 严格匹配模式：true 时只有本插件发放的物品才能触发菜单
+  # （通过 PersistentDataContainer 标记识别，玩家自制同名物品无效）
+  # 设为 false 则按材质+名称匹配，便于用 /give 自制触发物品
+  strict-match: true
+
+# ==================== 音效 ====================
+
+sound:
+  # 点击菜单项时的音效名（使用字符串形式，跨版本升级不会失效）
+  # 留空字符串 '' 表示不播放音效
+  click: 'ui.button.click'
+  click-volume: 0.6
+  click-pitch: 1.0
+
+# ==================== 消息文本 ====================
+
+messages:
+  no-permission: '&c你没有权限使用快捷菜单'
+  no-admin-permission: '&c你需要管理员权限'
+  menu-not-found: '&c菜单 &e{menu} &c不存在'
+  player-not-found: '&c找不到玩家 &e{player}'
+  specify-player: '&c控制台执行时必须指定玩家名'
+  inventory-full: '&c{player} 的背包已满'
+  trigger-item-give-full: "&c背包已满，无法获取\u201C快捷菜单\u201D时钟，请用 /qm 打开快捷菜单"
+  trigger-item-upgraded: "&a检测到旧版触发物品，已自动升级为\u201C快捷菜单\u201D时钟"
+  give-success: '&a已发放快捷菜单物品给 &e{player}'
+  reload-success: '&a配置已重载，共加载 &e{count} &a个菜单'
+  no-menus: '&c尚未加载任何菜单'
+  console-not-allowed: '&c该命令只能由玩家执行'
+  unknown-subcommand: '&c未知子命令，使用 /qm 查看帮助'
+  chest-gui-disabled: '&c箱子菜单已被禁用'
+  item-drop-denied: '&c快捷菜单物品不能丢弃，使用 /qm 即可打开菜单'
+
+############################################################
+# 菜单定义
+#
+# 每个菜单的字段说明：
+#   title           界面标题（两端通用，支持 & 颜色码）
+#   bedrock-content 基岩表单标题下方的说明文字（留空则用 title）
+#   size            箱子界面容量，必须是 9 的倍数，范围 9~54
+#   back-menu       上级菜单 id，配置后会显示返回按钮（固定在右下角 size-1）
+#   filler          箱子界面空白处的填充物品
+#   items           菜单项列表
+#
+# 每个菜单项的字段说明：
+#   material      物品材质（仅 Java 箱子界面使用）
+#   display-name  物品显示名（两端通用）
+#   lore          物品描述行（仅 Java 箱子界面使用）
+#   slot          所在格子序号，从 0 开始（仅 Java 箱子界面使用）
+#                 注意：配了 back-menu 的菜单，右下角 size-1 是返回按钮专用
+#   glowing       是否发光
+#   permission    需要的权限节点，留空表示所有人可见
+#                 无权限的项会被跳过，基岩端按钮序号自动重排
+#   button-label  基岩表单按钮文本（可选，留空=自动用 display-name 去色）
+#   actions       点击后执行的动作列表
+#
+# actions 动作类型：
+#   [player] 命令      以玩家身份执行（受权限系统约束），不含斜杠
+#   [console] 命令     以控制台身份执行（无视权限），不含斜杠
+#   [menu] 菜单id      打开另一个菜单
+#   [message] 文本     发送消息，支持 & 颜色码
+#   [close]            关闭界面/表单
+#   不带前缀的命令      等同于 [player]
+#
+# 平台条件动作（两端需要调用不同指令时用）：
+#   [bedrock-player] 命令    仅基岩玩家，玩家身份
+#   [java-player] 命令       仅 Java 玩家，玩家身份
+#   [bedrock-console] 命令   仅基岩玩家，控制台身份
+#   [java-console] 命令      仅 Java 玩家，控制台身份
+############################################################
+
+menus:
+
+  ##########################################################
+  # ██████  玩 家 菜 单  ██████
+  ##########################################################
+
+  # ==================== 玩家主菜单 ====================
+  main:
+    title: '&6&l南瓜国际服 &8» &f快捷菜单'
+    bedrock-content: '&7请选择你要使用的功能'
+    size: 27
+    filler:
+      material: BLACK_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      # ---------- 传送功能 ----------
+      teleport:
+        material: ENDER_PEARL
+        display-name: '&b&l传送功能'
+        lore:
+          - '&7前往传送点、申请传送到玩家'
+          - '&8点击查看子菜单'
+        slot: 10
+        glowing: true
+        actions:
+          - '[menu] teleport'
+
+      # ---------- 家园 ----------
+      home:
+        material: RED_BED
+        display-name: '&a&l我的家园'
+        lore:
+          - '&7回家、设置家、查看家列表'
+          - '&8点击查看子菜单'
+        slot: 11
+        glowing: true
+        actions:
+          - '[menu] home'
+
+      # ---------- 领地 ----------
+      residence:
+        material: DIAMOND_BLOCK
+        display-name: '&2&l我的领地'
+        lore:
+          - '&7创建、传送、管理你的领地'
+          - '&7设置领地权限与子区域'
+          - '&8点击查看子菜单'
+        slot: 12
+        glowing: true
+        actions:
+          - '[menu] residence'
+
+      # ---------- 经济 ----------
+      economy:
+        material: GOLD_INGOT
+        display-name: '&6&l经济中心'
+        lore:
+          - '&7查余额、财富榜、转账、卖物品'
+          - '&8点击查看子菜单'
+        slot: 13
+        actions:
+          - '[menu] economy'
+
+      # ---------- 工具包 ----------
+      kit:
+        material: CHEST
+        display-name: '&e&l工具包'
+        lore:
+          - '&7领取新手包、每日奖励'
+          - '&8点击查看子菜单'
+        slot: 14
+        actions:
+          - '[menu] kit'
+
+      # ---------- 皮肤 ----------
+      skin:
+        material: PLAYER_HEAD
+        display-name: '&d&l皮肤管理'
+        lore:
+          - '&7更换、清除、随机皮肤'
+          - '&7打开皮肤库浏览'
+          - '&8点击查看子菜单'
+        slot: 15
+        actions:
+          - '[menu] skin'
+
+      # ---------- 社交 ----------
+      social:
+        material: NAME_TAG
+        display-name: '&9&l社交设置'
+        lore:
+          - '&7私信、改昵称、查信息、屏蔽'
+          - '&7绑定 QQ 群账号'
+          - '&8点击查看子菜单'
+        slot: 16
+        actions:
+          - '[menu] social'
+
+      # ---------- 服务器信息 ----------
+      info:
+        material: BOOK
+        display-name: '&a&l服务器信息'
+        lore:
+          - '&7在线人数、公告、规则'
+          - '&8点击查看子菜单'
+        slot: 20
+        actions:
+          - '[menu] info'
+
+      # ---------- 语音聊天 ----------
+      voice:
+        material: NOTE_BLOCK
+        display-name: '&b&l语音聊天'
+        lore:
+          - '&7 proximity 语音使用说明'
+          - '&8点击查看子菜单'
+        slot: 22
+        actions:
+          - '[menu] voice'
+
+      # ---------- 管理面板（权限门控） ----------
+      # 只有带 quickmenu.admin 的管理组能看到这一项，普通玩家界面里不会出现，
+      # 基岩端按钮序号也会自动重排，不会留下空位。
+      admin:
+        material: NETHER_STAR
+        display-name: '&c&l管理面板'
+        lore:
+          - '&7玩家管理、处罚、领地、审计'
+          - '&7世界、服务器、权限管理'
+          - '&c仅管理员可见'
+        slot: 24
+        glowing: true
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin'
+
+  # ==================== 传送子菜单 ====================
+  teleport:
+    title: '&b&l传送功能'
+    bedrock-content: '&7选择传送方式'
+    size: 27
+    back-menu: main
+    filler:
+      material: BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      warps:
+        material: COMPASS
+        display-name: '&b公共传送点列表'
+        lore:
+          - '&7查看所有可用传送点'
+          - '&8基岩端打开原生传送点表单'
+        slot: 10
+        # 两端分发：基岩走 BedrockPlayerSupport 的原生表单（带列表选择），
+        # Java 走 EssentialsX 的普通指令。
+        actions:
+          - '[close]'
+          - '[bedrock-player] warpgui'
+          - '[java-player] warp'
+
+      tpa:
+        material: ENDER_EYE
+        display-name: '&a申请传送到玩家'
+        lore:
+          - '&7向其他玩家发送传送请求'
+          - '&e需要对方同意'
+          - '&8基岩端可从列表选人'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[bedrock-player] tpgui'
+          - '[message] &7使用 &e/tpa 玩家名 &7发送传送请求'
+          - '[message] &7或输入 &e/传送 玩家名'
+
+      tpahere:
+        material: BEACON
+        display-name: '&a请求玩家来到我这里'
+        lore:
+          - '&7让对方传送到你的位置'
+          - '&c需要 tpahere 权限'
+        slot: 14
+        permission: essentials.tpahere
+        actions:
+          - '[close]'
+          - '[message] &7使用 &e/tpahere 玩家名 &7请求对方过来'
+
+      back:
+        material: CLOCK
+        display-name: '&e返回上一个位置'
+        lore:
+          - '&7传送或死亡后可用'
+        slot: 16
+        actions:
+          - '[close]'
+          - '[player] back'
+
+      spawn:
+        material: GRASS_BLOCK
+        display-name: '&f回到出生点'
+        lore:
+          - '&7传送到服务器主世界出生点'
+        slot: 20
+        actions:
+          - '[close]'
+          - '[player] spawn'
+
+      near:
+        material: SPYGLASS
+        display-name: '&7查看附近玩家'
+        lore:
+          - '&7列出你附近的玩家及距离'
+        slot: 22
+        actions:
+          - '[close]'
+          - '[player] near'
+
+  # ==================== 家园子菜单 ====================
+  home:
+    title: '&a&l我的家园'
+    bedrock-content: '&7家园管理'
+    size: 27
+    back-menu: main
+    filler:
+      material: GREEN_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      listhomes:
+        material: PAPER
+        display-name: '&a查看我的家列表'
+        lore:
+          - '&7列出所有已设置的家'
+          - '&8基岩端打开原生家园表单，点选即传送'
+        slot: 10
+        actions:
+          - '[close]'
+          - '[bedrock-player] homegui'
+          - '[java-player] homes'
+
+      gohome:
+        material: OAK_DOOR
+        display-name: '&b传送回家'
+        lore:
+          - '&7回到默认家'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[player] home'
+
+      sethome:
+        material: RED_BED
+        display-name: '&e在当前位置设置家'
+        lore:
+          - '&7将设为默认家'
+          - '&8输入 /sethome 名称 可命名'
+        slot: 14
+        actions:
+          - '[close]'
+          - '[player] sethome'
+
+      delhome:
+        material: BARRIER
+        display-name: '&c删除一个家'
+        lore:
+          - '&7需手动补充家名称'
+          - '&e用法：/delhome 家的名称'
+        slot: 16
+        permission: essentials.delhome
+        actions:
+          - '[close]'
+          - '[message] &7删除家：&e/delhome 家的名称'
+          - '[message] &7先执行 &e/homes &7查看有哪些家'
+
+  # ==================== 领地子菜单（Residence） ====================
+  residence:
+    title: '&2&l我的领地'
+    bedrock-content: '&7领地管理（Residence）'
+    size: 27
+    back-menu: main
+    filler:
+      material: LIME_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      reslist:
+        material: BOOKSHELF
+        display-name: '&a我的领地列表'
+        lore:
+          - '&7列出你名下的所有领地'
+        slot: 10
+        permission: residence.list
+        actions:
+          - '[close]'
+          - '[player] res list'
+
+      resinfo:
+        material: MAP
+        display-name: '&b查看当前领地信息'
+        lore:
+          - '&7显示你所在领地的详细资料'
+        slot: 11
+        permission: residence.info
+        actions:
+          - '[close]'
+          - '[player] res info'
+
+      rescreate:
+        material: DIAMOND_PICKAXE
+        display-name: '&e创建新领地'
+        lore:
+          - '&7需先框选两个对角点'
+          - '&e用法：/res create 领地名'
+          - '&8先用木斧或 /res select 选区'
+        slot: 12
+        permission: residence.create
+        actions:
+          - '[close]'
+          - '[message] &7创建领地：&e/res create 领地名'
+          - '[message] &7先对角选区：手持木斧左右键各点一次'
+
+      resremove:
+        material: BARRIER
+        display-name: '&c删除领地'
+        lore:
+          - '&7需手动补充领地名称'
+          - '&e用法：/res remove 领地名'
+          - '&c不可恢复'
+        slot: 13
+        permission: residence.delete
+        actions:
+          - '[close]'
+          - '[message] &7删除领地：&e/res remove 领地名'
+          - '[message] &7先执行 &e/res list &7确认名称'
+
+      restp:
+        material: ENDER_PEARL
+        display-name: '&b传送到我的领地'
+        lore:
+          - '&7需手动补充领地名称'
+          - '&e用法：/res tp 领地名'
+        slot: 14
+        permission: residence.teleport
+        actions:
+          - '[close]'
+          - '[message] &7传送到领地：&e/res tp 领地名'
+
+      restpset:
+        material: RECOVERY_COMPASS
+        display-name: '&6设置领地传送点'
+        lore:
+          - '&7把当前站位设为该领地的落点'
+        slot: 15
+        permission: residence.teleport
+        actions:
+          - '[close]'
+          - '[player] res tpset'
+
+      resunstuck:
+        material: FEATHER
+        display-name: '&e卡住时脱离'
+        lore:
+          - '&7被领地边界卡住时传送到安全位置'
+        slot: 16
+        permission: residence.unstuck
+        actions:
+          - '[close]'
+          - '[player] res unstuck'
+
+      resset:
+        material: LEVER
+        display-name: '&6设置领地开关（flag）'
+        lore:
+          - '&7控制建造、破坏、PVP、容器等'
+          - '&e用法：/res set 领地名 build true'
+          - '&8常用：build destroy use container pvp move tp'
+        slot: 19
+        permission: residence.flags.build
+        actions:
+          - '[close]'
+          - '[message] &7领地开关：&e/res set 领地名 build true'
+          - '[message] &8可选：destroy use container pvp move fire tnt'
+
+      respset:
+        material: WRITABLE_BOOK
+        display-name: '&6给单个玩家授权'
+        lore:
+          - '&7让好友在你的领地里建造'
+          - '&e用法：/res pset 领地名 玩家名 build true'
+        slot: 20
+        permission: residence.flags.build
+        actions:
+          - '[close]'
+          - '[message] &7玩家授权：&e/res pset 领地名 玩家名 build true'
+
+      ressubzone:
+        material: ITEM_FRAME
+        display-name: '&d创建子领地'
+        lore:
+          - '&7在领地内再划一小块独立区域'
+          - '&e用法：/res subzone 父领地 子领地'
+        slot: 21
+        permission: residence.subzone
+        actions:
+          - '[close]'
+          - '[message] &7子领地：&e/res subzone 父领地 子领地'
+
+      resmessage:
+        material: OAK_SIGN
+        display-name: '&a设置进出提示语'
+        lore:
+          - '&7玩家进出领地时显示的文字'
+          - '&e用法：/res message 领地名 enter 欢迎'
+        slot: 22
+        permission: residence.message
+        actions:
+          - '[close]'
+          - '[message] &7进出提示：&e/res message 领地名 enter 欢迎来到'
+
+      reshelp:
+        material: KNOWLEDGE_BOOK
+        display-name: '&f领地帮助文档'
+        lore:
+          - '&7查看 Residence 全部指令'
+        slot: 23
+        actions:
+          - '[close]'
+          - '[player] res ?'
+
+  # ==================== 经济子菜单 ====================
+  economy:
+    title: '&6&l经济中心'
+    bedrock-content: '&7经济功能'
+    size: 27
+    back-menu: main
+    filler:
+      material: ORANGE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      balance:
+        material: GOLD_NUGGET
+        display-name: '&6查看我的余额'
+        slot: 11
+        permission: essentials.balance
+        actions:
+          - '[close]'
+          - '[player] balance'
+
+      baltop:
+        material: NETHERITE_INGOT
+        display-name: '&e财富排行榜'
+        lore:
+          - '&7查看全服最富有的玩家'
+        slot: 13
+        permission: essentials.balancetop
+        actions:
+          - '[close]'
+          - '[player] baltop'
+
+      pay:
+        material: EMERALD
+        display-name: '&a转账给玩家'
+        lore:
+          - '&7需手动补充玩家名与金额'
+          - '&e用法：/pay 玩家名 金额'
+        slot: 15
+        permission: essentials.pay
+        actions:
+          - '[close]'
+          - '[message] &7转账格式：&e/pay 玩家名 金额'
+
+      sell:
+        material: HOPPER
+        display-name: '&b出售手中物品'
+        lore:
+          - '&7把背包里的物品卖给服务器'
+          - '&e用法：/sell 物品名 或 /sell hand'
+        slot: 21
+        permission: essentials.sell
+        actions:
+          - '[close]'
+          - '[message] &7出售物品：&e/sell 物品名'
+          - '[message] &7卖手中物品：&e/sell hand'
+
+      worth:
+        material: SPYGLASS
+        display-name: '&7估价手中物品'
+        lore:
+          - '&7查看物品能卖多少钱'
+        slot: 23
+        permission: essentials.worth
+        actions:
+          - '[close]'
+          - '[player] worth'
+
+  # ==================== 工具包子菜单 ====================
+  kit:
+    title: '&e&l工具包'
+    bedrock-content: '&7选择要领取的工具包'
+    size: 27
+    back-menu: main
+    filler:
+      material: YELLOW_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      starter:
+        material: IRON_SWORD
+        display-name: '&a新手工具包'
+        lore:
+          - '&7铁制工具套装 + 食物'
+          - '&8冷却 24 小时'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] kit starter'
+
+      daily:
+        material: GOLDEN_APPLE
+        display-name: '&e每日奖励'
+        lore:
+          - '&7每天可领一次'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] kit daily'
+
+      vipkit:
+        material: DIAMOND_SWORD
+        display-name: '&6VIP 专属工具包'
+        lore:
+          - '&7钻石装备 + 附魔'
+          - '&c仅 VIP 可领取'
+        slot: 15
+        permission: essentials.kit.vip
+        glowing: true
+        actions:
+          - '[close]'
+          - '[player] kit vip'
+
+  # ==================== 皮肤子菜单（SkinsRestorer） ====================
+  skin:
+    title: '&d&l皮肤管理'
+    bedrock-content: '&7皮肤功能（SkinsRestorer）'
+    size: 27
+    back-menu: main
+    filler:
+      material: MAGENTA_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      skingui:
+        material: PLAYER_HEAD
+        display-name: '&a打开皮肤库'
+        lore:
+          - '&7浏览并选择皮肤（Java 端为箱子界面）'
+          - '&8基岩端建议改用指令方式'
+        slot: 11
+        permission: skinsrestorer.command.gui
+        actions:
+          - '[close]'
+          - '[bedrock-player] skin'
+          - '[java-player] skins'
+
+      skinset:
+        material: LEATHER_CHESTPLATE
+        display-name: '&e更换皮肤'
+        lore:
+          - '&7使用正版玩家名作为皮肤来源'
+          - '&e用法：/skin set 皮肤名'
+        slot: 13
+        permission: skinsrestorer.command.set
+        actions:
+          - '[close]'
+          - '[message] &7更换皮肤：&e/skin set 皮肤名'
+          - '[message] &7也可用图片链接：&e/skin url 链接'
+
+      skinclear:
+        material: MILK_BUCKET
+        display-name: '&c清除皮肤'
+        lore:
+          - '&7恢复为默认皮肤'
+        slot: 15
+        permission: skinsrestorer.command.clear
+        actions:
+          - '[close]'
+          - '[player] skin clear'
+
+      skinupdate:
+        material: CLOCK
+        display-name: '&b刷新皮肤'
+        lore:
+          - '&7换肤后未生效时使用'
+        slot: 17
+        permission: skinsrestorer.command.update
+        actions:
+          - '[close]'
+          - '[player] skin update'
+
+      skinrandom:
+        material: ENDER_CHEST
+        display-name: '&d随机皮肤'
+        lore:
+          - '&7随机应用一个皮肤'
+        slot: 21
+        permission: skinsrestorer.command.set
+        actions:
+          - '[close]'
+          - '[player] skin random'
+
+      skinundo:
+        material: SPONGE
+        display-name: '&7撤销上次换肤'
+        slot: 23
+        permission: skinsrestorer.command.set
+        actions:
+          - '[close]'
+          - '[player] skin undo'
+
+  # ==================== 社交子菜单 ====================
+  social:
+    title: '&9&l社交设置'
+    bedrock-content: '&7社交与账号'
+    size: 27
+    back-menu: main
+    filler:
+      material: LIGHT_BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      msg:
+        material: PAPER
+        display-name: '&d给玩家发私信'
+        lore:
+          - '&7选择在线玩家并发送消息'
+          - '&8基岩端打开原生私信表单，免打玩家名'
+        slot: 10
+        actions:
+          - '[close]'
+          - '[bedrock-player] msggui'
+          - '[message] &7私信格式：&e/msg 玩家名 消息内容'
+
+      reply:
+        material: WRITABLE_BOOK
+        display-name: '&a快速回复'
+        lore:
+          - '&7回复最近一条私信'
+          - '&e用法：/r 消息内容'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[message] &7回复格式：&e/r 消息内容'
+
+      ignore:
+        material: BARRIER
+        display-name: '&c屏蔽玩家'
+        lore:
+          - '&7不再收到对方的私信'
+          - '&e用法：/ignore 玩家名'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[message] &7屏蔽玩家：&e/ignore 玩家名'
+
+      nick:
+        material: NAME_TAG
+        display-name: '&d修改昵称'
+        lore:
+          - '&e用法：/nick 你想要的昵称'
+          - '&8输入 /nick off 可恢复原名'
+        slot: 14
+        actions:
+          - '[close]'
+          - '[message] &7修改昵称：&e/nick 你想要的昵称'
+
+      whois:
+        material: PLAYER_HEAD
+        display-name: '&b查看我的信息'
+        lore:
+          - '&7位置、生命、游戏模式等'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[player] whois'
+
+      list:
+        material: PAINTING
+        display-name: '&a在线玩家列表'
+        slot: 16
+        actions:
+          - '[close]'
+          - '[player] list'
+
+      bind:
+        material: BELL
+        display-name: '&6绑定 QQ 账号'
+        lore:
+          - '&7在 QQ 群里发送「绑定」获取验证码'
+          - '&e用法：/bind 验证码'
+        slot: 20
+        permission: easybot.command.bind
+        actions:
+          - '[close]'
+          - '[message] &7绑定 QQ：在群里发送「绑定」获取验证码'
+          - '[message] &7然后在游戏内输入：&e/bind 验证码'
+
+  # ==================== 服务器信息子菜单 ====================
+  info:
+    title: '&a&l服务器信息'
+    bedrock-content: '&7服务器信息'
+    size: 27
+    back-menu: main
+    filler:
+      material: LIGHT_BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      list:
+        material: PAINTING
+        display-name: '&a在线玩家列表'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] list'
+
+      motd:
+        material: OAK_SIGN
+        display-name: '&e服务器公告'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] motd'
+
+      rules:
+        material: WRITTEN_BOOK
+        display-name: '&f服务器规则'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[player] rules'
+
+      crossplay:
+        material: SUNFLOWER
+        display-name: '&6关于互通服'
+        lore:
+          - '&7本服支持 Java 版与基岩版互通'
+          - '&8基岩版通过 Geyser + Floodgate 接入'
+        slot: 17
+        actions:
+          - '[close]'
+          - '[message] &6南瓜国际服 &7支持 Java / 基岩双端互通'
+          - '[message] &7基岩版玩家可直接使用 &e/tpa &7&7/home &7等指令'
+
+      help:
+        material: BOOK
+        display-name: '&b指令帮助'
+        lore:
+          - '&7查看 EssentialsX 指令列表'
+        slot: 21
+        actions:
+          - '[close]'
+          - '[player] help'
+
+  # ==================== 语音聊天子菜单（Simple Voice Chat） ====================
+  # 说明：Simple Voice Chat 是客户端模组驱动的，玩家侧没有服务端指令。
+  # 说话靠按键（默认 V），音量与距离在客户端设置里调。
+  # 因此本菜单以「使用指引」为主，不做指令执行。
+  voice:
+    title: '&b&l语音聊天'
+    bedrock-content: '&7语音聊天（Simple Voice Chat）'
+    size: 27
+    back-menu: main
+    filler:
+      material: CYAN_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      howto:
+        material: NOTE_BLOCK
+        display-name: '&a如何说话'
+        lore:
+          - '&7安装语音模组后按 &eV 键 &7即可发声'
+          - '&7松开停止，附近玩家能听到'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[message] &7按住 &eV 键 &7说话，松开停止'
+          - '[message] &7默认是 proximity 模式：只有附近玩家听得到'
+
+      group:
+        material: GOAT_HORN
+        display-name: '&6群组语音'
+        lore:
+          - '&7创建或加入语音群组'
+          - '&7群内无视距离，全图可听'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[message] &7群组语音：打开模组设置界面创建/加入群组'
+          - '[message] &7需要权限 &evoicechat.groups'
+
+      setting:
+        material: COMPARATOR
+        display-name: '&b音量与距离设置'
+        lore:
+          - '&7在客户端模组设置里调整'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[message] &7音量、麦克风、语音距离均在客户端模组设置中调整'
+
+      troubleshoot:
+        material: REDSTONE_LAMP
+        display-name: '&c听不到 / 说不了'
+        lore:
+          - '&7排查清单'
+          - '&8检查 UDP 端口 24454 是否放行'
+        slot: 17
+        actions:
+          - '[close]'
+          - '[message] &71) 确认客户端已安装语音模组且版本匹配'
+          - '[message] &72) 服务器 UDP 端口 &e24454 &7已在防火墙与云安全组放行'
+          - '[message] &73) 游戏内音频输出设备选择正确'
+
+  ##########################################################
+  # ██████  管 理 菜 单  ██████
+  # 入口：main 菜单的「管理面板」（permission: quickmenu.admin）
+  #      或管理员直接执行 /qm open admin
+  # 所有管理项均带 permission，无权限者即使强行 /qm open 也看不到任何按钮
+  ##########################################################
+
+  # ==================== 管理面板主菜单 ====================
+  admin:
+    title: '&c&l管理面板'
+    bedrock-content: '&7选择一个管理分类'
+    size: 36
+    back-menu: main
+    filler:
+      material: RED_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      admin-player:
+        material: PLAYER_HEAD
+        display-name: '&a&l玩家管理'
+        lore:
+          - '&7看背包、传送、模式、治疗、飞行'
+          - '&7隐身、清空背包、查信息'
+        slot: 10
+        glowing: true
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-player'
+
+      admin-punish:
+        material: IRON_AXE
+        display-name: '&c&l处罚管理'
+        lore:
+          - '&7踢出、封禁、临时封禁、解封'
+          - '&7禁言、关押、广播'
+        slot: 11
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-punish'
+
+      admin-teleport:
+        material: ENDER_PEARL
+        display-name: '&b&l传送管理'
+        lore:
+          - '&7强制传送、拉人、全员传送'
+          - '&7设置出生点与公共传送点'
+        slot: 12
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-teleport'
+
+      admin-residence:
+        material: DIAMOND_BLOCK
+        display-name: '&2&l领地管理'
+        lore:
+          - '&7查看/删除任意领地、转移归属'
+        slot: 13
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-residence'
+
+      admin-inspect:
+        material: SPYGLASS
+        display-name: '&9&l审计与回滚'
+        lore:
+          - '&7CoreProtect 查询、回滚、恢复'
+          - '&c含不可恢复操作，谨慎使用'
+        slot: 14
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-inspect'
+
+      admin-world:
+        material: FILLED_MAP
+        display-name: '&6&l世界管理'
+        lore:
+          - '&7时间与天气、Chunky 预生成'
+          - '&7WorldEdit 常用工具'
+        slot: 15
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-world'
+
+      admin-server:
+        material: REDSTONE_BLOCK
+        display-name: '&e&l服务器监控'
+        lore:
+          - '&7spark 性能、Geyser、ViaVersion'
+          - '&7EasyBot、插件列表'
+        slot: 16
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-server'
+
+      admin-perm:
+        material: ENCHANTED_BOOK
+        display-name: '&d&l权限管理'
+        lore:
+          - '&7LuckPerms 编辑器、同步、重载'
+        slot: 19
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-perm'
+
+      admin-qm:
+        material: COMPASS
+        display-name: '&b&l菜单管理'
+        lore:
+          - '&7QuickMenu 自身的重载与诊断'
+        slot: 20
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-qm'
+
+      backmain:
+        material: NETHER_STAR
+        display-name: '&f返回玩家主菜单'
+        lore:
+          - '&7回到普通玩家看到的菜单'
+        slot: 22
+        permission: quickmenu.admin
+        actions:
+          - '[menu] main'
+
+  # ==================== 玩家管理 ====================
+  admin-player:
+    title: '&a&l玩家管理'
+    bedrock-content: '&7选择一个操作'
+    size: 27
+    back-menu: admin
+    filler:
+      material: GREEN_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      invsee:
+        material: CHEST
+        display-name: '&e查看玩家背包'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/openinv 玩家名'
+        slot: 10
+        permission: openinv.open
+        actions:
+          - '[close]'
+          - '[message] &7查看背包：&e/openinv 玩家名'
+
+      tp:
+        material: ENDER_PEARL
+        display-name: '&b传送到玩家'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/tp 玩家名'
+        slot: 11
+        permission: essentials.tp
+        actions:
+          - '[close]'
+          - '[message] &7传送到玩家：&e/tp 玩家名'
+
+      tphere:
+        material: ENDER_EYE
+        display-name: '&b把玩家拉过来'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/tphere 玩家名'
+        slot: 12
+        permission: essentials.tphere
+        actions:
+          - '[close]'
+          - '[message] &7拉玩家过来：&e/tphere 玩家名'
+
+      gamemode:
+        material: DIAMOND_PICKAXE
+        display-name: '&6切换游戏模式'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/gamemode creative 玩家名'
+        slot: 13
+        permission: essentials.gamemode
+        actions:
+          - '[close]'
+          - '[message] &7切换模式：&e/gamemode creative 玩家名'
+          - '[message] &8可选：survival creative adventure spectator'
+
+      heal:
+        material: GOLDEN_APPLE
+        display-name: '&a治疗自己'
+        slot: 14
+        permission: essentials.heal
+        actions:
+          - '[close]'
+          - '[player] heal'
+
+      fly:
+        material: ELYTRA
+        display-name: '&b切换飞行'
+        lore:
+          - '&7切换自己的飞行状态'
+        slot: 15
+        permission: essentials.fly
+        actions:
+          - '[close]'
+          - '[player] fly'
+
+      god:
+        material: SHIELD
+        display-name: '&6切换无敌'
+        slot: 16
+        permission: essentials.god
+        actions:
+          - '[close]'
+          - '[player] god'
+
+      feed:
+        material: COOKED_BEEF
+        display-name: '&e恢复饥饿'
+        slot: 17
+        permission: essentials.feed
+        actions:
+          - '[close]'
+          - '[player] feed'
+
+      vanish:
+        material: POTION
+        display-name: '&8切换隐身'
+        lore:
+          - '&7隐身后其他玩家看不到你'
+        slot: 19
+        permission: essentials.vanish
+        actions:
+          - '[close]'
+          - '[player] vanish'
+
+      clearinv:
+        material: HOPPER
+        display-name: '&c清空玩家背包'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/ci 玩家名'
+          - '&c不可恢复'
+        slot: 20
+        permission: essentials.clearinventory
+        actions:
+          - '[close]'
+          - '[message] &7清空背包：&e/ci 玩家名'
+
+      whois:
+        material: PLAYER_HEAD
+        display-name: '&b查看玩家信息'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/whois 玩家名'
+        slot: 21
+        permission: essentials.whois
+        actions:
+          - '[close]'
+          - '[message] &7查看信息：&e/whois 玩家名'
+
+      seen:
+        material: CLOCK
+        display-name: '&7查看最后在线'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/seen 玩家名'
+        slot: 22
+        permission: essentials.seen
+        actions:
+          - '[close]'
+          - '[message] &7最后在线：&e/seen 玩家名'
+
+      repair:
+        material: ANVIL
+        display-name: '&a修复手中装备'
+        slot: 23
+        permission: essentials.repair
+        actions:
+          - '[close]'
+          - '[player] repair'
+
+      give:
+        material: CHEST_MINECART
+        display-name: '&6给玩家物品'
+        lore:
+          - '&7需手动补充玩家名与物品'
+          - '&e用法：/give 玩家名 物品 数量'
+        slot: 24
+        permission: essentials.give
+        actions:
+          - '[close]'
+          - '[message] &7给物品：&e/give 玩家名 物品 数量'
+
+  # ==================== 处罚管理 ====================
+  admin-punish:
+    title: '&c&l处罚管理'
+    bedrock-content: '&7选择一个处罚操作'
+    size: 27
+    back-menu: admin
+    filler:
+      material: RED_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      kick:
+        material: LEATHER_BOOTS
+        display-name: '&e踢出玩家'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/kick 玩家名 原因'
+        slot: 10
+        permission: essentials.kick
+        actions:
+          - '[close]'
+          - '[message] &7踢出玩家：&e/kick 玩家名 原因'
+
+      ban:
+        material: BARRIER
+        display-name: '&c永久封禁'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/ban 玩家名 原因'
+        slot: 11
+        permission: essentials.ban
+        actions:
+          - '[close]'
+          - '[message] &7永久封禁：&e/ban 玩家名 原因'
+
+      tempban:
+        material: CLOCK
+        display-name: '&6临时封禁'
+        lore:
+          - '&7需手动补充玩家名与时长'
+          - '&e用法：/tempban 玩家名 7d 原因'
+          - '&8时长单位：s m h d'
+        slot: 12
+        permission: essentials.tempban
+        actions:
+          - '[close]'
+          - '[message] &7临时封禁：&e/tempban 玩家名 7d 原因'
+
+      unban:
+        material: EMERALD
+        display-name: '&a解除封禁'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/unban 玩家名'
+        slot: 13
+        permission: essentials.unban
+        actions:
+          - '[close]'
+          - '[message] &7解除封禁：&e/unban 玩家名'
+
+      banip:
+        material: IRON_BARS
+        display-name: '&c封禁 IP'
+        lore:
+          - '&7需手动补充玩家名或 IP'
+          - '&e用法：/banip 玩家名'
+          - '&c会封禁整个 IP，慎用'
+        slot: 14
+        permission: essentials.banip
+        actions:
+          - '[close]'
+          - '[message] &7封禁 IP：&e/banip 玩家名'
+          - '[message] &c注意：会封禁同 IP 下的所有账号'
+
+      mute:
+        material: NOTE_BLOCK
+        display-name: '&7禁言玩家'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/mute 玩家名 [时长]'
+        slot: 15
+        permission: essentials.mute
+        actions:
+          - '[close]'
+          - '[message] &7禁言：&e/mute 玩家名 10m'
+
+      unmute:
+        material: BELL
+        display-name: '&a解除禁言'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/unmute 玩家名'
+        slot: 16
+        permission: essentials.unmute
+        actions:
+          - '[close]'
+          - '[message] &7解除禁言：&e/unmute 玩家名'
+
+      jail:
+        material: IRON_BLOCK
+        display-name: '&6关押玩家'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/jail 玩家名 [时长]'
+          - '&7需先 /setjail 设置监狱点'
+        slot: 17
+        permission: essentials.jail
+        actions:
+          - '[close]'
+          - '[message] &7关押：&e/jail 玩家名 10m'
+          - '[message] &7首次使用需先执行 &e/setjail &7设置监狱'
+
+      unjail:
+        material: IRON_DOOR
+        display-name: '&a释放玩家'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/unjail 玩家名'
+        slot: 19
+        permission: essentials.unjail
+        actions:
+          - '[close]'
+          - '[message] &7释放：&e/unjail 玩家名'
+
+      broadcast:
+        material: JUKEBOX
+        display-name: '&6全服广播'
+        lore:
+          - '&7需手动补充广播内容'
+          - '&e用法：/broadcast 内容'
+        slot: 20
+        permission: essentials.broadcast
+        actions:
+          - '[close]'
+          - '[message] &7广播：&e/broadcast 你要广播的内容'
+
+      socialspy:
+        material: SPYGLASS
+        display-name: '&8监视他人私信'
+        lore:
+          - '&7切换私信监视状态'
+        slot: 21
+        permission: essentials.socialspy
+        actions:
+          - '[close]'
+          - '[player] socialspy'
+
+  # ==================== 传送管理 ====================
+  admin-teleport:
+    title: '&b&l传送管理'
+    bedrock-content: '&7管理传送相关'
+    size: 27
+    back-menu: admin
+    filler:
+      material: LIGHT_BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      tp:
+        material: ENDER_PEARL
+        display-name: '&b强制传送到玩家'
+        lore:
+          - '&7无需对方同意'
+          - '&e用法：/tp 玩家名'
+        slot: 10
+        permission: essentials.tp
+        actions:
+          - '[close]'
+          - '[message] &7强制传送：&e/tp 玩家名'
+
+      tphere:
+        material: ENDER_EYE
+        display-name: '&b强制拉玩家过来'
+        lore:
+          - '&e用法：/tphere 玩家名'
+        slot: 11
+        permission: essentials.tphere
+        actions:
+          - '[close]'
+          - '[message] &7强制拉人：&e/tphere 玩家名'
+
+      tpall:
+        material: BEACON
+        display-name: '&6全员传送到我'
+        lore:
+          - '&7把全服玩家拉到你身边'
+          - '&c会影响所有在线玩家'
+        slot: 12
+        permission: essentials.tpall
+        actions:
+          - '[close]'
+          - '[player] tpall'
+
+      top:
+        material: LADDER
+        display-name: '&a传送到头顶'
+        lore:
+          - '&7传送到上方最近的安全位置'
+        slot: 13
+        permission: essentials.top
+        actions:
+          - '[close]'
+          - '[player] top'
+
+      setspawn:
+        material: GRASS_BLOCK
+        display-name: '&e设置出生点'
+        lore:
+          - '&7把当前位置设为服务器出生点'
+        slot: 14
+        permission: essentials.setspawn
+        actions:
+          - '[close]'
+          - '[player] setspawn'
+
+      setwarp:
+        material: OAK_SIGN
+        display-name: '&a创建公共传送点'
+        lore:
+          - '&7需手动补充传送点名称'
+          - '&e用法：/setwarp 名字'
+        slot: 15
+        permission: essentials.setwarp
+        actions:
+          - '[close]'
+          - '[message] &7创建传送点：&e/setwarp 名字'
+
+      delwarp:
+        material: BARRIER
+        display-name: '&c删除公共传送点'
+        lore:
+          - '&7需手动补充传送点名称'
+          - '&e用法：/delwarp 名字'
+        slot: 16
+        permission: essentials.delwarp
+        actions:
+          - '[close]'
+          - '[message] &7删除传送点：&e/delwarp 名字'
+
+      tpo:
+        material: PURPUR_BLOCK
+        display-name: '&8静默传送到玩家'
+        lore:
+          - '&7不提示对方'
+          - '&e用法：/tpo 玩家名'
+        slot: 17
+        permission: essentials.tpo
+        actions:
+          - '[close]'
+          - '[message] &7静默传送：&e/tpo 玩家名'
+
+      tpohere:
+        material: END_CRYSTAL
+        display-name: '&8静默拉玩家过来'
+        lore:
+          - '&e用法：/tpohere 玩家名'
+        slot: 19
+        permission: essentials.tpohere
+        actions:
+          - '[close]'
+          - '[message] &7静默拉人：&e/tpohere 玩家名'
+
+  # ==================== 领地管理（Residence 管理员） ====================
+  admin-residence:
+    title: '&2&l领地管理'
+    bedrock-content: '&7领地管理（Residence 管理权限）'
+    size: 27
+    back-menu: admin
+    filler:
+      material: LIME_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      listall:
+        material: BOOKSHELF
+        display-name: '&a列出服务器全部领地'
+        lore:
+          - '&e用法：/resadmin listall'
+        slot: 10
+        permission: residence.admin
+        actions:
+          - '[close]'
+          - '[message] &7全部领地：&e/resadmin listall'
+
+      info:
+        material: MAP
+        display-name: '&b查看任意领地信息'
+        lore:
+          - '&7需手动补充领地名称'
+          - '&e用法：/resadmin info 领地名'
+        slot: 11
+        permission: residence.admin.info
+        actions:
+          - '[close]'
+          - '[message] &7领地信息：&e/resadmin info 领地名'
+
+      remove:
+        material: BARRIER
+        display-name: '&c删除任意领地'
+        lore:
+          - '&7需手动补充领地名称'
+          - '&e用法：/resadmin remove 领地名'
+          - '&c不可恢复'
+        slot: 12
+        permission: residence.admin.remove
+        actions:
+          - '[close]'
+          - '[message] &7删除领地：&e/resadmin remove 领地名'
+          - '[message] &c删除后不可恢复，请先确认'
+
+      setowner:
+        material: NAME_TAG
+        display-name: '&6转移领地归属'
+        lore:
+          - '&7需手动补充领地名与新主人'
+          - '&e用法：/resadmin setowner 领地名 新主人'
+        slot: 13
+        permission: residence.admin.setowner
+        actions:
+          - '[close]'
+          - '[message] &7转移领地：&e/resadmin setowner 领地名 新主人'
+
+      tp:
+        material: ENDER_PEARL
+        display-name: '&b传送到任意领地'
+        lore:
+          - '&7需手动补充领地名称'
+          - '&e用法：/resadmin tp 领地名'
+        slot: 14
+        permission: residence.admin.tp
+        actions:
+          - '[close]'
+          - '[message] &7传送到领地：&e/resadmin tp 领地名'
+
+      select:
+        material: DIAMOND_PICKAXE
+        display-name: '&e选取他人领地'
+        lore:
+          - '&7把别人的领地载入你的选区'
+          - '&e用法：/resadmin select 领地名'
+        slot: 15
+        permission: residence.admin.select
+        actions:
+          - '[close]'
+          - '[message] &7选取领地：&e/resadmin select 领地名'
+
+  # ==================== 审计与回滚（CoreProtect） ====================
+  admin-inspect:
+    title: '&9&l审计与回滚'
+    bedrock-content: '&7CoreProtect 方块记录'
+    size: 27
+    back-menu: admin
+    filler:
+      material: BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      inspect:
+        material: SPYGLASS
+        display-name: '&a开启/关闭查询模式'
+        lore:
+          - '&7开启后点击方块即可查看是谁改的'
+          - '&7再次点击关闭'
+        slot: 10
+        permission: coreprotect.inspect
+        actions:
+          - '[close]'
+          - '[player] co inspect'
+
+      near:
+        material: COMPASS
+        display-name: '&b查看附近最近变更'
+        lore:
+          - '&7列出你周围最近的方块改动'
+        slot: 11
+        permission: coreprotect.near
+        actions:
+          - '[close]'
+          - '[player] co near'
+
+      lookup:
+        material: BOOK
+        display-name: '&e条件查询记录'
+        lore:
+          - '&7按玩家、时间、范围查询'
+          - '&e用法：/co lookup u:玩家名 t:24h r:10'
+        slot: 12
+        permission: coreprotect.lookup
+        actions:
+          - '[close]'
+          - '[message] &7查询记录：&e/co lookup u:玩家名 t:24h r:10'
+          - '[message] &8参数：u=玩家 t=时间 r=半径 a=动作 b=方块'
+
+      rollback:
+        material: CLOCK
+        display-name: '&c回滚破坏'
+        lore:
+          - '&7把某段时间内的改动还原'
+          - '&e用法：/co rollback u:玩家名 t:24h'
+          - '&c会影响其他玩家，务必确认范围'
+        slot: 13
+        permission: coreprotect.rollback
+        actions:
+          - '[close]'
+          - '[message] &c回滚：&e/co rollback u:玩家名 t:24h r:10'
+          - '[message] &c务必先用 /co lookup 确认范围'
+
+      restore:
+        material: REPEATER
+        display-name: '&6撤销回滚'
+        lore:
+          - '&7把误回滚的内容恢复回来'
+          - '&e用法：/co restore u:玩家名 t:24h'
+        slot: 14
+        permission: coreprotect.restore
+        actions:
+          - '[close]'
+          - '[message] &7撤销回滚：&e/co restore u:玩家名 t:24h'
+
+      purge:
+        material: TNT
+        display-name: '&c&l清理数据库'
+        lore:
+          - '&7删除指定时间之前的记录'
+          - '&e用法：/co purge t:30d'
+          - '&c&l不可恢复，仅服主操作'
+        slot: 15
+        permission: coreprotect.purge
+        actions:
+          - '[close]'
+          - '[message] &c&l危险：&e/co purge t:30d'
+          - '[message] &c清理后记录无法找回，请先备份数据库'
+
+      reload:
+        material: REDSTONE
+        display-name: '&7重载 CoreProtect'
+        slot: 16
+        permission: coreprotect.reload
+        actions:
+          - '[close]'
+          - '[player] co reload'
+
+      help:
+        material: KNOWLEDGE_BOOK
+        display-name: '&fCoreProtect 帮助'
+        slot: 17
+        permission: coreprotect.help
+        actions:
+          - '[close]'
+          - '[player] co help'
+
+  # ==================== 世界管理（Chunky + WorldEdit + 原版） ====================
+  admin-world:
+    title: '&6&l世界管理'
+    bedrock-content: '&7时间天气 / 区块预生成 / 创世神'
+    size: 36
+    back-menu: admin
+    filler:
+      material: ORANGE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      day:
+        material: SUNFLOWER
+        display-name: '&e切换为白天'
+        slot: 10
+        permission: minecraft.command.time
+        actions:
+          - '[close]'
+          - '[player] time set day'
+
+      night:
+        material: COAL
+        display-name: '&9切换为夜晚'
+        slot: 11
+        permission: minecraft.command.time
+        actions:
+          - '[close]'
+          - '[player] time set night'
+
+      clear:
+        material: GLASS
+        display-name: '&b天气：晴'
+        slot: 12
+        permission: minecraft.command.weather
+        actions:
+          - '[close]'
+          - '[player] weather clear'
+
+      rain:
+        material: WATER_BUCKET
+        display-name: '&9天气：雨'
+        slot: 13
+        permission: minecraft.command.weather
+        actions:
+          - '[close]'
+          - '[player] weather rain'
+
+      thunder:
+        material: LIGHTNING_ROD
+        display-name: '&5天气：雷暴'
+        slot: 14
+        permission: minecraft.command.weather
+        actions:
+          - '[close]'
+          - '[player] weather thunder'
+
+      cprogress:
+        material: FILLED_MAP
+        display-name: '&a区块预生成进度'
+        lore:
+          - '&7查看 Chunky 当前任务进度'
+        slot: 19
+        permission: chunky.progress
+        actions:
+          - '[close]'
+          - '[player] chunky progress'
+
+      cstart:
+        material: DIAMOND_PICKAXE
+        display-name: '&a开始预生成'
+        lore:
+          - '&7开始当前选区的区块生成任务'
+          - '&8需先设置世界与半径'
+        slot: 20
+        permission: chunky.start
+        actions:
+          - '[close]'
+          - '[player] chunky start'
+
+      cpause:
+        material: REDSTONE_LAMP
+        display-name: '&6暂停预生成'
+        lore:
+          - '&7暂停并保存当前进度'
+        slot: 21
+        permission: chunky.pause
+        actions:
+          - '[close]'
+          - '[player] chunky pause'
+
+      ccontinue:
+        material: LIME_WOOL
+        display-name: '&a继续预生成'
+        lore:
+          - '&7继续上次暂停的任务'
+        slot: 22
+        permission: chunky.pause
+        actions:
+          - '[close]'
+          - '[player] chunky continue'
+
+      ccancel:
+        material: BARRIER
+        display-name: '&c取消预生成'
+        lore:
+          - '&7停止当前任务'
+          - '&c未完成的进度会丢失'
+        slot: 23
+        permission: chunky.cancel
+        actions:
+          - '[close]'
+          - '[player] chunky cancel'
+
+      ctrim:
+        material: SHEARS
+        display-name: '&c&l裁剪区块'
+        lore:
+          - '&7删除选区之外的区块'
+          - '&c&l不可恢复，会删掉玩家建筑'
+        slot: 24
+        permission: chunky.trim
+        actions:
+          - '[close]'
+          - '[message] &c&l危险：&e/chunky trim &7会删除选区外所有区块'
+          - '[message] &c执行前务必确认选区，建议先备份世界'
+
+      wewand:
+        material: WOODEN_AXE
+        display-name: '&6获取选区木斧'
+        lore:
+          - '&7WorldEdit 选区工具'
+          - '&8左键点第一角，右键点第二角'
+        slot: 28
+        permission: worldedit.wand
+        actions:
+          - '[close]'
+          - '[player] //wand'
+
+      weundo:
+        material: ARROW
+        display-name: '&a撤销上一步'
+        lore:
+          - '&7WorldEdit 撤销'
+        slot: 29
+        permission: worldedit.history.undo
+        actions:
+          - '[close]'
+          - '[player] //undo'
+
+      weredo:
+        material: SPECTRAL_ARROW
+        display-name: '&a重做上一步'
+        lore:
+          - '&7WorldEdit 重做'
+        slot: 30
+        permission: worldedit.history.redo
+        actions:
+          - '[close]'
+          - '[player] //redo'
+
+      wecopy:
+        material: BOOK
+        display-name: '&b复制选区'
+        lore:
+          - '&7复制当前选区内容'
+        slot: 31
+        permission: worldedit.clipboard.copy
+        actions:
+          - '[close]'
+          - '[player] //copy'
+
+      wepaste:
+        material: WRITABLE_BOOK
+        display-name: '&b粘贴选区'
+        lore:
+          - '&7在你当前站位粘贴'
+        slot: 32
+        permission: worldedit.clipboard.paste
+        actions:
+          - '[close]'
+          - '[player] //paste'
+
+  # ==================== 服务器监控 ====================
+  admin-server:
+    title: '&e&l服务器监控'
+    bedrock-content: '&7性能与组件状态'
+    size: 27
+    back-menu: admin
+    filler:
+      material: YELLOW_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      tps:
+        material: CLOCK
+        display-name: '&a查看 TPS'
+        lore:
+          - '&7服务器每秒刻数与延迟'
+        slot: 10
+        permission: spark.tps
+        actions:
+          - '[close]'
+          - '[player] spark tps'
+
+      health:
+        material: GOLDEN_APPLE
+        display-name: '&a健康报告'
+        lore:
+          - '&7CPU / 内存 / 磁盘综合报告'
+        slot: 11
+        permission: spark.health
+        actions:
+          - '[close]'
+          - '[player] spark health'
+
+      ping:
+        material: REPEATER
+        display-name: '&b查看网络延迟'
+        slot: 12
+        permission: spark.ping
+        actions:
+          - '[close]'
+          - '[player] spark ping'
+
+      profiler:
+        material: SPYGLASS
+        display-name: '&6性能采样'
+        lore:
+          - '&7开启采样后需手动停止'
+          - '&e用法：/spark profiler start'
+          - '&7停止：/spark profiler stop'
+        slot: 13
+        permission: spark.profiler
+        actions:
+          - '[close]'
+          - '[message] &7开始采样：&e/spark profiler start'
+          - '[message] &7停止并查看：&e/spark profiler stop'
+
+      heapsummary:
+        material: CHEST
+        display-name: '&7堆内存摘要'
+        slot: 14
+        permission: spark.heapsummary
+        actions:
+          - '[close]'
+          - '[player] spark heapsummary'
+
+      geyserreload:
+        material: TRIDENT
+        display-name: '&b重载 Geyser'
+        lore:
+          - '&7重载基岩互通层配置'
+        slot: 15
+        permission: geyser.command.reload
+        actions:
+          - '[close]'
+          - '[player] geyser reload'
+
+      geyserdump:
+        material: WRITTEN_BOOK
+        display-name: '&b生成 Geyser 诊断'
+        lore:
+          - '&7生成调试信息链接，用于报障'
+        slot: 16
+        permission: geyser.command.dump
+        actions:
+          - '[close]'
+          - '[player] geyser dump'
+
+      geyserstat:
+        material: PAINTING
+        display-name: '&7Geyser 统计'
+        slot: 17
+        permission: geyser.command.statistics
+        actions:
+          - '[close]'
+          - '[player] geyser statistics'
+
+      viaversion:
+        material: MAGENTA_WOOL
+        display-name: '&dViaVersion 客户端版本'
+        lore:
+          - '&7查看在线玩家的客户端版本分布'
+        slot: 19
+        permission: viaversion.admin
+        actions:
+          - '[close]'
+          - '[player] viaversion list'
+
+      ebotreload:
+        material: BELL
+        display-name: '&6重载 EasyBot'
+        lore:
+          - '&7重载 QQ 机器人并重连 Bridge'
+        slot: 20
+        permission: easybot.command.reload
+        actions:
+          - '[close]'
+          - '[player] ebot reload'
+
+      plugins:
+        material: BOOKSHELF
+        display-name: '&7插件列表'
+        slot: 21
+        permission: bukkit.command.plugins
+        actions:
+          - '[close]'
+          - '[player] pl'
+
+      voicechat:
+        material: NOTE_BLOCK
+        display-name: '&b语音聊天管理'
+        lore:
+          - '&7需手动补充子命令'
+          - '&e用法：/voicechat'
+        slot: 22
+        permission: voicechat.admin
+        actions:
+          - '[close]'
+          - '[message] &7语音管理：&e/voicechat'
+          - '[message] &7可调整语音距离、踢出语音等'
+
+  # ==================== 权限管理（LuckPerms） ====================
+  admin-perm:
+    title: '&d&l权限管理'
+    bedrock-content: '&7LuckPerms'
+    size: 27
+    back-menu: admin
+    filler:
+      material: MAGENTA_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      editor:
+        material: WRITABLE_BOOK
+        display-name: '&a打开网页编辑器'
+        lore:
+          - '&7在浏览器里可视化编辑权限'
+          - '&7链接会打印在聊天栏'
+          - '&c任何拿到链接的人都能改权限'
+        slot: 10
+        permission: luckperms.editor
+        actions:
+          - '[close]'
+          - '[player] lp editor'
+
+      sync:
+        material: REPEATER
+        display-name: '&b同步权限数据'
+        lore:
+          - '&7从数据库重新拉取（多服务器时用）'
+        slot: 11
+        permission: luckperms.sync
+        actions:
+          - '[close]'
+          - '[player] lp sync'
+
+      reload:
+        material: REDSTONE
+        display-name: '&6重载 LuckPerms'
+        slot: 12
+        permission: luckperms.reload
+        actions:
+          - '[close]'
+          - '[player] lp reload'
+
+      tree:
+        material: OAK_SAPLING
+        display-name: '&7查看权限树'
+        lore:
+          - '&7列出某插件注册了哪些权限'
+          - '&e用法：/lp tree essentials'
+        slot: 13
+        permission: luckperms.tree
+        actions:
+          - '[close]'
+          - '[message] &7权限树：&e/lp tree 关键字'
+
+      info:
+        material: BOOK
+        display-name: '&7LuckPerms 信息'
+        slot: 14
+        permission: luckperms.info
+        actions:
+          - '[close]'
+          - '[player] lp info'
+
+      userinfo:
+        material: PLAYER_HEAD
+        display-name: '&b查看玩家权限'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/lp user 玩家名 info'
+        slot: 15
+        permission: luckperms.info
+        actions:
+          - '[close]'
+          - '[message] &7查看玩家权限：&e/lp user 玩家名 info'
+
+      verbose:
+        material: SPYGLASS
+        display-name: '&e实时追踪权限判定'
+        lore:
+          - '&7排查「明明给了权限却不生效」的利器'
+          - '&e用法：/lp verbose on 玩家名 权限关键字'
+          - '&7关闭：/lp verbose off'
+        slot: 16
+        permission: luckperms.verbose
+        actions:
+          - '[close]'
+          - '[message] &7开启追踪：&e/lp verbose on 玩家名 权限关键字'
+          - '[message] &7关闭追踪：&e/lp verbose off'
+
+  # ==================== 菜单管理（QuickMenu 自身） ====================
+  admin-qm:
+    title: '&b&l菜单管理'
+    bedrock-content: '&7QuickMenu 自身'
+    size: 27
+    back-menu: admin
+    filler:
+      material: CYAN_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      reload:
+        material: REDSTONE
+        display-name: '&a重载菜单配置'
+        lore:
+          - '&7改完 config.yml 后执行，无需重启'
+        slot: 10
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[player] qm reload'
+
+      list:
+        material: BOOKSHELF
+        display-name: '&7列出已加载菜单'
+        slot: 11
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[player] qm list'
+
+      info:
+        material: COMPASS
+        display-name: '&e客户端诊断'
+        lore:
+          - '&7查看自己是 Java 端还是基岩端'
+          - '&7排查表单不弹出的首选命令'
+        slot: 12
+        permission: quickmenu.use
+        actions:
+          - '[close]'
+          - '[player] qm info'
+
+      give:
+        material: CHEST
+        display-name: '&6发放触发物品'
+        lore:
+          - '&7需手动补充玩家名'
+          - '&e用法：/qm give 玩家名'
+        slot: 13
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[message] &7发放触发物品：&e/qm give 玩家名'
+
+      openmain:
+        material: NETHER_STAR
+        display-name: '&f回到玩家主菜单'
+        slot: 14
+        permission: quickmenu.use
+        actions:
+          - '[menu] main'

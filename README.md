@@ -11,6 +11,7 @@
 
 ## 目录
 
+- [文档分类总览](#文档分类总览)
 - [一、项目简介](#一项目简介)
 - [二、服务器速览](#二服务器速览)
 - [三、文档导航](#三文档导航)
@@ -28,6 +29,20 @@
 - [十五、架构分析与优化总结](#十五架构分析与优化总结)
 
 ---
+
+## 文档分类总览
+
+> 本仓库文档按**功能域**归入 7 个分类目录（数字前缀 + 中文名）；每个分类内的子文件夹按 1、2、3… 连续编号，无跳号。
+
+| 分类目录 | 说明 | 包含子文件夹 |
+| --- | --- | --- |
+| **1-服务端核心与网络层/** | 服务端内核、外置登录代理、跨端互通、跨版本兼容、代理与网络拓扑 | 01-Leaf · 02-Yggdrasil · 03-Geyser/Floodgate · 04-ViaVersion · 05-端口与网络架构 · 06-Velocity 多服 |
+| **2-玩法与玩家功能插件/** | 权限、经济、记录回滚、领地、皮肤等直接改变游戏玩法的插件 | 01-LuckPerms · 02-Vault · 03-CoreProtect · 04-Residence · 05-SkinsRestorer · 06-OpenInv · 07-WorldEdit · 08-Simple Voice Chat · 09-chunky · 10-EssentialsX · 11-BedrockPlayerSupport · 12-DecentHolograms · 13-自定义死亡信息 · 14-宠物系统 |
+| **3-运维监控与面板/** | 性能分析、统计、依赖库、Web/进程面板，以及 QQ 机器人联动 | 01-EasyBot · 02-OPanel · 03-spark · 04-CMILib · 05-bStats · 06-MCSM |
+| **4-玩家信息与数据展示/** | 玩家行为分析、TAB 信息、称号展示、坐标轨迹记录 | 01-玩家信息收集与展示 · 02-玩家位置记录 |
+| **5-配置与管理指南/** | 通用配置补充与管理命令速查 | 01-服务器配置文件补充 · 02-常用管理命令速查 |
+| **6-指令参考/** | 全量指令大全（实用 / 有趣 / 整蛊） | 01-指令大全 |
+| **7-工具与常见问题约束/** | 待选插件、数据迁移、FAQ、影响平衡的禁用项 | 01-实用工具 · 02-常见问题 · 03-禁用影响平衡的插件功能 |
 
 ## 一、项目简介
 
@@ -70,7 +85,7 @@
 | 视距 / 模拟距离 | 12 / 4 区块                           |
 | 启动内存        | 初始 1GB / 最大 4GB                   |
 | 服务端目录      | `C:\mc_serve\1.21.11-test`            |
-| 文档更新日期    | 2026-09-01                            |
+| 文档更新日期    | 2026-09-15                            |
 
 ---
 
@@ -80,77 +95,91 @@
 
 | #    | 章节              | 路径                                                                                                        | 说明                                      |
 | ---- | ----------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| 01   | 服务器核心        | [01-服务器核心-Leaf/](01-服务器核心-Leaf/Leaf服务端核心.md)                                                 | Leaf 核心、性能特性、Paper 迁移注意事项   |
-| 02   | 外置登录代理      | [02-外置登录代理-YggdrasilOfficialProxy/](02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md) | authlib-injector 字节码注入原理与认证链路 |
-| 03   | Java-Bedrock 互通 | [03-Java-Bedrock互通层-Geyser-Floodgate/](03-Java-Bedrock互通层-Geyser-Floodgate/README.md)                 | Geyser 协议转换 + Floodgate 基岩认证      |
-| 03.1 | └ Geyser-Spigot   | [01-Geyser-Spigot.md](03-Java-Bedrock互通层-Geyser-Floodgate/01-Geyser-Spigot.md)                           | 端口、连接地址、调试命令                  |
-| 03.2 | └ Floodgate       | [02-Floodgate.md](03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)                                   | 玩家识别前缀、key.pem 密钥管理            |
-| 04   | 跨版本兼容        | [04-跨版本协议兼容-ViaVersion/](04-跨版本协议兼容-ViaVersion/ViaVersion.md)                                 | 1.8 ~ 最新客户端协议翻译                  |
+| 01   | 服务器核心        | [1-服务端核心与网络层/01-服务器核心-Leaf/](1-服务端核心与网络层/01-服务器核心-Leaf/Leaf服务端核心.md)                                                 | Leaf 核心、性能特性、Paper 迁移注意事项   |
+| 02   | 外置登录代理      | [1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/](1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md) | authlib-injector 字节码注入原理与认证链路 |
+| 03   | Java-Bedrock 互通 | [1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/README.md)                 | Geyser 协议转换 + Floodgate 基岩认证      |
+| 03.1 | └ Geyser-Spigot   | [01-Geyser-Spigot.md](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/01-Geyser-Spigot.md)                           | 端口、连接地址、调试命令                  |
+| 03.2 | └ Floodgate       | [02-Floodgate.md](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)                                   | 玩家识别前缀、key.pem 密钥管理            |
+| 04   | 跨版本兼容        | [1-服务端核心与网络层/04-跨版本协议兼容-ViaVersion/](1-服务端核心与网络层/04-跨版本协议兼容-ViaVersion/ViaVersion.md)                                 | 1.8 ~ 最新客户端协议翻译                  |
 
 ### 3.2 玩法与管理插件
 
 | #    | 章节             | 路径                                                                                                                               | 说明                            |
 | ---- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| 05   | 权限管理         | [05-权限管理系统-LuckPerms/](05-权限管理系统-LuckPerms/LuckPerms.md)                                                               | 组/玩家权限、继承、上下文       |
-| 06   | 经济系统         | [06-经济系统-Vault/](06-经济系统-Vault/Vault.md)                                                                                   | Vault 经济 API 与占位符         |
-| 07   | 方块审计         | [07-方块记录与回滚-CoreProtect/](07-方块记录与回滚-CoreProtect/CoreProtect.md)                                                     | 记录/查询/回滚，SQLite 转 MySQL |
-| 07.1 | └ 数据库过大处理 | [1.行为数据库过大](07-方块记录与回滚-CoreProtect/CoreProtect插件：玩家的行为数据库过大/1.CoreProtect插件：玩家的行为数据库过大.md) | 清理与自动清理方案              |
-| 07.2 | └ SQLite → MySQL | [2.切换到MySQL](07-方块记录与回滚-CoreProtect/CoreProtect插件：玩家的行为数据库过大/2.将CoreProtect从SQLite切换到MySQL.md)         | 生产环境迁移步骤                |
-| 08   | 领地系统         | [08-领地系统-Residence/](08-领地系统-Residence/Residence.md)                                                                       | 圈地、Flags 权限、配置排查      |
-| 08.1 | └ 玩家使用指南   | [领地插件使用指南（玩家篇）.md](08-领地系统-Residence/领地插件使用指南（玩家篇）.md)                                               | 面向玩家的图文教程              |
-| 09   | 皮肤管理         | [09-皮肤管理-SkinsRestorer/](09-皮肤管理-SkinsRestorer/SkinsRestorer.md)                                                           | 外置登录下的皮肤加载            |
-| 10   | QQ 机器人联动    | [10-QQ机器人联动-EasyBot/](10-QQ机器人联动-EasyBot/EasyBot.md)                                                                     | 三层架构、跨机部署、绑定规则    |
-| 11   | Web 管理面板     | [11-Web管理面板-OPanel/](11-Web管理面板-OPanel/OPanel.md)                                                                          | accessKey 鉴权与安全建议        |
-| 12   | 离线背包         | [12-离线背包查看-OpenInv/](12-离线背包查看-OpenInv/OpenInv.md)                                                                     | 查看/编辑离线玩家背包           |
-| 20   | 创世神           | [20.创世神WorldEdit/](20.创世神WorldEdit/创世神WorldEdit.md)                                                                       | WorldEdit 安装与常用指令        |
+| 05   | 权限管理         | [2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/](2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/LuckPerms.md)                                                               | 组/玩家权限、继承、上下文       |
+| 06   | 经济系统         | [2-玩法与玩家功能插件/02-经济系统-Vault/](2-玩法与玩家功能插件/02-经济系统-Vault/Vault.md)                                                                                   | Vault 经济 API 与占位符         |
+| 07   | 方块审计         | [2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/](2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/CoreProtect.md)                                                     | 记录/查询/回滚，SQLite 转 MySQL，网页端查询面板 |
+| 07.1 | └ 数据库过大处理 | [1.行为数据库过大](2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/CoreProtect插件：玩家的行为数据库过大/1.CoreProtect插件：玩家的行为数据库过大.md) | 清理与自动清理方案              |
+| 07.2 | └ SQLite → MySQL | [2.切换到MySQL](2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/CoreProtect插件：玩家的行为数据库过大/2.将CoreProtect从SQLite切换到MySQL.md)         | 生产环境迁移步骤                |
+| 08   | 领地系统         | [2-玩法与玩家功能插件/04-领地系统-Residence/](2-玩法与玩家功能插件/04-领地系统-Residence/Residence.md)                                                                       | 圈地、Flags 权限、配置排查      |
+| 08.1 | └ 玩家使用指南   | [领地插件使用指南（玩家篇）.md](2-玩法与玩家功能插件/04-领地系统-Residence/领地插件使用指南（玩家篇）.md)                                               | 面向玩家的图文教程              |
+| 09   | 皮肤管理         | [2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/](2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/SkinsRestorer.md)                                                           | 外置登录下的皮肤加载            |
+| 10   | QQ 机器人联动    | [3-运维监控与面板/01-QQ机器人联动-EasyBot/](3-运维监控与面板/01-QQ机器人联动-EasyBot/EasyBot.md)                                                                     | 三层架构、跨机部署、绑定规则    |
+| 11   | Web 管理面板     | [3-运维监控与面板/02-Web管理面板-OPanel/](3-运维监控与面板/02-Web管理面板-OPanel/OPanel.md)                                                                          | accessKey 鉴权与安全建议        |
+| 12   | 离线背包         | [2-玩法与玩家功能插件/06-离线背包查看-OpenInv/](2-玩法与玩家功能插件/06-离线背包查看-OpenInv/OpenInv.md)                                                                     | 查看/编辑离线玩家背包           |
+| 13   | 全息投影         | [2-玩法与玩家功能插件/12-DecentHolograms全息插件/](2-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md)                                             | 浮动全息文字/物品/头颅，点击交互、动画、分页 |
+| 14   | 自定义死亡信息   | [2-玩法与玩家功能插件/13-自定义死亡信息/](2-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md)                                                       | 整活死亡播报、史诗死亡、音效/粒子/标题、经济收费 |
+| 15   | 宠物系统         | [2-玩法与玩家功能插件/14-宠物系统/](2-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md)                                                                                 | SimplePets 跟随宠物、骑乘/帽子、存档、GemsEconomy 付费 |
+| 20   | 创世神           | [2-玩法与玩家功能插件/07-创世神WorldEdit/](2-玩法与玩家功能插件/07-创世神WorldEdit/创世神WorldEdit.md)                                                                       | WorldEdit 安装与常用指令        |
 
-### 3.3 新增功能组件（22-26）
+### 3.3 新增功能组件（22-27）
 
 | # | 章节 | 路径 | 说明 |
 |---|---|---|---|
-| 22 | 语音聊天 | [22-Simple Voice Chat/](22-Simple Voice Chat/Simple Voice Chat.md) | 近距离语音，含 UDP 端口与内网穿透方案 |
-| 23 | 区块预生成 | [23-chunky区块加载优化/](23-chunky区块加载优化/chunky区块加载优化.md) | 预生成世界，根治跑图卡顿 |
-| 24 | 指令整合（含完整配置） | [24-EssentialsX多功能指令整合/](24-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) | 传送/家园/经济/管理 150+ 命令；`config.yml` / `kits.yml` / 中文别名 / LP 权限示例 |
-| 25 | 基岩 GUI 表单 | [25-BedrockPlayerSupport基岩版GUI表单界面/](25-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 基岩玩家免敲指令的表单界面 |
-| 26 | **快捷菜单（自研插件）** | [26-快捷菜单系统/](26-快捷菜单系统/快捷菜单系统-QuickMenu.md) | **整合全部插件的快捷菜单：玩家线 10 套 + 管理线 10 套（权限门控），Java 箱子 GUI + 基岩原生 Form，含成品 jar 与源码** |
-| 26.1 | └ 成品插件包 | [dist/QuickMenu-1.0.0.jar](26-快捷菜单系统/dist/QuickMenu-1.0.0.jar) | 编译验证通过的部署产物（53.7 KB，含 20 套菜单配置） |
-| 26.2 | └ 源码与构建脚本 | [plugin-src/](26-快捷菜单系统/plugin-src/) · [build.ps1](26-快捷菜单系统/build.ps1) | 15 个源文件；无需 Maven 的一键构建 |
-| 26.3 | └ 权限授予清单 | [§10 权限清单](26-快捷菜单系统/快捷菜单系统-QuickMenu.md#10-luckperms-权限授予清单) | 菜单用到的 60+ 权限节点，按玩家 / VIP / 管理 / 服主分组 |
-| 05 | 权限方案（重点） | [05-权限管理系统-LuckPerms/](05-权限管理系统-LuckPerms/权限组设计方案.md) | **完整权限组设计、导入脚本、节点速查** |
+| 22 | 语音聊天 | [2-玩法与玩家功能插件/08-Simple Voice Chat/](2-玩法与玩家功能插件/08-Simple Voice Chat/Simple Voice Chat.md) | 近距离语音，含 UDP 端口与内网穿透方案 |
+| 23 | 区块预生成 | [2-玩法与玩家功能插件/09-chunky区块加载优化/](2-玩法与玩家功能插件/09-chunky区块加载优化/chunky区块加载优化.md) | 预生成世界，根治跑图卡顿 |
+| 24 | 指令整合（含完整配置） | [2-玩法与玩家功能插件/10-EssentialsX多功能指令整合/](2-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) | 传送/家园/经济/管理 150+ 命令；`config.yml` / `kits.yml` / 中文别名 / LP 权限示例 |
+| 25 | 基岩 GUI 表单 | [2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/](2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 基岩玩家免敲指令的表单界面 |
+| 26 | **快捷菜单（自研插件）** | [ai写的/快捷菜单系统/](ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md) | **整合全部插件的快捷菜单：玩家线 10 套 + 管理线 10 套（权限门控），Java 箱子 GUI + 基岩原生 Form，含成品 jar 与源码** |
+| 26.1 | └ 成品插件包 | [dist/QuickMenu-1.0.0.jar](ai写的/快捷菜单系统/dist/QuickMenu-1.0.0.jar) | 编译验证通过的部署产物（53.7 KB，含 20 套菜单配置） |
+| 26.2 | └ 源码与构建脚本 | [plugin-src/](ai写的/快捷菜单系统/plugin-src/) · [build.ps1](ai写的/快捷菜单系统/build.ps1) | 15 个源文件；无需 Maven 的一键构建 |
+| 26.3 | └ 权限授予清单 | [§10 权限清单](ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md#10-luckperms-权限授予清单) | 菜单用到的 60+ 权限节点，按玩家 / VIP / 管理 / 服主分组 |
+| 27 | **多服代理（Velocity）** | [1-服务端核心与网络层/06-Velocity 多服/](<1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md>) | 单服升级为多子服网络：下载 / velocity.toml / 后端对接 / 外置登录 / 基岩互通迁移 / 跨服权限经济同步 / 排错 |
+| 27.1 | └ 迁移操作顺序 | [§12 Checklist](<1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md#12-迁移操作顺序checklist>) | 12 步可勾选落地清单 |
+| 28 | **指令大全** | [6-指令参考/01-指令大全/](<6-指令参考/01-指令大全/指令大全.md>) | **300+ 条 Java 1.21.11 指令**，分实用 / 有趣 / 整蛊三大主线共 25 个子分类：传送定位 · 物品背包 · 生物实体 · 方块建造 · 世界时间 · 信息查询 · 服主管理 · 备份运维；神装组件 · `/attribute` 体质改造 · 状态效果 · 粒子音效 · 生物奇观 · 展示实体 · 建筑魔法 · 循环机关 · 原版彩蛋；整蛊三档 + **复原清单**；建筑 / 红石 / 小游戏 / 摄影 / 运维五大场景专题；1.21.11 群骑纷争专属（`/stopwatch`、矛、鹦鹉螺）；5 组一键组合脚本与新旧语法对照 |
+| 05 | 权限方案（重点） | [2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/](2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md) | **完整权限组设计、导入脚本、节点速查** |
 
 ### 3.4 依赖库与辅助组件
 
 | #   | 章节       | 路径                                                    | 说明                      |
 | --- | ---------- | ------------------------------------------------------- | ------------------------- |
-| 13  | 性能分析   | [13-性能分析-spark/](13-性能分析-spark/spark.md)        | TPS / 采样分析 / 健康报告 |
-| 14  | 核心依赖库 | [14-核心依赖库-CMILib/](14-核心依赖库-CMILib/CMILib.md) | 多插件共享的底层库        |
-| 15  | 统计系统   | [15-统计系统-bStats/](15-统计系统-bStats/bStats.md)     | 匿名使用统计（可关闭）    |
+| 13  | 性能分析   | [3-运维监控与面板/03-性能分析-spark/](3-运维监控与面板/03-性能分析-spark/spark.md)        | TPS / 采样分析 / 健康报告 |
+| 14  | 核心依赖库 | [3-运维监控与面板/04-核心依赖库-CMILib/](3-运维监控与面板/04-核心依赖库-CMILib/CMILib.md) | 多插件共享的底层库        |
+| 15  | 统计系统   | [3-运维监控与面板/05-统计系统-bStats/](3-运维监控与面板/05-统计系统-bStats/bStats.md)     | 匿名使用统计（可关闭）    |
 
 ### 3.5 运维与部署
 
 | #    | 章节             | 路径                                                                               | 说明                                   |
 | ---- | ---------------- | ---------------------------------------------------------------------------------- | -------------------------------------- |
-| 16   | 配置文件补充     | [16-服务器配置文件补充/](16-服务器配置文件补充/README.md)                          | bukkit.yml / spigot.yml / 数据文件     |
-| 17   | 端口与网络架构   | [17-端口与网络架构总览/](17-端口与网络架构总览/README.md)                          | 端口表 + 同机/跨机拓扑                 |
-| 18   | 命令速查         | [18-常用管理命令速查/](18-常用管理命令速查/README.md)                              | 各插件高频管理命令                     |
-| 19   | MCSM 控制面板    | [19-MCSM控制面板/](19-MCSM控制面板/MCSM控制面板.md)                                | Windows 部署、分布式节点、导入已有目录 |
-| 19.1 | └ 链接已有文件夹 | [链接到已有文件夹.md](19-MCSM控制面板/链接到已有文件夹.md)                         | 不迁移文件直接接管旧服务端             |
-| 21   | 玩家信息展示     | [21-玩家信息收集与展示/](21-玩家信息收集与展示/0.玩家信息收集与展示.md)                                                                 | TAB / Plan / 全息榜等选型对比             |
-| 21.1 | └ TAB 配置       | [2.TAB信息展示.md](21-玩家信息收集与展示/2.TAB信息展示.md)                                                                               | TAB 列表与动画配置                        |
-| 21.2 | └ 炫彩多层称号   | [3.LuckPerms + TAB + PlaceholderAPI 实现炫彩多层称号效果.md](<21-玩家信息收集与展示/3.LuckPerms + TAB + PlaceholderAPI 实现炫彩多层称号效果.md>) | 前缀后缀叠加、渐变称号实战        |
-| 21.3 | └ Plan 数据分析  | [1.Plan (Player Analytics).md](<21-玩家信息收集与展示/1.Plan (Player Analytics).md>)                                                   | 玩家行为分析面板                          |
+| 16   | 配置文件补充     | [5-配置与管理指南/01-服务器配置文件补充/](5-配置与管理指南/01-服务器配置文件补充/README.md)                          | bukkit.yml / spigot.yml / 数据文件     |
+| 17   | 端口与网络架构   | [1-服务端核心与网络层/05-端口与网络架构总览/](1-服务端核心与网络层/05-端口与网络架构总览/README.md)                          | 端口表 + 同机/跨机拓扑                 |
+| 18   | 命令速查         | [5-配置与管理指南/02-常用管理命令速查/](5-配置与管理指南/02-常用管理命令速查/README.md)                              | 各插件高频管理命令                     |
+| 19   | MCSM 控制面板    | [3-运维监控与面板/06-MCSM控制面板/](3-运维监控与面板/06-MCSM控制面板/MCSM控制面板.md)                                | Windows 部署、分布式节点、导入已有目录 |
+| 19.1 | └ 链接已有文件夹 | [链接到已有文件夹.md](3-运维监控与面板/06-MCSM控制面板/链接到已有文件夹.md)                         | 不迁移文件直接接管旧服务端             |
+| 21   | 玩家信息展示     | [4-玩家信息与数据展示/01-玩家信息收集与展示/](4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md)                                                                 | TAB / Plan / 全息榜等选型对比             |
+| 21.1 | └ TAB 配置       | [2.TAB信息展示.md](4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md)                                                                               | TAB 列表与动画配置                        |
+| 21.2 | └ 炫彩多层称号   | [3.LuckPerms + TAB + PlaceholderAPI 实现炫彩多层称号效果.md](<4-玩家信息与数据展示/01-玩家信息收集与展示/3.LuckPerms + TAB + PlaceholderAPI 实现炫彩多层称号效果.md>) | 前缀后缀叠加、渐变称号实战        |
+| 21.3 | └ Plan 数据分析  | [1.Plan (Player Analytics).md](<4-玩家信息与数据展示/01-玩家信息收集与展示/1.Plan (Player Analytics).md>)                                                   | 玩家行为分析面板                          |
+| 21.4 | └ 玩家位置记录   | [CoordinateLogger玩家位置记录.md](4-玩家信息与数据展示/02-玩家位置记录/CoordinateLogger玩家位置记录.md)                                                     | 玩家坐标轨迹采样、走失 / 死亡回溯          |
+
+### 3.6 实用工具
+
+| 章节         | 路径                                                                             | 说明                                       |
+| ------------ | -------------------------------------------------------------------------------- | ------------------------------------------ |
+| 待选插件清单 | [各种插件（待选）.md](各种插件插件（待选）/各种插件（待选）.md)          | 备选 / 规划插件的调研与对比清单            |
+| 玩家数据迁移 | [UserOverUUID 玩家数据迁移](7-工具与常见问题约束/01-实用工具/玩家数据迁移/UserOverUUID-玩家数据管迁移.md) | 离线 UUID ↔ 在线 UUID 玩家数据迁移方案     |
 
 ### 3.7 附录与专题
 
 | 章节           | 路径                                                                                                                     | 说明               |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------ |
-| 常见问题排查   | [常见问题/常见问题排查.md](常见问题/常见问题排查.md)                                                                     | 高频故障排查       |
-| 服务器内存     | [常见问题/服务器内存相关/](常见问题/服务器内存相关/服务器内存相关.md)                                                    | 内存占用分析与调优 |
-| region 瘦身    | [1.region文件夹过大](常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/1.region文件夹：生成和保存的区块过大.md) | 存档体积治理       |
-| MCA Selector   | [MCASelector.md](常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/MCASelector/MCASelector.md)                  | 区块裁剪与建筑迁移 |
-| 反投影作弊     | [禁用影响平衡的插件功能/](禁用影响平衡的插件功能/1.禁用影响平衡的插件功能.md)                                            | 方案对比与选型     |
-| AntiLitematica | [1.说明.md](禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/1.说明.md)                        | 检测原理           |
-| └ 部署配置     | [2.安装部署与配置.md](禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md)    | 完整部署教程       |
+| 常见问题排查   | [7-工具与常见问题约束/02-常见问题/常见问题排查.md](7-工具与常见问题约束/02-常见问题/常见问题排查.md)                                                                     | 高频故障排查       |
+| 服务器内存     | [7-工具与常见问题约束/02-常见问题/服务器内存相关/](7-工具与常见问题约束/02-常见问题/服务器内存相关/服务器内存相关.md)                                                    | 内存占用分析与调优 |
+| region 瘦身    | [1.region文件夹过大](7-工具与常见问题约束/02-常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/1.region文件夹：生成和保存的区块过大.md) | 存档体积治理       |
+| MCA Selector   | [MCASelector.md](7-工具与常见问题约束/02-常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/MCASelector/MCASelector.md)                  | 区块裁剪与建筑迁移 |
+| 反投影作弊     | [7-工具与常见问题约束/03-禁用影响平衡的插件功能/](7-工具与常见问题约束/03-禁用影响平衡的插件功能/1.禁用影响平衡的插件功能.md)                                            | 方案对比与选型     |
+| AntiLitematica | [1.说明.md](7-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/1.说明.md)                        | 检测原理           |
+| └ 部署配置     | [2.安装部署与配置.md](7-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md)    | 完整部署教程       |
 
 ---
 
@@ -188,7 +217,7 @@
 | 网络     | 数据包压缩优化、Netty 线程池调优                |
 
 > Leaf 是 Paper 的即插即用替代品，**所有 Paper/Spigot/Bukkit 插件完全兼容**，可直接替换 JAR 迁移。
-> 详见 [01-服务器核心-Leaf](01-服务器核心-Leaf/Leaf服务端核心.md)。
+> 详见 [1-服务端核心与网络层/01-服务器核心-Leaf](1-服务端核心与网络层/01-服务器核心-Leaf/Leaf服务端核心.md)。
 
 **运行时配置目录**（首次启动自动生成）：
 
@@ -263,20 +292,20 @@ config/
 
 | 插件          | 文档                                                                             |
 | ------------- | -------------------------------------------------------------------------------- |
-| CMILib        | [14-核心依赖库-CMILib](14-核心依赖库-CMILib/CMILib.md)                           |
-| Vault         | [06-经济系统-Vault](06-经济系统-Vault/Vault.md)                                  |
-| LuckPerms     | [05-权限管理系统-LuckPerms](05-权限管理系统-LuckPerms/LuckPerms.md)              |
-| ViaVersion    | [04-跨版本协议兼容](04-跨版本协议兼容-ViaVersion/ViaVersion.md)                  |
-| Geyser-Spigot | [03.1 Geyser-Spigot](03-Java-Bedrock互通层-Geyser-Floodgate/01-Geyser-Spigot.md) |
-| Floodgate     | [03.2 Floodgate](03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)         |
-| CoreProtect   | [07-方块记录与回滚](07-方块记录与回滚-CoreProtect/CoreProtect.md)                |
-| Residence     | [08-领地系统-Residence](08-领地系统-Residence/Residence.md)                      |
-| SkinsRestorer | [09-皮肤管理](09-皮肤管理-SkinsRestorer/SkinsRestorer.md)                        |
-| OpenInv       | [12-离线背包查看](12-离线背包查看-OpenInv/OpenInv.md)                            |
-| EasyBot       | [10-QQ机器人联动](10-QQ机器人联动-EasyBot/EasyBot.md)                            |
-| OPanel        | [11-Web管理面板](11-Web管理面板-OPanel/OPanel.md)                                |
-| spark         | [13-性能分析-spark](13-性能分析-spark/spark.md)                                  |
-| bStats        | [15-统计系统-bStats](15-统计系统-bStats/bStats.md)                               |
+| CMILib        | [3-运维监控与面板/04-核心依赖库-CMILib](3-运维监控与面板/04-核心依赖库-CMILib/CMILib.md)                           |
+| Vault         | [2-玩法与玩家功能插件/02-经济系统-Vault](2-玩法与玩家功能插件/02-经济系统-Vault/Vault.md)                                  |
+| LuckPerms     | [2-玩法与玩家功能插件/01-权限管理系统-LuckPerms](2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/LuckPerms.md)              |
+| ViaVersion    | [04-跨版本协议兼容](1-服务端核心与网络层/04-跨版本协议兼容-ViaVersion/ViaVersion.md)                  |
+| Geyser-Spigot | [03.1 Geyser-Spigot](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/01-Geyser-Spigot.md) |
+| Floodgate     | [03.2 Floodgate](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)         |
+| CoreProtect   | [07-方块记录与回滚](2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/CoreProtect.md)                |
+| Residence     | [2-玩法与玩家功能插件/04-领地系统-Residence](2-玩法与玩家功能插件/04-领地系统-Residence/Residence.md)                      |
+| SkinsRestorer | [09-皮肤管理](2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/SkinsRestorer.md)                        |
+| OpenInv       | [12-离线背包查看](2-玩法与玩家功能插件/06-离线背包查看-OpenInv/OpenInv.md)                            |
+| EasyBot       | [10-QQ机器人联动](3-运维监控与面板/01-QQ机器人联动-EasyBot/EasyBot.md)                            |
+| OPanel        | [11-Web管理面板](3-运维监控与面板/02-Web管理面板-OPanel/OPanel.md)                                |
+| spark         | [3-运维监控与面板/03-性能分析-spark](3-运维监控与面板/03-性能分析-spark/spark.md)                                  |
+| bStats        | [3-运维监控与面板/05-统计系统-bStats](3-运维监控与面板/05-统计系统-bStats/bStats.md)                               |
 
 ### 4.5 新增功能组件（22-26 章节）
 
@@ -317,7 +346,7 @@ Simple Voice Chat ──► 独立 UDP 通道，与上面三者无耦合
 | Simple Voice Chat | `plugins/voicechat/voicechat-server.properties` | `port=24454`；`bind_address=0.0.0.0`（云服务器）；`voice_host=<公网IP>`；`force_voice_chat=false` |
 | BedrockPlayerSupport | `plugins/BedrockPlayerSupport/config.yml` | `language: zh_CN`；`bedrock-only: true`；各 GUI 开关 |
 
-> 完整配置示例见 [`24-EssentialsX多功能指令整合（功能说明与完整配置）.md`](24-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md)。
+> 完整配置示例见 [`2-玩法与玩家功能插件/10-EssentialsX多功能指令整合（功能说明与完整配置）.md`](2-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md)。
 
 #### 4.5.3 端口与网络要求
 
@@ -370,14 +399,14 @@ NapCat (WS :3001)  ←──  EasyBot 主程序 (Bridge :26990 / Web :5000)  ←
 
 | 组件                        | 版本           | 用途                            | 前置依赖            | 文档                                                                                                       | 状态                   |
 | --------------------------- | -------------- | ------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- |
-| **AntiLitematica**          | 最新           | 阻断投影「快速放置」与打印机    | **ProtocolLib**     | [部署文档](禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) | 📋 建议                |
+| **AntiLitematica**          | 最新           | 阻断投影「快速放置」与打印机    | **ProtocolLib**     | [部署文档](7-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) | 📋 建议                |
 | **ProtocolLib**             | 最新           | 数据包级开发库                  | 无                  | —                                                                                                          | 📋 AntiLitematica 前置 |
-| **TAB**                     | 5.5.0          | 自定义 TAB 列表、前缀后缀、动画 | 建议 PlaceholderAPI | [21 玩家信息展示](21-玩家信息收集与展示/2.TAB信息展示.md)                                                  | 📋 规划                |
-| **Plan (Player Analytics)** | 5.6 build 2965 | 玩家行为分析 + Web 仪表盘       | 无                  | [1.Plan](<21-玩家信息收集与展示/1.Plan (Player Analytics).md>)                                             | 📋 规划                |
-| **AntiLitematica**          | 最新           | 阻断投影「快速放置」与打印机    | **ProtocolLib**     | [部署文档](禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) | 📋 建议                |
+| **TAB**                     | 5.5.0          | 自定义 TAB 列表、前缀后缀、动画 | 建议 PlaceholderAPI | [21 玩家信息展示](4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md)                                                  | 📋 规划                |
+| **Plan (Player Analytics)** | 5.6 build 2965 | 玩家行为分析 + Web 仪表盘       | 无                  | [1.Plan](<4-玩家信息与数据展示/01-玩家信息收集与展示/1.Plan (Player Analytics).md>)                                             | 📋 规划                |
+| **AntiLitematica**          | 最新           | 阻断投影「快速放置」与打印机    | **ProtocolLib**     | [部署文档](7-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) | 📋 建议                |
 | **ProtocolLib**             | 最新           | 数据包级开发库                  | 无                  | —                                                                                                          | 📋 AntiLitematica 前置 |
-| **CyuTag**                  | 最新           | 头顶多行信息展示                | PlaceholderAPI      | [21 选型对比](21-玩家信息收集与展示/0.玩家信息收集与展示.md)                                               | 💡 可选                |
-| **BlueMap**                 | 最新           | 3D 网页地图                     | 无                  | [21 选型对比](21-玩家信息收集与展示/0.玩家信息收集与展示.md)                                               | 💡 可选                |
+| **CyuTag**                  | 最新           | 头顶多行信息展示                | PlaceholderAPI      | [21 选型对比](4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md)                                               | 💡 可选                |
+| **BlueMap**                 | 最新           | 3D 网页地图                     | 无                  | [21 选型对比](4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md)                                               | 💡 可选                |
 
 ---
 
@@ -426,7 +455,7 @@ NapCat (WS :3001)  ←──  EasyBot 主程序 (Bridge :26990 / Web :5000)  ←
 MC 端 `plugins/EasyBot/config.yml` 的 `service.url` 从 `127.0.0.1` 改为电脑 A 的 IP/域名，
 并在电脑 A 防火墙放行 TCP 26990。
 
-详见 [EasyBot 跨机部署](10-QQ机器人联动-EasyBot/EasyBot.md#easybot-与-mc-服务器在不同电脑的情况)。
+详见 [EasyBot 跨机部署](3-运维监控与面板/01-QQ机器人联动-EasyBot/EasyBot.md#easybot-与-mc-服务器在不同电脑的情况)。
 
 ---
 
@@ -645,16 +674,16 @@ service:
 | --- | -------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- |
 | 1   | 控制台无 `ERROR` / `Fatal` | 出现 `Done (x.xs)! For help, type "help"`              | —                                                                               |
 | 2   | `/pl` 插件全绿             | 无红色插件名                                           | [四、组件清单](#四组件清单)                                                     |
-| 3   | authlib-injector 注入成功  | 日志含 `Authentication server: http://localhost:32217` | [02 外置登录](02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md) |
+| 3   | authlib-injector 注入成功  | 日志含 `Authentication server: http://localhost:32217` | [02 外置登录](1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md) |
 | 4   | Java 玩家可进服            | 客户端直连 `<你的IP>:55551` 成功                       | —                                                                               |
-| 5   | 基岩玩家可进服             | 基岩版添加服务器 `<你的IP>:19132` 成功                 | [常见问题 Q1](常见问题/常见问题排查.md)                                         |
-| 6   | 基岩玩家名带 `.` 前缀      | 如 `.Steve`                                            | [03.2 Floodgate](03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)        |
-| 7   | QQ 群 ↔ 游戏聊天同步       | 双向可见                                               | [常见问题 Q2](常见问题/常见问题排查.md)                                         |
-| 8   | `/spark tps` 正常          | TPS ≥ 19                                               | [13 spark](13-性能分析-spark/spark.md)                                          |
-| 9   | `/co inspect` 可查询       | 点击方块返回记录                                       | [07 CoreProtect](07-方块记录与回滚-CoreProtect/CoreProtect.md)                  |
-| 10  | OPanel 可登录              | `http://<你的IP>:25555`                                | [11 OPanel](11-Web管理面板-OPanel/OPanel.md)                                    |
-| 11  | 皮肤正常显示               | 基岩/Java 皮肤均加载                                   | [09 SkinsRestorer](09-皮肤管理-SkinsRestorer/SkinsRestorer.md)                  |
-| 12  | 领地可创建                 | `/res create <名>` 成功                                | [08 Residence](08-领地系统-Residence/Residence.md)                              |
+| 5   | 基岩玩家可进服             | 基岩版添加服务器 `<你的IP>:19132` 成功                 | [常见问题 Q1](7-工具与常见问题约束/02-常见问题/常见问题排查.md)                                         |
+| 6   | 基岩玩家名带 `.` 前缀      | 如 `.Steve`                                            | [03.2 Floodgate](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)        |
+| 7   | QQ 群 ↔ 游戏聊天同步       | 双向可见                                               | [常见问题 Q2](7-工具与常见问题约束/02-常见问题/常见问题排查.md)                                         |
+| 8   | `/spark tps` 正常          | TPS ≥ 19                                               | [13 spark](3-运维监控与面板/03-性能分析-spark/spark.md)                                          |
+| 9   | `/co inspect` 可查询       | 点击方块返回记录                                       | [07 CoreProtect](2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/CoreProtect.md)                  |
+| 10  | OPanel 可登录              | `http://<你的IP>:25555`                                | [11 OPanel](3-运维监控与面板/02-Web管理面板-OPanel/OPanel.md)                                    |
+| 11  | 皮肤正常显示               | 基岩/Java 皮肤均加载                                   | [09 SkinsRestorer](2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/SkinsRestorer.md)                  |
+| 12  | 领地可创建                 | `/res create <名>` 成功                                | [08 Residence](2-玩法与玩家功能插件/04-领地系统-Residence/Residence.md)                              |
 
 ---
 
@@ -704,7 +733,7 @@ leaf-global.yml  >  gale-global.yml  >  paper-global.yml
 
 修改后需重启，或使用 `/leaf reload` 热重载。
 
-> ⚠️ `purpur.yml` 是历史遗留文件，**Leaf 不读取**。详见 [16 配置文件补充](16-服务器配置文件补充/README.md)。
+> ⚠️ `purpur.yml` 是历史遗留文件，**Leaf 不读取**。详见 [16 配置文件补充](5-配置与管理指南/01-服务器配置文件补充/README.md)。
 
 ### 8.4 启动参数
 
@@ -881,7 +910,7 @@ java -Xmx4G -Xms1G ^
 /msggui     # 发送私信        /phomegui # 公共家园（需 HuskHomes）
 ```
 
-> 完整速查见 [18-常用管理命令速查](18-常用管理命令速查/README.md)。
+> 完整速查见 [5-配置与管理指南/02-常用管理命令速查](5-配置与管理指南/02-常用管理命令速查/README.md)。
 
 ### 10.2 备份策略
 
@@ -900,9 +929,9 @@ java -Xmx4G -Xms1G ^
 ### 10.3 监控与告警
 
 - **游戏内**：`/spark tps`、`/spark health`、`/spark profiler`
-- **进程与文件**：[MCSM 面板](19-MCSM控制面板/MCSM控制面板.md) — 控制台、崩溃自动重启、计划任务备份
-- **Web 实时**：[OPanel](11-Web管理面板-OPanel/OPanel.md) 面板
-- **告警通道**：可复用 [EasyBot](10-QQ机器人联动-EasyBot/EasyBot.md) 的 QQ 通道推送异常；系统级监控建议用云厂商云监控或 Prometheus + Alertmanager
+- **进程与文件**：[MCSM 面板](3-运维监控与面板/06-MCSM控制面板/MCSM控制面板.md) — 控制台、崩溃自动重启、计划任务备份
+- **Web 实时**：[OPanel](3-运维监控与面板/02-Web管理面板-OPanel/OPanel.md) 面板
+- **告警通道**：可复用 [EasyBot](3-运维监控与面板/01-QQ机器人联动-EasyBot/EasyBot.md) 的 QQ 通道推送异常；系统级监控建议用云厂商云监控或 Prometheus + Alertmanager
 
 ### 10.4 例行维护
 
@@ -910,7 +939,7 @@ java -Xmx4G -Xms1G ^
 | ------ | ------------------------------------------------------------------------------------------------------------------------- |
 | 每周   | `/co purge t:30d` 清理审计数据                                                                                            |
 | 每周   | 检查 `logs\` 与 `crash-reports\`，清理 30 天前日志                                                                        |
-| 每月   | 用 [MCA Selector](常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/MCASelector/MCASelector.md) 裁剪跑图冗余区块 |
+| 每月   | 用 [MCA Selector](7-工具与常见问题约束/02-常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/MCASelector/MCASelector.md) 裁剪跑图冗余区块 |
 | 每月   | 检查插件更新（Leaf / Geyser / ViaVersion 需同步跟进 MC 版本）                                                             |
 | 每季度 | 全量备份 + 恢复演练                                                                                                       |
 
@@ -920,21 +949,21 @@ java -Xmx4G -Xms1G ^
 
 | 现象                            | 优先检查                                                                         | 详细文档                                                                                                                                                         |
 | ------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **基岩版玩家无法连接**          | ① UDP 19132 防火墙 ② Geyser `bedrock.port` ③ `key.pem` 路径一致性                | [常见问题 Q1](常见问题/常见问题排查.md)                                                                                                                          |
-| **QQ 消息不同步**               | ① EasyBot 主程序是否运行 ② `service.url` 地址 ③ Token 一致性 ④ TCP 26990 放行    | [常见问题 Q2](常见问题/常见问题排查.md)                                                                                                                          |
-| **服务器卡顿**                  | ① `/spark profiler` 采样 ② 视距是否过高 ③ 内存是否充足                           | [常见问题 Q3](常见问题/常见问题排查.md)                                                                                                                          |
-| **CoreProtect 数据库过大**      | ① `/co purge` ② 迁 MySQL                                                         | [常见问题 Q4](常见问题/常见问题排查.md) / [07.1](07-方块记录与回滚-CoreProtect/CoreProtect插件：玩家的行为数据库过大/1.CoreProtect插件：玩家的行为数据库过大.md) |
-| **权限不生效**                  | ① LuckPerms 主 JAR 是否存在 ② 组权重 ③ 子区域继承                                | [05 LuckPerms](05-权限管理系统-LuckPerms/LuckPerms.md)                                                                                                           |
-| **领地配置不生效**              | ① 旧领地缓存 ② `groups.yml` 覆盖 ③ 父子区域继承                                  | [08 Residence](08-领地系统-Residence/Residence.md)                                                                                                               |
-| **region 文件夹膨胀**           | 跑图产生的冗余区块                                                               | [region 瘦身](常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/1.region文件夹：生成和保存的区块过大.md)                                                |
-| **Java 版无法登录（认证失败）** | ① authlib-injector 是否注入 ② Yggdrasil 认证服务 :32217 是否可达 ③ `online-mode` | [02 外置登录](02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md)                                                                                  |
-| **皮肤不显示**                  | ① SkinsRestorer 配置 ② authlib-injector 是否拦截了 SkinProvider                  | [09 SkinsRestorer](09-皮肤管理-SkinsRestorer/SkinsRestorer.md)                                                                                                   |
-| **玩家用投影/打印机作弊**       | 安装 AntiLitematica（需 ProtocolLib）                                            | [禁用影响平衡的插件功能](禁用影响平衡的插件功能/1.禁用影响平衡的插件功能.md)                                                                                     |
-| **语音连不上 / 显示断开图标**   | ① 安全组是否放行 **UDP 24454**（不是 TCP）② `voice_host` 是否填公网 IP ③ 客户端与服务端 SVC 版本是否一致 | [22 Simple Voice Chat](22-Simple%20Voice%20Chat/Simple%20Voice%20Chat.md)                                                              |
-| **EssentialsX 命令提示无权限**  | ① `use-bukkit-permissions` 是否为 true ② LuckPerms 是否给了 `essentials.*` 对应节点 ③ `/essentials reload` | [权限组设计方案](05-权限管理系统-LuckPerms/权限组设计方案.md)                                                                        |
-| **基岩玩家点 GUI 表单报错**     | ① EssentialsX 是否安装 ② 玩家是否同时持有对应 EssentialsX 权限（GUI 只是前端） | [25 BedrockPlayerSupport](25-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md)                          |
-| **预生成时服务器卡爆**          | ① 立即 `/chunky pause` ② 缩小半径分批跑 ③ 提高 `/chunky quiet` 静默间隔 | [23 Chunky](23-chunky区块加载优化/chunky区块加载优化.md)                                                                              |
-| **玩家家 / 领地数量不对**       | ① `essentials.sethome.multiple.<n>` 取最大值 ② `residence.group.<名>` 与 `groups.yml` 组名是否小写一致 | [权限组设计方案 §4](05-权限管理系统-LuckPerms/权限组设计方案.md#四essentialsx-家园数量与-residence-领地组映射)                        |
+| **基岩版玩家无法连接**          | ① UDP 19132 防火墙 ② Geyser `bedrock.port` ③ `key.pem` 路径一致性                | [常见问题 Q1](7-工具与常见问题约束/02-常见问题/常见问题排查.md)                                                                                                                          |
+| **QQ 消息不同步**               | ① EasyBot 主程序是否运行 ② `service.url` 地址 ③ Token 一致性 ④ TCP 26990 放行    | [常见问题 Q2](7-工具与常见问题约束/02-常见问题/常见问题排查.md)                                                                                                                          |
+| **服务器卡顿**                  | ① `/spark profiler` 采样 ② 视距是否过高 ③ 内存是否充足                           | [常见问题 Q3](7-工具与常见问题约束/02-常见问题/常见问题排查.md)                                                                                                                          |
+| **CoreProtect 数据库过大**      | ① `/co purge` ② 迁 MySQL                                                         | [常见问题 Q4](7-工具与常见问题约束/02-常见问题/常见问题排查.md) / [07.1](2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/CoreProtect插件：玩家的行为数据库过大/1.CoreProtect插件：玩家的行为数据库过大.md) |
+| **权限不生效**                  | ① LuckPerms 主 JAR 是否存在 ② 组权重 ③ 子区域继承                                | [05 LuckPerms](2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/LuckPerms.md)                                                                                                           |
+| **领地配置不生效**              | ① 旧领地缓存 ② `groups.yml` 覆盖 ③ 父子区域继承                                  | [08 Residence](2-玩法与玩家功能插件/04-领地系统-Residence/Residence.md)                                                                                                               |
+| **region 文件夹膨胀**           | 跑图产生的冗余区块                                                               | [region 瘦身](7-工具与常见问题约束/02-常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/1.region文件夹：生成和保存的区块过大.md)                                                |
+| **Java 版无法登录（认证失败）** | ① authlib-injector 是否注入 ② Yggdrasil 认证服务 :32217 是否可达 ③ `online-mode` | [02 外置登录](1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md)                                                                                  |
+| **皮肤不显示**                  | ① SkinsRestorer 配置 ② authlib-injector 是否拦截了 SkinProvider                  | [09 SkinsRestorer](2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/SkinsRestorer.md)                                                                                                   |
+| **玩家用投影/打印机作弊**       | 安装 AntiLitematica（需 ProtocolLib）                                            | [禁用影响平衡的插件功能](7-工具与常见问题约束/03-禁用影响平衡的插件功能/1.禁用影响平衡的插件功能.md)                                                                                     |
+| **语音连不上 / 显示断开图标**   | ① 安全组是否放行 **UDP 24454**（不是 TCP）② `voice_host` 是否填公网 IP ③ 客户端与服务端 SVC 版本是否一致 | [22 Simple Voice Chat](2-玩法与玩家功能插件/08-Simple%20Voice%20Chat/Simple%20Voice%20Chat.md)                                                              |
+| **EssentialsX 命令提示无权限**  | ① `use-bukkit-permissions` 是否为 true ② LuckPerms 是否给了 `essentials.*` 对应节点 ③ `/essentials reload` | [权限组设计方案](2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md)                                                                        |
+| **基岩玩家点 GUI 表单报错**     | ① EssentialsX 是否安装 ② 玩家是否同时持有对应 EssentialsX 权限（GUI 只是前端） | [25 BedrockPlayerSupport](2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md)                          |
+| **预生成时服务器卡爆**          | ① 立即 `/chunky pause` ② 缩小半径分批跑 ③ 提高 `/chunky quiet` 静默间隔 | [23 Chunky](2-玩法与玩家功能插件/09-chunky区块加载优化/chunky区块加载优化.md)                                                                              |
+| **玩家家 / 领地数量不对**       | ① `essentials.sethome.multiple.<n>` 取最大值 ② `residence.group.<名>` 与 `groups.yml` 组名是否小写一致 | [权限组设计方案 §4](2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md#四essentialsx-家园数量与-residence-领地组映射)                        |
 
 ---
 
@@ -950,8 +979,8 @@ java -Xmx4G -Xms1G ^
 
 | 问题                       | 详情                                     | 解决方式                                                                                                                                                                 |
 | -------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **CoreProtect 数据库膨胀** | SQLite 模式下 `database.db` 增长极快     | ① 定期 `/co purge t:30d`；② 生产环境迁移 MySQL，见 [迁移文档](07-方块记录与回滚-CoreProtect/CoreProtect插件：玩家的行为数据库过大/2.将CoreProtect从SQLite切换到MySQL.md) |
-| **region 文件夹过大**      | 玩家跑图产生大量冗余区块                 | 用 [MCA Selector](常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/MCASelector/MCASelector.md) 按「停留时长」筛选裁剪                                          |
+| **CoreProtect 数据库膨胀** | SQLite 模式下 `database.db` 增长极快     | ① 定期 `/co purge t:30d`；② 生产环境迁移 MySQL，见 [迁移文档](2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/CoreProtect插件：玩家的行为数据库过大/2.将CoreProtect从SQLite切换到MySQL.md) |
+| **region 文件夹过大**      | 玩家跑图产生大量冗余区块                 | 用 [MCA Selector](7-工具与常见问题约束/02-常见问题/服务器内存相关/region文件夹：生成和保存的区块过大/MCASelector/MCASelector.md) 按「停留时长」筛选裁剪                                          |
 | **OPanel 暴露风险**        | `webServerPort` 默认绑定 `0.0.0.0:25555` | 改为绑定 `127.0.0.1`，对外用 Caddy / Nginx 反代 + HTTPS                                                                                                                  |
 
 ### 🔵 P2 — 提示
@@ -1097,7 +1126,7 @@ java -Xmx4G -Xms1G ^
 |---:|---|---|
 | **1** | 补齐 `LuckPerms-Bukkit-*.jar` | 不解决这个，后面所有权限配置都无效 |
 | **2** | 安装 EssentialsX + Vault 联动 | 补齐经济与基础命令，同时是 BPS 的前置 |
-| **3** | 导入 [权限组设计方案](05-权限管理系统-LuckPerms/权限组设计方案.md) | 有了 EssentialsX 才有意义；一次成型避免反复改 |
+| **3** | 导入 [权限组设计方案](2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md) | 有了 EssentialsX 才有意义；一次成型避免反复改 |
 | **4** | 用 Chunky 预生成主世界半径 3000 | 直接解决最大的体验问题（跑图卡顿） |
 | **5** | 安装 BedrockPlayerSupport | 基岩玩家体验收口 |
 | **6** | Simple Voice Chat + 放行 UDP 24454 | 锦上添花，但端口容易踩坑，放后面单独验证 |
@@ -1145,8 +1174,28 @@ java -Xmx4G -Xms1G ^
 | 2026-09-01 | 重写 README 为完整运维手册：新增组件清单、端口表、部署流程、依赖矩阵、安全基线；敏感信息改为占位符；同步整理插件清单                                     |
 | 2026-09-01 | 将原 `插件清单.md`（附录 A）合并进 README 第四章组件清单，下载源并入资源链接，目录文件说明并入第七章，已知问题独立成第十二章；删除重复文件 `插件清单.md` |
 | 2026-09-04 | 新增 22-25 章节（Simple Voice Chat / Chunky / EssentialsX / BedrockPlayerSupport）；组件清单追加 4.5 新增功能组件；依赖矩阵与安装顺序补充硬性顺序；端口表与网络最小化原则加入 UDP 24454；运维命令、备份策略、故障排查同步扩充；新增第十五章架构分析与优化总结 |
-| 2026-09-04 | 新增 [05-权限管理系统-LuckPerms](05-权限管理系统-LuckPerms/权限组设计方案.md) 完整权限方案：`config.yml` + 权限组设计 + 导入脚本 + 节点速查，覆盖全部已装与新增插件 |
+| 2026-09-04 | 新增 [2-玩法与玩家功能插件/01-权限管理系统-LuckPerms](2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md) 完整权限方案：`config.yml` + 权限组设计 + 导入脚本 + 节点速查，覆盖全部已装与新增插件 |
 | 2026-09-08 | 新增 26 章「快捷菜单系统」：交付自研 QuickMenu 插件（含编译验证通过的 jar、15 个源文件、无需 Maven 的 build.ps1 构建脚本、7 套示例菜单配置）；Java 端箱子 GUI + 基岩端原生 Form 双轨分发；同步修正 24 章因文档合并而失效的两处链接 |
+| 2026-09-08 | QuickMenu 菜单整合全服插件：由 7 套扩至 **20 套**（玩家 10 + 管理 10），覆盖 Residence / SkinsRestorer / Simple Voice Chat / EasyBot / CoreProtect / OpenInv / Chunky / WorldEdit / spark / Geyser / ViaVersion / LuckPerms；管理菜单靠 `quickmenu.admin` 权限门控；新增 §10 LuckPerms 权限授予清单；jar 重新打包至 53.7 KB |
+| 2026-09-08 | 新增 27 章「多服代理（Velocity）」：单服升级为多子服网络的完整落地教程——选型、下载、velocity.toml 全注释、后端 Leaf 对接、Yggdrasil 外置登录全端 agent 注入、Geyser/Floodgate 迁移到代理、LuckPerms 切 MySQL 跨服权限同步、现有插件逐项适配表、安全基线、排错与迁移 Checklist；并给出「单服→多服」演进路线 |
+| 2026-09-12 | 07 章新增「网页端面板部署」目录：CoLWI 一键部署脚本 `deploy.sh`（装依赖 / 收权限 / 改写 config.php 的 server 段 / 生成 Nginx 站点 / Basic Auth / 防火墙 / 自检三模式 deploy·verify·conf）+ `nginx-colwi.conf.example`；文档补「一键部署脚本」小节 |
+| 2026-09-12 | 07 章新增 `网页端面板部署/部署步骤.md`：CoLWI 完整部署手册（环境要求、13 项准备清单、脚本九阶段详解、config.php 改写逻辑、非 apt 系手动部署与 SELinux、8 条安全加固、5 项验收标准、14 条故障排查、更新与卸载） |
+| 2026-09-12 | 新增 28 章「指令大全」（原「有趣指令」扩充并改名）：面向 Java 1.21.11 的 300+ 条指令，按**实用 / 有趣 / 整蛊**三大主线拆成 25 个子分类，每条带注释；新增 8 大实用分类（传送定位/物品背包/生物实体/方块建造/世界时间/信息查询/服主管理/备份运维含热备份四步）、整蛊三档分级与**一键复原清单**、五大场景专题（建筑创造/红石自动化/小游戏/摄影录制/服主诊断）、1.21.11 群骑纷争专属（`/stopwatch` 秒表、矛与突进、鹦鹉螺等新生物、7 种新物品组件）、5 组带注释的一键组合脚本、原版彩蛋（Dinnerbone 倒立、jeb_ 彩虹羊、杀手兔、Toast） |
+| 2026-09-12 | 补充 CoreProtect 网页端查询面板（CoLWI）：CoreProtect 无官方 Web UI，补充第三方 PHP 面板的下载、`config.php` MySQL/SQLite 配置、只读库账号授权、查询安全上限、外部访问控制（rework 已移除内置认证）、v23.2↔v24.0 兼容提醒、与游戏内命令对比、6 条常见故障 |
+| 2026-09-12 | 文档导航补录「实用工具」目录（待选插件清单 / UserOverUUID 玩家数据迁移），与既有的 01–28 章、常见问题、禁用影响平衡插件功能等章节对齐；确认 07 章网页端面板部署（deploy.sh / nginx-colwi.conf.example / 部署步骤.md）与 28 章指令大全均已收录，旧「有趣指令」目录已删除无残留引用；文档更新日期同步为 2026-09-12 |
+| 2026-09-13 | 新增「文档分类总览」小节（README 顶部）：按功能域把 01–27 编号章节与散装文件夹归为 A–G 七大类；其中 10-EasyBot 由 B 类（玩法插件）调整至 C 类（运维/监控/面板）；仅文档化分类、未移动任何文件；文档更新日期同步为 2026-09-13 |
+| 2026-09-13 | 执行方案 2：顶层 31 个文件夹原地加**数字分类前缀**（1 核心网络 / 2 玩法插件 / 3 运维面板 / 4 玩家信息 / 5 配置指南 / 6 指令 / 7 工具FAQ），其中 10-QQ机器人联动-EasyBot 由 2 类改到 3 类；用脚本批量重写 README 及交叉引用的 .md 内相对链接（git mv 失败的内部未提交目录回退 os.rename），并修正 1 处 %20 编码旧链接；分类总览表同步改为数字 1–7；未建子目录、未移动目录层级 |
+| 2026-09-13 | 执行方案 3：新建 7 个分类目录（1-服务端核心与网络层 / 2-玩法与玩家功能插件 / 3-运维监控与面板 / 4-玩家信息与数据展示 / 5-配置与管理指南 / 6-指令参考 / 7-工具与常见问题约束），把 31 个文件夹物理移入对应分类目录并去掉冗余数字前缀（如 `1-01-服务器核心-Leaf` → `1-服务端核心与网络层/01-服务器核心-Leaf`）；批量重写 README 及交叉引用 .md 的相对链接（含 Simple Voice Chat 的 %20 编码变体）；分类总览表改为分层树表示；3 个未提交目录 git mv 失败回退 os.rename |
+| 2026-09-13 | 修正不连续编号：每个分类内子文件夹按 1、2、3… 连续重编号——1-服务端核心与网络层 由 01/02/03/04/17/27 → 01–06；2-玩法与玩家功能插件 由 05…26 → 01–12；3-运维监控与面板 由 10…19 → 01–06；4 → 01；5 → 01–02；6-指令参考/指令大全 → 01-指令大全；7 实用工具/常见问题/禁用影响平衡的插件功能 → 01–03；27 个改名 + 6 个 .md 链接同步重写（含 Simple Voice Chat %20 变体）；分类总览表同步为连续编号；3 个未提交目录回退 os.rename |
+| 2026-09-13 | 将「各种插件（待选）」文件夹由 `7-工具与常见问题约束/01-实用工具/各种插件插件（待选）` 移到仓库最外层（顶层）`各种插件插件（待选）`，使其成为独立顶层目录而非 7 类下的子项；同步改写 README §3.6 实用工具 的唯一引用（`7-工具与常见问题约束/01-实用工具/各种插件插件（待选）/各种插件（待选）.md` → `各种插件插件（待选）/各种插件（待选）.md`）；全仓 grep 确认仅此一处引用，无残留旧路径 |
+| 2026-09-13 | 将 `12-快捷菜单系统` 由 `2-玩法与玩家功能插件/` 移至顶层 `ai写的/`（归入 AI 生成内容区）：同步改写全部引用——README 分类总览表去掉该条目、第 26 章 4 行链接改前缀 `2-玩法与玩家功能插件/12-快捷菜单系统/` → `ai写的/快捷菜单系统/`；Velocity 多服.md 相对链接 `../2-...` → `../../ai写的/...`；文档内目录树与 `cd` 示例路径同步更新；全仓 grep 确认旧路径零残留 |
+| 2026-09-13 | 将 `ai写的/12-快捷菜单系统/` 去冗余前缀重命名为 `ai写的/快捷菜单系统/`：同步改写全部路径引用——README 第 26 章 4 行链接 `ai写的/12-快捷菜单系统/` → `ai写的/快捷菜单系统/`；Velocity 多服.md `../../ai写的/12-快捷菜单系统/` → `../../ai写的/快捷菜单系统/`；文档内目录树与 `cd` 示例路径同步更新；全仓 grep 确认除上条历史记录（保留移动当时旧名）外 `12-快捷菜单系统` 零残留 |
+| 2026-09-15 | 在 `4-玩家信息与数据展示/` 新增 `02-玩家位置记录/` 文件夹与 `CoordinateLogger玩家位置记录.md`（玩家坐标轨迹记录与回溯的部署文档，含配置 / 数据字段 / 查询 / 命令 / 性能注意，服务器专属值以占位符标注）；同步更新引用——分类总览表 4 类补 `· 02-玩家位置记录`，第 3.5 章导航新增 `21.4 └ 玩家位置记录` 指向该文件；文档更新日期同步为 2026-09-15 |
+| 2026-09-15 | 将 `CoordinateLogger玩家位置记录.md` 由占位脚手架补全为**实际安装配置**：确认插件为 Modrinth 上 Mr_irak 的 CoordinateLogger（Bukkit/Spigot/Paper，ARR，存 MySQL）；用户确认用 1.21.x 兼容构建（公开页列 1.20.1，已注明需锁 1.21.x 构建）、MySQL 后端、`/cl` 命令前缀与 `coordinatelogger.*` 权限；补全 config.yml（MySQL 形态）、自动建表 SQL 示例、命令/权限表、MySQL 直查语句、性能与 FAQ；仅数据库账号/密码/具体构建版本保留 `<...>` 占位 |
+| 2026-09-15 | 用户手动精简 `CoordinateLogger玩家位置记录.md` 内容（改为仅保留 `config.yml` 配置片段，约 17 行）；因文件名与路径未变，README 引用（分类总览表第 4 类、第 3.5 章 `21.4 └ 玩家位置记录`）仍有效，无需改链接；此处仅补记本次修订 |
+| 2026-09-15 | 新增 12 章「全息投影系统 — DecentHolograms」：`2-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md`（基于官方 Wiki 与 Modrinth 2.10.1 编写的详细部署文档——功能说明、安装前置、目录结构、config.yml 全注释、全息 YAML 结构、行类型/颜色/渐变/动画、点击交互、分页、命令/权限、PAPI 与 DHAPI、实战示例、性能排错与 FAQ）；同步更新 README——分类总览表 2 类补 `· 12-DecentHolograms`，第 3.2 章导航新增 `13 全息投影` 指向该文件 |
+| 2026-09-15 | 新增 13 章「自定义死亡信息 — CustomDeathMessages」：`2-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md`（原为 0 字节空文件，基于 Modrinth 上 SicklySurgeon 的 CustomDeathMessages 1.3 编写——功能说明、安装前置、目录结构、config.yml 注释、占位符全表、统一 `/cdm` 命令集、权限表、广播系统、实战示例、性能排错与 FAQ；已在 FAQ 标注与同名 GitHub sb2bg fork 的命令/配置差异）；同步更新 README——分类总览表 2 类补 `· 13-自定义死亡信息`，第 3.2 章导航新增 `14 自定义死亡信息` 指向该文件（导航 13 已被全息投影占用，故顺延为 14，沿用跨小节复用编号风格） |
+| 2026-09-15 | 新增 14 章「宠物系统 — SimplePets」：`2-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md`（原为 0 字节空文件，基于 GitHub brainsynder-Dev 的 SimplePets 最新构建 R5-B315 编写——EchoPets 继任者、GPL-3.0、1.21.11 需 Java 21、单一 jar 覆盖全版本、90+ 宠物类型、骑乘/帽子/存档、MySQL/SQLite、PlaceholderAPI、GemsEconomy Addon 付费；含命令表、官方 `Pet.*` 权限方案、实战示例、性能排错与 FAQ）；同步更新 README——分类总览表 2 类补 `· 14-宠物系统`，第 3.2 章导航新增 `15 宠物系统` 指向该文件（导航 14 已被自定义死亡信息占用，故顺延为 15） |
 
 ---
 

@@ -1,0 +1,44 @@
+# CoreProtect Lookup Web — Nginx 站点配置示例
+# 用法：改完下面 4 处后放到 /etc/nginx/sites-available/colwi.conf，再 ln -s 到 sites-enabled/
+# 由 deploy.sh 生成时会自动填好，这里仅供已有 Nginx 的手动接入参考。
+
+server {
+    listen 18443;                    # ← 建议用冷门端口
+    server_name _;                   # ← 有域名就填域名
+
+    root /var/www/CoreProtect-Lookup-Web-23.2;   # ← 程序目录
+    index index.php;
+
+    access_log /var/log/nginx/colwi.access.log;
+    error_log  /var/log/nginx/colwi.error.log;
+
+    client_max_body_size 2m;
+    fastcgi_read_timeout 60;
+
+    # ---- 访问控制（二选一或都开）----
+    # ① 账号密码：htpasswd -bc /etc/nginx/.colwi_htpasswd cpadmin 你的密码
+    auth_basic "CoreProtect Lookup";
+    auth_basic_user_file /etc/nginx/.colwi_htpasswd;
+
+    # ② IP 白名单：把下面的 IP 换成你的出口公网 IP
+    # allow 127.0.0.1;
+    # allow 1.2.3.4;
+    # deny all;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;   # ← 按实际 PHP 版本改
+    }
+
+    # 关键：别让外部拿到数据库凭据和源码
+    location ~ /(config\.php|\.git|tests|\.env) {
+        deny all;
+    }
+    location ~ /\. {
+        deny all;
+    }
+}

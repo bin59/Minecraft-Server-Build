@@ -1,0 +1,23 @@
+name: SpacePortal
+version: '${project.version}'
+main: com.mc.spaceportal.SpacePortalPlugin
+api-version: '1.20'
+description: 空间传送阵 - Java/基岩（Geyser）互通两点传送，大型粒子阵法 + 时光穿梭特效
+commands:
+  spaceportal:
+    description: 空间传送阵指令
+    aliases: [csz, portal]
+    usage: /spaceportal help
+permissions:
+  spaceportal.use:
+    description: 使用传送阵
+    default: true
+  spaceportal.free:
+    description: 免费使用传送阵（免钻石）
+    default: false
+  spaceportal.create:
+    description: 玩家自建传送阵（受数量上限约束）
+    default: true
+  spaceportal.admin:
+    description: 创建/管理传送阵
+    default: op
