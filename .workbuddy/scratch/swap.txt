@@ -1,0 +1,5 @@
+﻿dir2_old_exists=False
+dir3_old_exists=False
+new_3_play=True
+new_2_ops=True
+tmp_exists=False

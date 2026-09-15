@@ -1,0 +1,26 @@
+﻿===== 3-玩法与玩家功能插件 =====
+  02-经济系统-Vault
+  04-领地系统-Residence
+  05-皮肤管理-SkinsRestorer
+  06-离线背包查看-OpenInv
+  07-创世神WorldEdit
+  08-Simple Voice Chat
+  10-EssentialsX多功能指令整合
+  11-BedrockPlayerSupport基岩版GUI表单界面
+  12-DecentHolograms全息插件
+  13-自定义死亡信息
+  14-宠物系统
+===== 2-运维监控与面板 =====
+  01-QQ机器人联动-EasyBot
+  02-Web管理面板-OPanel
+  03-性能分析-spark
+  04-核心依赖库-CMILib
+  05-统计系统-bStats
+  06-MCSM控制面板
+===== 5-服务器管理 =====
+  01-权限管理系统-LuckPerms
+  02-常用管理命令速查
+  03-方块记录与回滚-CoreProtect
+  09-chunky区块加载优化
+  玩家数据迁移
+===== 各种插件插件（待选） =====

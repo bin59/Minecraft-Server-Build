@@ -1,0 +1,27 @@
+﻿=== 1- 顶层 ===
+01-服务器核心-Leaf
+02-外置登录代理-YggdrasilOfficialProxy
+03-Java-Bedrock互通层-Geyser-Floodgate
+04-跨版本协议兼容-ViaVersion
+05-端口与网络架构总览
+06-Velocity 多服
+=== README 含 '1-服务端核心与网络层' 的行 ===
+39: | **1-服务端核心与网络层/** | 服务端内核、外置登录代理、跨端互通、跨版本兼容、代理与网络拓扑 | 01-Leaf · 02-Yggdrasil · 03-Geyser/Floodgate · 04-ViaVersion · 05-端口与网络架构 · 06-Velocity 多服 |
+98: | 01   | 服务器核心        | [1-服务端核心与网络层/01-服务器核心-Leaf/](1-服务端核心与网络层/01-服务器核心-Leaf/Leaf服务端核心.md)                                                 | Leaf 核心、性能特性、Paper 迁移注意事项   |
+99: | 02   | 外置登录代理      | [1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/](1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md) | authlib-injector 字节码注入原理与认证链路 |
+100: | 03   | Java-Bedrock 互通 | [1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/README.md)                 | Geyser 协议转换 + Floodgate 基岩认证      |
+101: | 03.1 | └ Geyser-Spigot   | [01-Geyser-Spigot.md](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/01-Geyser-Spigot.md)                           | 端口、连接地址、调试命令                  |
+102: | 03.2 | └ Floodgate       | [02-Floodgate.md](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)                                   | 玩家识别前缀、key.pem 密钥管理            |
+103: | 04   | 跨版本兼容        | [1-服务端核心与网络层/04-跨版本协议兼容-ViaVersion/](1-服务端核心与网络层/04-跨版本协议兼容-ViaVersion/ViaVersion.md)                                 | 1.8 ~ 最新客户端协议翻译                  |
+137: | 27 | **多服代理（Velocity）** | [1-服务端核心与网络层/06-Velocity 多服/](<1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md>) | 单服升级为多子服网络：下载 / velocity.toml / 后端对接 / 外置登录 / 基岩互通迁移 / 跨服权限经济同步 / 排错 |
+138: | 27.1 | └ 迁移操作顺序 | [§12 Checklist](<1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md#12-迁移操作顺序checklist>) | 12 步可勾选落地清单 |
+155: | 17   | 端口与网络架构   | [1-服务端核心与网络层/05-端口与网络架构总览/](1-服务端核心与网络层/05-端口与网络架构总览/README.md)                          | 端口表 + 同机/跨机拓扑                 |
+220: > 详见 [1-服务端核心与网络层/01-服务器核心-Leaf](1-服务端核心与网络层/01-服务器核心-Leaf/Leaf服务端核心.md)。
+298: | ViaVersion    | [04-跨版本协议兼容](1-服务端核心与网络层/04-跨版本协议兼容-ViaVersion/ViaVersion.md)                  |
+299: | Geyser-Spigot | [03.1 Geyser-Spigot](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/01-Geyser-Spigot.md) |
+300: | Floodgate     | [03.2 Floodgate](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)         |
+677: | 3   | authlib-injector 注入成功  | 日志含 `Authentication server: http://localhost:32217` | [02 外置登录](1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md) |
+680: | 6   | 基岩玩家名带 `.` 前缀      | 如 `.Steve`                                            | [03.2 Floodgate](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)        |
+959: | **Java 版无法登录（认证失败）** | ① authlib-injector 是否注入 ② Yggdrasil 认证服务 :32217 是否可达 ③ `online-mode` | [02 外置登录](1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/YggdrasilOfficialProxy.md)                                                                                  |
+1188: | 2026-09-13 | 执行方案 3：新建 7 个分类目录（1-服务端核心与网络层 / 2-玩法与玩家功能插件 / 3-运维监控与面板 / 4-玩家信息与数据展示 / 5-配置与管理指南 / 6-指令参考 / 7-工具与常见问题约束），把 31 个文件夹物理移入对应分类目录并去掉冗余数字前缀（如 `1-01-服务器核心-Leaf` → `1-服务端核心与网络层/01-服务器核心-Leaf`）；批量重写 README 及交叉引用 .md 的相对链接（含 Simple Voice Chat 的 %20 编码变体）；分类总览表改为分层树表示；3 个未提交目录 git mv 失败回退 os.rename |
+1189: | 2026-09-13 | 修正不连续编号：每个分类内子文件夹按 1、2、3… 连续重编号——1-服务端核心与网络层 由 01/02/03/04/17/27 → 01–06；2-玩法与玩家功能插件 由 05…26 → 01–12；3-运维监控与面板 由 10…19 → 01–06；4 → 01；5 → 01–02；6-指令参考/指令大全 → 01-指令大全；7 实用工具/常见问题/禁用影响平衡的插件功能 → 01–03；27 个改名 + 6 个 .md 链接同步重写（含 Simple Voice Chat %20 变体）；分类总览表同步为连续编号；3 个未提交目录回退 os.rename |

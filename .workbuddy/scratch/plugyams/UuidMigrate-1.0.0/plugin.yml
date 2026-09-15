@@ -1,0 +1,13 @@
+name: UuidMigrate
+version: 1.0.0
+main: com.example.uuidmigrate.UuidMigratePlugin
+api-version: 1.19
+commands:
+  uuidmigrate:
+    description: Main command for UUID Migration
+    usage: /uuidmigrate <status|migrate|dryrun|reload> [player]
+    permission: uuidmigrate.admin
+permissions:
+  uuidmigrate.admin:
+    description: Allows full access to UuidMigrate commands
+    default: op

@@ -1,0 +1,2 @@
+﻿Restored. LIVE SizeBytes=6464
+CoordinateLoggerCount=1586

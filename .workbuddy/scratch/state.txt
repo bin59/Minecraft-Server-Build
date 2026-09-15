@@ -1,0 +1,8 @@
+﻿LIVE SizeBytes=0
+LIVE Length(chars via ReadAllText)=0
+
+HISTORY CoordinateLogger files:
+  F:\game\pc\MC\开服\Minecraft-Server-Build\.history\4-玩家信息与数据展示\02-玩家位置记录\CoordinateLogger玩家位置记录_20260915003001.md  Size=6360
+  F:\game\pc\MC\开服\Minecraft-Server-Build\.history\4-玩家信息与数据展示\02-玩家位置记录\CoordinateLogger玩家位置记录_20260915005313.md  Size=458
+  F:\game\pc\MC\开服\Minecraft-Server-Build\.history\4-玩家信息与数据展示\02-玩家位置记录\CoordinateLogger玩家位置记录_20260915205201.md  Size=6272
+  F:\game\pc\MC\开服\Minecraft-Server-Build\.history\4-玩家信息与数据展示\02-玩家位置记录\CoordinateLogger玩家位置记录_20260915210237.md  Size=6464

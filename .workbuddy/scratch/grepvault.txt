@@ -1,0 +1,168 @@
+﻿===== 引用 Vault 的文档 =====
+
+File                                                                LineNumber
+----                                                                ----------
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 336
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 338
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 340
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 343
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 367
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                          3
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         13
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         20
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         28
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         79
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         83
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         85
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         87
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         92
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        100
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        101
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        170
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        171
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md         22
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md         61
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        300
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        794
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                        9
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                       22
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                       36
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                       55
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                      145
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                      168
+/4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md                                    50
+/4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md                                    56
+/4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md                                   116
+/4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md                                   121
+/4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md                                   192
+/4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md                                     136
+/4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md                                     143
+/4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md                                     147
+/4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md                                     199
+/5-服务器管理/01-权限管理系统-LuckPerms/LuckPerms.md                                   53
+/5-服务器管理/01-权限管理系统-LuckPerms/LuckPerms.md                                   54
+/5-服务器管理/01-权限管理系统-LuckPerms/权限组设计方案.md                                     11
+/5-服务器管理/01-权限管理系统-LuckPerms/权限节点速查.md                                      24
+/5-服务器管理/01-权限管理系统-LuckPerms/权限节点速查.md                                     413
+/5-服务器管理/01-权限管理系统-LuckPerms/权限节点速查.md                                     417
+/5-服务器管理/01-权限管理系统-LuckPerms/权限节点速查.md                                     419
+/5-服务器管理/01-权限管理系统-LuckPerms/权限节点速查.md                                     420
+/ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md                                            79
+/ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md                                           370
+/各种插件插件（待选）/各种插件（待选）.md                                                    414
+/各种插件插件（待选）/各种插件（待选）.md                                                    435
+/各种插件插件（待选）/各种插件（待选）.md                                                    482
+
+
+===== 含经济/economy/金币/¥/money 的文档 =====
+
+File                                                                LineNumber
+----                                                                ----------
+/玩家命令使用手册.md                                                                29
+/玩家命令使用手册.md                                                               117
+/玩家命令使用手册.md                                                               263
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 320
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 336
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 338
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 339
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 340
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 342
+/1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md                                 367
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                          7
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         19
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         21
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         22
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         33
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         47
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         48
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         53
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         56
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         70
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                         74
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        100
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        104
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        111
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        118
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        120
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        123
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        128
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        130
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        133
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        136
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        138
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        143
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        149
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        160
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        161
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        162
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        169
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        171
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        173
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        174
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        175
+/3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md                                        181
+/3-玩法与玩家功能插件/04-领地系统-Residence/Residence.md                                 73
+/3-玩法与玩家功能插件/04-领地系统-Residence/Residence.md                                108
+/3-玩法与玩家功能插件/04-领地系统-Residence/领地插件使用指南（玩家篇）.md                            240
+/3-玩法与玩家功能插件/04-领地系统-Residence/领地插件使用指南（玩家篇）.md                            243
+/3-玩法与玩家功能插件/04-领地系统-Residence/领地插件使用指南（玩家篇）.md                            273
+/3-玩法与玩家功能插件/04-领地系统-Residence/领地插件使用指南（玩家篇）.md                            287
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md         22
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md         54
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md         59
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md         61
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md         75
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md         76
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        263
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        279
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        284
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        300
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        374
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        377
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        379
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        380
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        383
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        389
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        394
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        395
+/3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md        794
+/3-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md                  24
+/3-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md                  55
+/3-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md                 344
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                        9
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                       22
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                       36
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                       55
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                      145
+/3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md                      168
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                      25
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                      37
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     100
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     115
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     121
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     123
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     124
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     125
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     142
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     161
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     172
+/3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md                                     173
+/4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md                                     199
+/5-服务器管理/01-权限管理系统-LuckPerms/权限节点速查.md                                      73
+/ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md                                            16
+/ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md                                           370
+/ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md                                           631
+/各种插件插件（待选）/各种插件（待选）.md                                                     52
+/各种插件插件（待选）/各种插件（待选）.md                                                    109
+/各种插件插件（待选）/各种插件（待选）.md                                                    133
+/各种插件插件（待选）/各种插件（待选）.md                                                    270
+/各种插件插件（待选）/各种插件（待选）.md                                                    350
+/各种插件插件（待选）/各种插件（待选）.md                                                    406
+/各种插件插件（待选）/各种插件（待选）.md                                                    410
+/各种插件插件（待选）/各种插件（待选）.md                                                    414
+/各种插件插件（待选）/各种插件（待选）.md                                                    419
+/各种插件插件（待选）/各种插件（待选）.md                                                    425
+/各种插件插件（待选）/各种插件（待选）.md                                                    440
+/各种插件插件（待选）/各种插件（待选）.md                                                    482
+
+

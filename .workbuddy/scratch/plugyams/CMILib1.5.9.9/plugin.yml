@@ -1,0 +1,12 @@
+main: net.Zrips.CMILib.CMILib
+name: CMILib
+author: Zrips
+version: 1.5.9.9
+folia-supported: true
+api-version: 1.13
+description: CMI library
+softdepend: [PlaceholderAPI, MVdWPlaceholderAPI]
+website: https://www.spigotmc.org/resources/cmilib.87610/
+commands:
+  cmil:
+      description: basic command

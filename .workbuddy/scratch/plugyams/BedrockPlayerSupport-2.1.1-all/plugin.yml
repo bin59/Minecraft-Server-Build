@@ -1,0 +1,83 @@
+name: BedrockPlayerSupport
+version: 2.1.1
+main: cc.dsnb.bedrockplayersupport.BedrockPlayerSupport
+api-version: 1.19
+folia-supported: true
+depend:
+  - floodgate
+softdepend:
+  - CMI
+  - Essentials
+  - HuskHomes
+  - AdvancedTeleport
+  - SunLight
+  - AuthMe
+  - CatSeedLogin
+  - NexAuth
+  - PlaceholderAPI
+authors: [ DongShaoNB ]
+description: Make it easier for bedrock player to use other plugins
+website: dsnb.cc
+
+commands:
+  bedrockplayersupport:
+    description: "BedrockPlayerSupport main command"
+    aliases:
+      - bps
+    permission: bedrockplayersupport.admin
+  tpgui:
+    description: "Bedrock player teleport form"
+    permission: bedrockplayersupport.command.tpgui
+  msggui:
+    description: "Bedrock player msg form"
+    permission: bedrockplayersupport.command.msggui
+  homegui:
+    description: "Bedrock player home form"
+    permission: bedrockplayersupport.command.homegui
+  phomegui:
+    description: "Bedrock player public home form"
+    permission: bedrockplayersupport.command.phomegui
+  warpgui:
+    description: "Bedrock player warp form"
+    permission: bedrockplayersupport.command.warpgui
+  kitgui:
+    description: "Bedrock player kit form"
+    permission: bedrockplayersupport.command.kitgui
+  paygui:
+    description: "Bedrock player pay form"
+    permission: bedrockplayersupport.command.paygui
+  pointsgui:
+    description: "Bedrock player points form"
+    permission: bedrockplayersupport.command.pointsgui
+
+permissions:
+  bedrockplayersupport.admin:
+    description: "BedrockPlayerSupport admin permission"
+    default: op
+  bedrockplayersupport.command.tpgui:
+    description: "Bedrock player teleport form permission"
+    default: true
+  bedrockplayersupport.command.msggui:
+    description: "Bedrock player msg form permission"
+    default: true
+  bedrockplayersupport.command.homegui:
+    description: "Bedrock player home form permission"
+    default: true
+  bedrockplayersupport.command.phomegui:
+    description: "Bedrock player public home form permission"
+    default: true
+  bedrockplayersupport.command.warpgui:
+    description: "Bedrock player warp form permission"
+    default: true
+  bedrockplayersupport.command.kitgui:
+    description: "Bedrock player kit form permission"
+    default: true
+  bedrockplayersupport.form.backdeath:
+    description: "Bedrock player back death location form permission"
+    default: true
+  bedrockplayersupport.command.paygui:
+    description: "Bedrock player pay form permission"
+    default: true
+  bedrockplayersupport.command.pointsgui:
+    description: "Bedrock player points form permission"
+    default: true

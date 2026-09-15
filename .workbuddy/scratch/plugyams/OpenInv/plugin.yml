@@ -1,0 +1,155 @@
+name: OpenInv
+main: com.lishid.openinv.OpenInv
+version: 5.3.3
+author: lishid
+authors: [ Jikoo, ShadowRanger ]
+description: Open a player's inventory as a chest and interact with it in real time.
+api-version: "1.13"
+folia-supported: true
+
+libraries:
+  - "org.xerial:sqlite-jdbc:3.49.1.0"
+
+permissions:
+
+  openinv:
+    children:
+      # Inventory nodes (/openinv)
+      openinv.inventory:
+        children:
+          openinv.inventory.open:
+            children:
+              openinv.inventory.open.self: true
+              openinv.inventory.open.other: true
+          openinv.inventory.edit:
+            children:
+              openinv.inventory.open: true
+              openinv.inventory.edit.self:
+                children:
+                  openinv.inventory.open.self: true
+              openinv.inventory.edit.other:
+                children:
+                  openinv.inventory.open.other: true
+          # Specific slot behaviors inside opened player inventories
+          openinv.inventory.slot:
+            default: true
+            children:
+              openinv.inventory.slot.head.any: true
+              openinv.inventory.slot.chest.any: true
+              openinv.inventory.slot.legs.any: true
+              openinv.inventory.slot.feet.any: true
+              openinv.inventory.slot.drop: true
+      # Ender chest nodes (/openender)
+      openinv.enderchest:
+        children:
+          openinv.enderchest.open:
+            children:
+              openinv.enderchest.open.self: true
+              openinv.enderchest.open.other: true
+          openinv.enderchest.edit:
+            children:
+              openinv.enderchest.edit.self:
+                children:
+                  openinv.enderchest.open.self: true
+              openinv.enderchest.edit.other:
+                children:
+                  openinv.enderchest.open.other: true
+      # Clear nodes (/clearinv and /clearender)
+      openinv.clear:
+        children:
+          openinv.clear.self: true
+          openinv.clear.other: true
+      # Player access
+      openinv.access:
+        children:
+          openinv.access.offline: true
+          openinv.access.online: true
+          openinv.access.crossworld: true
+          openinv.access.level.1: true
+          openinv.access.level.2: false
+          openinv.access.level.3: false
+          openinv.access.level.4: false
+          openinv.access.equal.edit: false
+          openinv.access.equal.view: false
+          openinv.access.equal.deny: false
+      # Spectate features
+      openinv.spectate:
+        children:
+          openinv.spectate.click: true
+      # Container features
+      openinv.container:
+        children:
+          openinv.container.any:
+            children:
+              openinv.container.any.use: true
+          openinv.container.any.use:
+            default: false
+          openinv.container.silent:
+            children:
+              openinv.container.silent.use: true
+          openinv.container.silent.use:
+            default: false
+      # Search functionality
+      openinv.search:
+        children:
+          openinv.search.inventory: true
+          openinv.search.container: true
+
+commands:
+  openinv:
+    aliases: [ oi, inv, open ]
+    description: Open a player's inventory
+    permission: openinv.inventory.open.self;openinv.inventory.open.other
+    usage: |-
+      /<command> [Player] - Open a player's inventory
+  clearinv:
+    description: Clear a player's inventory
+    permission: openinv.clear.self;openinv.clear.other
+    usage: |-
+      /<command> [Player] - Clear a player's inventory
+  openender:
+    aliases: [ oe ]
+    description: Open a player's ender chest
+    permission: openinv.enderchest.open.self;openinv.enderchest.open.other
+    usage: |-
+      /<command> [Player] - Open a player's ender chest
+  clearender:
+    description: Clear a player's ender chest
+    permission: openinv.clear.self;openinv.clear.other
+    usage: |-
+      /<command> [Player] - Clear a player's ender chest
+  searchinv:
+    aliases: [ si ]
+    description: Search and list players having a specific item
+    permission: openinv.search.inventory
+    usage: |-
+      /<command> <Material> [MinAmount] - MinAmount is optional, the minimum amount required
+  searchender:
+    aliases: [ se ]
+    permission: openinv.search.inventory
+    description: Search and list players having a specific item in their ender chest
+    usage: |-
+      /<command> <Material> [MinAmount] - MinAmount is optional, the minimum amount required
+  silentcontainer:
+    aliases: [ sc, silent, silentchest ]
+    description: SilentContainer stops sounds and animations when using containers.
+    permission: openinv.container.silent
+    usage: |-
+      /<command> [check|on|off] - Check, toggle, or set SilentContainer
+  anycontainer:
+    aliases: [ ac, anychest ]
+    description: AnyContainer allows using blocked containers.
+    permission: openinv.container.any
+    usage: |-
+      /<command> [check|on|off] - Check, toggle, or set AnyContainer
+  searchenchant:
+    aliases: [ searchenchants ]
+    description: Search and list players with a specific enchantment.
+    permission: openinv.search.inventory
+    usage: |-
+      /<command> <[Enchantment] [MinLevel]> - Enchantment is the enchantment type, MinLevel is the minimum level. One is optional
+  searchcontainer:
+    aliases: [ searchchest ]
+    description: Search and list containers with a specific material.
+    permission: openinv.search.container
+    usage: /<command> <Material> [ChunkRadius] - ChunkRadius is optional, the length that will be searched for matching items. Default 5

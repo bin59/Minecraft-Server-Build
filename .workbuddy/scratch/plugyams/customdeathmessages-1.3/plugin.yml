@@ -1,0 +1,48 @@
+name: CustomDeathMessages
+version: 1.3
+main: com.sicklysurgeon.customdeathmessages.CustomDeathMessages
+api-version: 1.17
+authors: [SicklySurgeon]
+description: Muestra mensajes de muerte personalizados, coloridos y dinámicos.
+softdepend: [PlaceholderAPI, Vault, Essentials]
+commands:
+  cdmreload:
+    description: Recarga la configuración del plugin.
+    permission: cdm.reload
+    usage: /cdmreload
+  cdm:
+    description: Prueba mensajes de muerte o respawn.
+    usage: /cdm [test|broadcast|help|config|reload]
+    permission: cdm.use
+  cdmhelp:
+    description: Shows help for the plugin.
+    usage: /cdm help [page|search <keyword>]
+    aliases: [help]
+    permission: cdm.use
+  cdmconfig:
+    description: Valida la configuración del plugin.
+    usage: /cdm config validate
+    permission: cdm.reload
+  cdmbroadcast:
+    description: Test broadcast modes for death effects
+    usage: /cdm broadcast <sound|particle|message|test|modes|global>
+    permission: cdm.broadcast
+permissions:
+  cdm.use:
+    description: Basic access to plugin commands
+    default: true
+  cdm.reload:
+    description: Allows reloading configuration
+    default: op
+  cdm.test:
+    description: Allows testing death messages
+    default: op
+  cdm.broadcast:
+    description: Allows testing broadcast modes
+    default: op
+  cdm.bypass:
+    description: Permite a los jugadores no recibir mensajes de muerte.
+    default: false
+  cdm.admin:
+    description: Recibe actualizaciones del plugin
+    default: op
