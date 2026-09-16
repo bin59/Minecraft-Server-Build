@@ -21,16 +21,18 @@ BedrockPlayerSupport 是专为 GeyserMC 互通服设计的辅助插件，核心�
 
 | 分类       | 指令          | 功能说明                                          |
 | ---------- | ------------- | ------------------------------------------------- |
-| **传送**   | `/tpgui`      | 打开传送请求表单，选择要传送的玩家                |
-|            | `/warpgui`    | 打开传送点列表表单，选择传送点传送                |
-|            | 自动弹出      | 收到 tpa/tpahere 请求时自动弹出接受/拒绝/忽略表单 |
-| **家园**   | `/homegui`    | 打开个人家园列表表单，快速传送回家                |
-|            | `/phomegui`   | 打开公共家园列表表单，访问其他玩家的公开家        |
-| **消息**   | `/msggui`     | 打开私信发送表单，方便与其他玩家沟通              |
-| **工具包** | `/kitgui`     | 打开工具包领取表单                                |
-| **其他**   | 自动注册      | 基岩版玩家加入时自动使用随机密码注册并登录        |
-|            | 死亡回传      | 重生后自动弹出表单，询问是否返回死亡地点          |
-|            | 加入/退出命令 | 支持基岩版玩家加入/退出服务器时自动执行命令       |
+| **传送**   | `/tpgui`      | 打开传送请求表单，选择要传送的玩家（运行服已启用） |
+|            | `/warpgui`    | 打开传送点列表表单，选择传送点传送（已启用）       |
+|            | 自动弹出      | 收到 tpa/tpahere 请求时自动弹出接受/拒绝/忽略表单（receive.enable=true） |
+| **家园**   | `/homegui`    | 打开个人家园列表表单，快速传送回家（已启用）      |
+|            | `/phomegui`   | 打开公共家园列表表单（仅 HuskHomes 基础插件时可用，已启用） |
+| **消息**   | `/msggui`     | 打开私信发送表单（已启用）                        |
+| **工具包** | `/kitgui`     | 打开工具包领取表单（已启用）                      |
+| **经济**   | `/paygui`     | 经济支付表单（**运行服 form.money.enable=false，关闭**） |
+| **点券**   | `/pointsgui`  | 点券支付表单（**运行服 form.points.enable=false，关闭**） |
+| **其他**   | 自动注册/登录 | ⚠️ 运行服 `auth.register/auth.login` 均为 **false**，**未启用**自动随机密码注册登录 |
+|            | 死亡回传      | 重生后自动弹出表单，返回死亡点（back.enable=true，命令 `/back`） |
+|            | 加入/退出命令 | 支持基岩版玩家加入/退出时自动执行命令（运行服 join/quit-commands.enable=false） |
 
 ---
 
@@ -61,180 +63,82 @@ BedrockPlayerSupport 可与其他插件联动：
 
 #### config.yml 配置示例
 
+> ✅ **运行服校准（2026-09-16）**：以下结构为运行服 `plugins\BedrockPlayerSupport\config.yml`（v2.1.1，作者 DongShaoNB）**真实命名空间结构**。早期文档中按 `tpa:/tpgui:/homegui:` 平铺的写法为臆测模板，与实际不符，已替换为真实结构。关键项：语言 `zh_CN`（第9行）。
+
 ```yaml
-############################################################
-# BedrockPlayerSupport 配置文件
-# 适用于 Java 基岩互通服
-############################################################
+# ===== plugin 通用设置 =====
+plugin:
+  # 插件语言（实际值：'zh_CN'，见 config.yml 第9行）
+  language: 'zh_CN'
+  # 登录插件：auto/authme/catseedlogin/nexauth/other/none
+  # 实际值：'auto'（第18行）
+  auth: 'auto'
+  # 启动时检测更新
+  # 实际值：true（第21行）
+  check-update: true
+  # 基础插件：auto/cmi/essentialsx/huskhomes/advancedteleport/sunlight/none
+  # 实际值：'auto'（第28行，自动检测到 EssentialsX）
+  basic: 'auto'
+  # 表单支持 PlaceholderAPI
+  # 实际值：true（第33行）
+  support-papi: true
 
-# ==================== 通用设置 ====================
+# ===== form 各表单开关 =====
+form:
+  # 死亡回传（重生后自动打开返回死亡点表单）
+  back:
+    open-delay-time: 20          # 打开延迟（刻），第43行
+    enable: true                 # 第46行
+    command: '/back'             # 返回死亡点命令，第51行
+  teleport:
+    receive:
+      enable: true               # 收到 tpa/tpahere 自动弹出表单，第57行
+    enable: true                 # /tpgui，第61行
+    cross-server: false          # 跨服（仅 HuskHomes），第66行
+  phome:
+    enable: true                 # /phomegui 公共家（仅 HuskHomes），第73行
+  msg:
+    enable: true                 # /msggui，第78行
+  kit:
+    enable: true                 # /kitgui 工具包，第85行
+  warp:
+    enable: true                 # /warpgui 传送点，第90行
+  money:
+    enable: false               # /paygui 经济支付表单（运行服关闭），第95行
+    pay-command: 'pay %playerName% %amount%'   # 第102行
+  home:
+    enable: true                 # /homegui，第107行
+  points:
+    enable: false               # /pointsgui 点券表单（运行服关闭），第112行
+    pay-command: '/points pay %playerName% %amount%'  # 第119行
 
-# 插件语言（支持 en, zh_CN 等）
-language: zh_CN
+# ===== 加入/退出命令 =====
+general:
+  quit-commands:
+    enable: false                # 第128行（默认关闭，示例命令保留在配置内）
+    commands:
+      - '[CONSOLE] say Bedrock Player %playerName% quit the server'
+      - '[PLAYER] me I''m a Bedrock Player %playerName%'
+  join-commands:
+    enable: false                # 第148行
+    commands:
+      - '[CONSOLE] say Welcome Bedrock Player %playerName%'
+      - '[PLAYER] me I''m a Bedrock Player %playerName%'
 
-# 是否仅对基岩版玩家启用 GUI 功能
-# 设为 false 则 Java 玩家也可使用 GUI 指令
-bedrock-only: true
-
-# ==================== 传送表单 ====================
-
-tpa:
-  # 是否启用传送请求表单
-  # 开启后，基岩版玩家收到 tpa/tpahere 请求时自动弹出表单
-  enabled: true
-
-  # 表单标题
-  form-title: '传送请求'
-
-  # 表单内容（支持颜色代码 &）
-  form-content: '&e{player} &f请求传送到你'
-
-  # 接受按钮文本
-  accept-button: '&a接受'
-
-  # 拒绝按钮文本
-  reject-button: '&c拒绝'
-
-  # 忽略按钮文本
-  ignore-button: '&7忽略'
-
-# /tpgui 传送表单
-tpgui:
-  # 是否启用 /tpgui 指令
-  enabled: true
-
-  # 表单标题
-  form-title: '选择传送目标'
-
-  # 表单内容
-  form-content: '选择要传送到的玩家'
-
-  # 每页显示的玩家数量
-  players-per-page: 10
-
-# /warpgui 传送点表单
-warpgui:
-  # 是否启用 /warpgui 指令
-  enabled: true
-
-  # 表单标题
-  form-title: '传送点列表'
-
-  # 表单内容
-  form-content: '选择要传送到的传送点'
-
-# ==================== 家园表单 ====================
-
-# /homegui 家园列表表单
-homegui:
-  # 是否启用 /homegui 指令
-  enabled: true
-
-  # 表单标题
-  form-title: '我的家园'
-
-  # 表单内容
-  form-content: '选择要传送到的家园'
-
-  # 无家园时的提示
-  no-homes-message: '&c你还没有设置任何家园'
-
-# /phomegui 公共家园列表表单
-phomegui:
-  # 是否启用 /phomegui 指令（需要 HuskHomes 支持）
-  enabled: true
-
-  # 表单标题
-  form-title: '公共家园'
-
-  # 表单内容
-  form-content: '选择要访问的公共家园'
-
-# ==================== 消息表单 ====================
-
-# /msggui 私信表单
-msggui:
-  # 是否启用 /msggui 指令
-  enabled: true
-
-  # 表单标题
-  form-title: '发送私信'
-
-  # 表单内容
-  form-content: '选择要发送私信的玩家'
-
-# ==================== 工具包表单 ====================
-
-# /kitgui 工具包表单
-kitgui:
-  # 是否启用 /kitgui 指令
-  enabled: true
-
-  # 表单标题
-  form-title: '工具包'
-
-  # 表单内容
-  form-content: '选择要领取的工具包'
-
-  # 显示工具包冷却状态
-  show-cooldown: true
-
-# ==================== 自动注册/登录 ====================
-
-auto-register:
-  # 是否启用自动注册
-  # 基岩版玩家加入时自动使用随机密码注册
-  enabled: true
-
-  # 是否需要 AuthMe 插件
-  require-authme: true
-
-  # 自动注册后是否需要再次登录
-  # 设为 false 则注册后自动登录
-  login-after-register: false
-
-# ==================== 死亡回传 ====================
-
-death-back:
-  # 是否在重生后弹出返回死亡地点的表单
-  enabled: true
-
-  # 表单标题
-  form-title: '返回死亡地点'
-
-  # 表单内容
-  form-content: '是否返回你的死亡地点？'
-
-  # 是按钮文本
-  yes-button: '&a返回死亡地点'
-
-  # 否按钮文本
-  no-button: '&c不返回'
-
-# ==================== 加入/退出命令 ====================
-
-# 基岩版玩家加入服务器时自动执行的命令
-join-commands:
-  enabled: false
-  commands:
-    # 示例：加入时发送欢迎消息
-    # - 'say 基岩版玩家 {player} 加入了服务器'
-    # 示例：加入时给予新手工具包
-    # - 'kit starter {player}'
-
-# 基岩版玩家退出服务器时自动执行的命令
-quit-commands:
-  enabled: false
-  commands:
-    # 示例：退出时记录日志
-    # - 'say 基岩版玩家 {player} 离开了服务器'
-
-# ==================== PlaceholderAPI 集成 ====================
-
-placeholderapi:
-  # 是否启用 PlaceholderAPI 支持
-  enabled: true
+# ===== 自动登录/自动注册 =====
+# ⚠️ 运行服实际均为关闭（第168、182行）：
+#   自动登录 enable: false；自动注册 enable: false
+#   即基岩版玩家加入时不会自动注册/登录，需自行通过登录流程
+auth:
+  login:
+    enable: false                # 第168行
+    command: 'forcelogin %playerName%'   # 第177行
+  register:
+    enable: false                # 第182行
+    password-length: 16          # 第185行
 ```
+
+> 📌 **与早期文档的差异提醒**：运行服 `auth.register.enable=false`、`auth.login.enable=false`，即**未启用**"基岩版玩家加入自动随机密码注册并登录"；`form.money`（/paygui）与 `form.points`（/pointsgui）也为关闭。若需开启自动注册，需先在 `plugin.auth` 指定登录插件并把对应 `enable` 改为 `true`（涉及登录/权限，建议用户决策后再改）。
 
 ---
 

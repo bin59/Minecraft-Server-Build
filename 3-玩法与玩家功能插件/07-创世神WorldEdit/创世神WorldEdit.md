@@ -44,6 +44,24 @@
 
 ---
 
+## 本服实际配置要点（2026-09-16 校准，对照 plugins/WorldEdit/config.yml）
+
+| 配置项 | 实际值 | config.yml 行号 |
+| --- | --- | --- |
+| `wand-item`（`//wand` 给的选区工具） | `minecraft:wooden_axe`（木斧） | 第 147 行 |
+| `navigation-wand.item`（导航杖，用于 `/jumpto` `/thru` `/unstuck` 等） | `minecraft:compass`（指南针） | 第 124 行 |
+| `navigation-wand.max-distance` | `100` | 第 125 行 |
+| 单次最大改动方块 `limits.max-blocks-changed` | `default: -1` / `maximum: -1`（无上限） | 第 20–22 行 |
+| 垂直高度上限 `vertical-height` | `256` | 第 23–24 行 |
+| 历史记录 `history` | `size: 15` / `expiration: 10` | 第 137–139 行 |
+| 快照 `snapshots.directory` | 空（未配置快照目录，`//restore` 类功能不可用） | 第 120–121 行 |
+| 方案保存目录 `saving.dir` | `schematics` | 第 131–132 行 |
+| 不允许操作的方块 `disallowed-blocks` | 树苗/床/铁轨/草/花/作物/红石元件等一长串（见 config 第 34–94 行） | 第 34–94 行 |
+
+> **刻意错开说明（重要）**：本服 WorldEdit 的导航杖 `navigation-wand` 是 **指南针 `minecraft:compass`**（第 124 行），而快捷菜单 QuickMenu 的触发物品是 **时钟 CLOCK**——两者刻意不同，避免冲突。`//wand` 给的是**木斧**（选区），别把导航杖当成 `//wand`。
+
+---
+
 以下是创世神（WorldEdit）的常用使用方法，按操作流程整理：
 
 ---

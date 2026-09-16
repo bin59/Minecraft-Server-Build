@@ -4,6 +4,31 @@
 
 > **Vault 是什么**：Vault 本身不存钱、也不管权限，它是中间件——把 Residence、宠物、菜单、死亡信息等一群「功能插件」统一接到同一套**经济核心（EssentialsX）**和**权限核心（LuckPerms）**上。装好 Vault，这些插件才「找得到钱」。
 
+> **⚠️ 运行服实际配置校准（2026-09-16，重点）**：
+> 打开运行服 `plugins/Vault/config.yml` 发现，本服装入的 Vault 并非「纯 API 桥接版」，而是 **Vault 2.0 自带内置经济**（config 第 2–5 行标注 `Vault 2.0 — internal economy`，`plugin_version: 1.6.2`）。其实际行为与本文「Vault 只做桥、钱存在 EssentialsX」的描述有出入，以下为**实际值**：
+>
+> | 配置项 | 实际值（plugins/Vault/config.yml） |
+> | --- | --- |
+> | 经济定位 | Vault 自带内部经济，账目存 `plugins/Vault/balances.yml`；`import.essentials.enabled: false`（第 45 行，未从 EssentialsX 导入） |
+> | 货币符号 | `currency.symbol: $`（第 21 行），位置 suffix —— **不是** EssentialsX 的 ¥ |
+> | 语言 | `language: en`（第 7 行） |
+> | 借贷系统 | `loans.enabled: true`（第 78 行），账目 `plugins/Vault/loans.yml` |
+> | 存储 | 文件存储（`storage.use_mysql: false`，第 27 行） |
+> | 自带指令 | `/balance`、`/pay`、`/eco give|take`、`/vault reload`、`/vault loan`（见 config 注释第 113–130 行） |
+>
+> **需用户决策**：(1) 究竟以 Vault 内置经济为准，还是以 EssentialsX 经济为准——二者可能存在 `/bal` 与 `/balance` 双经济并存；(2) 货币符号实际为 `$`，与 EssentialsX 已改的 `¥` 不一致；(3) 本文 §4.1 让 Residence `EnableEconomy: true`，但运行服 Residence 当前为 `false`。在确认经济核心前，请勿按本文「下载 Vault Updated / 接 EssentialsX」一节继续操作。
+
+--- | --- |
+> | 经济定位 | Vault 自带内部经济，账目存 plugins/Vault/balances.yml；import.essentials.enabled: false（第 45 行，未从 EssentialsX 导入） |
+> | 货币符号 | currency.symbol: $（第 21 行），位置 suffix —— **不是** EssentialsX 的 ¥ |
+> | 语言 | language: en（第 7 行） |
+> | 借贷系统 | loans.enabled: true（第 78 行），账目 plugins/Vault/loans.yml |
+> | 存储 | 文件存储（storage.use_mysql: false，第 27 行） |
+> | 自带指令 | /balance、/pay、/eco give|take、/vault reload、/vault loan（见 config 注释第 113–130 行） |
+>
+> **需用户决策**：(1) 究竟以 Vault 内置经济为准，还是以 EssentialsX 经济为准——二者可能存在 /bal 与 /balance 双经济并存；(2) 货币符号实际为 $，与 EssentialsX 已改的 ¥ 不一致；(3) 本文 §4.1 让 Residence EnableEconomy: true，但运行服 Residence 当前为 alse。在确认经济核心前，请勿按本文「下载 Vault Updated / 接 EssentialsX」一节继续操作。
+
+
 ---
 
 ## 一、核心原理与安装顺序

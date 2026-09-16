@@ -51,23 +51,40 @@ plugins/CustomDeathMessages/
 
 ```yaml
 # 史诗死亡触发概率（0.0 ~ 1.0），如 0.05 = 5% 概率
+# 实际值：epic-death-chance: 0.05（config.yml 第116行）
 epic-death-chance: 0.05
 # 展示死亡消息向玩家收取的费用（需 Vault + 经济插件，0 为免费）
+# 实际值：cost-per-death-message: 0.0（第123行，未启用收费）
 cost-per-death-message: 0
 # 免收费用的权限组（LuckPerms 组名），如 admin / vip
+# 实际值：exempt-groups-from-cost: ["admin"]（第125-126行）
 exempt-groups-from-cost:
   - "admin"
 # 旧版颜色兼容：true 时自动剥离现代十六进制颜色码，避免低版本显示为纯文本
+# 实际值：legacy-color-support: false（第161行）
 legacy-color-support: false
-# 启动检查更新（仅通知有 cdm.admin 的玩家/OP）
-update-checker: true
-# 广播相关：各效果（消息/音效/粒子/标题/暗屏）的默认可见范围
-# 取值示例：SELF / KILLER / WORLD / GLOBAL
+# 启动检查更新
+# 注意：运行服 1.3 的 config.yml 中【没有 update-checker 键】（已核对全文），
+#       更新通知由 cdm.admin 权限控制，无需在此配置。
+# update-checker: true
+# 广播相关：各效果（消息/音效/粒子/标题/暗屏）的可见范围
+# 取值：GLOBAL / WORLD / RADIUS / VICTIM_ONLY
+# ⚠️ 以下为运行服实际值（第79-98行），与旧文档示例不同：
 effects-broadcast:
-  default-mode: GLOBAL
-  sound-mode: WORLD
-  title-mode: WORLD
+  default-mode: "WORLD"          # 第81行（旧文档示例误写 GLOBAL）
+  default-radius: 50
+  sound-mode: "WORLD"            # 第85行
+  sound-radius: 50
+  particle-mode: "WORLD"         # 第88行
+  particle-radius: 50
+  title-mode: "VICTIM_ONLY"      # 第91行（旧文档示例误写 WORLD）
+  title-radius: 0
+  actionbar-mode: "VICTIM_ONLY"  # 第94行
+  darken-effect-mode: "RADIUS"   # 第97行
+  darken-effect-radius: 30
 ```
+
+> ✅ **运行服校准（2026-09-16，`plugins\CustomDeathMessages\config.yml` 实测）**：`epic-death-chance:0.05`、`cost-per-death-message:0.0`、`exempt-groups-from-cost:["admin"]`、`legacy-color-support:false` 均与文档一致；广播模式以上述实际值为准。实际文件另有 `play-sound-on-death`（音效 `entity.player.death`）、`play-particles-on-death`（粒子 EXPLOSION）、`respawn-message-enabled:true`、`use-permission-based-messages:true`、`help-permissions` 等键，文档仅列常用项。
 
 > `messages.yml` 按死亡原因分组存放消息列表（如 `global-pvp-death-messages`、`melee-death-messages`、`arrow-messages`、`fireball-messages`、`fall-damage-messages`、`creeper-messages`、`warden-sonic-boom-messages`、`unknown-messages` 等），并含 `broadcast-system` 段。该文件首次生成后可直接编辑，或用 `/cdm editor` 在游戏内改。
 

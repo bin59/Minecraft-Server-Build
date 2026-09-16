@@ -1,4 +1,4 @@
-# EssentialsX 多功能指令整合：功能说明与完整配置
+﻿# EssentialsX 多功能指令整合：功能说明与完整配置
 
 ---
 
@@ -306,6 +306,28 @@ essentials.commandcooldowns.bypass  # 绕过命令冷却
 ### 📄 config.yml 完整配置
 
 文件路径：`plugins/Essentials/config.yml`
+
+> ✅ **运行服校准说明（2026-09-16，基于 `plugins\Essentials\config.yml` 实际值核对）**
+>
+> 下方 yaml 为**面向互通服的推荐模板/框架**，并非运行服逐行实际值。已与运行服核对的关键项：
+>
+> | 配置项 | 模板值 | 运行服实际值（config.yml） | 结论 |
+> | --- | --- | --- | --- |
+> | currency-symbol | `'¥'` | `'¥'`（第869行） | ✅ 一致（上一轮已改） |
+> | locale | `zh` | `zh`（第471行） | ✅ 一致（上一轮已改） |
+> | use-bukkit-permissions | `true` | `true`（第358行） | ✅ 一致 |
+> | debug | `false` | `false`（第464行） | ✅ 一致 |
+> | register-back-in-listener | `false` | `false`（第659行） | ✅ 一致 |
+> | spawn-on-join | `false` | `false`（第1308行） | ✅ 一致 |
+> | teleport-delay | `3` | `0`（第120行） | ⚠️ 差异（行为项，需用户决策） |
+> | teleport-cooldown | `10` | `0`（第116行） | ⚠️ 差异（行为项，需用户决策） |
+> | teleport-invulnerability | `5` | `4`（第124行） | ⚠️ 差异（行为项，需用户决策） |
+> | starting-balance | `100.0` | `0`（第856行） | ⚠️ 差异（经济项，需用户决策） |
+> | max-money | `10000000` | `10000000000000`（第877行） | ⚠️ 差异（经济项，需用户决策） |
+> | command-cooldowns | feed/heal/home/tpa/spawn/back | 空（第720-722行全部注释） | ⚠️ 差异（冷却项，需用户决策） |
+> | command-costs | 注释示例 | 空（第860-864行全部注释） | ⚠️ 差异（收费项，需用户决策） |
+>
+> 另：实际 `kits.yml`（第19-48行）为 EssentialsX 默认示例包 `tools / dtools / notch / color / firework`，与下方"新手/VIP/每日奖励"模板不同；该模板仅作参考。
 
 ```yaml
 ############################################################

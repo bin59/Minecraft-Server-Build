@@ -46,6 +46,8 @@ api:
   elyByEnabled: false            # Ely.by 已禁用
 ```
 
+> **核对结论（2026-09-16）**：上述关键配置已逐项对照运行服 `plugins/SkinsRestorer/config.yml`，全部一致（locale=zh-cn 第 35/40 行、database.type=FILE 第 61 行、各冷却与历史值第 87–133 行、proxyMode.detection=AUTO 第 279 行、enablePaperJoinListener=true 第 334 行、mineskinAPIKey=key 占位 第 298 行）。无需改动。
+
 ## 常用命令
 
 ### 玩家命令

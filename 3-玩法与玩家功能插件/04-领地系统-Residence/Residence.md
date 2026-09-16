@@ -100,9 +100,13 @@ Global:
     setFalse: RED_WOOL                    # 关闭状态: 红色羊毛
     setRemove: LIGHT_GRAY_WOOL            # 移除状态: 灰色羊毛
 
-  WebMap:
-    Use: true                             # Web 地图支持启用
+  DynMap:
+    Use: true                             # DynMap 地图支持启用（实际 config.yml 第 522 行）
     ShowFlags: true                       # 显示旗帜信息
+  Pl3xMap:
+    Use: true                             # Pl3xMap 地图支持启用（实际 config.yml 第 556 行）
+    ShowFlags: true                       # 显示旗帜信息
+  # 实际配置无 WebMap 段，在线地图走 DynMap / Pl3xMap。
 
   # 以下功能均已禁用:
   EnableEconomy: false                    # 经济系统
@@ -110,6 +114,8 @@ Global:
   EnableRentSystem: false                 # 出租系统
   Sell.Subzone: false                     # 子区域出售
 ```
+
+> **经济开关实际值**：本服领地当前 EnableEconomy: false（config.yml 第 355 行）、Type: Vault（第 367 行）、UseLeaseSystem: false（第 334 行）、EnableRentSystem: false（第 374 行）——圈地不扣钱、不可买卖/出租。Vault.md §4.1 描述的「开启经济、领地买卖」是目标方案，当前运行服为关闭状态；如需开启属经济行为项，需用户决策（见校准报告）。
 
 ## flags.yml 权限配置文件
 
@@ -119,9 +125,10 @@ Global:
 
 这部分定义了玩家**不在任何领地内**时的世界默认行为。
 
-- **核心保护**：默认**禁止**玩家建造 (`build: false`)、使用 (`use: false`) 和破坏 (`destroy: false`) 方块。
-- **PVP 与伤害**：默认**开启**玩家对战 (`pvp: true`) 和生物伤害 (`damage: false` - _注：此处原文为false，意为禁止生物伤害，但pvp为true_)。
-- **爆炸与火灾**：默认**允许**TNT 爆炸 (`tnt: true`) 和火焰蔓延 (`firespread: false` - _注：此处原文为false，意为禁止火焰蔓延_)，但禁止苦力怕爆炸 (`creeper: false`)。
+- **核心保护**：野外**允许**玩家建造 (`build: true`，flags.yml 第 9 行)、使用 (`use: true`，第 8 行)；全局 `Global` 段未单独列出 `destroy`。
+- **PVP 与伤害**：野外**开启**玩家对战 (`pvp: true`，flags.yml 第 15 行) 和生物伤害 (`damage: true`，第 12 行)。
+- **爆炸与火灾**：野外**允许** TNT 爆炸 (`tnt: true`，flags.yml 第 14 行)、火焰蔓延 (`firespread: true`，第 11 行)、点燃 (`ignite: true`，第 10 行)，苦力怕爆炸 (`creeper: true`，第 13 行) 亦为允许。
+- **结论**：本服野外（无人圈地区域）几乎不做规则限制，保护完全靠玩家自建领地实现。_（本节已按运行服 flags.yml 第 7–15 行实际值于 2026-09-16 校准，旧版此处数值全部相反。）_
 
 ### 🚩 权限标志管理 (FlagPermission)
 
@@ -135,9 +142,9 @@ Global:
 
 当玩家创建一个新的领地时，该领地会自动应用以下默认权限：
 
-- **基础操作**：默认**禁止**建造 (`build: false`)、破坏 (`destroy: false`)、使用容器 (`container: false`) 和 PVP (`pvp: true` - _注：此处原文为true，意为开启PVP_)。
-- **生物与动物**：禁止生物生成 (`nomobs: true`)，禁止动物繁殖 (`animalkilling: false`) 和剪羊毛 (`shear: false`)。
-- **特殊保护**：禁止TNT爆炸 (`tnt: true` - _注：此处原文为true，意为允许TNT_)，禁止活塞推动方块 (`pistonprotection: true`)。
+- **基础操作**：新领地默认**禁止**建造 (`build: false`)、破坏 (`destroy: false`)、使用容器 (`container: false`)、使用 (`use: false`) 和 PVP (`pvp: false`，flags.yml 第 412 行)。
+- **生物与动物**：禁止动物捕杀 (`animalkilling: false`，flags.yml 第 399 行) 和剪羊毛 (`shear: false`，第 413 行)。
+- **特殊保护**：禁止 TNT 爆炸 (`tnt: false`，flags.yml 第 415 行)、禁止爆炸 (`explode: false`)、火焰蔓延 (`firespread: false`)，开启活塞保护 (`pistonprotection: true`，第 411 行)。
 
 ### 👤 创建者与租客权限 (CreatorDefault & RentedDefault)
 

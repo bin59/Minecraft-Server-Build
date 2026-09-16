@@ -129,6 +129,8 @@ custom-replacements:
 
 > `config.yml` 由插件自动生成，键名以实际生成文件为准；如不确定某字段，保留默认值即可，不要照抄过时教程里的键名。
 
+> ✅ **运行服校准（2026-09-16，`plugins\DecentHolograms\config.yml` 实测）**：上表数值与运行服逐项一致——`display-range:48`（第26行）、`update-range:48`（第28行）、`update-interval:20`（第30行）、`lru-cache-size:500`（第36行）、`height.*`（第39-42行）、`damage-display.enabled:false`（第103行）、`healing-display.enabled:false`（第132行）、`player-skin-connection-timeout:5`（第89行）均为默认值。**结构微调**：实际文件中 `update-checker`（第47行）与 `click-cooldown`（第50行）为**顶层键**，不在 `defaults:` 下；另实际多出 `defaults.text: Blank Line`（第24行）与 `displays-eye-level-positioning: false`（第76行）。运行服现有全息文件：`holograms/` 下 `welcome.yml / menu.yml / 1.yml / nanguascunf.yml`。
+
 ## 全息文件结构 (`holograms/<name>.yml`)
 
 每个全息是一个独立 YAML。手写或 `/dh hologram create` 生成后可直接编辑。下面是**官方 2.x 真实文件格式**（注意：行用 `content:` 直接写，动作挂在**整页**下并以点击类型为键）：

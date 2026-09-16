@@ -22,7 +22,7 @@ SimplePets 把「跟随伙伴」做成了开箱即用的装饰/养成系统，�
 - **服务器管控**：召唤冷却、世界限制、每世界宠物数量上限。
 - **数据存储**：支持 **MySQL 与 SQLite**（存档跨服/重启保留）。
 - **PlaceholderAPI 支持**：可在其他插件（TAB、计分板）显示宠物信息。
-- **Addon 系统**：通过经济 Addon 联动，实现「花钱买宠物 / 解锁宠物」；可选 **Vault Addon**（用服务器主货币 EssentialsX 余额，与全服统一）或 GemsEconomy Addon 等。
+- **Addon 系统**：通过经济 Addon 联动，实现「花钱买宠物 / 解锁宠物」；本服已启用 **Vault Addon**（用服务器主货币 EssentialsX 余额，与全服统一），GemsEconomy Addon 未装。
 
 ## 安装与前置
 
@@ -34,7 +34,7 @@ SimplePets 把「跟随伙伴」做成了开箱即用的装饰/养成系统，�
 3. 下载 **单一 jar**（自 R5-B292 起不再按 MC 版本分 jar，一个文件覆盖全部支持版本），放入 `plugins/` 并**完整重启**服务端。
 4. 可选依赖：
    - **PlaceholderAPI**：用于外部占位符。
-   - **Vault Addon（推荐，货币与服务器统一）** / **GemsEconomy + SimplePets 经济 Addon**：做「花钱买宠物」。本服已有 Vault + EssentialsX，直接用 Vault Addon 即可，免第二套货币。
+   - **Vault Addon（本服已安装 ✅）**：用服务器主货币（EssentialsX 余额）买宠物，与全服统一账本；无需第二套货币。
 
 > 1.21.x 需要精确版本支持，插件启动时会自动链接到对应支持并控制台提示；如某补丁版出问题会启用专用支持。
 
@@ -43,6 +43,8 @@ SimplePets 把「跟随伙伴」做成了开箱即用的装饰/养成系统，�
 ```
 plugins/SimplePets/
 ├── config.yml            # 全局配置（存储方式、冷却、世界限制、消息等）
+├── Addons/               # 经济 Addon（VaultAddon.jar，已装）
+├── AddonConfig.yml       # Addon 配置（Vault 启用开关、宠物价格）
 ├── pets/                 # 玩家宠物存档（SQLite 本地存储时）
 └── <pet>.json            # 每个宠物类型的独立配置（权限/速度/选项）
 ```
@@ -79,6 +81,11 @@ allow-worlds:
 ```
 
 > 具体键名随版本演进，改完用 `/pet reload` 生效；不确定时以插件生成的文件与 Wiki 的 Config 章节为准。
+
+> ✅ **运行服校准（2026-09-16，`plugins\SimplePets\config.yml` 实测）**：上方 yaml 为示意，运行服实际——
+> - 存储：`MySQL.Enabled: false`（config.yml 第180行），即 **SQLite 本地存储**（`storage.db`），未启用 MySQL。
+> - 召唤冷却：实际键为 `pet-cooldown.enabled: false`（第474行，**运行服未启用召唤冷却**），`duration: 5`（第479行，仅在 enabled=true 时生效）；绕过权限 `pet.cooldown.bypass`（第471行注释）。
+> - 经济 Addon：`AddonConfig.yml` 第3行 `Vault.Enabled: true`；`Addons/configs/Vault.yml` 全部宠物默认价 **2000**（如 `type.wolf: 2000` 第409行），一次性购买（`Pay-Per-Use-Enabled: false` 第8行），免付父权限 `pet.vault.bypass`（第59行）。
 
 ## 命令
 
@@ -118,13 +125,33 @@ allow-worlds:
 
 > 权限以官方 Wiki 与插件实际生成的权限参考为准；若某节点不生效，优先核对前缀（`Pet.` 而非 `simplepets.`）与版本。
 
-## 经济联动（GemsEconomy Addon）
+## 经济联动（Vault Addon — 已启用 ✅）
 
-- SimplePets 通过 **经济 Addon** 接入经济系统，实现「花钱买宠物 / 解锁宠物类型」。可选 Addon：
-  - **Vault Addon（本服推荐）**：Hook 进 Vault，宠物用服务器主货币（EssentialsX 余额）购买，与 `/bal`、Residence、死亡收费同一套账；
-  - GemsEconomy Addon：用 GemsEconomy 货币，与 Vault 余额是两套账（不推荐，除非你想分开）。
-- 安装对应 Addon jar 到 `plugins/SimplePets/Addons/`（或游戏内 `/pet addon install Vault`），在配置里给宠物标价；玩家用 `/pet purchased` 查看已购，购买后获得对应 `Pet.type.<类型>` 使用权。
-- 用 `Pet.economy.bypass` 让赞助组（如 vip/vip+）免单，配合「待选清单」的宠物数量梯度（default 1 只 / vip 2 只 / vip+ 3 只）做分层权益。
+SimplePets 通过**经济 Addon** 接入经济系统，实现「花钱买宠物 / 解锁宠物类型」。可选 Addon：
+
+| Addon | 货币 | 状态 |
+|---|---|---|
+| **Vault Addon**（本服选用） | Hook 进 Vault，用服务器主货币（EssentialsX 余额）购买，与 `/bal`、Residence、死亡收费**同一套账** | ✅ **已安装启用**（2026-09-16） |
+| GemsEconomy Addon | 用 GemsEconomy 独立货币，两套账 | ❌ 未装（不推荐，除非想分开货币） |
+
+### 运行服安装记录（2026-09-16）
+
+- Addon jar：`plugins/SimplePets/Addons/VaultAddon.jar`（**0.4**，MC 1.18–1.19.4 兼容构建，来源 Modrinth 官方源 `spets-vault` 项目；`curl -k` 下载）
+- 重启后日志确认：`[SimplePets ADDON] Loading modules for the Vault addon`
+- 自动生成 `plugins/SimplePets/AddonConfig.yml`：默认 `Vault.Enabled: true`，**所有宠物默认价格 2000**
+- Vault 经济挂钩：`[Vault] [Economy] Essentials Economy hooked.`（宠物购买扣的是服务器主货币）
+
+### 宠物价格调整
+
+价格文件是 **`plugins/SimplePets/Addons/configs/Vault.yml`**（不是 AddonConfig.yml）——编辑其 `type:` 段按宠物类型分别定价（当前全部默认 2000，如 `wolf: 2000` 第 409 行），改完在游戏内执行 `/pet addon` **禁用再启用**刷新，或重启服务端。
+
+> 完整配置说明（`Pay-Per-Use`、`Hide-Price-If-Bypassed`、各宠物子权限 `pet.vault.bypass.<type>`）见独立文档 [SimplePets-Vault-Addon经济联动.md](SimplePets-Vault-Addon经济联动.md)。
+
+### 权限（重要）
+
+- **Vault Addon 免付费权限：`pet.vault.bypass`**（服务端启动日志确认该节点已随 Addon 注册）——给赞助组（vip/vip+）免单用这个；
+- `Pet.economy.bypass` 是 **GemsEconomy Addon** 的免单权限，本服未装 GemsEconomy，**不要混用**；
+- 购买后玩家获得对应 `Pet.type.<类型>` 使用权，用 `/pet purchased` 查看已购。
 
 ## 实战示例
 
@@ -172,7 +199,7 @@ A：默认 SQLite 本地文件（`pets/`），可改 MySQL 实现跨服共享；
 A：**Java 21**（1.20.5+ 与 1.21.x 均要求 Java 21）。
 
 **Q：想做「买宠物蛋」经济玩法？**
-A：本服已有 Vault + EssentialsX，直接装 **SimplePets Vault Addon**（`/pet addon install Vault`），给宠物标价即可用服务器主货币购买，货币自动统一；若偏要用 GemsEconomy 则装 GemsEconomy Addon（两套账）。配合 `Pet.economy.bypass` 让赞助组免单，再用 LuckPerms 分组控制可拥有数量。
+A：本服已装 **SimplePets Vault Addon**（2026-09-16 已启用），在 `plugins/SimplePets/AddonConfig.yml` 给宠物标价即可用服务器主货币购买（当前默认 2000/只），货币自动统一；调价后 `/pet addon` 禁用再启用刷新。赞助组免费用 **`pet.vault.bypass`**，再用 LuckPerms 分组控制可拥有数量。
 
 ## 猫模型错误
 

@@ -22,6 +22,8 @@ settings:
   console-locale: 'en'               # 控制台英文
 ```
 
+> **核对结论（2026-09-16）**：上述关键配置已逐项对照运行服 `plugins/OpenInv/config.yml`（全文仅 11 行），全部一致（config-version=8、equal-access=allow、no-args-opens-self=false、searchcontainer.max-radius=10、disable-offline-access=false、disable-saving=false、console-locale=en）。无需改动。
+
 ## 常用命令
 
 | 命令 | 说明 |
