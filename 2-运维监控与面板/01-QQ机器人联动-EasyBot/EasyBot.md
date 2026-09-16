@@ -20,7 +20,7 @@ service:
   ignore_error: false # 连接失败时阻止玩家登录
 
 command:
-  allow_bind: true # 允许玩家使用绑定命令
+  allow_bind: false # 允许玩家使用绑定命令（实际值：false，见 plugins\EasyBot\config.yml 第17行；本服已按文末"关闭EasyBot QQ验证码绑定"流程禁用插件端绑定）
 
 event:
   enable_success_event: false # 绑定成功事件已禁用

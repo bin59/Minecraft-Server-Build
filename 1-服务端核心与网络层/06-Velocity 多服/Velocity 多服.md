@@ -472,7 +472,7 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 | [01 服务器核心-Leaf](../1-服务端核心与网络层/01-服务器核心-Leaf/) | Leaf 改造为 Velocity 的后端子服 |
 | [02 外置登录代理](../1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/) | 全端加载 Yggdrasil agent，Velocity 承担认证 |
 | [03 Java-Bedrock互通层-Geyser-Floodgate](../1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/) | Geyser+Floodgate 迁到代理端，后端按需装 floodgate |
-| [05 权限管理-LuckPerms](../2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/) | LuckPerms 切 MySQL 实现跨服权限同步 |
+| [05 权限管理-LuckPerms](../../5-服务器管理/01-权限管理系统-LuckPerms/) | LuckPerms 切 MySQL 实现跨服权限同步 |
 | [17 端口与网络架构总览](../1-服务端核心与网络层/05-端口与网络架构总览/README.md) | 端口表需按本章重规划（对外仅 Velocity+Geyser） |
 | [26 快捷菜单系统](../../ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md) | 后端需装 floodgate-bukkit 才能继续按客户端分流 |
 

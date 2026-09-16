@@ -1,12 +1,12 @@
 # 5. 权限管理系统 — LuckPerms
 
-**插件 Jar**: ⚠️ **未找到 LuckPerms 主 JAR 文件**（需手动下载）  
-**数据文件**: `plugins/LuckPerms/luckperms-h2-v2.mv.db`（权限数据完好）  
-**依赖库**: `plugins/LuckPerms/libs/` 目录下 24 个 .jar（运行时依赖齐全）
+**插件 Jar**: ✅ 已安装 `plugins/LuckPerms-Bukkit-5.5.81.jar`（版本 5.5.81，已正常加载）
+**数据文件**: `plugins/LuckPerms/luckperms-h2-v2.mv.db`（H2 本地数据库，权限数据完好）
+**依赖库**: `plugins/LuckPerms/libs/` 目录下运行时依赖齐全
 
 **官方网站**: https://luckperms.net | **Wiki**: https://luckperms.net/wiki
 
-> ⚠️ **当前状态**: 权限数据库和配置文件均完好，但 `plugins/` 目录下缺少 `LuckPerms-Bukkit-*.jar` 主插件文件。请从 [LuckPerms 下载页](https://luckperms.net/download) 下载 `LuckPerms-Bukkit` 对应版本放入 `plugins/` 目录，否则权限系统无法加载。
+> ✅ **当前状态（2026-09-16 校准）**：主插件 JAR（5.5.81）已在 `plugins/` 目录并正常加载，存储后端为 H2 本地库（`config.yml` 第86行 `storage-method: h2`），此前「缺少主 JAR、需手动下载」的说明已过时，现删除。
 
 ## 📁 本目录配置文件索引
 

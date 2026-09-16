@@ -1,6 +1,8 @@
-# 3.1 Geyser-Spigot
+# 3.1 Geyser-Velocity（代理层）
 
-**文件**: `plugins/Geyser-Spigot.jar` (18.26 MB)
+**文件**: `velocity/plugins/Geyser-Velocity/Geyser-Velocity.jar` (18.26 MB)
+
+> ⚠️ **实际部署位置（校准 2026-09-16）**: 本服 Geyser 装在 **Velocity 代理层**（`C:\mc_serve\1.21.11-velocity\velocity\plugins\Geyser-Velocity\`），使用的是 **Geyser-Velocity** 插件，而非后端 Spigot 上的 Geyser-Spigot。后端 `1.21.11-test\plugins` 下**没有** Geyser，只装 floodgate-spigot（见 02-Floodgate.md）。下方配置值取自代理层实际 `velocity/plugins/Geyser-Velocity/config.yml`。
 
 **官方网站**: https://geysermc.org | **Wiki**: https://wiki.geysermc.org
 
@@ -8,13 +10,13 @@
 
 Geyser 是一个协议转换代理/插件，它能将 Minecraft 基岩版的网络协议实时翻译为 Java 版的协议，使得基岩版玩家（手机、Win10/11、Xbox、Switch、PS4/PS5 等）可以直接加入 Java 版服务器。
 
-## 关键配置 (`plugins/Geyser-Spigot/config.yml`)
+## 关键配置 (`velocity/plugins/Geyser-Velocity/config.yml`)
 
 ```yaml
 bedrock:
-  address: 0.0.0.0        # 监听所有网络接口
-  port: 19132             # Bedrock UDP 端口
-  clone-remote-port: true # 自动跟随 Java 端口
+  address: 0.0.0.0        # 监听所有网络接口（实际值，config.yml 第18行）
+  port: 19132             # Bedrock UDP 端口（实际值，第22行）
+  clone-remote-port: false # 实际值：false（第26行），固定使用 19132，不随 Java 端口变化
 
 java:
   auth-type: floodgate    # 使用 Floodgate 认证基岩版玩家

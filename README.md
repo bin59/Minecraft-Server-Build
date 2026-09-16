@@ -37,7 +37,7 @@
 | 分类目录 | 说明 | 包含子文件夹 |
 | --- | --- | --- |
 | **1-服务端核心与网络层/** | 服务端内核、外置登录代理、跨端互通、跨版本兼容、代理与网络拓扑、服务器配置文件补充 | 01-Leaf · 02-Yggdrasil · 03-Geyser/Floodgate · 04-ViaVersion · 05-端口与网络架构 · 06-Velocity 多服 · 07-服务器配置文件补充 |
-| **3-玩法与玩家功能插件/** | 经济、领地、皮肤等直接改变游戏玩法的插件 | 02-Vault · 04-Residence · 05-SkinsRestorer · 06-OpenInv · 07-WorldEdit · 08-Simple Voice Chat · 10-EssentialsX · 11-BedrockPlayerSupport · 12-DecentHolograms · 13-自定义死亡信息 · 14-宠物系统 |
+| **3-玩法与玩家功能插件/** | 经济、领地、皮肤等直接改变游戏玩法的插件 | 02-Vault · 04-Residence · 05-SkinsRestorer · 06-OpenInv · 07-WorldEdit · 08-Simple Voice Chat · 10-EssentialsX · 11-BedrockPlayerSupport · 12-DecentHolograms · 13-自定义死亡信息 · 14-宠物系统 · 15-DeluxeMenus |
 | **2-运维监控与面板/** | 性能分析、统计、依赖库、Web/进程面板，以及 QQ 机器人联动 | 01-EasyBot · 02-OPanel · 03-spark · 04-CMILib · 05-bStats · 06-MCSM |
 | **4-玩家信息与数据展示/** | 玩家行为分析、TAB 信息、称号展示、坐标轨迹记录 | 01-玩家信息收集与展示 · 02-玩家位置记录 |
 | **5-服务器管理/** | 权限管理、记录回滚、区块优化、管理命令速查、玩家数据迁移 | 01-权限管理系统-LuckPerms · 02-常用管理命令速查 · 03-方块记录与回滚-CoreProtect · 09-chunky区块加载优化 · 玩家数据迁移 |
@@ -119,7 +119,7 @@
 | 12   | 离线背包         | [3-玩法与玩家功能插件/06-离线背包查看-OpenInv/](3-玩法与玩家功能插件/06-离线背包查看-OpenInv/OpenInv.md)                                                                     | 查看/编辑离线玩家背包           |
 | 13   | 全息投影         | [3-玩法与玩家功能插件/12-DecentHolograms全息插件/](3-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md)                                             | 浮动全息文字/物品/头颅，点击交互、动画、分页 |
 | 14   | 自定义死亡信息   | [3-玩法与玩家功能插件/13-自定义死亡信息/](3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md)                                                       | 整活死亡播报、史诗死亡、音效/粒子/标题、经济收费 |
-| 15   | 宠物系统         | [3-玩法与玩家功能插件/14-宠物系统/](3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md)                                                                                 | SimplePets 跟随宠物、骑乘/帽子、存档、GemsEconomy 付费 |
+| 15   | 宠物系统         | [3-玩法与玩家功能插件/14-宠物系统/](3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md)                                                                                 | SimplePets 跟随宠物、骑乘/帽子、存档、Vault Addon 经济联动 |
 | 20   | 创世神           | [3-玩法与玩家功能插件/07-创世神WorldEdit/](3-玩法与玩家功能插件/07-创世神WorldEdit/创世神WorldEdit.md)                                                                       | WorldEdit 安装与常用指令        |
 
 ### 3.3 新增功能组件（22-27）
@@ -130,8 +130,8 @@
 | 23 | 区块预生成 | [5-服务器管理/09-chunky区块加载优化/](5-服务器管理/09-chunky区块加载优化/chunky区块加载优化.md) | 预生成世界，根治跑图卡顿 |
 | 24 | 指令整合（含完整配置） | [3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/](3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) | 传送/家园/经济/管理 150+ 命令；`config.yml` / `kits.yml` / 中文别名 / LP 权限示例 |
 | 25 | 基岩 GUI 表单 | [3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/](3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 基岩玩家免敲指令的表单界面 |
-| 26 | **快捷菜单（自研插件）** | [ai写的/快捷菜单系统/](ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md) | **整合全部插件的快捷菜单：玩家线 10 套 + 管理线 10 套（权限门控），Java 箱子 GUI + 基岩原生 Form，含成品 jar 与源码** |
-| 26.1 | └ 成品插件包 | [dist/QuickMenu-1.0.0.jar](ai写的/快捷菜单系统/dist/QuickMenu-1.0.0.jar) | 编译验证通过的部署产物（53.7 KB，含 20 套菜单配置） |
+| 26 | **快捷菜单（自研插件）** | [ai写的/快捷菜单系统/](ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md) | **整合全部插件的快捷菜单：玩家线 11 套 + 管理线 11 套（权限门控），Java 箱子 GUI + 基岩原生 Form，含成品 jar 与源码** |
+| 26.1 | └ 成品插件包 | [dist/QuickMenu-1.0.0.jar](ai写的/快捷菜单系统/dist/QuickMenu-1.0.0.jar) | 编译验证通过的部署产物（53.7 KB，含 22 套菜单配置） |
 | 26.2 | └ 源码与构建脚本 | [plugin-src/](ai写的/快捷菜单系统/plugin-src/) · [build.ps1](ai写的/快捷菜单系统/build.ps1) | 15 个源文件；无需 Maven 的一键构建 |
 | 26.3 | └ 权限授予清单 | [§10 权限清单](ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md#10-luckperms-权限授予清单) | 菜单用到的 60+ 权限节点，按玩家 / VIP / 管理 / 服主分组 |
 | 27 | **多服代理（Velocity）** | [1-服务端核心与网络层/06-Velocity 多服/](<1-服务端核心与网络层/06-Velocity 多服/Velocity 多服.md>) | 单服升级为多子服网络：下载 / velocity.toml / 后端对接 / 外置登录 / 基岩互通迁移 / 跨服权限经济同步 / 排错 |
@@ -195,10 +195,9 @@
 | --------------------- | ---- | ------------------------------------------------------------- |
 | 服务端核心            | 1    | Leaf 1.21.11-174                                              |
 | Java Agent / 外置登录 | 2    | YggdrasilOfficialProxy + authlib-injector                     |
-| 已安装插件            | 12   | 见 [4.4](#44-已安装插件)                                      |
-| 新增功能插件          | 4    | EssentialsX / Chunky / Simple Voice Chat / BedrockPlayerSupport |
+| 已安装插件            | 29   | 见 [4.4](#44-已安装插件)（含自研 QuickMenu / SpacePortal）    |
 | 外部程序              | 4    | NapCat / EasyBot 主程序 / MCSM / Caddy                        |
-| 规划 / 备选           | 4    | 见 [4.7](#47-规划--备选插件)                                  |
+| 规划 / 备选           | 2    | 见 [4.7](#47-规划--备选插件)（CyuTag / BlueMap）              |
 
 ### 4.2 服务端核心
 
@@ -253,71 +252,114 @@ config/
 
 ### 4.4 已安装插件
 
-| #   | 组件               | 版本  | 文件                                           | 体积      | 分类                  | 状态            |
-| --- | ------------------ | ----- | ---------------------------------------------- | --------- | --------------------- | --------------- |
-| 1   | **CMILib**         | 最新  | `plugins/CMILib/`                              | —         | 核心依赖库            | ✅              |
-| 2   | **Vault**          | 1.6.2 | `plugins/Vault/`                               | —         | 经济 API              | ✅              |
-| 3   | **LuckPerms**      | 最新  | `plugins/LuckPerms/`                           | —         | 权限管理              | ⚠️ **缺主 JAR** |
-| 4   | **ViaVersion**     | 5.9.1 | `plugins/ViaVersion.jar`                       | 6.08 MB   | 跨版本协议兼容        | ✅              |
-| 5   | **Geyser-Spigot**  | 最新  | `plugins/Geyser-Spigot.jar`                    | 18.26 MB  | Java-Bedrock 协议转换 | ✅              |
-| 6   | **Floodgate**      | 最新  | `plugins/floodgate-spigot.jar`                 | 11.03 MB  | 基岩版认证            | ✅              |
-| 7   | **CoreProtect CE** | 23.2  | `plugins/CoreProtect.jar`                      | 2.07 MB   | 方块记录/回滚         | ✅              |
-| 8   | **Residence**      | 最新  | `plugins/Residence/`                           | —         | 领地保护              | ✅              |
-| 9   | **SkinsRestorer**  | 最新  | `plugins/SkinsRestorer.jar`                    | 7.64 MB   | 皮肤管理              | ✅              |
-| 10  | **OpenInv**        | 最新  | `plugins/OpenInv.jar`                          | 347.81 KB | 离线背包查看          | ✅              |
-| 11  | **EasyBot**        | 2.3.1 | `plugins/EasyBot-2.3.1.jar`                    | 3.75 MB   | QQ 机器人联动         | ✅              |
-| 12  | **OPanel**         | 2.0.1 | `plugins/opanel-bukkit-1.21.9-build-2.0.1.jar` | 78.62 MB  | Web 管理面板          | ✅              |
-| —   | **spark**          | 最新  | （服务端内置）                                 | —         | 性能分析              | ✅              |
-| —   | **bStats**         | 最新  | （多插件内嵌）                                 | —         | 匿名统计              | ✅              |
+| #   | 组件                     | 版本              | 文件                                             | 分类                           | 状态 |
+| --- | ------------------------ | ----------------- | ------------------------------------------------ | ------------------------------ | ---- |
+| 1   | **CMILib**              | 1.5.9.9           | `plugins/CMILib1.5.9.9.jar`                      | 核心依赖库                     | ✅   |
+| 2   | **Vault**               | 1.7.3-b131        | `plugins/Vault.jar`                              | 经济 API                       | ✅   |
+| 3   | **LuckPerms**           | 5.5.81            | `plugins/LuckPerms-Bukkit-5.5.81.jar`            | 权限管理                       | ✅   |
+| 4   | **ViaVersion**          | 5.12.0-SNAPSHOT   | `plugins/ViaVersion-5.12.0-SNAPSHOT.jar`         | 跨版本协议兼容                 | ✅   |
+| 5   | **Geyser**（代理层）    | 最新              | `velocity/plugins/Geyser-Velocity.jar`           | Java-Bedrock 协议转换          | ✅   |
+| 6   | **Floodgate**           | 2.2.5-SNAPSHOT    | `plugins/floodgate-spigot.jar`                   | 基岩版认证                     | ✅   |
+| 7   | **CoreProtect CE**      | 24.0              | `plugins/CoreProtect-CE-24.0.jar`                | 方块记录/回滚                  | ✅   |
+| 8   | **Residence**           | 6.0.0.1           | `plugins/Residence6.0.0.1.jar`                   | 领地保护                       | ✅   |
+| 9   | **SkinsRestorer**       | 15.12.5           | `plugins/SkinsRestorer.jar`                      | 皮肤管理                       | ✅   |
+| 10  | **OpenInv**             | 5.3.3             | `plugins/OpenInv.jar`                            | 离线背包查看                   | ✅   |
+| 11  | **EasyBot**             | 2.3.1             | `plugins/EasyBot-2.3.1.jar`                      | QQ 机器人联动                  | ✅   |
+| 12  | **OPanel**              | 2.0.1             | `plugins/opanel-bukkit-1.21.9-build-2.0.1.jar`   | Web 管理面板                   | ✅   |
+| 13  | **EssentialsX**         | 2.22.1-dev        | `plugins/EssentialsX-2.22.1-dev+23-43cb76a.jar`  | 传送/家园/经济/管理            | ✅   |
+| 14  | **Chunky**              | 1.4.40            | `plugins/Chunky-Bukkit-1.4.40.jar`               | 区块预生成                     | ✅   |
+| 15  | **Simple Voice Chat**   | 2.6.21            | `plugins/voicechat-bukkit-2.6.21.jar` + UDP 24454 | 近距离语音聊天                | ✅   |
+| 16  | **BedrockPlayerSupport**| 2.1.1             | `plugins/BedrockPlayerSupport-2.1.1-all.jar`     | 基岩版 GUI 表单                | ✅   |
+| 17  | **QuickMenu**（自研）   | 1.0.0             | `plugins/QuickMenu-1.0.0.jar`                    | 物品右键菜单（时钟触发）       | ✅   |
+| 18  | **SpacePortal**（自研） | 1.0.0             | `plugins/SpacePortal-1.0.0.jar`                  | 空间传送阵                     | ✅   |
+| 19  | **WorldEdit**           | 7.4.2+7450        | `plugins/worldedit-bukkit-7.4.2.jar`             | 创世神建筑辅助                 | ✅   |
+| 20  | **CustomDeathMessages** | 1.3               | `plugins/customdeathmessages-1.3.jar`            | 自定义死亡信息                 | ✅   |
+| 21  | **DecentHolograms**     | 2.10.1            | `plugins/DecentHolograms-2.10.1.jar`             | 全息文字                       | ✅   |
+| 22  | **SimplePets**          | R5-B315           | `plugins/SimplePets.jar` + Vault Addon           | 宠物系统                       | ✅   |
+| 23  | **PosTracker**          | 1.0.0             | `plugins/PosTracker-1.0.0.jar`                   | 玩家位置轨迹记录               | ✅   |
+| 24  | **DeluxeMenus**         | 1.14.1-Release    | `plugins/DeluxeMenus-1.14.1-Release.jar`         | 高级 GUI 菜单                  | ✅   |
+| 25  | **UuidMigrate**         | 1.0.0             | `plugins/UuidMigrate-1.0.0.jar`                  | 玩家数据迁移（UUID 兼容）      | ✅   |
+| 26  | **PlaceholderAPI**      | 2.12.3            | `plugins/PlaceholderAPI-2.12.3.jar`              | 占位符                         | ✅   |
+| 27  | **TAB**                 | 6.1.2             | `plugins/TAB v6.1.2.jar`                         | TAB 列表/前缀后缀              | ✅   |
+| 28  | **Plan**                | 5.8 build 3605    | `plugins/Plan-5.8-build-3605.jar`                | 玩家行为分析 + Web 仪表盘      | ✅   |
+| 29  | **AntiLitematica**      | 7.0.1             | `plugins/AntiLitematica-7.0.1.jar`               | 投影打印机检测阻断             | ✅   |
+| 30  | **ProtocolLib**         | 5.4.0             | `plugins/ProtocolLib.jar`                        | 数据包级开发库                 | ✅   |
+| —   | **spark**               | 最新              | （服务端内置）                                   | 性能分析                       | ✅   |
+| —   | **bStats**              | 最新              | （多插件内嵌）                                   | 匿名统计                       | ✅   |
+
+> Geyser 挂在 Velocity 代理层（`velocity/plugins/`），后端不重复安装；外置登录由代理层 HyperZoneLogin 处理，后端不再挂 YggdrasilOfficialProxy。
 
 **插件关键配置路径**：
 
-| 插件          | 配置文件                                     | 关键项                                                          |
-| ------------- | -------------------------------------------- | --------------------------------------------------------------- |
-| LuckPerms     | `plugins/LuckPerms/config.yml`               | `server: global`、`storage-method: h2`、`auto-op: false`        |
-| Vault         | `plugins/Vault/config.yml`                   | 经济实现、占位符                                                |
-| ViaVersion    | `plugins/ViaVersion/config.yml`              | 旧版兼容、1.21 特定修复                                         |
-| Geyser-Spigot | `plugins/Geyser-Spigot/config.yml`           | `bedrock.port=19132`、`clone-remote-port`、`floodgate-key-file` |
-| Floodgate     | `plugins/floodgate/config.yml`               | `key.pem` 路径、玩家名前缀（默认 `.`）                          |
-| CoreProtect   | `plugins/CoreProtect/config.yml`             | 记录项开关、SQLite / MySQL 存储                                 |
-| Residence     | `plugins/Residence/config.yml` + `flags.yml` | 领地默认权限、全局 Flags                                        |
-| SkinsRestorer | `plugins/SkinsRestorer/config.yml`           | 皮肤源、缓存                                                    |
-| OpenInv       | `plugins/OpenInv/config.yml`                 | 跨世界背包                                                      |
-| EasyBot       | `plugins/EasyBot/config.yml`                 | `service.url`、`service.token`、消息同步开关                    |
-| OPanel        | `plugins/OPanel/config.yml`                  | `accessKey`、`salt`、`webServerPort=25555`                      |
-| spark         | `plugins/spark/config.json`                  | 采样参数                                                        |
-| bStats        | `plugins/bStats/config.yml`                  | `enabled`（可关闭匿名统计）                                     |
+| 插件                 | 配置文件                                        | 关键项                                                             |
+| -------------------- | ----------------------------------------------- | ------------------------------------------------------------------ |
+| LuckPerms            | `plugins/LuckPerms/config.yml`                  | `server: global`、`storage-method: h2`、`auto-op: false`           |
+| Vault                | `plugins/Vault/config.yml`                      | 经济实现、占位符                                                   |
+| ViaVersion           | `plugins/ViaVersion/config.yml`                 | 旧版兼容、1.21 特定修复                                            |
+| Geyser               | `velocity/plugins/Geyser-Velocity/config.yml`   | `bedrock.port=19132`、`floodgate-key-file`                         |
+| Floodgate            | `plugins/floodgate/config.yml`                  | `key.pem` 路径、玩家名前缀（默认 `.`）                             |
+| CoreProtect          | `plugins/CoreProtect/config.yml`                | 记录项开关、SQLite / MySQL 存储                                    |
+| Residence            | `plugins/Residence/config.yml` + `flags.yml`    | 领地默认权限、全局 Flags                                           |
+| SkinsRestorer        | `plugins/SkinsRestorer/config.yml`              | 皮肤源、缓存                                                       |
+| OpenInv              | `plugins/OpenInv/config.yml`                    | 跨世界背包                                                         |
+| EasyBot              | `plugins/EasyBot/config.yml`                    | `service.url`、`service.token`、消息同步开关                       |
+| OPanel               | `plugins/OPanel/config.yml`                     | `accessKey`、`salt`、`webServerPort=25555`                         |
+| EssentialsX          | `plugins/Essentials/config.yml`                 | `use-bukkit-permissions: true`、`currency-symbol: '¥'`、`locale: zh` |
+| Simple Voice Chat    | `plugins/voicechat/voicechat-server.properties` | `port=24454`                                                       |
+| BedrockPlayerSupport | `plugins/BedrockPlayerSupport/config.yml`       | `language: zh_CN`、各 GUI 表单开关                                 |
+| QuickMenu            | `plugins/QuickMenu/config.yml`                  | `trigger-item.material: CLOCK`（与 WorldEdit 指南针错开）          |
+| WorldEdit            | `plugins/WorldEdit/config.yml`                  | `navigation-wand.item: minecraft:compass`（与快捷菜单时钟错开）    |
+| SimplePets           | `plugins/SimplePets/AddonConfig.yml` + `Addons/configs/Vault.yml` | Vault Addon 已装，宠物价格在 `Addons/configs/Vault.yml` `type:` 段 |
+| PosTracker           | `plugins/PosTracker/config.yml`                 | `saveInterval`、`language`、文件/数据库存储                        |
+| DeluxeMenus          | `plugins/DeluxeMenus/config.yml` + `gui_menus/` | 自定义 GUI 菜单                                                   |
+| spark                | `plugins/spark/config.json`                     | 采样参数                                                           |
+| bStats               | `plugins/bStats/config.yml`                     | `enabled`（可关闭匿名统计）                                        |
 
 **各插件文档**：
 
-| 插件          | 文档                                                                             |
-| ------------- | -------------------------------------------------------------------------------- |
-| CMILib        | [2-运维监控与面板/04-核心依赖库-CMILib](2-运维监控与面板/04-核心依赖库-CMILib/CMILib.md)                           |
-| Vault         | [3-玩法与玩家功能插件/02-经济系统-Vault](3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md)                                  |
-| LuckPerms     | [5-服务器管理/01-权限管理系统-LuckPerms](5-服务器管理/01-权限管理系统-LuckPerms/LuckPerms.md)              |
-| ViaVersion    | [04-跨版本协议兼容](1-服务端核心与网络层/04-跨版本协议兼容-ViaVersion/ViaVersion.md)                  |
-| Geyser-Spigot | [03.1 Geyser-Spigot](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/01-Geyser-Spigot.md) |
-| Floodgate     | [03.2 Floodgate](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md)         |
-| CoreProtect   | [07-方块记录与回滚](5-服务器管理/03-方块记录与回滚-CoreProtect/CoreProtect.md)                |
-| Residence     | [3-玩法与玩家功能插件/04-领地系统-Residence](3-玩法与玩家功能插件/04-领地系统-Residence/Residence.md)                      |
-| SkinsRestorer | [09-皮肤管理](3-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/SkinsRestorer.md)                        |
-| OpenInv       | [12-离线背包查看](3-玩法与玩家功能插件/06-离线背包查看-OpenInv/OpenInv.md)                            |
-| EasyBot       | [10-QQ机器人联动](2-运维监控与面板/01-QQ机器人联动-EasyBot/EasyBot.md)                            |
-| OPanel        | [11-Web管理面板](2-运维监控与面板/02-Web管理面板-OPanel/OPanel.md)                                |
-| spark         | [2-运维监控与面板/03-性能分析-spark](2-运维监控与面板/03-性能分析-spark/spark.md)                                  |
-| bStats        | [2-运维监控与面板/05-统计系统-bStats](2-运维监控与面板/05-统计系统-bStats/bStats.md)                               |
+| 插件                  | 文档                                                                             |
+| --------------------- | -------------------------------------------------------------------------------- |
+| CMILib                | [2-运维监控与面板/04-核心依赖库-CMILib](2-运维监控与面板/04-核心依赖库-CMILib/CMILib.md) |
+| Vault                 | [3-玩法与玩家功能插件/02-经济系统-Vault](3-玩法与玩家功能插件/02-经济系统-Vault/Vault.md) |
+| LuckPerms             | [5-服务器管理/01-权限管理系统-LuckPerms](5-服务器管理/01-权限管理系统-LuckPerms/LuckPerms.md) |
+| ViaVersion            | [04-跨版本协议兼容](1-服务端核心与网络层/04-跨版本协议兼容-ViaVersion/ViaVersion.md) |
+| Geyser-Spigot         | [03.1 Geyser-Spigot](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/01-Geyser-Spigot.md) |
+| Floodgate             | [03.2 Floodgate](1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/02-Floodgate.md) |
+| CoreProtect           | [07-方块记录与回滚](5-服务器管理/03-方块记录与回滚-CoreProtect/CoreProtect.md) |
+| Residence             | [3-玩法与玩家功能插件/04-领地系统-Residence](3-玩法与玩家功能插件/04-领地系统-Residence/Residence.md) |
+| SkinsRestorer         | [09-皮肤管理](3-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/SkinsRestorer.md) |
+| OpenInv               | [12-离线背包查看](3-玩法与玩家功能插件/06-离线背包查看-OpenInv/OpenInv.md) |
+| EasyBot               | [10-QQ机器人联动](2-运维监控与面板/01-QQ机器人联动-EasyBot/EasyBot.md) |
+| OPanel                | [11-Web管理面板](2-运维监控与面板/02-Web管理面板-OPanel/OPanel.md) |
+| EssentialsX           | [3-玩法与玩家功能插件/10-EssentialsX多功能指令整合](3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) |
+| Chunky                | [5-服务器管理/09-chunky区块加载优化](5-服务器管理/09-chunky区块加载优化/chunky区块加载优化.md) |
+| Simple Voice Chat     | [3-玩法与玩家功能插件/08-Simple Voice Chat](3-玩法与玩家功能插件/08-Simple Voice Chat/Simple Voice Chat.md) |
+| BedrockPlayerSupport  | [3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面](3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) |
+| QuickMenu（自研）     | [快捷菜单系统](ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md) |
+| SpacePortal（自研）   | [空间传送阵使用说明](ai写的/传送阵/空间传送阵使用说明.md) |
+| WorldEdit             | [创世神WorldEdit](3-玩法与玩家功能插件/07-创世神WorldEdit/创世神WorldEdit.md) |
+| CustomDeathMessages   | [自定义死亡信息](3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md) |
+| DecentHolograms       | [DecentHolograms全息插件](3-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md) |
+| SimplePets            | [宠物系统simplepets](3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md) · [Vault Addon 经济联动](3-玩法与玩家功能插件/14-宠物系统/SimplePets-Vault-Addon经济联动.md) |
+| PosTracker            | [PosTracker玩家位置记录](4-玩家信息与数据展示/02-玩家位置记录/PosTracker玩家位置记录.md) |
+| DeluxeMenus           | [DeluxeMenus高级GUI菜单](3-玩法与玩家功能插件/15-DeluxeMenus高级GUI菜单/DeluxeMenus高级GUI菜单.md) |
+| TAB                   | [2.TAB信息展示](4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md) |
+| Plan                  | [1.Plan (Player Analytics)](4-玩家信息与数据展示/01-玩家信息收集与展示/1.Plan%20(Player%20Analytics).md) |
+| AntiLitematica        | [AntiLitematica 安装部署](7-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) |
+| UuidMigrate           | [UserOverUUID-玩家数据管迁移](5-服务器管理/玩家数据迁移/UserOverUUID-玩家数据管迁移.md) |
+| spark                 | [2-运维监控与面板/03-性能分析-spark](2-运维监控与面板/03-性能分析-spark/spark.md) |
+| bStats                | [2-运维监控与面板/05-统计系统-bStats](2-运维监控与面板/05-统计系统-bStats/bStats.md) |
+### 4.5 新增功能组件（已全部部署）
 
-### 4.5 新增功能组件（22-26 章节）
-
-这五个组件把服务器从「能玩」推进到「好玩、好管」，且彼此强耦合，建议**成套部署**。
+这五个组件已全部部署到测试服，把服务器从「能玩」推进到「好玩、好管」，且彼此强耦合。
 
 | # | 组件 | 版本 | 文件 / 端口 | 分类 | 状态 |
 |---|---|---|---|---|---|
-| 1 | **EssentialsX** | 最新（支持 1.21.11） | `plugins/EssentialsX*.jar` | 传送 / 家园 / 经济 / 管理 150+ 命令 | 📥 新增 |
-| 2 | **Chunky** | 最新（1.13~1.21.11） | `plugins/Chunky.jar` | 区块预生成，根治跑图卡顿 | 📥 新增 |
-| 3 | **Simple Voice Chat** | 最新（支持插件端） | `plugins/voicechat/` + **UDP 24454** | 近距离语音聊天 | 📥 新增 |
-| 4 | **BedrockPlayerSupport** | v2.1.0+ | `plugins/BedrockPlayerSupport.jar` | 基岩版 GUI 表单（免敲指令） | 📥 新增 |
-| 5 | **QuickMenu**（自研） | v1.0.0 | `plugins/QuickMenu-1.0.0.jar` | 物品右键菜单：Java 箱子 GUI + 基岩原生 Form | 📥 新增 |
+| 1 | **EssentialsX** | 最新（支持 1.21.11） | `plugins/EssentialsX*.jar` | 传送 / 家园 / 经济 / 管理 150+ 命令 | ✅ 已安装 |
+| 2 | **Chunky** | 最新（1.13~1.21.11） | `plugins/Chunky.jar` | 区块预生成，根治跑图卡顿 | ✅ 已安装 |
+| 3 | **Simple Voice Chat** | 最新（支持插件端） | `plugins/voicechat/` + **UDP 24454** | 近距离语音聊天 | ✅ 已安装 |
+| 4 | **BedrockPlayerSupport** | v2.1.0+ | `plugins/BedrockPlayerSupport.jar` | 基岩版 GUI 表单（免敲指令） | ✅ 已安装 |
+| 5 | **QuickMenu**（自研） | v1.0.0 | `plugins/QuickMenu-1.0.0.jar` | 物品右键菜单：Java 箱子 GUI + 基岩原生 Form | ✅ 已安装 |
 
 #### 4.5.1 五者的协作关系
 
@@ -399,14 +441,11 @@ NapCat (WS :3001)  ←──  EasyBot 主程序 (Bridge :26990 / Web :5000)  ←
 
 | 组件                        | 版本           | 用途                            | 前置依赖            | 文档                                                                                                       | 状态                   |
 | --------------------------- | -------------- | ------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------- | ---------------------- |
-| **AntiLitematica**          | 最新           | 阻断投影「快速放置」与打印机    | **ProtocolLib**     | [部署文档](7-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) | 📋 建议                |
-| **ProtocolLib**             | 最新           | 数据包级开发库                  | 无                  | —                                                                                                          | 📋 AntiLitematica 前置 |
-| **TAB**                     | 5.5.0          | 自定义 TAB 列表、前缀后缀、动画 | 建议 PlaceholderAPI | [21 玩家信息展示](4-玩家信息与数据展示/01-玩家信息收集与展示/2.TAB信息展示.md)                                                  | 📋 规划                |
-| **Plan (Player Analytics)** | 5.6 build 2965 | 玩家行为分析 + Web 仪表盘       | 无                  | [1.Plan](<4-玩家信息与数据展示/01-玩家信息收集与展示/1.Plan (Player Analytics).md>)                                             | 📋 规划                |
-| **AntiLitematica**          | 最新           | 阻断投影「快速放置」与打印机    | **ProtocolLib**     | [部署文档](7-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-保姆级Litematica、打印机检测与阻断器/2.安装部署与配置.md) | 📋 建议                |
-| **ProtocolLib**             | 最新           | 数据包级开发库                  | 无                  | —                                                                                                          | 📋 AntiLitematica 前置 |
 | **CyuTag**                  | 最新           | 头顶多行信息展示                | PlaceholderAPI      | [21 选型对比](4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md)                                               | 💡 可选                |
 | **BlueMap**                 | 最新           | 3D 网页地图                     | 无                  | [21 选型对比](4-玩家信息与数据展示/01-玩家信息收集与展示/0.玩家信息收集与展示.md)                                               | 💡 可选                |
+
+> 原「规划」中的 AntiLitematica / ProtocolLib / TAB / Plan 已于 2026-09 部署到测试服，见 [4.4](#44-已安装插件)；
+> 本表仅保留尚未安装的备选项。
 
 ---
 
@@ -973,7 +1012,7 @@ java -Xmx4G -Xms1G ^
 
 | 问题                   | 详情                                                                                                                                                     | 解决方式                                                                                                                        |
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| **LuckPerms 缺主 JAR** | `plugins/LuckPerms/` 下有配置文件、数据库 `luckperms-h2-v2.mv.db` 和 24 个依赖库 jar，**但缺少主插件 JAR**（`LuckPerms-Bukkit-*.jar`），权限系统无法加载 | 从 [LuckPerms 下载页](https://luckperms.net/download) 下载 `LuckPerms-Bukkit` 放入 `plugins/`，重启即可（现有权限数据不会丢失） |
+| **LuckPerms 主 JAR** | ~~缺主 JAR~~（历史问题，2026-09 已解决） | `plugins/LuckPerms-Bukkit-5.5.81.jar` 已安装，权限系统正常加载 |
 
 ### 🟡 P1 — 建议处理
 
@@ -1195,6 +1234,7 @@ java -Xmx4G -Xms1G ^
 | 2026-09-15 | 用户手动精简 `CoordinateLogger玩家位置记录.md` 内容（改为仅保留 `config.yml` 配置片段，约 17 行）；因文件名与路径未变，README 引用（分类总览表第 4 类、第 3.5 章 `21.4 └ 玩家位置记录`）仍有效，无需改链接；此处仅补记本次修订 |
 | 2026-09-15 | 新增 12 章「全息投影系统 — DecentHolograms」：`2-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md`（基于官方 Wiki 与 Modrinth 2.10.1 编写的详细部署文档——功能说明、安装前置、目录结构、config.yml 全注释、全息 YAML 结构、行类型/颜色/渐变/动画、点击交互、分页、命令/权限、PAPI 与 DHAPI、实战示例、性能排错与 FAQ）；同步更新 README——分类总览表 2 类补 `· 12-DecentHolograms`，第 3.2 章导航新增 `13 全息投影` 指向该文件 |
 | 2026-09-15 | 新增 13 章「自定义死亡信息 — CustomDeathMessages」：`2-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md`（原为 0 字节空文件，基于 Modrinth 上 SicklySurgeon 的 CustomDeathMessages 1.3 编写——功能说明、安装前置、目录结构、config.yml 注释、占位符全表、统一 `/cdm` 命令集、权限表、广播系统、实战示例、性能排错与 FAQ；已在 FAQ 标注与同名 GitHub sb2bg fork 的命令/配置差异）；同步更新 README——分类总览表 2 类补 `· 13-自定义死亡信息`，第 3.2 章导航新增 `14 自定义死亡信息` 指向该文件（导航 13 已被全息投影占用，故顺延为 14，沿用跨小节复用编号风格） |
+| 2026-09-16 | 快捷菜单宠物项修复（`/pet`→`/pet gui`，default 组授 pet.commands.gui/help/summon/rename/remove）；SimplePets 全界面汉化（95 宠物名 + 9 按钮 + 4 标题 + 新增 Items/storage.json 覆盖内置英文按钮，`Simpler-Pet-GUI-Command: true`）；经济中心空菜单修复（default 组授 essentials.balance/balancetop/pay/sell/worth）；QuickMenu §10.1 补宠物权限段、权限速查补已授标注 |
 | 2026-09-15 | 新增 14 章「宠物系统 — SimplePets」：`2-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md`（原为 0 字节空文件，基于 GitHub brainsynder-Dev 的 SimplePets 最新构建 R5-B315 编写——EchoPets 继任者、GPL-3.0、1.21.11 需 Java 21、单一 jar 覆盖全版本、90+ 宠物类型、骑乘/帽子/存档、MySQL/SQLite、PlaceholderAPI、GemsEconomy Addon 付费；含命令表、官方 `Pet.*` 权限方案、实战示例、性能排错与 FAQ）；同步更新 README——分类总览表 2 类补 `· 14-宠物系统`，第 3.2 章导航新增 `15 宠物系统` 指向该文件（导航 14 已被自定义死亡信息占用，故顺延为 15） |
 
 ---

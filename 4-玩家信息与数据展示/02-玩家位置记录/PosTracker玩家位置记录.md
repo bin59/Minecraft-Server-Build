@@ -38,14 +38,19 @@ language: en
 # 位置保存间隔（秒），越小越密、写入越频繁
 saveInterval: 3
 
-# true = 写入日志文件（无需数据库）；false = 写入 MySQL
-saveDataInFile: true
+# 存储开关：useDatabase
+#   true  = 写入下方 db 段配置的 MySQL（插件自动建表）
+#   false = 写入本地文件 plugins/PosTracker/positions.log（无需数据库）
+# 注意：上游曾把 true/false 注释写反，已按字节码真实行为更正
+# （true -> setupDatabase()，false -> setupLogFile()）。本服实际为 false（文件模式）。
+# 实际值见 plugins/PosTracker/config.yml 第28行
+useDatabase: false
 
-# 仅当 saveDataInFile 为 false 时使用的 MySQL 连接信息
+# 仅当 useDatabase 为 true 时使用的 MySQL 连接信息
 db:
   host: "localhost"
   port: "3306"
-  database: "minecraft"
+  database: "postracker"
   username: "root"
   password: ""
 ```
@@ -56,8 +61,8 @@ db:
 | --- | --- |
 | `language` | 插件语言，可选 `en` / `uk` / `ru` |
 | `saveInterval` | 两次位置保存之间的秒数 |
-| `saveDataInFile` | `true` 时数据存文件；`false` 时走 MySQL |
-| `db` | MySQL 连接信息，仅 `saveDataInFile: false` 时生效 |
+| `useDatabase` | `true` 时走 MySQL（下方 `db` 段生效）；`false` 时数据写入本地 `positions.log`。本服当前为 `false` |
+| `db` | MySQL 连接信息，仅 `useDatabase: true` 时生效 |
 
 ## 4. 数据库配置（MySQL 模式）
 
@@ -65,14 +70,14 @@ db:
 
 - **数据表：不用手动建。** 插件首次连接 MySQL 后会**自动建表**。
 - **数据库（schema）：一般需要手动建一个空库。** 插件只连接"已存在的库"并在其中建表，不会帮你执行 `CREATE DATABASE`。
-- **不想用数据库？** 把 `saveDataInFile` 设为 `true` 即可完全跳过 MySQL，数据写入本地日志文件。
+- **不想用数据库？** 把 `useDatabase` 设为 `false` 即可完全跳过 MySQL，数据写入本地日志文件（`positions.log`）。
 
 MySQL 模式步骤：
 1. 在 MySQL 中手动建立空库，例如：
    ```sql
    CREATE DATABASE postracker CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
    ```
-2. 确认 `saveDataInFile: false`
+2. 确认 `useDatabase: true`（开启 MySQL 存储）
 3. 在 `db` 段填好 `host / port / database / username / password`（`database` 填上一步建的库名）
 4. 重启服务器，插件自动建表并开始记录
 
@@ -102,6 +107,6 @@ MySQL 模式步骤：
 
 ## 7. 注意事项
 
-- 文件模式（`saveDataInFile: true`）无需任何数据库，适合轻量 / 单机使用；数据量随在线人数与间隔累积，注意定期清理日志文件。
+- 文件模式（`useDatabase: false`）无需任何数据库，适合轻量 / 单机使用；数据量随在线人数与间隔累积，注意定期清理日志文件。
 - MySQL 模式请确保数据库账号有该库的建表权限；跨网络部署时注意 `host` 放行与密码安全（不要用空密码跑生产）。
 - 插件标注为实验性（Experimental）版本，生产环境建议先在测试服验证。

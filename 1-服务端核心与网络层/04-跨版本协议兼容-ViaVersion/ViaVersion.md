@@ -1,12 +1,12 @@
 # 4. 跨版本协议兼容 — ViaVersion
 
-**文件**: `plugins/ViaVersion-5.9.1.jar` (6.08 MB)
+**文件**: `plugins/ViaVersion-5.12.0-SNAPSHOT.jar`（实际版本 5.12.0-SNAPSHOT，见 plugins/ViaVersion/config.yml）
 
 **官方网站**: https://viaversion.com | **文档**: https://docs.viaversion.com
 
 ## 功能说明
 
-ViaVersion 允许**低于服务器版本的 Minecraft 客户端**连接到服务器。本服运行 1.21.1，安装了 ViaVersion 后，使用较旧版本（如 1.8.x ~ 1.21.x）的 Java 版客户端也能加入游戏。
+ViaVersion 允许**低于服务器版本的 Minecraft 客户端**连接到服务器。本服运行 1.21.11（实际运行目录 1.21.11-test），安装了 ViaVersion 后，使用较旧版本（如 1.8.x ~ 1.21.x）的 Java 版客户端也能加入游戏。
 
 > ⚠️ **注意**: 本服仅安装了 ViaVersion（允许低版本客户端加入），未安装 **ViaBackwards**（允许高版本客户端加入低版本服务器）和 **ViaRewind**（允许更旧的 1.7.x 客户端）。
 

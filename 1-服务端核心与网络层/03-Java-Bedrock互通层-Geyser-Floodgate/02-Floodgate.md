@@ -8,6 +8,8 @@ Floodgate 是 Geyser 的配套认证插件。它允许基岩版玩家**绕过 Ja
 
 ## 关键配置 (`plugins/floodgate/config.yml`)
 
+> 实际后端配置目录为 `1.21.11-test/plugins/floodgate/`（jar 为 `floodgate-spigot.jar`）。代理层 Velocity 另装有 `Floodgate-Velocity.jar`（其 config 在 `velocity/plugins/floodgate/`），二者密钥通过 `key.pem` 共享。下方值取自**后端** `plugins/floodgate/config.yml`。
+
 ```yaml
 key-file-name: key.pem # 加密密钥文件（与 Geyser 共享）
 username-prefix: '.' # 基岩版玩家用户名前缀（点号）

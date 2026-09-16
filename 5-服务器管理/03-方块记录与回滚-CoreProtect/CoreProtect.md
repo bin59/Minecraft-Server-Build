@@ -17,6 +17,8 @@ v24.0 主要更新：回滚性能提升约 80%、新增 8 个 API 查询方法�
 
 ```yaml
 use-mysql: true # 使用 MySQL（按下方"MySQL 数据库配置"章节设置；false 则使用 SQLite 本地存储）
+# ⚠️ 实际值（2026-09-16 校准）：plugins/CoreProtect/config.yml 第10行 use-mysql: false —— 本服当前运行在 SQLite 本地存储（database.db），并未启用 MySQL。
+#    上方 true 是"切换到 MySQL 后的目标态"，不是当前生效值。是否要真的切到 MySQL 属数据库迁移决策，需用户拍板后再改配置。
 language: zh-CN # 中文语言
 api-enabled: true # 启用 API
 default-radius: 10 # 默认回滚半径

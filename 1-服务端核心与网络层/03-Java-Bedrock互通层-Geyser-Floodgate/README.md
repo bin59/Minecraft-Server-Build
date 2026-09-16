@@ -4,8 +4,8 @@
 
 | 插件 | 文件 | 说明 |
 |---|---|---|
-| [Geyser-Spigot](01-Geyser-Spigot.md) | `plugins/Geyser-Spigot.jar` (18.26 MB) | 协议转换引擎，将基岩版协议翻译为 Java 版协议 |
-| [Floodgate](02-Floodgate.md) | `plugins/floodgate-spigot.jar` (11.03 MB) | 基岩版认证插件，允许基岩版玩家绕过 Java 正版验证 |
+| [Geyser-Velocity（代理层）](01-Geyser-Spigot.md) | `velocity/plugins/Geyser-Velocity/Geyser-Velocity.jar` (18.26 MB) | 协议转换引擎，将基岩版协议翻译为 Java 版协议；**装在 Velocity 代理层**，后端不装 |
+| [Floodgate](02-Floodgate.md) | 后端 `plugins/floodgate-spigot.jar` (11.03 MB)（代理层另装 Floodgate-Velocity.jar） | 基岩版认证插件，允许基岩版玩家绕过 Java 正版验证 |
 
 ### 工作流程
 

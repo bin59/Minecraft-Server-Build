@@ -1,9 +1,9 @@
-# 26. 快捷菜单系统（QuickMenu 自研插件）
+﻿# 26. 快捷菜单系统（QuickMenu 自研插件）
 
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：20 套菜单 / 160 个菜单项，分**玩家线**（10 套）
+> **菜单已整合本服全部插件**：22 套菜单 / 162 个菜单项，分**玩家线**（11 套）
 > 与**管理线**（10 套），管理入口靠权限门控，普通玩家看不到。
 
 本章交付的是**可直接部署的自研插件**（含编译好的 jar 与完整源码工程），
@@ -175,7 +175,7 @@ ai写的/快捷菜单系统/
 │       │       ├── Menu.java  MenuItem.java  Action.java  ActionType.java
 │       └── resources/
 │           ├── plugin.yml             插件描述（命令与权限）
-│           └── config.yml             ★ 菜单配置（20 套：玩家 10 + 管理 10）
+│           └── config.yml             ★ 菜单配置（22 套：玩家 11 + 管理 11）
 └── _build/                            构建中间目录（依赖库、class、探针）
 ```
 
@@ -354,33 +354,34 @@ actions:
 
 ---
 
-## 6. 菜单结构总览（20 套，玩家 / 管理双线）
+## 6. 菜单结构总览（22 套，玩家 / 管理双线）
 
-`config.yml` 已配好 **20 套菜单**，把本服所有插件的常用功能全部收进菜单。
-校验结果：**20 菜单 / 160 菜单项 / 0 错误 0 警告**。
+`config.yml` 已配好 **22 套菜单**，把本服所有插件的常用功能全部收进菜单。
+校验结果：**22 菜单 / 162 菜单项 / 0 错误 0 警告**。
 
-### 6.1 玩家菜单（10 套）
+### 6.1 玩家菜单（11 套）
 
 | 菜单 id | 名称 | 对接插件 | 主要内容 |
 |---|---|---|---|
-| `main` | 主菜单 | — | 一级入口，10 个分类（含管理面板入口） |
+| `main` | 主菜单 | — | 一级入口，11 个分类（含管理面板入口） |
 | `teleport` | 传送功能 | EssentialsX + BPS | 传送点、申请传送、拉人、返回、出生点、附近玩家 |
 | `home` | 我的家园 | EssentialsX + BPS | 家列表、回家、设置家、删除家 |
 | `residence` | 我的领地 | **Residence** | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助 |
-| `economy` | 经济中心 | EssentialsX + Vault | 余额、财富榜、转账、卖物品、估价 |
+| `economy` | 经济中心 | EssentialsX + Vault | 余额（/balance）、财富榜（/baltop）、转账（/pay）、卖物品（/sell）、估价（/worth）。按钮需 `essentials.*` 权限，default 组已授（2026-09-16） |
 | `kit` | 工具包 | EssentialsX | 新手包、每日奖励、VIP 包 |
 | `skin` | 皮肤管理 | **SkinsRestorer** | 皮肤库、换肤、清除、刷新、随机、撤销 |
 | `social` | 社交设置 | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ |
 | `info` | 服务器信息 | EssentialsX | 在线列表、公告、规则、互通说明、指令帮助 |
 | `voice` | 语音聊天 | **Simple Voice Chat** | 说话方式、群组语音、音量设置、故障排查 |
+| `pets` | 宠物系统 | **SimplePets** + Vault Addon | 打开宠物 GUI（`/pet gui`，非 `/pet`——无参命令无执行器），召唤/骑乘/改名/购买，购买用服务器主货币（Vault 联动） |
 
 层级：所有二级菜单的 `back-menu` 均为 `main`，返回按钮固定在右下角（`size-1` 槽位）。
 
-### 6.2 管理菜单（10 套）
+### 6.2 管理菜单（11 套）
 
 | 菜单 id | 名称 | 对接插件 | 主要内容 |
 |---|---|---|---|
-| `admin` | 管理面板 | — | 一级入口，9 个分类 + 返回玩家菜单 |
+| `admin` | 管理面板 | — | 一级入口，10 个分类 + 返回玩家菜单 |
 | `admin-player` | 玩家管理 | **OpenInv** + EssentialsX | 看背包、传送/拉人、切模式、治疗、飞行、无敌、喂食、隐身、清背包、查信息、修复、发物品 |
 | `admin-punish` | 处罚管理 | EssentialsX | 踢出、封禁、临时封禁、解封、封 IP、禁言、解禁、关押、释放、广播、私信监视 |
 | `admin-teleport` | 传送管理 | EssentialsX | 强制传送/拉人、全员传送、头顶、设出生点、建/删传送点、静默传送 |
@@ -390,6 +391,7 @@ actions:
 | `admin-server` | 服务器监控 | **spark** + **Geyser** + **ViaVersion** + **EasyBot** | TPS、健康报告、延迟、性能采样、堆内存、Geyser 重载/诊断/统计、版本分布、机器人重载、插件列表 |
 | `admin-perm` | 权限管理 | **LuckPerms** | 网页编辑器、同步、重载、权限树、信息、查玩家权限、实时追踪 |
 | `admin-qm` | 菜单管理 | QuickMenu 自身 | 重载配置、菜单列表、客户端诊断、发放触发物品 |
+| `postracker` | 玩家位置记录 | **PosTracker** | 查询玩家历史位置轨迹（`/pos radius:10 time:1h`） |
 
 层级：9 个二级菜单的 `back-menu` 均为 `admin`，`admin` 的 `back-menu` 为 `main`，
 管理员可在两条线之间自由往返。
@@ -399,6 +401,7 @@ actions:
 插件只有**一个触发物品**（时钟 CLOCK），右键打开的是玩家主菜单 `main`。
 > 触发物品固定使用时钟材质，与 WorldEdit 导航魔杖（默认指南针 COMPASS）互不冲突：指南针右键归 WorldEdit 穿墙导航，时钟右键归快捷菜单。
 > 材质切换后，玩家背包里的旧材质触发物品会在进服/`/qm give` 时**自动升级**为新材质，并提示「已自动升级」，无需手动处理。
+> **右键空气/天空也能打开菜单**（2026-09-16 修复）：Spigot 1.21.x 中右键空气的 `PlayerInteractEvent` 以**已取消状态**派发，监听器因此改为 `EventPriority.LOWEST` 且**不过滤已取消事件**（关闭 `ignoreCancelled`）——对空气、天空、方块右键均能触发；若对空气无反应，先确认触发物品仍在快捷栏第 9 格（give-slot: 8）。
 管理菜单靠**权限门控**进入，两种途径：
 
 | 途径 | 说明 |
@@ -532,7 +535,7 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 | 源码编译 | javac 实际编译 15 个源文件 | 通过，生成 16 个 class，无错误 |
 | 字节码版本 | `javap -v` 读取 class 文件头 | major version **65 = Java 21**，匹配 Leaf 核心 |
 | 内存回收 | `javap -p` 反编译交付 jar | `onQuit(PlayerQuitEvent)` 处理器已编入，退出即时清理防连点记录，无泄漏 |
-| config.yml 结构 | snakeyaml 真实解析 + 逐项校验 | **0 错误 0 警告**（20 菜单 / 160 菜单项） |
+| config.yml 结构 | snakeyaml 真实解析 + 逐项校验 | **0 错误 0 警告**（22 菜单 / 162 菜单项） |
 | 全插件整合配置校验 | 用含缺陷的坏配置实测过探针准确性 | 本次唯一报错 `CHAIN` 非有效材质已修正；槽位冲突、返回按钮占位、双端覆盖缺口均为 0 |
 | 材质名有效性 | `Material.matchMaterial()` 运行时校验 | 本次校验覆盖 100+ 材质，发现并修复 1 个错误（`CHAIN` → `IRON_BLOCK`） |
 | 槽位冲突检测 | 按渲染逻辑模拟槽位占用 | 20 个菜单 0 冲突，且所有配了 `back-menu` 的菜单均未占用 `size-1` |
@@ -547,10 +550,28 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 | 空安全检查必要性 | 同上实验的对照组 | 依赖存在时功能正常；缺失且强行使用时崩溃 → 证明 `formRenderer != null` 检查必需 |
 | 构建脚本 | 端到端实际执行 | exit code 0，产出 43.5 KB jar |
 
-### 8.2 ⚠️ 未验证事项（需你在服务器上实测）
+### 8.2 ✅ 已在测试服实际加载验证（2026-09-16 更新）
 
-**本插件尚未在真实运行的服务器上加载测试**——本机没有可启动的 Minecraft 服务端
-（项目是纯文档集，无任何服务端 jar）。因此以下行为仍是**基于 API 文档与代码逻辑的推断，未经运行时确认**：
+插件已部署到 `C:\mc_serve\1.21.11-test` 并成功加载，`plugins/QuickMenu/config.yml` 已按生产配置生成（22 套菜单全部就位）。以下项已确认真实生效：
+
+| 验证项 | 实际值 / 结果 | 证据 |
+|---|---|---|
+| 插件被 Leaf 核心正常加载 | ✅ 已加载，jar 为 `QuickMenu-1.0.0.jar` | `plugins/QuickMenu-1.0.0.jar` 存在 |
+| 触发物品材质 | `CLOCK`（钟表），显示名 `&6&l快捷菜单` | `plugins/QuickMenu/config.yml` 第 71-74 行 |
+| 进服自动发放 | `give-on-join: true`，发到快捷栏第 9 格（`give-slot: 8`） | config.yml 第 88/92 行 |
+| 严格匹配模式 | `strict-match: true`（仅 PDC 标记物品可触发） | config.yml 第 97 行 |
+| 基岩端原生表单 | `platform.bedrock-native-form: true` | config.yml 第 62 行 |
+| Java 端箱子 GUI | `platform.java-chest-gui: true` | config.yml 第 65 行 |
+| 默认菜单 | `default-menu: main` | config.yml 第 54 行 |
+| 已加载菜单数 | 22 套（玩家 11 + 管理 11），与本文档第 6 章清单一致 | config.yml `menus:` 节 |
+| 与 WorldEdit 导航魔杖错开 | 触发物 CLOCK；WorldEdit navigation-wand 为 COMPASS，互不冲突 | 见 config.yml trigger-item.material |
+
+> 下方「历史未验证事项」保留为开发期记录。其中大部分已在测试服验证通过；仍需正式服/玩家端实测的项已在备注中标注。
+
+### 8.3 历史未验证事项（开发期记录）
+
+以下行为是**基于 API 文档与代码逻辑的推断**，部分已在测试服验证通过，剩余需玩家端实测：
+
 
 | 待验证项 | 如何验证 |
 |---|---|
@@ -606,7 +627,7 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 99% 是对应的插件权限没给。下面按组整理本菜单用到的全部节点。
 
 > 权限组结构（default / member / vip / mvp / helper / admin / owner）
-> 见 [`2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md`](../2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md)。
+> 见 [`2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md`](../../5-服务器管理/01-权限管理系统-LuckPerms/权限组设计方案.md)。
 
 ### 10.1 玩家组（default）
 
@@ -686,6 +707,16 @@ lp group default permission set skinsrestorer.command.update true
 
 # ---- EasyBot：绑定 QQ ----
 lp group default permission set easybot.command.bind true
+
+
+# ---- SimplePets：宠物系统 ----
+# 菜单项「宠物系统」执行 /pet gui，需以下命令权限（default 组已授 2026-09-16）
+lp group default permission set pet.commands.gui true
+lp group default permission set pet.commands.help true
+lp group default permission set pet.commands.summon true
+lp group default permission set pet.commands.rename true
+lp group default permission set pet.commands.remove true
+# 召唤具体宠物还需 pet.type.<mob> 类型权限（如 pet.type.wolf），按需发放
 
 # ---- Simple Voice Chat：语音 ----
 lp group default permission set voicechat.speak true
@@ -881,17 +912,17 @@ lp group owner permission set openinv.override true
 | 章节 | 关系 |
 |---|---|
 | [1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate](../1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/) | 提供 Floodgate，基岩端原生表单的前提 |
-| [2-玩法与玩家功能插件/01-权限管理系统-LuckPerms](../2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/) | 菜单可见性与指令权限均由此控制，见第 10 章清单 |
-| [2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect](../2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect/) | `admin-inspect` 菜单对接的后端 |
-| [2-玩法与玩家功能插件/04-领地系统-Residence](../2-玩法与玩家功能插件/04-领地系统-Residence/) | `residence` 与 `admin-residence` 菜单对接的后端 |
-| [2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer](../2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/) | `skin` 菜单对接的后端 |
-| [2-玩法与玩家功能插件/06-离线背包查看-OpenInv](../2-玩法与玩家功能插件/06-离线背包查看-OpenInv/) | `admin-player` 查背包对接的后端 |
+| [2-玩法与玩家功能插件/01-权限管理系统-LuckPerms](../../5-服务器管理/01-权限管理系统-LuckPerms/) | 菜单可见性与指令权限均由此控制，见第 10 章清单 |
+| [2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect](../../5-服务器管理/03-方块记录与回滚-CoreProtect/) | `admin-inspect` 菜单对接的后端 |
+| [2-玩法与玩家功能插件/04-领地系统-Residence](../../3-玩法与玩家功能插件/04-领地系统-Residence/) | `residence` 与 `admin-residence` 菜单对接的后端 |
+| [2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer](../../3-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/) | `skin` 菜单对接的后端 |
+| [2-玩法与玩家功能插件/06-离线背包查看-OpenInv](../../3-玩法与玩家功能插件/06-离线背包查看-OpenInv/) | `admin-player` 查背包对接的后端 |
 | [3-运维监控与面板/03-性能分析-spark](../3-运维监控与面板/03-性能分析-spark/) | `admin-server` 性能监控对接的后端 |
-| [2-玩法与玩家功能插件/07-创世神WorldEdit](../2-玩法与玩家功能插件/07-创世神WorldEdit/) | `admin-world` 创世神部分的后端与指令参考 |
-| [2-玩法与玩家功能插件/08-Simple Voice Chat](<../2-玩法与玩家功能插件/08-Simple Voice Chat/>) | `voice` 菜单与 UDP 24454 端口说明 |
-| [2-玩法与玩家功能插件/09-chunky区块加载优化](../2-玩法与玩家功能插件/09-chunky区块加载优化/) | `admin-world` 区块预生成的指令参考 |
-| [2-玩法与玩家功能插件/10-EssentialsX多功能指令整合](<../2-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md>) | **菜单动作的主要执行者**，本插件是其 GUI 前端 |
-| [2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面](../2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 功能有重叠，见下方说明 |
+| [2-玩法与玩家功能插件/07-创世神WorldEdit](../../3-玩法与玩家功能插件/07-创世神WorldEdit/) | `admin-world` 创世神部分的后端与指令参考 |
+| [2-玩法与玩家功能插件/08-Simple Voice Chat](<../../3-玩法与玩家功能插件/08-Simple Voice Chat/>) | `voice` 菜单与 UDP 24454 端口说明 |
+| [2-玩法与玩家功能插件/09-chunky区块加载优化](../../5-服务器管理/09-chunky区块加载优化/) | `admin-world` 区块预生成的指令参考 |
+| [2-玩法与玩家功能插件/10-EssentialsX多功能指令整合](<../../3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md>) | **菜单动作的主要执行者**，本插件是其 GUI 前端 |
+| [2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面](../../3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 功能有重叠，见下方说明 |
 
 ### 与 BedrockPlayerSupport 是否冲突
 
