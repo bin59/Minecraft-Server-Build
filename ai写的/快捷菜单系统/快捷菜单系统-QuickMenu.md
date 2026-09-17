@@ -1,4 +1,4 @@
-﻿# 26. 快捷菜单系统（QuickMenu 自研插件）
+# 26. 快捷菜单系统（QuickMenu 自研插件）
 
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
@@ -917,13 +917,13 @@ lp group owner permission set openinv.override true
 | [2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect](../../5-服务器管理/03-方块记录与回滚-CoreProtect/) | `admin-inspect` 菜单对接的后端 |
 | [2-玩法与玩家功能插件/04-领地系统-Residence](../../3-玩法与玩家功能插件/04-领地系统-Residence/) | `residence` 与 `admin-residence` 菜单对接的后端 |
 | [2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer](../../3-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/) | `skin` 菜单对接的后端 |
-| [2-玩法与玩家功能插件/06-离线背包查看-OpenInv](../../3-玩法与玩家功能插件/06-离线背包查看-OpenInv/) | `admin-player` 查背包对接的后端 |
+| [2-玩法与玩家功能插件/06-离线背包查看-OpenInv](../../5-服务器管理/06-离线背包查看-OpenInv/) | `admin-player` 查背包对接的后端 |
 | [3-运维监控与面板/03-性能分析-spark](../3-运维监控与面板/03-性能分析-spark/) | `admin-server` 性能监控对接的后端 |
 | [2-玩法与玩家功能插件/07-创世神WorldEdit](../../3-玩法与玩家功能插件/07-创世神WorldEdit/) | `admin-world` 创世神部分的后端与指令参考 |
 | [2-玩法与玩家功能插件/08-Simple Voice Chat](<../../3-玩法与玩家功能插件/08-Simple Voice Chat/>) | `voice` 菜单与 UDP 24454 端口说明 |
 | [2-玩法与玩家功能插件/09-chunky区块加载优化](../../5-服务器管理/09-chunky区块加载优化/) | `admin-world` 区块预生成的指令参考 |
 | [2-玩法与玩家功能插件/10-EssentialsX多功能指令整合](<../../3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md>) | **菜单动作的主要执行者**，本插件是其 GUI 前端 |
-| [2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面](../../3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 功能有重叠，见下方说明 |
+| [2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面](../../5-服务器管理/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 功能有重叠，见下方说明 |
 
 ### 与 BedrockPlayerSupport 是否冲突
 

@@ -37,10 +37,10 @@
 | 分类目录 | 说明 | 包含子文件夹 |
 | --- | --- | --- |
 | **1-服务端核心与网络层/** | 服务端内核、外置登录代理、跨端互通、跨版本兼容、代理与网络拓扑、服务器配置文件补充 | 01-Leaf · 02-Yggdrasil · 03-Geyser/Floodgate · 04-ViaVersion · 05-端口与网络架构 · 06-Velocity 多服 · 07-服务器配置文件补充 |
-| **3-玩法与玩家功能插件/** | 经济、领地、皮肤等直接改变游戏玩法的插件 | 02-Vault · 04-Residence · 05-SkinsRestorer · 06-OpenInv · 07-WorldEdit · 08-Simple Voice Chat · 10-EssentialsX · 11-BedrockPlayerSupport · 12-DecentHolograms · 13-自定义死亡信息 · 14-宠物系统 · 15-DeluxeMenus |
+| **3-玩法与玩家功能插件/** | 经济、领地、皮肤等直接改变游戏玩法的插件 | 02-Vault · 04-Residence · 05-SkinsRestorer · 07-WorldEdit · 08-Simple Voice Chat · 10-EssentialsX · 12-DecentHolograms · 13-自定义死亡信息 · 14-宠物系统 · 15-DeluxeMenus |
 | **2-运维监控与面板/** | 性能分析、统计、依赖库、Web/进程面板，以及 QQ 机器人联动 | 01-EasyBot · 02-OPanel · 03-spark · 04-CMILib · 05-bStats · 06-MCSM |
 | **4-玩家信息与数据展示/** | 玩家行为分析、TAB 信息、称号展示、坐标轨迹记录 | 01-玩家信息收集与展示 · 02-玩家位置记录 |
-| **5-服务器管理/** | 权限管理、记录回滚、区块优化、管理命令速查、玩家数据迁移 | 01-权限管理系统-LuckPerms · 02-常用管理命令速查 · 03-方块记录与回滚-CoreProtect · 09-chunky区块加载优化 · 玩家数据迁移 |
+| **5-服务器管理/** | 权限管理、记录回滚、区块优化、管理命令速查、玩家数据迁移 | 01-权限管理系统-LuckPerms · 02-常用管理命令速查 · 03-方块记录与回滚-CoreProtect · 06-离线背包查看-OpenInv · 09-chunky区块加载优化 · 11-BedrockPlayerSupport基岩版GUI表单界面 · 玩家数据迁移 |
 | **6-指令参考/** | 全量指令大全（实用 / 有趣 / 整蛊） | 01-指令大全 |
 | **7-工具与常见问题约束/** | 待选插件、FAQ、影响平衡的禁用项 | 02-常见问题 · 03-禁用影响平衡的插件功能 |
 
@@ -116,7 +116,7 @@
 | 09   | 皮肤管理         | [3-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/](3-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/SkinsRestorer.md)                                                           | 外置登录下的皮肤加载            |
 | 10   | QQ 机器人联动    | [2-运维监控与面板/01-QQ机器人联动-EasyBot/](2-运维监控与面板/01-QQ机器人联动-EasyBot/EasyBot.md)                                                                     | 三层架构、跨机部署、绑定规则    |
 | 11   | Web 管理面板     | [2-运维监控与面板/02-Web管理面板-OPanel/](2-运维监控与面板/02-Web管理面板-OPanel/OPanel.md)                                                                          | accessKey 鉴权与安全建议        |
-| 12   | 离线背包         | [3-玩法与玩家功能插件/06-离线背包查看-OpenInv/](3-玩法与玩家功能插件/06-离线背包查看-OpenInv/OpenInv.md)                                                                     | 查看/编辑离线玩家背包           |
+| 12   | 离线背包         | [5-服务器管理/06-离线背包查看-OpenInv/](5-服务器管理/06-离线背包查看-OpenInv/OpenInv.md)                                                                     | 查看/编辑离线玩家背包           |
 | 13   | 全息投影         | [3-玩法与玩家功能插件/12-DecentHolograms全息插件/](3-玩法与玩家功能插件/12-DecentHolograms全息插件/DecentHolograms全息插件.md)                                             | 浮动全息文字/物品/头颅，点击交互、动画、分页 |
 | 14   | 自定义死亡信息   | [3-玩法与玩家功能插件/13-自定义死亡信息/](3-玩法与玩家功能插件/13-自定义死亡信息/自定义死亡信息customdeathmessages.md)                                                       | 整活死亡播报、史诗死亡、音效/粒子/标题、经济收费 |
 | 15   | 宠物系统         | [3-玩法与玩家功能插件/14-宠物系统/](3-玩法与玩家功能插件/14-宠物系统/宠物系统simplepets.md)                                                                                 | SimplePets 跟随宠物、骑乘/帽子、存档、Vault Addon 经济联动 |
@@ -129,7 +129,7 @@
 | 22 | 语音聊天 | [3-玩法与玩家功能插件/08-Simple Voice Chat/](3-玩法与玩家功能插件/08-Simple Voice Chat/Simple Voice Chat.md) | 近距离语音，含 UDP 端口与内网穿透方案 |
 | 23 | 区块预生成 | [5-服务器管理/09-chunky区块加载优化/](5-服务器管理/09-chunky区块加载优化/chunky区块加载优化.md) | 预生成世界，根治跑图卡顿 |
 | 24 | 指令整合（含完整配置） | [3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/](3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) | 传送/家园/经济/管理 150+ 命令；`config.yml` / `kits.yml` / 中文别名 / LP 权限示例 |
-| 25 | 基岩 GUI 表单 | [3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/](3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 基岩玩家免敲指令的表单界面 |
+| 25 | 基岩 GUI 表单 | [5-服务器管理/11-BedrockPlayerSupport基岩版GUI表单界面/](5-服务器管理/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 基岩玩家免敲指令的表单界面 |
 | 26 | **快捷菜单（自研插件）** | [ai写的/快捷菜单系统/](ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md) | **整合全部插件的快捷菜单：玩家线 11 套 + 管理线 11 套（权限门控），Java 箱子 GUI + 基岩原生 Form，含成品 jar 与源码** |
 | 26.1 | └ 成品插件包 | [dist/QuickMenu-1.0.0.jar](ai写的/快捷菜单系统/dist/QuickMenu-1.0.0.jar) | 编译验证通过的部署产物（53.7 KB，含 22 套菜单配置） |
 | 26.2 | └ 源码与构建脚本 | [plugin-src/](ai写的/快捷菜单系统/plugin-src/) · [build.ps1](ai写的/快捷菜单系统/build.ps1) | 15 个源文件；无需 Maven 的一键构建 |
@@ -328,13 +328,13 @@ config/
 | CoreProtect           | [07-方块记录与回滚](5-服务器管理/03-方块记录与回滚-CoreProtect/CoreProtect.md) |
 | Residence             | [3-玩法与玩家功能插件/04-领地系统-Residence](3-玩法与玩家功能插件/04-领地系统-Residence/Residence.md) |
 | SkinsRestorer         | [09-皮肤管理](3-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/SkinsRestorer.md) |
-| OpenInv               | [12-离线背包查看](3-玩法与玩家功能插件/06-离线背包查看-OpenInv/OpenInv.md) |
+| OpenInv               | [12-离线背包查看](5-服务器管理/06-离线背包查看-OpenInv/OpenInv.md) |
 | EasyBot               | [10-QQ机器人联动](2-运维监控与面板/01-QQ机器人联动-EasyBot/EasyBot.md) |
 | OPanel                | [11-Web管理面板](2-运维监控与面板/02-Web管理面板-OPanel/OPanel.md) |
 | EssentialsX           | [3-玩法与玩家功能插件/10-EssentialsX多功能指令整合](3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) |
 | Chunky                | [5-服务器管理/09-chunky区块加载优化](5-服务器管理/09-chunky区块加载优化/chunky区块加载优化.md) |
 | Simple Voice Chat     | [3-玩法与玩家功能插件/08-Simple Voice Chat](3-玩法与玩家功能插件/08-Simple Voice Chat/Simple Voice Chat.md) |
-| BedrockPlayerSupport  | [3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面](3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) |
+| BedrockPlayerSupport  | [5-服务器管理/11-BedrockPlayerSupport基岩版GUI表单界面](5-服务器管理/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) |
 | QuickMenu（自研）     | [快捷菜单系统](ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md) |
 | SpacePortal（自研）   | [空间传送阵使用说明](ai写的/传送阵/空间传送阵使用说明.md) |
 | WorldEdit             | [创世神WorldEdit](3-玩法与玩家功能插件/07-创世神WorldEdit/创世神WorldEdit.md) |
@@ -1000,7 +1000,7 @@ java -Xmx4G -Xms1G ^
 | **玩家用投影/打印机作弊**       | 安装 AntiLitematica（需 ProtocolLib）                                            | [禁用影响平衡的插件功能](7-工具与常见问题约束/03-禁用影响平衡的插件功能/1.禁用影响平衡的插件功能.md)                                                                                     |
 | **语音连不上 / 显示断开图标**   | ① 安全组是否放行 **UDP 24454**（不是 TCP）② `voice_host` 是否填公网 IP ③ 客户端与服务端 SVC 版本是否一致 | [22 Simple Voice Chat](3-玩法与玩家功能插件/08-Simple%20Voice%20Chat/Simple%20Voice%20Chat.md)                                                              |
 | **EssentialsX 命令提示无权限**  | ① `use-bukkit-permissions` 是否为 true ② LuckPerms 是否给了 `essentials.*` 对应节点 ③ `/essentials reload` | [权限组设计方案](5-服务器管理/01-权限管理系统-LuckPerms/权限组设计方案.md)                                                                        |
-| **基岩玩家点 GUI 表单报错**     | ① EssentialsX 是否安装 ② 玩家是否同时持有对应 EssentialsX 权限（GUI 只是前端） | [25 BedrockPlayerSupport](3-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md)                          |
+| **基岩玩家点 GUI 表单报错**     | ① EssentialsX 是否安装 ② 玩家是否同时持有对应 EssentialsX 权限（GUI 只是前端） | [25 BedrockPlayerSupport](5-服务器管理/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md)                          |
 | **预生成时服务器卡爆**          | ① 立即 `/chunky pause` ② 缩小半径分批跑 ③ 提高 `/chunky quiet` 静默间隔 | [23 Chunky](5-服务器管理/09-chunky区块加载优化/chunky区块加载优化.md)                                                                              |
 | **玩家家 / 领地数量不对**       | ① `essentials.sethome.multiple.<n>` 取最大值 ② `residence.group.<名>` 与 `groups.yml` 组名是否小写一致 | [权限组设计方案 §4](5-服务器管理/01-权限管理系统-LuckPerms/权限组设计方案.md#四essentialsx-家园数量与-residence-领地组映射)                        |
 
