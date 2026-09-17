@@ -1,5 +1,7 @@
 # 4. 跨版本协议兼容 — ViaVersion
 
+本文档介绍跨版本协议兼容插件 ViaVersion 的功能与本服实际配置。本服运行 1.21.11，安装 ViaVersion 后允许使用较旧版本（约 1.8.x 至 1.21.x）的 Java 版客户端加入；本服仅装了 ViaVersion，未装 ViaBackwards 与 ViaRewind。文档列出了 config.yml 中的版本限制、数据包限速与各版本兼容修复项，以及常用命令，供管理员调整跨版本策略时参考。
+
 **文件**: `plugins/ViaVersion-5.12.0-SNAPSHOT.jar`（实际版本 5.12.0-SNAPSHOT，见 plugins/ViaVersion/config.yml）
 
 **官方网站**: https://viaversion.com | **文档**: https://docs.viaversion.com

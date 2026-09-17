@@ -1,5 +1,7 @@
 # UserOverUUID（UuidMigrate）下载使用配置
 
+本文档介绍 UserOverUUID（JAR 内部名 UuidMigrate）插件的下载、安装、配置与命令用法，用于在服务器正版（Online）与离线（Offline）模式之间迁移玩家背包、统计与成就数据而不丢失进度。文档详细说明了 config.yml 各项含义、自动迁移工作原理以及权限数据不自动迁移等注意事项，供需要切换服务器正版/离线模式时参考。
+
 > 玩家数据管理工具：用于在服务器 Online 模式（正版/在线UUID）与 Offline 模式（离线/盗版UUID）之间迁移玩家数据，切换正版/离线模式时**不丢背包、进度、成就**。
 
 - 插件名：UserOverUUID（JAR 内部名：UuidMigrate）

@@ -1,5 +1,7 @@
 # PosTracker 玩家位置记录（安装与配置）
 
+本文介绍 PosTracker 这款轻量玩家位置追踪插件，用来替代已弃用的 CoordinateLogger：它按可配置秒数间隔记录在线玩家的坐标、世界与时间戳，并支持按半径和时间回溯查询、坐标可点击传送。文档给出 config.yml 各项说明、文件与 MySQL 两种存储模式的建表要点、/pos 命令权限和排查违规、回爆炸现场等使用示例。
+
 > 旧插件 CoordinateLogger 已弃用，本服现使用 **PosTracker（Player Position Tracker）** 作为玩家位置追踪方案。
 
 ## 1. 插件简介

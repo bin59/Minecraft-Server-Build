@@ -1,5 +1,7 @@
 # 8. 领地系统 — Residence
 
+Residence 是 Minecraft 中流行的领地保护插件，允许玩家创建私人领地并细粒度设置建造、破坏、容器、PVP 等权限，支持领地买卖、租赁与子区域。本文档汇总了圈地、传送、领地频道等常用命令，config.yml 与 flags.yml 的实际校准值，并针对配置不生效给出旧领地缓存、权限组覆盖、子区域继承三层排查思路。供管理员管理领地权限与排查问题时使用。
+
 [Github Residence](https://github.com/Zrips/Residence)
 
 **文件**: 内置于 `plugins/Residence/` 目录

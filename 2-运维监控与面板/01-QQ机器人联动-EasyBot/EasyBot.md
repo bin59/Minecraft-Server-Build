@@ -1,5 +1,7 @@
 # 10. QQ 机器人联动 — EasyBot
 
+EasyBot 是把 Minecraft 服务器与 QQ 群聊打通的插件，通过 WebSocket 与 NapCat、EasyBot 主程序串联，实现群聊与游戏内聊天双向同步、群内执行命令、玩家绑定 QQ 号等功能。本文档记录了插件端 config.yml 的关键配置与三层连接架构，并单独说明机器人和 MC 服务器分处两台电脑时的跨机部署、网络要求与故障排查。供服务器管理员搭建和维护 QQ 联动时参考。
+
 **文件**: `plugins/EasyBot-2.3.1.jar` (3.75 MB)
 
 ## 功能说明

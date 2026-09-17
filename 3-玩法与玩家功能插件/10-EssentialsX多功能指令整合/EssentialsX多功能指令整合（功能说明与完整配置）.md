@@ -1,5 +1,7 @@
 ﻿# EssentialsX 多功能指令整合：功能说明与完整配置
 
+EssentialsX 是 Spigot/Paper 服务器装机量最大的经典指令套件，本文先以功能说明梳理它提供的传送家园、经济、管理审核、物品工具包、聊天、世界保护等全部模块，再给出一份面向 Java 基岩互通服的完整 config.yml，并附 kits.yml、commands.yml 模板与 LuckPerms 权限分配示例，服主可直接照抄后按注释微调。
+
 ---
 
 ## 第一部分：功能说明

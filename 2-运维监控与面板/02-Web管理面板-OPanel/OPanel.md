@@ -1,5 +1,7 @@
 # 11. Web 管理面板 — OPanel
 
+OPanel 是一个自带完整 Web 前后端的 Minecraft 服务器图形化管理面板，管理员通过浏览器即可登录管理服务器。本文档列出了插件 config.yml 的关键配置、面板访问方式、根目录 opanel/ 下的辅助文件，以及 accessKey 保密与反向代理等安全建议。供运维人员部署和加固 Web 面板时参考。
+
 **文件**: `plugins/opanel-bukkit-1.21.9-build-2.0.1.jar` (78.62 MB)
 
 ## 功能说明

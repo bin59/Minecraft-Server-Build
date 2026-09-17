@@ -1,5 +1,7 @@
 # 16. 服务器配置文件补充
 
+本文档补充列出 Leaf 服务端目录下各类配置与数据文件的作用和当前取值。核心文件包括 server.properties、bukkit.yml、spigot.yml、commands.yml、permissions.yml 等，文档同时标注了 purpur.yml 等迁移遗留文件以及 ops.json、封禁名单等数据文件。文中给出了 bukkit.yml 生成限制、spigot.yml 中文消息、commands.yml 别名等关键片段，供服主调优服务器时查阅。
+
 ## 配置文件总览
 
 | 状态 | 文件 | 作用 |

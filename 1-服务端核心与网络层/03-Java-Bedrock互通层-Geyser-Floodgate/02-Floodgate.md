@@ -1,5 +1,7 @@
 # 3.2 Floodgate
 
+本文档介绍 Floodgate——Geyser 的配套认证插件，部署在后端 Spigot 上。它让基岩版玩家凭借 Xbox Live 账号绕过 Java 版正版验证，直接加入开启 online-mode=true 的服务器，并通过加密密钥对只放行经 Geyser 代理的合法连接。文档记录了后端 config.yml 关键配置、基岩玩家的“.”前缀识别方式与密钥管理要点，供管理员维护基岩互通认证时参考。
+
 **文件**: `plugins/floodgate-spigot.jar` (11.03 MB)
 
 ## 功能说明

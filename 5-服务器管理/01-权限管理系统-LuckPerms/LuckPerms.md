@@ -1,5 +1,7 @@
 # 5. 权限管理系统 — LuckPerms
 
+本页记录南瓜生存服 LuckPerms 权限插件的安装现状、关键配置与常用命令。LuckPerms 负责管理全服玩家的权限组、命令权限与聊天前缀，数据保存在本地 H2 数据库。正式部署权限前建议先阅读同目录的《权限组设计方案》，理解组架构与继承链后再动手。
+
 **插件 Jar**: ✅ 已安装 `plugins/LuckPerms-Bukkit-5.5.81.jar`（版本 5.5.81，已正常加载）
 **数据文件**: `plugins/LuckPerms/luckperms-h2-v2.mv.db`（H2 本地数据库，权限数据完好）
 **依赖库**: `plugins/LuckPerms/libs/` 目录下运行时依赖齐全

@@ -1,5 +1,7 @@
 # 1. 服务器核心 — Leaf
 
+本文档说明本服选用的服务端核心 Leaf（leaf-1.21.11-174.jar）的定位与部署配置。Leaf 是 Paper/Gale 链路上的高性能分支，完全兼容 Bukkit/Spigot 插件生态，可作为 Paper 的即插即用替代。文档列出了相比 Paper 的性能优化点、从 Paper 迁移的注意事项，以及 server.properties、spigot.yml、leaf-global.yml 的关键取值和启动脚本，供服主与管理员在搭建或替换核心时参考。
+
 ## 1.1 Leaf 1.21.11
 
 **文件**: `leaf-1.21.11-174.jar`

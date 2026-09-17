@@ -1,5 +1,7 @@
 # 14. 宠物系统 — SimplePets
 
+本文介绍 SimplePets 这款 GUI 管理的纯服务端宠物插件，支持 90 多种生物当跟随伙伴，可骑乘、戴头、多宠同出并存档重召，本服还已接入 Vault Addon 用主货币购买。文档覆盖安装、目录结构、界面汉化、config.yml、/pet 命令、权限与经济联动，末尾另附一起客户端猫模型错位的排查结论（与服务端无关，升级 Realistic Animals 资源包即可）。
+
 **当前版本**: SimplePets R5-B315（最新构建，2026-09） | **MC 要求**: 1.17 – 26.2（含 1.21.11，需 Java 21）
 
 **作者/发布**: brainsynder-Dev（BS-Development） | **协议**: GPL-3.0（开源）

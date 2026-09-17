@@ -1,5 +1,7 @@
 # 13. 性能分析 — spark
 
+spark 是由 LuckPerms 作者开发的高性能服务器性能分析工具，可实时监控 CPU 使用率、TPS 与内存，并通过 profiler 生成分析报告来定位卡顿原因。本文档记录了插件的关键配置和常用命令，涵盖健康报告、TPS、GC 以及 profiler 的启停。供管理员排查服务器卡顿与性能问题时使用。
+
 **文件**: 内置于 `plugins/spark/` 目录
 
 **官方网站**: https://spark.lucko.me

@@ -1,5 +1,7 @@
 # 9. 皮肤管理 — SkinsRestorer
 
+SkinsRestorer 让玩家自由更换 Minecraft 皮肤，支持从正版账号获取、URL 自定义和内置推荐皮肤库，对离线模式与基岩版玩家尤为重要。本文档列出了 config.yml 的关键配置（中文界面、换肤冷却、皮肤缓存等）以及玩家换肤命令和管理员维护命令。供管理员确认换肤功能配置时参考。
+
 **文件**: `plugins/SkinsRestorer.jar` (7.64 MB)
 
 **官方网站**: https://skinsrestorer.net | **文档**: https://skinsrestorer.net/docs

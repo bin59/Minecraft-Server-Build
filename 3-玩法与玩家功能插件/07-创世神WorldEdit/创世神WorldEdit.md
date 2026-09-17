@@ -1,3 +1,5 @@
+本文档记录创世神 WorldEdit 插件的下载安装步骤、本服实际配置要点与常用编辑指令，面向服主和建筑玩家快速上手。内容覆盖选区工具、填充替换、复制粘贴、撤销重做与 schematic 方案存取，并对照 config.yml 标注了木斧选区、指南针导航、改动上限等关键项的实际取值。
+
 ## 官方下载渠道
 
 - **Modrinth**（推荐）：https://modrinth.com/plugin/worldedit

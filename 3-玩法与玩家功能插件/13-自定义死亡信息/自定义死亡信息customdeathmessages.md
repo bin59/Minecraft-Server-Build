@@ -1,5 +1,7 @@
 # 13. 自定义死亡信息 — CustomDeathMessages
 
+本文介绍 CustomDeathMessages（简称 CDM），它把原版单调的死亡提示替换成可自定义、可随机抽取的彩色整活播报，并支持史诗死亡特效、分范围广播和 Vault 收费。文档按安装、config.yml 与 messages.yml、占位符、/cdm 命令、权限和实战示例展开，是 Paper 服调节聊天氛围的实用参考。
+
 **当前版本**: CustomDeathMessages 1.3（稳定版） | **MC 要求**: Java 1.18 – 26.1.x（含 1.21.11）
 
 **作者/发布**: SicklySurgeon | **协议**: MIT（开源免费）

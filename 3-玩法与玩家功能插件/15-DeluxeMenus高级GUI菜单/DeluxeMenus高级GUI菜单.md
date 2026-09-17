@@ -1,5 +1,7 @@
 # DeluxeMenus 高级 GUI 菜单
 
+本文介绍 DeluxeMenus 这款用 YAML 定义高级 GUI 菜单的插件，支持命令打开、点击执行、物品条件、PlaceholderAPI 占位符、分页与动态物品，适合做帮助菜单、商店、活动菜单等复杂交互。文档先讲它与自研 QuickMenu 的分工和运行服现状，再列目录结构、常用命令权限、菜单文件骨架和动作/条件写法。
+
 > **插件**：DeluxeMenus | **版本**：1.14.1-Release | **状态**：✅ 已安装（测试服）
 > **作者**：extended_clip | **官网**：<https://www.spigotmc.org/resources/deluxemenus.11734/> | **Wiki**：<https://wiki.helpch.at/helpchat-plugins/deluxemenus>
 

@@ -1,5 +1,7 @@
 # 2. 外置登录代理 — YggdrasilOfficialProxy
 
+本文档介绍外置登录代理 YggdrasilOfficialProxy 的工作原理与部署方式。它以 Java Agent 形式封装 authlib-injector，通过字节码注入让服务器在保持 online-mode=true 的同时改用第三方 Yggdrasil 认证服务器验证玩家身份。文档说明了其架构组成、被注入修改的类、-javaagent 加载方式以及适用场景，供服主在外置登录与基岩互通部署时参考。
+
 **主文件**: `YggdrasilOfficialProxy-2.3.0-paperclip.jar` (17.09 MB)  
 **核心引擎**: `authlib-injector-1.2.7.jar` (336 KB)
 

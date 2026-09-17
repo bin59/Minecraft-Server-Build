@@ -1,5 +1,7 @@
 # 12. 全息投影系统 — DecentHolograms
 
+本文介绍 DecentHolograms（简称 DH）这款不依赖 ProtocolLib 的全息投影插件，讲解在世界中生成浮动文字、物品、头颅与方块，以及点击交互、多页翻页、动画和按权限隐藏等玩法。内容按安装、目录结构、config.yml、全息文件格式、命令与权限、实战示例和排错顺序组织，适合 Paper/Spigot/Folia 服主照做。
+
 **当前版本**: DecentHolograms 2.10.1（稳定版） | **MC 要求**: Java 1.8.9 – 26.2（含 1.21.11）
 
 **官方网站**: https://www.decentholograms.eu | **Modrinth**: https://modrinth.com/plugin/decentholograms

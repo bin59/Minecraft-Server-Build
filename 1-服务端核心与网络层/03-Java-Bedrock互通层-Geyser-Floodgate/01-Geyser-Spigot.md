@@ -1,5 +1,7 @@
 # 3.1 Geyser-Velocity（代理层）
 
+本文档记录本服 Geyser 的实际部署——装在 Velocity 代理层的 Geyser-Velocity 插件，而非后端 Spigot。Geyser 将基岩版网络协议实时翻译为 Java 版协议，使手机、Win10、Xbox 等基岩版玩家能直接加入本服。文档列出了代理层 config.yml 的关键取值、基岩版玩家连接方式与常用命令，供管理员维护互通层时参考。
+
 **文件**: `velocity/plugins/Geyser-Velocity/Geyser-Velocity.jar` (18.26 MB)
 
 > ⚠️ **实际部署位置（校准 2026-09-16）**: 本服 Geyser 装在 **Velocity 代理层**（`C:\mc_serve\1.21.11-velocity\velocity\plugins\Geyser-Velocity\`），使用的是 **Geyser-Velocity** 插件，而非后端 Spigot 上的 Geyser-Spigot。后端 `1.21.11-test\plugins` 下**没有** Geyser，只装 floodgate-spigot（见 02-Floodgate.md）。下方配置值取自代理层实际 `velocity/plugins/Geyser-Velocity/config.yml`。
