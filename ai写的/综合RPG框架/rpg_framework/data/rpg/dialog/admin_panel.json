@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "GM 管理面板", "color": "gold", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "怪物领域与传送阵的图形化管理入口。所有按钮需要 OP 权限才会真正生效。", "color": "gray", "italic": true},
+      "width": 320
+    }
+  ],
+  "actions": [
+    {"label": {"text": "怪物领域管理", "color": "gold", "bold": true}, "width": 220, "action": {"type": "show_dialog", "dialog": "rpg:zone_admin"}},
+    {"label": {"text": "传送阵管理", "color": "light_purple", "bold": true}, "width": 220, "action": {"type": "show_dialog", "dialog": "rpg:portal_admin"}},
+    {"label": {"text": "怪物领域列表", "color": "aqua"}, "width": 220, "action": {"type": "run_command", "command": "function rpg:zone/list"}},
+    {"label": {"text": "传送阵列表", "color": "aqua"}, "width": 220, "action": {"type": "run_command", "command": "function rpg:portal/list"}},
+    {"label": {"text": "奖励开关管理", "color": "green", "bold": true}, "width": 220, "action": {"type": "show_dialog", "dialog": "rpg:reward_admin"}},
+    {"label": {"text": "重载配置文件", "color": "yellow"}, "tooltip": {"text": "以 config.mcfunction 的参数为准强制覆盖", "color": "gray"}, "width": 220, "action": {"type": "run_command", "command": "function rpg:config"}},
+    {"label": {"text": "玩法帮助", "color": "white"}, "width": 220, "action": {"type": "show_dialog", "dialog": "rpg:help"}},
+    {"label": {"text": "返回主菜单", "color": "gray"}, "width": 220, "action": {"type": "show_dialog", "dialog": "rpg:main"}}
+  ],
+  "columns": 2,
+  "after_action": "none",
+  "pause": false,
+  "exit_action": {"label": {"text": "关闭", "color": "gray"}}
+}

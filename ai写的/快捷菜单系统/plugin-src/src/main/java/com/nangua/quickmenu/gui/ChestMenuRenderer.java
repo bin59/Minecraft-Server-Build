@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
@@ -35,6 +36,15 @@ public final class ChestMenuRenderer {
     /** 用于标记菜单归属的 PDC 键，值为菜单 id */
     private final NamespacedKey menuKey;
 
+    /** 玩家选择器：标记"这是可选中的玩家头颅"，值为固定标识 __selector__ */
+    private final NamespacedKey selectorTargetKey;
+
+    /** 玩家选择器：存储目标玩家名 */
+    private final NamespacedKey selectorNameKey;
+
+    /** 玩家选择器：存储点击后要执行的命令模板（含 {target}） */
+    private final NamespacedKey selectorTemplateKey;
+
     private final QuickMenuPlugin plugin;
 
     public ChestMenuRenderer(QuickMenuPlugin plugin) {
@@ -42,6 +52,9 @@ public final class ChestMenuRenderer {
         this.triggerKey = new NamespacedKey(plugin, "trigger_item");
         this.itemKey = new NamespacedKey(plugin, "menu_item");
         this.menuKey = new NamespacedKey(plugin, "menu_id");
+        this.selectorTargetKey = new NamespacedKey(plugin, "selector_target");
+        this.selectorNameKey = new NamespacedKey(plugin, "selector_name");
+        this.selectorTemplateKey = new NamespacedKey(plugin, "selector_template");
     }
 
     public NamespacedKey getTriggerKey() {
@@ -54,6 +67,18 @@ public final class ChestMenuRenderer {
 
     public NamespacedKey getMenuKey() {
         return menuKey;
+    }
+
+    public NamespacedKey getSelectorTargetKey() {
+        return selectorTargetKey;
+    }
+
+    public NamespacedKey getSelectorNameKey() {
+        return selectorNameKey;
+    }
+
+    public NamespacedKey getSelectorTemplateKey() {
+        return selectorTemplateKey;
     }
 
     /**
@@ -108,6 +133,116 @@ public final class ChestMenuRenderer {
         }
 
         player.openInventory(inventory);
+    }
+
+    /**
+     * 构建并打开"在线玩家选择器"箱子界面。
+     *
+     * <p>动态列出当前在线玩家（排除自己），每人一个带真实皮肤的头颅，
+     * 点击后执行 {@code commandTemplate}（其中 {@code {target}} 替换为玩家名）。
+     * 界面每次打开都重新生成，因此玩家上下线后列表始终是最新状态。
+     */
+    public void renderPlayerSelector(Player player, String commandTemplate) {
+        PlayerSelectorHolder holder = new PlayerSelectorHolder();
+        int size = 54;
+        Inventory inventory = Bukkit.createInventory(holder, size,
+                ActionExecutor.color(plugin.getSettings().getPlayerSelectorTitle()));
+        holder.setInventory(inventory);
+
+        // 背景填充
+        ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta fillerMeta = filler.getItemMeta();
+        if (fillerMeta != null) {
+            fillerMeta.setDisplayName(" ");
+            fillerMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+            filler.setItemMeta(fillerMeta);
+        }
+        for (int slot = 0; slot < size; slot++) {
+            inventory.setItem(slot, filler);
+        }
+
+        // 在线玩家列表（排除自己，最多 45 人，留出关闭按钮槽位）
+        List<Player> targets = new ArrayList<>();
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            if (online.getUniqueId().equals(player.getUniqueId())) {
+                continue;
+            }
+            if (targets.size() >= 45) {
+                break;
+            }
+            targets.add(online);
+        }
+
+        if (targets.isEmpty()) {
+            ItemStack empty = new ItemStack(Material.BARRIER);
+            ItemMeta emptyMeta = empty.getItemMeta();
+            if (emptyMeta != null) {
+                emptyMeta.setDisplayName(ActionExecutor.color(plugin.getSettings().getPlayerSelectorNoPlayers()));
+                List<String> emptyLore = new ArrayList<>();
+                emptyLore.add(ActionExecutor.color("&7稍后再试，或直接使用指令"));
+                emptyLore.add(ActionExecutor.color("&e" + commandTemplate.replace("{target}", "玩家名")));
+                emptyMeta.setLore(emptyLore);
+                empty.setItemMeta(emptyMeta);
+            }
+            inventory.setItem(22, empty);
+        } else {
+            for (int i = 0; i < targets.size(); i++) {
+                inventory.setItem(i, buildSelectorHead(targets.get(i), commandTemplate));
+            }
+        }
+
+        // 关闭按钮：固定在右下角
+        inventory.setItem(size - 1, buildSelectorCloseButton());
+
+        player.openInventory(inventory);
+    }
+
+    /** 构建可点击的玩家头颅（带真实皮肤贴图与选择器标记） */
+    private ItemStack buildSelectorHead(Player target, String commandTemplate) {
+        ItemStack stack = new ItemStack(Material.PLAYER_HEAD);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return stack;
+        }
+
+        meta.setDisplayName(ActionExecutor.color("&a" + target.getName()));
+
+        List<String> lore = new ArrayList<>();
+        lore.add(ActionExecutor.color(plugin.getSettings().getPlayerSelectorLore()));
+        lore.add(ActionExecutor.color("&8点击后自动执行"));
+        meta.setLore(lore);
+
+        meta.getPersistentDataContainer().set(itemKey, PersistentDataType.STRING, "__selector__");
+        meta.getPersistentDataContainer().set(selectorTargetKey, PersistentDataType.STRING, target.getName());
+        meta.getPersistentDataContainer().set(selectorTemplateKey, PersistentDataType.STRING, commandTemplate);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+
+        // 真实皮肤头：在线玩家可直接取 PlayerProfile
+        if (meta instanceof SkullMeta skullMeta) {
+            try {
+                skullMeta.setOwnerProfile(target.getPlayerProfile());
+            } catch (Exception ignored) {
+                // 取不到贴图时保留默认头颅，不影响功能
+            }
+        }
+
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    /** 构建选择器界面的关闭按钮 */
+    private ItemStack buildSelectorCloseButton() {
+        ItemStack stack = new ItemStack(Material.ARROW);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ActionExecutor.color("&c关闭"));
+            List<String> lore = new ArrayList<>();
+            lore.add(ActionExecutor.color("&7点击关闭选择界面"));
+            meta.setLore(lore);
+            meta.getPersistentDataContainer().set(itemKey, PersistentDataType.STRING, "__close__");
+            stack.setItemMeta(meta);
+        }
+        return stack;
     }
 
     /**

@@ -30,6 +30,13 @@ public enum ActionType {
     /** 关闭当前界面 / 表单 */
     CLOSE,
 
+    /**
+     * 打开在线玩家选择器（动态列出在线玩家，点击后执行命令模板）。
+     * value 为命令模板，其中 {@code {target}} 会被替换为玩家点击的玩家名。
+     * 例：{@code [player-selector] tpa {target}}
+     */
+    PLAYER_SELECTOR,
+
     // ==================== 平台条件动作 ====================
 
     /** 仅基岩玩家：以玩家身份执行命令 */

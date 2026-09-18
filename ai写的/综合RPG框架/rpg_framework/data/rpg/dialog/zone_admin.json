@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "怪物领域管理", "color": "gold", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "站在想作为中心的位置，拖好滑块后点“创建”。需要 OP 权限；所有按钮均要求管理员身份。", "color": "gray", "italic": true},
+      "width": 340
+    }
+  ],
+  "inputs": [
+    {"type": "minecraft:number_range", "key": "slot", "label": {"text": "槽位 1~8"}, "start": 1, "end": 8, "step": 1, "initial": 1, "width": 260},
+    {"type": "minecraft:number_range", "key": "r", "label": {"text": "水平半径(格)"}, "start": 8, "end": 96, "step": 4, "initial": 48, "width": 260},
+    {"type": "minecraft:number_range", "key": "h", "label": {"text": "垂直半高(格)"}, "start": 8, "end": 64, "step": 4, "initial": 32, "width": 260},
+    {"type": "minecraft:number_range", "key": "pool", "label": {"text": "怪物池 1~4"}, "start": 1, "end": 4, "step": 1, "initial": 1, "width": 260},
+    {"type": "minecraft:number_range", "key": "cap", "label": {"text": "数量上限"}, "start": 1, "end": 40, "step": 1, "initial": 16, "width": 260}
+  ],
+  "actions": [
+    {"label": {"text": "以脚下为中心创建/覆盖领域", "color": "gold", "bold": true}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:zone/create {slot:$(slot),r:$(r),h:$(h),pool:$(pool),cap:$(cap),name:\"领域\"}"}},
+    {"label": {"text": "启用该槽位领域", "color": "green"}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:zone/enable {slot:$(slot)}"}},
+    {"label": {"text": "停用该槽位领域", "color": "red"}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:zone/disable {slot:$(slot)}"}},
+    {"label": {"text": "删除该槽位领域", "color": "dark_red"}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:zone/remove {slot:$(slot)}"}},
+    {"label": {"text": "列出全部领域", "color": "aqua"}, "width": 260, "action": {"type": "run_command", "command": "function rpg:zone/list"}},
+    {"label": {"text": "系统总开关：开启", "color": "green", "bold": true}, "width": 260, "action": {"type": "run_command", "command": "function rpg:zone/on"}},
+    {"label": {"text": "系统总开关：关闭", "color": "red", "bold": true}, "width": 260, "action": {"type": "run_command", "command": "function rpg:zone/off"}},
+    {"label": {"text": "重载配置文件(config)", "color": "yellow"}, "width": 260, "action": {"type": "run_command", "command": "function rpg:config"}}
+  ],
+  "columns": 2,
+  "after_action": "none",
+  "pause": false,
+  "exit_action": {"label": {"text": "返回 GM 面板", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:admin_panel"}}
+}

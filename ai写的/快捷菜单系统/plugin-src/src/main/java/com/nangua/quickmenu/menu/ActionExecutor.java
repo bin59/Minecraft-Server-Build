@@ -92,6 +92,13 @@ public final class ActionExecutor {
                 }
                 break;
 
+            case PLAYER_SELECTOR:
+                if (!value.isEmpty()) {
+                    // 打开在线玩家选择器，点击玩家后执行 value 中的命令模板
+                    plugin.getMenuManager().openPlayerSelector(player, value);
+                }
+                break;
+
             case MESSAGE:
                 if (!value.isEmpty()) {
                     player.sendMessage(value);

@@ -5,6 +5,7 @@ import com.nangua.quickmenu.menu.Action;
 import com.nangua.quickmenu.menu.ActionExecutor;
 import com.nangua.quickmenu.menu.Menu;
 import com.nangua.quickmenu.menu.MenuItem;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.geysermc.cumulus.form.SimpleForm;
 import org.geysermc.cumulus.response.SimpleFormResponse;
@@ -154,6 +155,72 @@ public final class BedrockFormRenderer {
             return floodgatePlayer.sendForm(builder);
         } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
             plugin.getLogger().warning("Floodgate API 不可用，无法发送原生表单: " + ex.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 向基岩玩家发送"在线玩家选择器"表单。
+     *
+     * <p>动态为每个在线玩家（排除自己）添加一个按钮，玩家点击后
+     * 以玩家身份执行命令模板（{@code {target}} 替换为所点玩家名）。
+     * 回调在 Netty 网络线程触发，因此命令执行通过主线程调度。
+     *
+     * @return true 表示发送成功；false 表示玩家不是基岩玩家或发送失败
+     */
+    public boolean renderPlayerSelector(Player player, String commandTemplate) {
+        if (!isBedrockPlayer(player)) {
+            return false;
+        }
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+                .title(ActionExecutor.color(plugin.getSettings().getPlayerSelectorTitle()))
+                .content(ActionExecutor.color(plugin.getSettings().getPlayerSelectorContent()));
+
+        List<String> targets = new ArrayList<>();
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            if (online.getUniqueId().equals(player.getUniqueId())) {
+                continue;
+            }
+            targets.add(online.getName());
+            builder.button(online.getName());
+        }
+
+        if (targets.isEmpty()) {
+            builder.button(ActionExecutor.stripColor(plugin.getSettings().getPlayerSelectorNoPlayers()));
+        }
+
+        builder.validResultHandler((SimpleFormResponse response) -> {
+            int index = response.clickedButtonId();
+            if (index < 0 || index >= targets.size()) {
+                return;
+            }
+            String target = targets.get(index);
+            // Netty 线程 → 主线程
+            Bukkit.getScheduler().runTask(plugin, () ->
+                    player.performCommand(commandTemplate.replace("{target}", target)));
+        });
+
+        builder.closedResultHandler(() -> {
+            if (plugin.getSettings().isDebug()) {
+                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了玩家选择器表单");
+            }
+        });
+
+        builder.invalidResultHandler(() -> {
+            plugin.getLogger().warning("玩家 " + player.getName()
+                    + " 的玩家选择器表单响应无效");
+        });
+
+        try {
+            FloodgateApi api = FloodgateApi.getInstance();
+            FloodgatePlayer floodgatePlayer = api.getPlayer(player.getUniqueId());
+            if (floodgatePlayer == null) {
+                return false;
+            }
+            return floodgatePlayer.sendForm(builder);
+        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
+            plugin.getLogger().warning("Floodgate API 不可用，无法发送玩家选择器表单: " + ex.getMessage());
             return false;
         }
     }

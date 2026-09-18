@@ -1,3 +1,17 @@
 .history
 .codebuddy
 .workbuddy
+log*
+1.21.11-test/world*
+libraries
+libs
+.gitignore
+cache
+*.db
+1.21.11-test/plugins/Residence/Save/PlayerData
+1.21.11-test/plugins/SkinsRestorer/locales
+1.21.11-test/plugins/SkinsRestorer/cache
+1.21.11-test/plugins/SkinsRestorer/skins
+1.21.11-test/plugins/SkinsRestorer/players
+1.21.11-test/plugins/SkinsRestorer/locales
+1.21.11-test/plugins/WorldEdit/.archive-unpack/

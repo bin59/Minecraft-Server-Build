@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "传送阵管理", "color": "light_purple", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "站在空地，拖好滑块后点“建造”。dt=目标类型：1=另一座传送阵 2=怪物领域中心 3=传送点(主城/矿区/竞技场)。需要 OP 权限。", "color": "gray", "italic": true},
+      "width": 340
+    }
+  ],
+  "inputs": [
+    {"type": "minecraft:number_range", "key": "slot", "label": {"text": "槽位 1~8"}, "start": 1, "end": 8, "step": 1, "initial": 1, "width": 260},
+    {"type": "minecraft:number_range", "key": "dt", "label": {"text": "目标类型 dt(1/2/3)"}, "start": 1, "end": 3, "step": 1, "initial": 2, "width": 260},
+    {"type": "minecraft:number_range", "key": "di", "label": {"text": "目标编号 di"}, "start": 1, "end": 8, "step": 1, "initial": 1, "width": 260},
+    {"type": "minecraft:number_range", "key": "lv", "label": {"text": "等级门槛(0=无)"}, "start": 0, "end": 60, "step": 1, "initial": 0, "width": 260},
+    {"type": "minecraft:number_range", "key": "cost", "label": {"text": "传送费用(金)"}, "start": 0, "end": 500, "step": 10, "initial": 0, "width": 260}
+  ],
+  "actions": [
+    {"label": {"text": "在脚下建造传送阵", "color": "light_purple", "bold": true}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:portal/create {slot:$(slot),dt:$(dt),di:$(di),lv:$(lv),cost:$(cost),name:\"传送阵\"}"}},
+    {"label": {"text": "修改目标/门槛(link)", "color": "aqua"}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:portal/link {slot:$(slot),dt:$(dt),di:$(di),lv:$(lv),cost:$(cost)}"}},
+    {"label": {"text": "启用该传送阵", "color": "green"}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:portal/enable {slot:$(slot)}"}},
+    {"label": {"text": "停用该传送阵", "color": "red"}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:portal/disable {slot:$(slot)}"}},
+    {"label": {"text": "重建阵法方块", "color": "yellow"}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:portal/rebuild {slot:$(slot)}"}},
+    {"label": {"text": "删除该传送阵", "color": "dark_red"}, "width": 260, "action": {"type": "dynamic/run_command", "template": "function rpg:portal/remove {slot:$(slot)}"}},
+    {"label": {"text": "列出全部传送阵", "color": "aqua"}, "width": 260, "action": {"type": "run_command", "command": "function rpg:portal/list"}},
+    {"label": {"text": "系统总开关：开启", "color": "green", "bold": true}, "width": 260, "action": {"type": "run_command", "command": "function rpg:portal/on"}},
+    {"label": {"text": "系统总开关：关闭", "color": "red", "bold": true}, "width": 260, "action": {"type": "run_command", "command": "function rpg:portal/off"}}
+  ],
+  "columns": 2,
+  "after_action": "none",
+  "pause": false,
+  "exit_action": {"label": {"text": "返回 GM 面板", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:admin_panel"}}
+}

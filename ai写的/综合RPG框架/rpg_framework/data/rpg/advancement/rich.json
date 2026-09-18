@@ -1,0 +1,14 @@
+{
+  "display": {
+    "icon": {"id": "minecraft:gold_block"},
+    "title": {"text": "富甲一方", "color": "gold", "bold": true},
+    "description": {"text": "身上持有10000金币", "color": "gray"},
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "rpg:root",
+  "criteria": {
+    "requirement": {"trigger": "minecraft:impossible"}
+  }
+}

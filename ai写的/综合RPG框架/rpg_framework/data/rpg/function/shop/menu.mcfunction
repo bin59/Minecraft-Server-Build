@@ -1,0 +1,18 @@
+# ══ 商店菜单 ══
+scoreboard players reset @s rpg.shop
+tellraw @s ["",{"text":"╔═══ ","color":"gold"},{"text":"金币商店","color":"yellow","bold":true},{"text":" ═══╗","color":"gold"}]
+tellraw @s ["",{"text":"余额：","color":"gray"},{"score":{"name":"@s","objective":"rpg.gold"},"color":"gold","bold":true},{"text":" 金币","color":"gray"}]
+tellraw @s ["",{"text":"1. 面包×8 ","color":"white"},{"text":"—— 30金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 1"}}]
+tellraw @s ["",{"text":"2. 熟牛排×8 ","color":"white"},{"text":"—— 60金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 2"}}]
+tellraw @s ["",{"text":"3. 铁锭×8 ","color":"white"},{"text":"—— 80金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 3"}}]
+tellraw @s ["",{"text":"4. 铁剑×1 ","color":"white"},{"text":"—— 100金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 4"}}]
+tellraw @s ["",{"text":"5. 铁甲套装（4件）","color":"white"},{"text":"—— 350金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 5"}}]
+tellraw @s ["",{"text":"6. 弓×1 ","color":"white"},{"text":"—— 120金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 6"}}]
+tellraw @s ["",{"text":"7. 箭×32 ","color":"white"},{"text":"—— 60金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 7"}}]
+tellraw @s ["",{"text":"8. 力量药水 ","color":"white"},{"text":"—— 200金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 8"}}]
+tellraw @s ["",{"text":"9. 速度药水 ","color":"white"},{"text":"—— 180金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 9"}}]
+tellraw @s ["",{"text":"10. 附魔金苹果 ","color":"white"},{"text":"—— 500金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 10"}}]
+tellraw @s ["",{"text":"11. ","color":"white"},{"text":"深渊之眼","color":"light_purple","bold":true},{"text":"（BOSS召唤）—— 300金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 11"}}]
+tellraw @s ["",{"text":"12. ","color":"white"},{"text":"精英召集令","color":"gold","bold":true},{"text":"（精英挑战）—— 100金 ","color":"gray"},{"text":"[购买]","color":"aqua","bold":true,"click_event":{"action":"suggest_command","command":"/trigger rpg.buy set 12"}}]
+tellraw @s ["",{"text":"╚══════════════════════╝","color":"gold"}]
+tellraw @s ["",{"text":"提示：也可用 /trigger rpg.buy set <编号> 购买","color":"dark_gray","italic":true}]

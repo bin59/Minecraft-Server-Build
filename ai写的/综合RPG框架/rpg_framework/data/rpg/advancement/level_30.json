@@ -1,0 +1,14 @@
+{
+  "display": {
+    "icon": {"id": "minecraft:netherite_ingot"},
+    "title": {"text": "一方霸主（30级）", "color": "gold"},
+    "description": {"text": "达到等级30，实力冠绝一方", "color": "gray"},
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "rpg:level_20",
+  "criteria": {
+    "requirement": {"trigger": "minecraft:impossible"}
+  }
+}

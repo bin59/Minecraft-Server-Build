@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "奖励开关管理", "color": "gold", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "总开关关闭时，所有奖励一律停发。分项开关可在总开关开启的基础上单独关掉某一类。关闭期间任务进度与当日签到资格均保留，重新开启后照常领取。所有按钮需要 OP 权限。", "color": "gray", "italic": true},
+      "width": 340
+    }
+  ],
+  "inputs": [],
+  "actions": [
+    {"label": {"text": "总开关：一键切换", "color": "gold", "bold": true}, "width": 240, "action": {"type": "run_command", "command": "function rpg:reward/toggle"}},
+    {"label": {"text": "查看当前状态", "color": "aqua"}, "width": 240, "action": {"type": "run_command", "command": "function rpg:reward/status"}},
+    {"label": {"text": "击杀掉落：切换", "color": "yellow"}, "width": 240, "action": {"type": "run_command", "command": "function rpg:reward/item_toggle {key:\"kill\"}"}},
+    {"label": {"text": "任务/每日：切换", "color": "yellow"}, "width": 240, "action": {"type": "run_command", "command": "function rpg:reward/item_toggle {key:\"quest\"}"}},
+    {"label": {"text": "每日签到：切换", "color": "yellow"}, "width": 240, "action": {"type": "run_command", "command": "function rpg:reward/item_toggle {key:\"daily\"}"}},
+    {"label": {"text": "升级/里程碑：切换", "color": "yellow"}, "width": 240, "action": {"type": "run_command", "command": "function rpg:reward/item_toggle {key:\"level\"}"}},
+    {"label": {"text": "BOSS/精英：切换", "color": "yellow"}, "width": 240, "action": {"type": "run_command", "command": "function rpg:reward/item_toggle {key:\"boss\"}"}},
+    {"label": {"text": "幸运抽奖：切换", "color": "yellow"}, "width": 240, "action": {"type": "run_command", "command": "function rpg:reward/item_toggle {key:\"lottery\"}"}}
+  ],
+  "columns": 2,
+  "after_action": "none",
+  "pause": false,
+  "exit_action": {"label": {"text": "返回 GM 面板", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:admin_panel"}}
+}

@@ -1,0 +1,112 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "综合RPG框架", "color": "gold", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "选择下方按钮开始你的冒险之旅", "color": "gray"},
+      "width": 300
+    }
+  ],
+  "actions": [
+    {
+      "label": {"text": "选择职业", "color": "red"},
+      "tooltip": {"text": "战士/弓箭手/法师/牧师", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:class_select"}
+    },
+    {
+      "label": {"text": "金币商店", "color": "gold"},
+      "tooltip": {"text": "使用金币购买装备物资", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:shop"}
+    },
+    {
+      "label": {"text": "任务面板", "color": "green"},
+      "tooltip": {"text": "普通任务与每日任务", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:quest_board"}
+    },
+    {
+      "label": {"text": "传送系统", "color": "aqua"},
+      "tooltip": {"text": "主城/矿区/竞技场", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:warp"}
+    },
+    {
+      "label": {"text": "怪物领域", "color": "gold"},
+      "tooltip": {"text": "查看怪物集中刷新的限制区域", "color": "gray"},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.zone"}
+    },
+    {
+      "label": {"text": "传送阵", "color": "light_purple"},
+      "tooltip": {"text": "站上阵台停留2秒跨图传送", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:portal"}
+    },
+    {
+      "label": {"text": "幸运抽奖", "color": "light_purple"},
+      "tooltip": {"text": "50金币一次，最高500金大奖", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:lottery"}
+    },
+    {
+      "label": {"text": "每日签到", "color": "yellow"},
+      "tooltip": {"text": "每天领取100金币+20经验", "color": "gray"},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.daily"}
+    },
+    {
+      "label": {"text": "挑战BOSS", "color": "dark_red"},
+      "tooltip": {"text": "深渊领主（需5级+深渊之眼，冷却10分钟）", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:boss_confirm"}
+    },
+    {
+      "label": {"text": "精英入侵", "color": "dark_purple"},
+      "tooltip": {"text": "需精英召集令（商店购买），冷却5分钟", "color": "gray"},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.elite"}
+    },
+    {
+      "label": {"text": "玩家转账", "color": "gold"},
+      "tooltip": {"text": "转给16格内最近的玩家", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:pay"}
+    },
+    {
+      "label": {"text": "排行榜", "color": "red"},
+      "tooltip": {"text": "查看全服等级排行", "color": "gray"},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.top"}
+    },
+    {
+      "label": {"text": "角色面板", "color": "aqua"},
+      "tooltip": {"text": "查看等级/职业/金币等详细数据", "color": "gray"},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.stats"}
+    },
+    {
+      "label": {"text": "玩法帮助", "color": "white"},
+      "tooltip": {"text": "查看玩法说明", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:help"}
+    },
+    {
+      "label": {"text": "GM 面板", "color": "dark_red"},
+      "tooltip": {"text": "管理员专用：怪物领域 / 传送阵配置（需 OP）", "color": "gray"},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.admin"}
+    },
+    {
+      "label": {"text": "基岩版指南", "color": "aqua"},
+      "tooltip": {"text": "基岩版玩家操作指引", "color": "gray"},
+      "width": 200,
+      "action": {"type": "show_dialog", "dialog": "rpg:bedrock_guide"}
+    }
+  ],
+  "columns": 2,
+  "exit_action": {"label": {"text": "关闭", "color": "gray"}},
+  "pause": false
+}

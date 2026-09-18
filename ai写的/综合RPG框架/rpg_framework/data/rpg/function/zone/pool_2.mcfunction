@@ -1,0 +1,9 @@
+# ══════════════════════════════════════════════════════════
+#  怪物池 2 · 亡灵墓穴（中级难度，属性强化 + 自定义名称）
+# ══════════════════════════════════════════════════════════
+execute store result score #zr rpg.data run random value 1..5
+execute if score #zr rpg.data matches 1 run summon minecraft:zombie ~ ~ ~ {Tags:["rpg.zmob","rpg.znew"],PersistenceRequired:false,CustomName:'{"text":"腐化尸卫","color":"dark_green"}',Health:30.0f,active_effects:[{id:"minecraft:fire_resistance",amplifier:0b,duration:1000000,show_particles:false}],attributes:[{id:"minecraft:max_health",base:30.0d},{id:"minecraft:attack_damage",base:6.0d}]}
+execute if score #zr rpg.data matches 2 run summon minecraft:husk ~ ~ ~ {Tags:["rpg.zmob","rpg.znew"],PersistenceRequired:false,CustomName:'{"text":"沙葬者","color":"gold"}',Health:32.0f,attributes:[{id:"minecraft:max_health",base:32.0d},{id:"minecraft:attack_damage",base:7.0d}]}
+execute if score #zr rpg.data matches 3 run summon minecraft:stray ~ ~ ~ {Tags:["rpg.zmob","rpg.znew"],PersistenceRequired:false,CustomName:'{"text":"霜骨射手","color":"aqua"}',Health:26.0f,active_effects:[{id:"minecraft:fire_resistance",amplifier:0b,duration:1000000,show_particles:false}],attributes:[{id:"minecraft:max_health",base:26.0d}]}
+execute if score #zr rpg.data matches 4 run summon minecraft:drowned ~ ~ ~ {Tags:["rpg.zmob","rpg.znew"],PersistenceRequired:false,CustomName:'{"text":"溺亡卫兵","color":"dark_aqua"}',Health:28.0f,active_effects:[{id:"minecraft:fire_resistance",amplifier:0b,duration:1000000,show_particles:false}],attributes:[{id:"minecraft:max_health",base:28.0d},{id:"minecraft:attack_damage",base:6.0d}]}
+execute if score #zr rpg.data matches 5 run summon minecraft:wither_skeleton ~ ~ ~ {Tags:["rpg.zmob","rpg.znew"],PersistenceRequired:false,CustomName:'{"text":"凋零卫士","color":"dark_gray"}',Health:34.0f,attributes:[{id:"minecraft:max_health",base:34.0d},{id:"minecraft:attack_damage",base:8.0d}]}

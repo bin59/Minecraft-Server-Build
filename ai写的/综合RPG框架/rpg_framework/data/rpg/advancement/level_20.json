@@ -1,0 +1,14 @@
+{
+  "display": {
+    "icon": {"id": "minecraft:enchanted_golden_apple"},
+    "title": {"text": "声名远扬（20级）", "color": "gold"},
+    "description": {"text": "达到等级20，成为远近闻名的冒险者", "color": "gray"},
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "rpg:level_10",
+  "criteria": {
+    "requirement": {"trigger": "minecraft:impossible"}
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "display": {
+    "icon": {"id": "minecraft:zombie_head"},
+    "title": {"text": "屠龙者", "color": "dark_red", "bold": true},
+    "description": {"text": "参与击败深渊领主", "color": "gray"},
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "rpg:root",
+  "criteria": {
+    "requirement": {"trigger": "minecraft:impossible"}
+  }
+}

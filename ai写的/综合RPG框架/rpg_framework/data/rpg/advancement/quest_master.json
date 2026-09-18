@@ -1,0 +1,14 @@
+{
+  "display": {
+    "icon": {"id": "minecraft:writable_book"},
+    "title": {"text": "任务达人", "color": "green"},
+    "description": {"text": "累计完成5个任务", "color": "gray"},
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false
+  },
+  "parent": "rpg:root",
+  "criteria": {
+    "requirement": {"trigger": "minecraft:impossible"}
+  }
+}

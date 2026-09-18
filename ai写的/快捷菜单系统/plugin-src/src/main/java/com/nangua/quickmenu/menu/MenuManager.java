@@ -149,6 +149,33 @@ public final class MenuManager {
     }
 
     /**
+     * 打开在线玩家选择器（tpa / tpahere 选人界面）。
+     *
+     * <p>动态列出当前在线玩家（排除自己），玩家点击某人后执行
+     * 传入的命令模板（{@code {target}} 会被替换为所点玩家的名字）。
+     * 两端分发规则与 {@link #openMenu} 一致：基岩玩家优先原生表单，
+     * 发送失败自动回退箱子界面。
+     *
+     * @param player          目标玩家
+     * @param commandTemplate 命令模板，如 {@code tpa {target}}
+     */
+    public void openPlayerSelector(Player player, String commandTemplate) {
+        boolean bedrockNative = plugin.getSettings().isBedrockUseNativeForm()
+                && isBedrockPlayer(player);
+
+        if (bedrockNative && formRenderer != null) {
+            boolean sent = formRenderer.renderPlayerSelector(player, commandTemplate);
+            if (sent) {
+                return;
+            }
+            plugin.getLogger().warning("向 " + player.getName()
+                    + " 发送玩家选择器表单失败，回退到箱子界面");
+        }
+
+        chestRenderer.renderPlayerSelector(player, commandTemplate);
+    }
+
+    /**
      * 关闭所有玩家打开中的菜单界面（服务器关闭时调用）。
      */
     public void closeAll() {

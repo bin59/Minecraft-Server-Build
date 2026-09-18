@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:confirmation",
+  "title": {"text": "幸运抽奖", "color": "light_purple", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "50金币一次！奖池：100金(50%)、200金(25%)、500金(10%)、附魔金苹果(5%)、谢谢惠顾(10%)", "color": "gray"},
+      "width": 320
+    }
+  ],
+  "yes": {
+    "label": {"text": "抽奖一次（50金）", "color": "gold", "bold": true},
+    "action": {"type": "run_command", "command": "trigger rpg.lottery"}
+  },
+  "no": {
+    "label": {"text": "不抽了", "color": "gray"}
+  },
+  "pause": false
+}

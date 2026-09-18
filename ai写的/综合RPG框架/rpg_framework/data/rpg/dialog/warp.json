@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "传送系统", "color": "aqua", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "如显示\"尚未设置\"，请联系管理员站位设置传送点", "color": "gray", "italic": true},
+      "width": 300
+    }
+  ],
+  "actions": [
+    {"label": {"text": "传送到主城", "color": "aqua"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.go set 1"}},
+    {"label": {"text": "传送到矿区", "color": "aqua"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.go set 2"}},
+    {"label": {"text": "传送到BOSS竞技场", "color": "dark_red"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.go set 3"}}
+  ],
+  "columns": 1,
+  "pause": false,
+  "exit_action": {"label": {"text": "返回主菜单", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:main"}}
+}

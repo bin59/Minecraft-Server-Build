@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:confirmation",
+  "title": {"text": "挑战深渊领主", "color": "dark_red", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "召唤需要 5级 + 深渊之眼（商店第11项，300金购买），召唤后全服冷却10分钟。击杀后仅参战玩家（对BOSS造成伤害）获得 500金币+300经验。确定要唤醒它吗？", "color": "gray"},
+      "width": 300
+    }
+  ],
+  "yes": {
+    "label": {"text": "唤醒深渊领主", "color": "dark_red", "bold": true},
+    "action": {"type": "run_command", "command": "trigger rpg.boss"}
+  },
+  "no": {
+    "label": {"text": "再想想", "color": "gray"}
+  },
+  "pause": false
+}

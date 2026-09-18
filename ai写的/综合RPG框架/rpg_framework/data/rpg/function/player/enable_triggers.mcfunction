@@ -1,0 +1,25 @@
+# ══ 每秒重新启用所有触发器 ══
+scoreboard players enable @s rpg.gui
+scoreboard players enable @s rpg.menu
+scoreboard players enable @s rpg.cls
+scoreboard players enable @s rpg.pick
+scoreboard players enable @s rpg.stats
+scoreboard players enable @s rpg.skill
+scoreboard players enable @s rpg.shop
+scoreboard players enable @s rpg.buy
+scoreboard players enable @s rpg.quest
+scoreboard players enable @s rpg.qacc
+scoreboard players enable @s rpg.qdone
+scoreboard players enable @s rpg.warp
+scoreboard players enable @s rpg.go
+scoreboard players enable @s rpg.pay
+scoreboard players enable @s rpg.daily
+scoreboard players enable @s rpg.top
+scoreboard players enable @s rpg.boss
+scoreboard players enable @s rpg.lottery
+scoreboard players enable @s rpg.elite
+scoreboard players enable @s rpg.zone
+scoreboard players enable @s rpg.portal
+scoreboard players enable @s rpg.admin
+scoreboard players enable @s rpg.zone_admin
+scoreboard players enable @s rpg.portal_admin

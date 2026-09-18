@@ -1,0 +1,43 @@
+{
+  "type": "minecraft:notice",
+  "title": {"text": "玩法帮助", "color": "white", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "【职业】四职业各有专属技能，右键技能魔杖释放。基岩版玩家可输入 /trigger rpg.skill", "color": "gray"},
+      "width": 340
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "【升级】击杀怪物获得经验和金币，升级提升生命上限，每10级有里程碑奖励", "color": "gray"},
+      "width": 340
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "【任务】普通任务可重复做，每日任务每天刷新，达标后回任务面板点[交付]", "color": "gray"},
+      "width": 340
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "【经济】打怪赚钱→商店购物→抽奖搏运气→转账给队友", "color": "gray"},
+      "width": 340
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "【BOSS与精英】商店购买召唤道具：深渊之眼(300金)召唤深渊领主、精英召集令(100金)召唤精英入侵，参战玩家共享重赏，召唤有冷却", "color": "gray"},
+      "width": 340
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "【成就】打开原版成就界面→\"综合RPG\"标签页查看你的冒险足迹", "color": "gray"},
+      "width": 340
+    },
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "【基岩版】本菜单按钮全部可用；需输入指令时点击\"基岩版指南\"自动填入", "color": "aqua"},
+      "width": 340
+    }
+  ],
+  "action": {"label": {"text": "我知道了", "color": "gray"}},
+  "pause": false
+}

@@ -50,6 +50,12 @@ public final class PluginSettings {
     /** Java 端是否禁用（例如只想让基岩玩家用 Form） */
     private boolean javaUseChestGui = true;
 
+    // ===== 玩家选择器（tpa / tpahere 选人界面）=====
+    private String playerSelectorTitle = "&6&l选择玩家";
+    private String playerSelectorContent = "请选择要传送的玩家";
+    private String playerSelectorLore = "&7点击向 TA 发送传送请求";
+    private String playerSelectorNoPlayers = "&c当前没有其他在线玩家";
+
     // ===== 菜单注册表 =====
     private final List<Menu> menus = new ArrayList<>();
 
@@ -189,5 +195,37 @@ public final class PluginSettings {
 
     public void setJavaUseChestGui(boolean javaUseChestGui) {
         this.javaUseChestGui = javaUseChestGui;
+    }
+
+    public String getPlayerSelectorTitle() {
+        return playerSelectorTitle;
+    }
+
+    public void setPlayerSelectorTitle(String playerSelectorTitle) {
+        this.playerSelectorTitle = playerSelectorTitle;
+    }
+
+    public String getPlayerSelectorContent() {
+        return playerSelectorContent;
+    }
+
+    public void setPlayerSelectorContent(String playerSelectorContent) {
+        this.playerSelectorContent = playerSelectorContent;
+    }
+
+    public String getPlayerSelectorLore() {
+        return playerSelectorLore;
+    }
+
+    public void setPlayerSelectorLore(String playerSelectorLore) {
+        this.playerSelectorLore = playerSelectorLore;
+    }
+
+    public String getPlayerSelectorNoPlayers() {
+        return playerSelectorNoPlayers;
+    }
+
+    public void setPlayerSelectorNoPlayers(String playerSelectorNoPlayers) {
+        this.playerSelectorNoPlayers = playerSelectorNoPlayers;
     }
 }

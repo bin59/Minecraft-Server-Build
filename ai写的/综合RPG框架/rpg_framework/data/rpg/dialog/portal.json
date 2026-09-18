@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "传送阵", "color": "light_purple", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "走到传送阵上原地停留约 2 秒即可自动传送。也可点下方按钮立即激活脚下的传送阵。", "color": "gray"},
+      "width": 300
+    }
+  ],
+  "actions": [
+    {"label": {"text": "立即激活脚下的传送阵", "color": "light_purple", "bold": true}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.portal set 2"}},
+    {"label": {"text": "查看全部传送阵", "color": "aqua"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.portal set 1"}},
+    {"label": {"text": "查看怪物领域", "color": "gold"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.zone"}}
+  ],
+  "columns": 1,
+  "pause": false,
+  "exit_action": {"label": {"text": "返回主菜单", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:main"}}
+}

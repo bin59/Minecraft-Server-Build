@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "任务面板", "color": "green", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "普通任务可重复接取；每日任务每天刷新一次。进度详情可在聊天输入 /trigger rpg.quest 查看", "color": "gray"},
+      "width": 320
+    }
+  ],
+  "actions": [
+    {"label": {"text": "① 讨伐僵尸(10只) [接受]", "color": "yellow"}, "tooltip": {"text": "奖励200金+150经验", "color": "gray"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qacc set 1"}},
+    {"label": {"text": "① 讨伐僵尸 [交付]", "color": "green"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qdone set 1"}},
+    {"label": {"text": "② 收集铁锭(16个) [接受]", "color": "yellow"}, "tooltip": {"text": "奖励150金+80经验", "color": "gray"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qacc set 2"}},
+    {"label": {"text": "② 收集铁锭 [交付]", "color": "green"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qdone set 2"}},
+    {"label": {"text": "③ 骷髅猎手(8只) [接受]", "color": "yellow"}, "tooltip": {"text": "奖励250金+200经验", "color": "gray"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qacc set 3"}},
+    {"label": {"text": "③ 骷髅猎手 [交付]", "color": "green"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qdone set 3"}},
+    {"label": {"text": "★ 每日:击杀15怪物 [接受]", "color": "gold"}, "tooltip": {"text": "奖励300金+100经验，每日一次", "color": "gray"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qacc set 11"}},
+    {"label": {"text": "★ 每日:击杀15怪物 [交付]", "color": "gold"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qdone set 11"}},
+    {"label": {"text": "★ 每日:开采20石头 [接受]", "color": "gold"}, "tooltip": {"text": "奖励300金+100经验，每日一次", "color": "gray"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qacc set 12"}},
+    {"label": {"text": "★ 每日:开采20石头 [交付]", "color": "gold"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qdone set 12"}},
+    {"label": {"text": "★ 每日:拾取5绿宝石 [接受]", "color": "gold"}, "tooltip": {"text": "奖励300金+100经验，每日一次", "color": "gray"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qacc set 13"}},
+    {"label": {"text": "★ 每日:拾取5绿宝石 [交付]", "color": "gold"}, "width": 240, "action": {"type": "run_command", "command": "trigger rpg.qdone set 13"}}
+  ],
+  "columns": 2,
+  "after_action": "none",
+  "pause": false,
+  "exit_action": {"label": {"text": "返回主菜单", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:main"}}
+}

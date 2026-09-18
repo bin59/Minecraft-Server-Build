@@ -1,0 +1,14 @@
+{
+  "display": {
+    "icon": {"id": "minecraft:nether_star"},
+    "title": {"text": "踏入RPG世界", "color": "gold", "bold": true},
+    "description": {"text": "开始你的角色扮演冒险之旅", "color": "gray"},
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "background": "minecraft:textures/block/gold_block.png"
+  },
+  "criteria": {
+    "requirement": {"trigger": "minecraft:impossible"}
+  }
+}

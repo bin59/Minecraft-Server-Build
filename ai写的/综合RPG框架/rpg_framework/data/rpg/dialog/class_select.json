@@ -1,0 +1,56 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "职业选择", "color": "red", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "职业一经选择无法更改，请谨慎选择（管理员可重置）", "color": "gray", "italic": true},
+      "width": 300
+    },
+    {
+      "type": "minecraft:item",
+      "item": {"id": "minecraft:iron_sword"},
+      "description": {"contents": {"text": "战士：攻击+3 生命+4，技能「冲锋怒吼」", "color": "gray"}, "width": 260}
+    },
+    {
+      "type": "minecraft:item",
+      "item": {"id": "minecraft:bow"},
+      "description": {"contents": {"text": "弓箭手：移速+15%，技能「箭雨」", "color": "gray"}, "width": 260}
+    },
+    {
+      "type": "minecraft:item",
+      "item": {"id": "minecraft:blaze_powder"},
+      "description": {"contents": {"text": "法师：技能冷却-30%，技能「圣火流星」", "color": "gray"}, "width": 260}
+    },
+    {
+      "type": "minecraft:item",
+      "item": {"id": "minecraft:golden_apple"},
+      "description": {"contents": {"text": "牧师：持续回血，技能「圣光普照」", "color": "gray"}, "width": 260}
+    }
+  ],
+  "actions": [
+    {
+      "label": {"text": "成为战士", "color": "red", "bold": true},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.pick set 1"}
+    },
+    {
+      "label": {"text": "成为弓箭手", "color": "green", "bold": true},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.pick set 2"}
+    },
+    {
+      "label": {"text": "成为法师", "color": "light_purple", "bold": true},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.pick set 3"}
+    },
+    {
+      "label": {"text": "成为牧师", "color": "yellow", "bold": true},
+      "width": 200,
+      "action": {"type": "run_command", "command": "trigger rpg.pick set 4"}
+    }
+  ],
+  "columns": 2,
+  "exit_action": {"label": {"text": "返回主菜单", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:main"}},
+  "pause": false
+}

@@ -1,0 +1,27 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:air",
+    "minecraft:cave_air",
+    "minecraft:void_air",
+    "minecraft:water",
+    "minecraft:short_grass",
+    "minecraft:tall_grass",
+    "minecraft:fern",
+    "minecraft:large_fern",
+    "minecraft:dead_bush",
+    "minecraft:snow",
+    "minecraft:vine",
+    "minecraft:seagrass",
+    "minecraft:tall_seagrass",
+    "minecraft:kelp",
+    "minecraft:kelp_plant",
+    "minecraft:light",
+    "minecraft:structure_void",
+    "minecraft:torchflower",
+    "minecraft:dandelion",
+    "minecraft:poppy",
+    "minecraft:cornflower",
+    "minecraft:sugar_cane"
+  ]
+}

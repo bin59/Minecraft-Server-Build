@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "金币商店", "color": "gold", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "点击购买后界面保持打开，可连续购物", "color": "gray", "italic": true},
+      "width": 300
+    }
+  ],
+  "actions": [
+    {"label": {"text": "面包×8 —— 30金", "color": "white"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 1"}},
+    {"label": {"text": "熟牛排×8 —— 60金", "color": "white"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 2"}},
+    {"label": {"text": "铁锭×8 —— 80金", "color": "white"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 3"}},
+    {"label": {"text": "铁剑 —— 100金", "color": "white"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 4"}},
+    {"label": {"text": "铁甲套装 —— 350金", "color": "white"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 5"}},
+    {"label": {"text": "弓 —— 120金", "color": "white"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 6"}},
+    {"label": {"text": "箭×32 —— 60金", "color": "white"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 7"}},
+    {"label": {"text": "力量药水 —— 200金", "color": "light_purple"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 8"}},
+    {"label": {"text": "速度药水 —— 180金", "color": "light_purple"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 9"}},
+    {"label": {"text": "附魔金苹果 —— 500金", "color": "gold", "bold": true}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 10"}},
+    {"label": {"text": "深渊之眼（BOSS召唤）—— 300金", "color": "light_purple", "bold": true}, "tooltip": {"text": "召唤深渊领主的道具，冷却10分钟", "color": "gray"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 11"}},
+    {"label": {"text": "精英召集令（精英挑战）—— 100金", "color": "gold", "bold": true}, "tooltip": {"text": "召唤精英入侵的道具，冷却5分钟", "color": "gray"}, "width": 220, "action": {"type": "run_command", "command": "trigger rpg.buy set 12"}}
+  ],
+  "columns": 2,
+  "after_action": "none",
+  "pause": false,
+  "exit_action": {"label": {"text": "返回主菜单", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:main"}}
+}

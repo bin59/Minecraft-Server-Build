@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "玩家转账", "color": "gold", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "转账对象：你身边16格内最近的玩家", "color": "gray"},
+      "width": 300
+    }
+  ],
+  "inputs": [
+    {
+      "type": "minecraft:number_range",
+      "key": "amount",
+      "label": {"text": "转账金额"},
+      "start": 1,
+      "end": 10000,
+      "step": 10,
+      "initial": 100,
+      "width": 260
+    }
+  ],
+  "actions": [
+    {
+      "label": {"text": "确认转账", "color": "gold", "bold": true},
+      "width": 220,
+      "action": {"type": "dynamic/run_command", "template": "trigger rpg.pay set $(amount)"}
+    }
+  ],
+  "columns": 1,
+  "pause": false,
+  "exit_action": {"label": {"text": "返回主菜单", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:main"}}
+}

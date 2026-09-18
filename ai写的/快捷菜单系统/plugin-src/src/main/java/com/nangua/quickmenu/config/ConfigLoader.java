@@ -62,6 +62,11 @@ public final class ConfigLoader {
         settings.setDefaultMenu(config.getString("default-menu", "main"));
         settings.setBedrockUseNativeForm(config.getBoolean("platform.bedrock-native-form", true));
         settings.setJavaUseChestGui(config.getBoolean("platform.java-chest-gui", true));
+
+        settings.setPlayerSelectorTitle(config.getString("player-selector.title", "&6&l选择玩家"));
+        settings.setPlayerSelectorContent(config.getString("player-selector.content", "请选择要传送的玩家"));
+        settings.setPlayerSelectorLore(config.getString("player-selector.lore", "&7点击向 TA 发送传送请求"));
+        settings.setPlayerSelectorNoPlayers(config.getString("player-selector.no-players", "&c当前没有其他在线玩家"));
     }
 
     /** 从主 config.yml 的 menus 节点加载 */
@@ -194,6 +199,10 @@ public final class ConfigLoader {
      *     "[message] &a提示文本"  发送消息
      *     "[close]"               关闭界面
      *
+     *   选择器动作（任何客户端都执行）：
+     *     "[player-selector] tpa {target}"   打开在线玩家选择器，
+     *                                         点击玩家后执行 /tpa 玩家名
+     *
      *   平台条件动作（仅对应客户端执行）：
      *     "[bedrock-player] warpgui"   仅基岩玩家执行
      *     "[java-player] warp"         仅 Java 玩家执行
@@ -224,7 +233,10 @@ public final class ConfigLoader {
             // 平台条件动作前缀。这些前缀与无条件前缀互不包含
             // （"[bedrock-player]" 并不以 "[player]" 开头），因此判断顺序不影响正确性；
             // 此处仍把平台前缀列在前面，便于阅读时先看特殊规则。
-            if (lower.startsWith("[bedrock-player]")) {
+            if (lower.startsWith("[player-selector]")) {
+                actions.add(new Action(ActionType.PLAYER_SELECTOR,
+                        strip(trimmed, "[player-selector]")));
+            } else if (lower.startsWith("[bedrock-player]")) {
                 actions.add(new Action(ActionType.BEDROCK_PLAYER_COMMAND,
                         strip(trimmed, "[bedrock-player]")));
             } else if (lower.startsWith("[bedrock-console]")) {

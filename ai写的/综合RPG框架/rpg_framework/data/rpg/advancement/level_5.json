@@ -1,0 +1,14 @@
+{
+  "display": {
+    "icon": {"id": "minecraft:iron_sword"},
+    "title": {"text": "崭露头角（5级）", "color": "yellow"},
+    "description": {"text": "达到等级5，解锁BOSS挑战资格", "color": "gray"},
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "rpg:first_class",
+  "criteria": {
+    "requirement": {"trigger": "minecraft:impossible"}
+  }
+}

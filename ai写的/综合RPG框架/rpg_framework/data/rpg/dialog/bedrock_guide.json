@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:multi_action",
+  "title": {"text": "基岩版玩家指南", "color": "aqua", "bold": true},
+  "body": [
+    {
+      "type": "minecraft:plain_message",
+      "contents": {"text": "界面按钮对你同样生效，点击即可使用！部分功能需要用聊天输入触发指令（点击下方按钮自动填入，点发送即可）", "color": "gray"},
+      "width": 320
+    }
+  ],
+  "actions": [
+    {"label": {"text": "查看角色面板", "color": "aqua"}, "tooltip": {"text": "点击下方按钮自动填入指令，发送即可", "color": "gray"}, "width": 240, "action": {"type": "suggest_command", "command": "trigger rpg.stats"}},
+    {"label": {"text": "查看任务进度", "color": "green"}, "width": 240, "action": {"type": "suggest_command", "command": "trigger rpg.quest"}},
+    {"label": {"text": "释放职业技能", "color": "light_purple"}, "width": 240, "action": {"type": "suggest_command", "command": "trigger rpg.skill"}},
+    {"label": {"text": "查看等级排行榜", "color": "red"}, "width": 240, "action": {"type": "suggest_command", "command": "trigger rpg.top"}}
+  ],
+  "columns": 2,
+  "pause": false,
+  "exit_action": {"label": {"text": "返回主菜单", "color": "gray"}, "action": {"type": "show_dialog", "dialog": "rpg:main"}}
+}

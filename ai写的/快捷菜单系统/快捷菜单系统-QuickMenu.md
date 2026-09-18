@@ -3,8 +3,8 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：22 套菜单 / 163 个菜单项，分**玩家线**（11 套）
-> 与**管理线**（10 套），管理入口靠权限门控，普通玩家看不到。
+> **菜单已整合本服全部插件**：22 套菜单 / 175 个菜单项，分**玩家线**（11 套）
+> 与**管理线**（11 套），管理入口靠权限门控，普通玩家看不到。
 
 本章交付的是**可直接部署的自研插件**（含编译好的 jar 与完整源码工程），
 而非第三方插件的配置教程。
@@ -326,11 +326,10 @@ actions:
 也可以给缺功能的一端用 `[message]` 做**文字指引降级**：
 
 ```yaml
-# 基岩走表单选人，Java 端 EssentialsX 无等价界面，改为提示指令用法
+# 两端统一走 QuickMenu 玩家选择器：动态列出在线玩家，点谁就发给谁
 actions:
-  - '[close]'
-  - '[bedrock-player] tpgui'
-  - '[message] &7使用 &e/tpa 玩家名 &7发送传送请求'
+  - '[player-selector] tpa {target}'
+  # tpahere 同理：- '[player-selector] tpahere {target}'
 ```
 
 > `[message]` 是两端通用动作，上例中基岩玩家也会看到这句提示，属可接受的冗余。
@@ -357,24 +356,25 @@ actions:
 ## 6. 菜单结构总览（22 套，玩家 / 管理双线）
 
 `config.yml` 已配好 **22 套菜单**，把本服所有插件的常用功能全部收进菜单。
-校验结果：**22 菜单 / 163 菜单项 / 0 错误 0 警告**。
+校验结果：**22 菜单 / 175 菜单项 / 0 错误 0 警告**。
 
 ### 6.1 玩家菜单（11 套）
 
 | 菜单 id | 名称 | 对接插件 | 主要内容 |
 |---|---|---|---|
-| `main` | 主菜单 | — | 一级入口，11 个分类（含管理面板入口） |
-| `teleport` | 传送功能 | EssentialsX + BPS | 传送点、申请传送、拉人、返回、出生点、附近玩家 |
-| `home` | 我的家园 | EssentialsX + BPS | 家列表、回家、设置家、删除家 |
+| `main` | 主菜单 | — | 一级入口，16 个功能项 + 管理面板入口。含**宠物系统**（`/pet gui`，SimplePets + Vault 联动）与**传送阵**（`/csz gui`，SpacePortal 自研）直达项；经济第二阶段新增 拍卖行 / 玩家商店 / 投票奖励 / 每日任务 / 家扩位 五项直达（2026-09-19） |
+| `teleport` | 传送功能 | EssentialsX + BPS | 公共传送点（warps 子菜单）、申请传送、拉人、返回、回主城、附近玩家 |
+| `warps` | 传送点 | EssentialsX | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加 |
+| `home` | 我的家园 | EssentialsX + BPS | 家列表、回家、设置家、删除家。**入口已从主菜单隐藏**（2026-09-19），菜单定义保留：可用 `/qm open home` 或直接 `/home` 指令 |
 | `residence` | 我的领地 | **Residence** | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助 |
-| `economy` | 经济中心 | EssentialsX + Vault | 余额（/balance）、财富榜（/baltop）、转账（/pay）、卖物品（/sell）、估价（/worth）。按钮需 `essentials.*` 权限，default 组已授（2026-09-16） |
+| `economy` | 经济中心 | EssentialsX + Vault | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、卖物品（/sell）、估价（/worth）。按钮需 `essentials.*` / `eztax.stats` 权限，default 组已授 |
 | `kit` | 工具包 | EssentialsX | 新手包、每日奖励、VIP 包 |
 | `skin` | 皮肤管理 | **SkinsRestorer** | 皮肤库、换肤、清除、刷新、随机、撤销 |
 | `social` | 社交设置 | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ |
 | `info` | 服务器信息 | EssentialsX | 在线列表、公告、规则、互通说明、指令帮助 |
 | `voice` | 语音聊天 | **Simple Voice Chat** | 说话方式、群组语音、音量设置、故障排查 |
-| `pets` | 宠物系统 | **SimplePets** + Vault Addon | 打开宠物 GUI（`/pet gui`，非 `/pet`——无参命令无执行器），召唤/骑乘/改名/购买，购买用服务器主货币（Vault 联动） |
-| `portal` | 传送阵 | **SpacePortal**（自研） | 打开传送阵界面（`/csz gui`，双端通用）；走进阵法充能后自动传送，消耗 20 颗钻石 |
+
+> **2026-09-19 经济系统第二阶段集成**：主菜单新增 5 个直达项——**拍卖行**（`/ah`，slot 9）、**玩家商店**（`/shop`，slot 11）、**投票奖励**（`/vote`，slot 17）、**每日任务**（`/quests`，slot 18）、**家扩位**（`/homeshop`，slot 19）；经济中心新增**周持有税查询**（`/eztax stats`，slot 17，权限 `eztax.stats`）。涉及权限已授 default 组：`economyshop.*`、`votespeed.*`、`quests.command.*`、`eztax.stats`（AuctionHouse `auction.*` 默认 true）。
 
 层级：所有二级菜单的 `back-menu` 均为 `main`，返回按钮固定在右下角（`size-1` 槽位）。
 
@@ -392,7 +392,7 @@ actions:
 | `admin-server` | 服务器监控 | **spark** + **Geyser** + **ViaVersion** + **EasyBot** | TPS、健康报告、延迟、性能采样、堆内存、Geyser 重载/诊断/统计、版本分布、机器人重载、插件列表 |
 | `admin-perm` | 权限管理 | **LuckPerms** | 网页编辑器、同步、重载、权限树、信息、查玩家权限、实时追踪 |
 | `admin-qm` | 菜单管理 | QuickMenu 自身 | 重载配置、菜单列表、客户端诊断、发放触发物品 |
-| `postracker` | 玩家位置记录 | **PosTracker** | 查询玩家历史位置轨迹（`/pos radius:10 time:1h`） |
+| `postracker` | 玩家位置记录 | **PosTracker** | 位于 `admin` 菜单内（非独立菜单），查询玩家历史位置轨迹（`/pos radius:10 time:1h`） |
 
 层级：9 个二级菜单的 `back-menu` 均为 `admin`，`admin` 的 `back-menu` 为 `main`，
 管理员可在两条线之间自由往返。
@@ -421,11 +421,34 @@ actions:
 
 | 菜单项 | 基岩端 | Java 端 |
 |---|---|---|
-| `teleport.warps` | `/warpgui`（BPS 传送点表单） | `/warp`（EssentialsX 列表） |
-| `teleport.tpa` | `/tpgui`（BPS 选人表单） | 文字提示 `/tpa` 用法 |
+| `teleport.warps` | 统一 QuickMenu 传送点 GUI（`[menu] warps`，双端通用） | 同左 |
+| `teleport.tpa` / `teleport.tpahere` | 统一 QuickMenu 玩家选择器（`[player-selector]`，两端从在线列表选人） | 同左 |
 | `home.listhomes` | `/homegui`（BPS 家园表单） | `/homes`（EssentialsX 列表） |
 | `social.msg` | `/msggui`（BPS 私信表单） | 文字提示 `/msg` 用法 |
-| `skin.skingui` | `/skin`（指令方式） | `/skins`（GUI 浏览器） |
+| `skin.skingui` / `skin.skinhistory` / `skin.skinfavourites` | `/skin`（指令方式） | `/skins`（GUI 选择菜单，含皮肤/历史/收藏三入口）+ `/skin history` + `/skin favourites` |
+
+> **2026-09-19 最终调整**：首屏`打开皮肤库`按钮已移除；皮肤管理子菜单新增三个入口：
+> **皮肤库浏览**（打开 /skins 选择菜单，内含 [皮肤菜单]/[历史菜单]/[收藏菜单] 三入口——这是 SkinsRestorer 固定界面，无法跳过，点 [皮肤菜单] 即进入浏览页）、**历史皮肤**（`/skin history`）、**收藏皮肤**（`/skin favourites`）。
+> 已给 default 组授权 `skinsrestorer.command` 与 `skinsrestorer.command.gui`（玩家此前看不到按钮即为缺此权限）。
+
+> **2026-09-19 新增：tpa / tpahere 界面化（[player-selector] 动作）**：
+> 新增 `[player-selector] 命令模板` 动作——点击菜单项后动态列出全部在线玩家（排除自己）：
+> Java 端显示为 54 格箱子界面（每位玩家一个带真实皮肤的头颅，点击即执行）；基岩端显示为原生表单按钮列表。
+> `{target}` 会被替换为所点玩家的名字。
+> - `teleport.tpa` → `[player-selector] tpa {target}`（原 BPS tpgui + 文字提示已移除）
+> - `teleport.tpahere` → `[player-selector] tpahere {target}`
+> 外观文案在 config.yml `player-selector` 节点可调（标题/说明/无人在线提示）。
+> 需要重新构建 jar（新动作需类支持），已部署 QuickMenu-1.0.0.jar（57.6 KB）并重启生效。
+
+> **2026-09-19 管理命令批量界面化**：
+> 下列原本「聊天栏提示指令用法」的管理项全部改为 `[player-selector]`（点击后从在线列表选人）：
+> 查看背包(openinv) / 传送(tp) / 拉人(tphere) / 清空背包(ci) / 查看信息(whois) / 踢出(kick) / 封禁(ban) / 临时封禁(tempban 7d) / 封 IP(banip) / 禁言(mute 10m) / 解禁言(unmute) / 关押(jail 10m) / 释放(unjail) / 静默传送(tpo) / 静默拉人(tpohere) / 查看玩家权限(lp user) / 发放触发物品(qm give) / 屏蔽玩家(ignore)。
+> 另新增 `gamemode` 子菜单（第 22 套）：先选 生存/创造/冒险/旁观，再从在线列表选玩家。
+> 仍保留 `[message]` 的项：需要开放参数输入的（领地名/金额/物品/消息内容/广播内容）与离线玩家操作（unban/seen）——QuickMenu 无输入框，这些只能提示指令用法。
+
+> **2026-09-18 更新**：	eleport.warps 已改为两端统一打开 QuickMenu 传送点子菜单（[menu] warps），
+> 不再依赖 BPS 表单。子菜单当前列出 主城 传送点（点击即 /warp 主城）；
+> **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的 warps: 子菜单里手动添加对应菜单项。
 
 > **未安装 BedrockPlayerSupport 时会怎样**：基岩玩家点击这些项，
 > `[bedrock-player] xxxgui` 会执行一个不存在的指令，客户端提示「未知指令」，
@@ -536,7 +559,7 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 | 源码编译 | javac 实际编译 15 个源文件 | 通过，生成 16 个 class，无错误 |
 | 字节码版本 | `javap -v` 读取 class 文件头 | major version **65 = Java 21**，匹配 Leaf 核心 |
 | 内存回收 | `javap -p` 反编译交付 jar | `onQuit(PlayerQuitEvent)` 处理器已编入，退出即时清理防连点记录，无泄漏 |
-| config.yml 结构 | snakeyaml 真实解析 + 逐项校验 | **0 错误 0 警告**（22 菜单 / 163 菜单项） |
+| config.yml 结构 | snakeyaml 真实解析 + 逐项校验 | **0 错误 0 警告**（22 菜单 / 175 菜单项） |
 | 全插件整合配置校验 | 用含缺陷的坏配置实测过探针准确性 | 本次唯一报错 `CHAIN` 非有效材质已修正；槽位冲突、返回按钮占位、双端覆盖缺口均为 0 |
 | 材质名有效性 | `Material.matchMaterial()` 运行时校验 | 本次校验覆盖 100+ 材质，发现并修复 1 个错误（`CHAIN` → `IRON_BLOCK`） |
 | 槽位冲突检测 | 按渲染逻辑模拟槽位占用 | 20 个菜单 0 冲突，且所有配了 `back-menu` 的菜单均未占用 `size-1` |
@@ -618,7 +641,8 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 | **`/qm open admin` 打开后是空的** | 管理项每个都单独配了 permission，你一个都没有 | 按第 10.3 / 10.4 节补齐 EssentialsX / Residence / CoreProtect 等权限 |
 | 管理项点了提示无权限 | 有 `quickmenu.admin` 但缺该插件自身的权限 | 例：点「封禁」需 `essentials.ban`（仅服主组），见第 10.4 节 |
 | 菜单项只显示指令用法、不执行 | 该项需要参数（玩家名/领地名），设计如此 | 见第 6.5 节；复制提示里的指令补上参数即可 |
-| 点「获取选区木斧」没反应 | `//wand` 经 `performCommand` 分发可能无效 | 把 config.yml 里该项改为 `[player] wand`（去掉双斜杠）后 `/qm reload` |
+| 点「获取选区木斧」没反应 | //wand 经 performCommand 分发可能无效 | 把 config.yml 里该项改为 [player] wand（去掉双斜杠）后 /qm reload |
+| **「回主城」点了报未知指令/没反应** | 未装 EssentialsSpawn 模块，/spawn 命令不存在（RCON 实测 Unknown） | 已在 Essentials 建 warp 传送点 主城（主城阵法坐标 47.67,71,30.82），并把主菜单 spawn 按钮动作改为 [player] warp 主城（2026-09-18） |
 
 ---
 
@@ -645,7 +669,7 @@ lp group default permission set essentials.tpa true
 lp group default permission set essentials.tpaccept true
 lp group default permission set essentials.tpdeny true
 lp group default permission set essentials.warp true
-lp group default permission set essentials.spawn true
+lp group default permission set essentials.spawn true   # 注：未装 EssentialsSpawn 模块，/spawn 命令实际不存在；主菜单「回主城」按钮已改用 essentials.warp + /warp 主城（2026-09-18）
 lp group default permission set essentials.back true
 lp group default permission set essentials.back.ondeath true
 lp group default permission set essentials.near true
@@ -656,6 +680,24 @@ lp group default permission set essentials.balancetop true
 lp group default permission set essentials.pay true
 lp group default permission set essentials.sell true
 lp group default permission set essentials.worth true
+
+# ---- 经济系统第二阶段插件（2026-09-19）----
+# 拍卖行（AuctionHouse auction.* 默认 true，无需授予）
+lp group default permission set economyshop.use true
+lp group default permission set economyshop.sell true
+lp group default permission set economyshop.chestshop.create true
+lp group default permission set economyshop.chestshop.use true
+lp group default permission set votespeed.vote true
+lp group default permission set votespeed.gui true
+lp group default permission set votespeed.stats true
+lp group default permission set votespeed.top true
+lp group default permission set votespeed.points true
+lp group default permission set votespeed.shop true
+lp group default permission set quests.command.start true
+lp group default permission set quests.command.track true
+lp group default permission set quests.command.cancel true
+lp group default permission set quests.command.quest true
+lp group default permission set eztax.stats true
 
 # ---- EssentialsX：工具包与物品 ----
 lp group default permission set essentials.kit true
