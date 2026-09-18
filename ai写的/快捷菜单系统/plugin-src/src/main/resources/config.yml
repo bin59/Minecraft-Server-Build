@@ -179,7 +179,6 @@ player-selector:
 ############################################################
 
 menus:
-
   ##########################################################
   # ██████  玩 家 菜 单  ██████
   ##########################################################
@@ -194,18 +193,6 @@ menus:
       name: '&8'
 
     items:
-      # ---------- 拍卖行 ----------
-      auction:
-        material: GOLD_BLOCK
-        display-name: '&6&l拍卖行'
-        lore:
-          - '&7上架物品、竞拍、一口价购买'
-          - '&8点击打开拍卖行'
-        slot: 9
-        actions:
-          - '[close]'
-          - '[player] ah'
-
       # ---------- 传送功能 ----------
       teleport:
         material: ENDER_PEARL
@@ -217,18 +204,6 @@ menus:
         glowing: true
         actions:
           - '[menu] teleport'
-
-      # ---------- 玩家商店 ----------
-      shop:
-        material: CHEST_MINECART
-        display-name: '&e&l玩家商店'
-        lore:
-          - '&7开设玩家商店、木牌商店'
-          - '&8点击打开商店界面'
-        slot: 11
-        actions:
-          - '[close]'
-          - '[player] shop'
 
       # ---------- 领地 ----------
       residence:
@@ -253,6 +228,30 @@ menus:
         slot: 13
         actions:
           - '[menu] economy'
+
+      # ---------- 玩家商店 ----------
+      shop:
+        material: CHEST_MINECART
+        display-name: '&e&l玩家商店'
+        lore:
+          - '&7开设玩家商店、木牌商店'
+          - '&8点击打开商店界面'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] shop'
+
+      # ---------- 拍卖行 ----------
+      auction:
+        material: GOLD_BLOCK
+        display-name: '&6&l拍卖行'
+        lore:
+          - '&7上架物品、竞拍、一口价购买'
+          - '&8点击打开拍卖行'
+        slot: 9
+        actions:
+          - '[close]'
+          - '[player] ah'
 
       # ---------- 工具包 ----------
       kit:
@@ -288,18 +287,6 @@ menus:
         actions:
           - '[menu] social'
 
-      # ---------- 投票奖励 ----------
-      vote:
-        material: SUNFLOWER
-        display-name: '&a&l投票奖励'
-        lore:
-          - '&7为服务器投票获得南瓜币'
-          - '&8每票 30 南瓜币'
-        slot: 17
-        actions:
-          - '[close]'
-          - '[player] vote'
-
       # ---------- 每日任务 ----------
       quests:
         material: BOOK
@@ -311,18 +298,6 @@ menus:
         actions:
           - '[close]'
           - '[player] quests'
-
-      # ---------- 家扩位 ----------
-      homeshop:
-        material: RED_BED
-        display-name: '&a&l家扩位'
-        lore:
-          - '&7用南瓜币扩大家园数量上限'
-          - '&8点击打开购买菜单'
-        slot: 19
-        actions:
-          - '[close]'
-          - '[player] homeshop'
 
       # ---------- 服务器信息 ----------
       info:
@@ -370,7 +345,6 @@ menus:
         slot: 23
         actions:
           - '[player] csz gui'
-
 
       # ---------- 管理面板（权限门控） ----------
       # 只有带 quickmenu.admin 的管理组能看到这一项，普通玩家界面里不会出现，

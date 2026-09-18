@@ -105,6 +105,34 @@ allow-worlds:
 > - 召唤冷却：实际键为 `pet-cooldown.enabled: false`（第474行，**运行服未启用召唤冷却**），`duration: 5`（第479行，仅在 enabled=true 时生效）；绕过权限 `pet.cooldown.bypass`（第471行注释）。
 > - 经济 Addon：`AddonConfig.yml` 第3行 `Vault.Enabled: true`；`Addons/configs/Vault.yml` 全部宠物默认价 **2000**（如 `type.wolf: 2000` 第409行），一次性购买（`Pay-Per-Use-Enabled: false` 第8行），免付父权限 `pet.vault.bypass`（第59行）。
 
+## 宠物独立配置与飞行机制
+
+每只宠物一个独立 JSON 文件（`plugins/SimplePets/Pets/<生物>.json`），控制该宠物的开关、速度与外观。**飞行不是全局配置，而是逐宠开关**（2026-09-19 测试服实测）：
+
+```jsonc
+// 蝙蝠 bat.json（会飞）
+"mount": true,        // 可骑乘
+"hat": true,          // 可戴头上
+"fly": true,          // ← 飞行开关
+"fly_speed": 0.3,     // 飞行速度
+"ride_speed": 0.2,    // 骑乘速度
+"walk_speed": 0.58,   // 走路速度
+"water_speed": 0.15,  // 游泳速度
+"float_down": false,  // 飞行时是否下沉
+
+// 狼 wolf.json（不会飞）
+"mount": true,
+"fly": false,         // ← 关着的
+```
+
+### 让宠物飞起来（三步）
+
+1. **开开关**：把目标宠物 JSON 里的 `"fly": false` 改为 `"fly": true`，重启服务器（或 `/pet reload`）。
+2. **给权限**：玩家需要 `Pet.type.<生物>.fly` 权限（如 `Pet.type.bat.fly`；官方 Wiki 权限页写作小写 `pet.type.<mob>.fly`——Bukkit 权限大小写不敏感，两者等价）。
+3. **起飞**：召唤后宠物会**悬空飞行跟随**；`mount: true` 的宠物可骑乘，骑上会飞的宠物（蝙蝠、鹦鹉、幻翼，或任意开了 `fly` 的生物）即可空中飞行。
+
+> **要点**：所有生物都能开飞行（狼、牛、猪都能飞），不限于原生会飞的种类；`fly_speed` 可单独调快慢。当前测试服 89 个宠物 JSON 中，蝙蝠开着飞行、狼关着。
+
 ## 命令
 
 主命令 `/pet`（别名 `/sp`、`/simplepets`、`/pets`、`/pet gui` 打开管理界面）。v5 常用子命令如下：
@@ -171,6 +199,18 @@ SimplePets 通过**经济 Addon** 接入经济系统，实现「花钱买宠物 
 - `Pet.economy.bypass` 是 **GemsEconomy Addon** 的免单权限，本服未装 GemsEconomy，**不要混用**；
 - 购买后玩家获得对应 `Pet.type.<类型>` 使用权，用 `/pet purchased` 查看已购。
 
+## 被动能力扩展（Addon）
+
+**SimplePets 本身没有内置被动/技能系统**——FarPets 那种 22 种物种被动（炽足兽抗火、海豚辅助钓鱼、狼近战增伤等）是 FarPets 写死在插件里的功能，SimplePets 不能靠配置复刻。
+
+但 R5 提供 **Addon API**，可以开发自定义 addon 实现同类效果（2026-09-19 查证官方文档）：
+
+- **官方开发文档**：[How to make an addon](https://wiki.bsdevelopment.org/pet-addons/how-to-make-an-addon)（需 Java 16+，Maven 依赖 `simplepets.brainsynder:API`，编译为独立 jar 放入 `plugins/SimplePets/Addons/` 后重启生效）。
+- **现有官方/社区 addon 清单**：全部是**经济类**（Vault / PlayerPoints / TokenManager / GemsEconomy / Treasury / ItemEconomy）、**区域类**（Residence / WorldGuard / PlotSquared / RedProtect…）、**实用类**（PetWeight / PvP / Vanish / PermissionLore）——**没有任何现成的被动/技能类 addon**。
+- **要复刻 FarPets 式被动**：需自己写 Java addon——监听事件，按玩家当前宠物类型附加对应效果（防火、钓鱼幸运、攻击加成等）。可参考官方示例仓库结构（如 [BSDevelopers/GemsEconomyAddon](https://github.com/BSDevelopers/GemsEconomyAddon)）。
+
+**结论**：加被动是**开发活，不是配置活**。本服已接 Vault Addon + 89 个宠物 JSON 且 QuickMenu 有 `/pet gui` 直达，除非确实想要"养成型被动"玩法，否则不建议为此投入开发；想要成熟被动/养成可另评估 PetBlocks / AdvancedPets / MyPet 这类 RPG 向宠物插件。
+
 ## 实战示例
 
 **1. 普通玩家可用狼并骑乘、改名**（LuckPerms 授予）：
@@ -218,6 +258,12 @@ A：**Java 21**（1.20.5+ 与 1.21.x 均要求 Java 21）。
 
 **Q：想做「买宠物蛋」经济玩法？**
 A：本服已装 **SimplePets Vault Addon**（2026-09-16 已启用），在 `plugins/SimplePets/AddonConfig.yml` 给宠物标价即可用服务器主货币购买（当前默认 2000/只），货币自动统一；调价后 `/pet addon` 禁用再启用刷新。赞助组免费用 **`pet.vault.bypass`**，再用 LuckPerms 分组控制可拥有数量。
+
+**Q：宠物怎么飞？**
+A：逐宠开关——把 `plugins/SimplePets/Pets/<生物>.json` 里的 `"fly": false` 改成 `"true"`，重启或 `/pet reload`，再给玩家 `Pet.type.<生物>.fly` 权限即可。召唤后悬空飞行跟随，骑上会飞的宠物可空中骑乘（详见「宠物独立配置与飞行机制」一节）。
+
+**Q：SimplePets 能加 FarPets 那样的被动加成吗？**
+A：插件本身无被动/技能系统；需自行开发 addon（官方有 Addon API 与开发文档，但现成 addon 全是经济/区域/实用类，无被动类）。属于开发工作量，不是配置能做到的（详见「被动能力扩展（Addon）」一节）。
 
 ## 猫模型错误
 

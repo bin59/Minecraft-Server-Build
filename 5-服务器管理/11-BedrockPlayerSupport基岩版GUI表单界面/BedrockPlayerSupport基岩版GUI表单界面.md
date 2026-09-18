@@ -19,20 +19,20 @@ BedrockPlayerSupport 是专为 GeyserMC 互通服设计的辅助插件，核心�
 
 #### 功能清单
 
-| 分类       | 指令          | 功能说明                                          |
-| ---------- | ------------- | ------------------------------------------------- |
-| **传送**   | `/tpgui`      | 打开传送请求表单，选择要传送的玩家（运行服已启用） |
-|            | `/warpgui`    | 打开传送点列表表单，选择传送点传送（已启用）       |
-|            | 自动弹出      | 收到 tpa/tpahere 请求时自动弹出接受/拒绝/忽略表单（receive.enable=true） |
-| **家园**   | `/homegui`    | 打开个人家园列表表单，快速传送回家（已启用）      |
-|            | `/phomegui`   | 打开公共家园列表表单（仅 HuskHomes 基础插件时可用，已启用） |
-| **消息**   | `/msggui`     | 打开私信发送表单（已启用）                        |
-| **工具包** | `/kitgui`     | 打开工具包领取表单（已启用）                      |
-| **经济**   | `/paygui`     | 经济支付表单（**运行服 form.money.enable=false，关闭**） |
-| **点券**   | `/pointsgui`  | 点券支付表单（**运行服 form.points.enable=false，关闭**） |
+| 分类       | 指令          | 功能说明                                                                            |
+| ---------- | ------------- | ----------------------------------------------------------------------------------- |
+| **传送**   | `/tpgui`      | 打开传送请求表单，选择要传送的玩家（运行服已启用）                                  |
+|            | `/warpgui`    | 打开传送点列表表单，选择传送点传送（已启用）                                        |
+|            | 自动弹出      | 收到 tpa/tpahere 请求时自动弹出接受/拒绝/忽略表单（receive.enable=true）            |
+| **家园**   | `/homegui`    | 打开个人家园列表表单，快速传送回家（已启用）                                        |
+|            | `/phomegui`   | 打开公共家园列表表单（仅 HuskHomes 基础插件时可用，已启用）                         |
+| **消息**   | `/msggui`     | 打开私信发送表单（已启用）                                                          |
+| **工具包** | `/kitgui`     | 打开工具包领取表单（已启用）                                                        |
+| **经济**   | `/paygui`     | 经济支付表单（**运行服 form.money.enable=false，关闭**）                            |
+| **点券**   | `/pointsgui`  | 点券支付表单（**运行服 form.points.enable=false，关闭**）                           |
 | **其他**   | 自动注册/登录 | ⚠️ 运行服 `auth.register/auth.login` 均为 **false**，**未启用**自动随机密码注册登录 |
-|            | 死亡回传      | 重生后自动弹出表单，返回死亡点（back.enable=true，命令 `/back`） |
-|            | 加入/退出命令 | 支持基岩版玩家加入/退出时自动执行命令（运行服 join/quit-commands.enable=false） |
+|            | 死亡回传      | 重生后自动弹出表单，返回死亡点（back.enable=true，命令 `/back`）                    |
+|            | 加入/退出命令 | 支持基岩版玩家加入/退出时自动执行命令（运行服 join/quit-commands.enable=false）     |
 
 ---
 
@@ -87,43 +87,43 @@ plugin:
 form:
   # 死亡回传（重生后自动打开返回死亡点表单）
   back:
-    open-delay-time: 20          # 打开延迟（刻），第43行
-    enable: true                 # 第46行
-    command: '/back'             # 返回死亡点命令，第51行
+    open-delay-time: 20 # 打开延迟（刻），第43行
+    enable: false # 第46行
+    command: '/back' # 返回死亡点命令，第51行
   teleport:
     receive:
-      enable: true               # 收到 tpa/tpahere 自动弹出表单，第57行
-    enable: true                 # /tpgui，第61行
-    cross-server: false          # 跨服（仅 HuskHomes），第66行
+      enable: true # 收到 tpa/tpahere 自动弹出表单，第57行
+    enable: true # /tpgui，第61行
+    cross-server: false # 跨服（仅 HuskHomes），第66行
   phome:
-    enable: true                 # /phomegui 公共家（仅 HuskHomes），第73行
+    enable: true # /phomegui 公共家（仅 HuskHomes），第73行
   msg:
-    enable: true                 # /msggui，第78行
+    enable: true # /msggui，第78行
   kit:
-    enable: true                 # /kitgui 工具包，第85行
+    enable: true # /kitgui 工具包，第85行
   warp:
-    enable: true                 # /warpgui 传送点，第90行
+    enable: true # /warpgui 传送点，第90行
   money:
-    enable: false               # /paygui 经济支付表单（运行服关闭），第95行
-    pay-command: 'pay %playerName% %amount%'   # 第102行
+    enable: false # /paygui 经济支付表单（运行服关闭），第95行
+    pay-command: 'pay %playerName% %amount%' # 第102行
   home:
-    enable: true                 # /homegui，第107行
+    enable: true # /homegui，第107行
   points:
-    enable: false               # /pointsgui 点券表单（运行服关闭），第112行
-    pay-command: '/points pay %playerName% %amount%'  # 第119行
+    enable: false # /pointsgui 点券表单（运行服关闭），第112行
+    pay-command: '/points pay %playerName% %amount%' # 第119行
 
 # ===== 加入/退出命令 =====
 general:
   quit-commands:
-    enable: false                # 第128行（默认关闭，示例命令保留在配置内）
+    enable: false # 第128行（默认关闭，示例命令保留在配置内）
     commands:
       - '[CONSOLE] say Bedrock Player %playerName% quit the server'
-      - '[PLAYER] me I''m a Bedrock Player %playerName%'
+      - "[PLAYER] me I'm a Bedrock Player %playerName%"
   join-commands:
-    enable: false                # 第148行
+    enable: false # 第148行
     commands:
       - '[CONSOLE] say Welcome Bedrock Player %playerName%'
-      - '[PLAYER] me I''m a Bedrock Player %playerName%'
+      - "[PLAYER] me I'm a Bedrock Player %playerName%"
 
 # ===== 自动登录/自动注册 =====
 # ⚠️ 运行服实际均为关闭（第168、182行）：
@@ -131,11 +131,11 @@ general:
 #   即基岩版玩家加入时不会自动注册/登录，需自行通过登录流程
 auth:
   login:
-    enable: false                # 第168行
-    command: 'forcelogin %playerName%'   # 第177行
+    enable: false # 第168行
+    command: 'forcelogin %playerName%' # 第177行
   register:
-    enable: false                # 第182行
-    password-length: 16          # 第185行
+    enable: false # 第182行
+    password-length: 16 # 第185行
 ```
 
 > 📌 **与早期文档的差异提醒**：运行服 `auth.register.enable=false`、`auth.login.enable=false`，即**未启用**"基岩版玩家加入自动随机密码注册并登录"；`form.money`（/paygui）与 `form.points`（/pointsgui）也为关闭。若需开启自动注册，需先在 `plugin.auth` 指定登录插件并把对应 `enable` 改为 `true`（涉及登录/权限，建议用户决策后再改）。

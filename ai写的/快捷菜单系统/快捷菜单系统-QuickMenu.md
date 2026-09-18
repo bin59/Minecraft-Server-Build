@@ -3,7 +3,7 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：22 套菜单 / 175 个菜单项，分**玩家线**（11 套）
+> **菜单已整合本服全部插件**：22 套菜单 / 173 个菜单项，分**玩家线**（11 套）
 > 与**管理线**（11 套），管理入口靠权限门控，普通玩家看不到。
 
 本章交付的是**可直接部署的自研插件**（含编译好的 jar 与完整源码工程），
@@ -356,13 +356,13 @@ actions:
 ## 6. 菜单结构总览（22 套，玩家 / 管理双线）
 
 `config.yml` 已配好 **22 套菜单**，把本服所有插件的常用功能全部收进菜单。
-校验结果：**22 菜单 / 175 菜单项 / 0 错误 0 警告**。
+校验结果：**22 菜单 / 173 菜单项 / 0 错误 0 警告**。
 
 ### 6.1 玩家菜单（11 套）
 
 | 菜单 id | 名称 | 对接插件 | 主要内容 |
 |---|---|---|---|
-| `main` | 主菜单 | — | 一级入口，16 个功能项 + 管理面板入口。含**宠物系统**（`/pet gui`，SimplePets + Vault 联动）与**传送阵**（`/csz gui`，SpacePortal 自研）直达项；经济第二阶段新增 拍卖行 / 玩家商店 / 投票奖励 / 每日任务 / 家扩位 五项直达（2026-09-19） |
+| `main` | 主菜单 | — | 一级入口，16 个功能项 + 管理面板入口。含**宠物系统**（`/pet gui`，SimplePets + Vault 联动）与**传送阵**（`/csz gui`，SpacePortal 自研）直达项；经济第二阶段新增 拍卖行 / 玩家商店 / 每日任务 三项直达（2026-09-19；投票奖励、家扩位入口同日取消） |
 | `teleport` | 传送功能 | EssentialsX + BPS | 公共传送点（warps 子菜单）、申请传送、拉人、返回、回主城、附近玩家 |
 | `warps` | 传送点 | EssentialsX | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加 |
 | `home` | 我的家园 | EssentialsX + BPS | 家列表、回家、设置家、删除家。**入口已从主菜单隐藏**（2026-09-19），菜单定义保留：可用 `/qm open home` 或直接 `/home` 指令 |
@@ -374,7 +374,7 @@ actions:
 | `info` | 服务器信息 | EssentialsX | 在线列表、公告、规则、互通说明、指令帮助 |
 | `voice` | 语音聊天 | **Simple Voice Chat** | 说话方式、群组语音、音量设置、故障排查 |
 
-> **2026-09-19 经济系统第二阶段集成**：主菜单新增 5 个直达项——**拍卖行**（`/ah`，slot 9）、**玩家商店**（`/shop`，slot 11）、**投票奖励**（`/vote`，slot 17）、**每日任务**（`/quests`，slot 18）、**家扩位**（`/homeshop`，slot 19）；经济中心新增**周持有税查询**（`/eztax stats`，slot 17，权限 `eztax.stats`）。涉及权限已授 default 组：`economyshop.*`、`votespeed.*`、`quests.command.*`、`eztax.stats`（AuctionHouse `auction.*` 默认 true）。
+> **2026-09-19 经济系统第二阶段集成**：主菜单新增 3 个直达项——**拍卖行**（`/ah`，slot 9）、**玩家商店**（`/shop`，slot 11）、**每日任务**（`/quests`，slot 18）；经济中心新增**周持有税查询**（`/eztax stats`，slot 17，权限 `eztax.stats`）。**投票奖励**（`/vote`）与**家扩位**（`/homeshop`）入口同日（2026-09-19）已从主菜单取消——插件与命令仍保留，玩家仍可手动输入 `/vote`、`/homeshop`。涉及权限已授 default 组：`economyshop.*`、`votespeed.*`、`quests.command.*`、`eztax.stats`（AuctionHouse `auction.*` 默认 true）。
 
 层级：所有二级菜单的 `back-menu` 均为 `main`，返回按钮固定在右下角（`size-1` 槽位）。
 
@@ -559,7 +559,7 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 | 源码编译 | javac 实际编译 15 个源文件 | 通过，生成 16 个 class，无错误 |
 | 字节码版本 | `javap -v` 读取 class 文件头 | major version **65 = Java 21**，匹配 Leaf 核心 |
 | 内存回收 | `javap -p` 反编译交付 jar | `onQuit(PlayerQuitEvent)` 处理器已编入，退出即时清理防连点记录，无泄漏 |
-| config.yml 结构 | snakeyaml 真实解析 + 逐项校验 | **0 错误 0 警告**（22 菜单 / 175 菜单项） |
+| config.yml 结构 | snakeyaml 真实解析 + 逐项校验 | **0 错误 0 警告**（22 菜单 / 173 菜单项） |
 | 全插件整合配置校验 | 用含缺陷的坏配置实测过探针准确性 | 本次唯一报错 `CHAIN` 非有效材质已修正；槽位冲突、返回按钮占位、双端覆盖缺口均为 0 |
 | 材质名有效性 | `Material.matchMaterial()` 运行时校验 | 本次校验覆盖 100+ 材质，发现并修复 1 个错误（`CHAIN` → `IRON_BLOCK`） |
 | 槽位冲突检测 | 按渲染逻辑模拟槽位占用 | 20 个菜单 0 冲突，且所有配了 `back-menu` 的菜单均未占用 `size-1` |

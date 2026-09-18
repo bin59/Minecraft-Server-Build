@@ -68,8 +68,6 @@ platform:
 
 trigger-item:
   # 物品材质，使用 Bukkit Material 名称（大写）
-  # 注意：不要与 WorldEdit 导航魔杖（默认指南针 COMPASS）冲突，
-  # 触发物品使用时钟 CLOCK，右键行为互不干扰
   material: CLOCK
 
   # 物品显示名（支持 & 颜色码）
@@ -181,7 +179,6 @@ player-selector:
 ############################################################
 
 menus:
-
   ##########################################################
   # ██████  玩 家 菜 单  ██████
   ##########################################################
@@ -208,18 +205,6 @@ menus:
         actions:
           - '[menu] teleport'
 
-      # ---------- 家园 ----------
-      home:
-        material: RED_BED
-        display-name: '&a&l我的家园'
-        lore:
-          - '&7回家、设置家、查看家列表'
-          - '&8点击查看子菜单'
-        slot: 11
-        glowing: true
-        actions:
-          - '[menu] home'
-
       # ---------- 领地 ----------
       residence:
         material: DIAMOND_BLOCK
@@ -244,6 +229,30 @@ menus:
         actions:
           - '[menu] economy'
 
+      # ---------- 玩家商店 ----------
+      shop:
+        material: CHEST_MINECART
+        display-name: '&e&l玩家商店'
+        lore:
+          - '&7开设玩家商店、木牌商店'
+          - '&8点击打开商店界面'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] shop'
+
+      # ---------- 拍卖行 ----------
+      auction:
+        material: GOLD_BLOCK
+        display-name: '&6&l拍卖行'
+        lore:
+          - '&7上架物品、竞拍、一口价购买'
+          - '&8点击打开拍卖行'
+        slot: 9
+        actions:
+          - '[close]'
+          - '[player] ah'
+
       # ---------- 工具包 ----------
       kit:
         material: CHEST
@@ -261,7 +270,6 @@ menus:
         display-name: '&d&l皮肤管理'
         lore:
           - '&7更换、清除、随机皮肤'
-          - '&7打开皮肤库浏览'
           - '&8点击查看子菜单'
         slot: 15
         actions:
@@ -279,6 +287,18 @@ menus:
         actions:
           - '[menu] social'
 
+      # ---------- 每日任务 ----------
+      quests:
+        material: BOOK
+        display-name: '&b&l每日任务'
+        lore:
+          - '&7挖矿、打怪、钓鱼赚南瓜币'
+          - '&8点击打开任务界面'
+        slot: 18
+        actions:
+          - '[close]'
+          - '[player] quests'
+
       # ---------- 服务器信息 ----------
       info:
         material: BOOK
@@ -290,6 +310,18 @@ menus:
         actions:
           - '[menu] info'
 
+      # ---------- 宠物系统 ----------
+      pets:
+        material: BONE
+        display-name: '&f&l宠物系统'
+        lore:
+          - '&7召唤、骑乘、改名、购买宠物'
+          - '&7购买使用服务器货币（Vault 联动）'
+          - '&8点击打开宠物菜单'
+        slot: 21
+        actions:
+          - '[player] pet gui'
+
       # ---------- 语音聊天 ----------
       voice:
         material: NOTE_BLOCK
@@ -300,6 +332,19 @@ menus:
         slot: 22
         actions:
           - '[menu] voice'
+
+      # ---------- 传送阵（SpacePortal） ----------
+      portal:
+        material: END_CRYSTAL
+        display-name: '&d&l传送阵'
+        lore:
+          - '&7走进阵法范围自动充能传送'
+          - '&7或点击打开传送阵界面（双端通用）'
+          - '&7传送消耗 20 颗钻石'
+          - '&8点击打开传送阵界面'
+        slot: 23
+        actions:
+          - '[player] csz gui'
 
       # ---------- 管理面板（权限门控） ----------
       # 只有带 quickmenu.admin 的管理组能看到这一项，普通玩家界面里不会出现，
@@ -333,14 +378,12 @@ menus:
         display-name: '&b公共传送点列表'
         lore:
           - '&7查看所有可用传送点'
-          - '&8基岩端打开原生传送点表单'
+          - '&8点击选择传送点，Java/基岩通用'
         slot: 10
-        # 两端分发：基岩走 BedrockPlayerSupport 的原生表单（带列表选择），
-        # Java 走 EssentialsX 的普通指令。
+        # 两端统一打开 QuickMenu 传送点 GUI（Java/基岩通用）
         actions:
           - '[close]'
-          - '[bedrock-player] warpgui'
-          - '[java-player] warp'
+          - '[menu] warps'
 
       tpa:
         material: ENDER_EYE
@@ -348,13 +391,10 @@ menus:
         lore:
           - '&7向其他玩家发送传送请求'
           - '&e需要对方同意'
-          - '&8基岩端可从列表选人'
+          - '&8点击后从在线列表选择目标'
         slot: 12
         actions:
-          - '[close]'
-          - '[bedrock-player] tpgui'
-          - '[message] &7使用 &e/tpa 玩家名 &7发送传送请求'
-          - '[message] &7或输入 &e/传送 玩家名'
+          - '[player-selector] tpa {target}'
 
       tpahere:
         material: BEACON
@@ -362,11 +402,11 @@ menus:
         lore:
           - '&7让对方传送到你的位置'
           - '&c需要 tpahere 权限'
+          - '&8点击后从在线列表选择目标'
         slot: 14
         permission: essentials.tpahere
         actions:
-          - '[close]'
-          - '[message] &7使用 &e/tpahere 玩家名 &7请求对方过来'
+          - '[player-selector] tpahere {target}'
 
       back:
         material: CLOCK
@@ -380,13 +420,13 @@ menus:
 
       spawn:
         material: GRASS_BLOCK
-        display-name: '&f回到出生点'
+        display-name: '&f&l回主城'
         lore:
-          - '&7传送到服务器主世界出生点'
+          - '&7传送到服务器主城'
         slot: 20
         actions:
           - '[close]'
-          - '[player] spawn'
+          - '[player] warp 主城'
 
       near:
         material: SPYGLASS
@@ -398,6 +438,25 @@ menus:
           - '[close]'
           - '[player] near'
 
+  # ==================== 传送点子菜单（EssentialsX warp） ====================
+  warps:
+    title: '&b&l传送点'
+    bedrock-content: '&7传送点列表'
+    size: 27
+    back-menu: teleport
+    filler:
+      material: BLUE_STAINED_GLASS_PANE
+      name: '&8'
+    items:
+      主城:
+        material: GRASS_BLOCK
+        display-name: '&f&l主城'
+        lore:
+          - '&7服务器主城，点击传送'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] warp 主城'
   # ==================== 家园子菜单 ====================
   home:
     title: '&a&l我的家园'
@@ -653,6 +712,19 @@ menus:
           - '[close]'
           - '[message] &7转账格式：&e/pay 玩家名 金额'
 
+      eztax:
+        material: WRITABLE_BOOK
+        display-name: '&c周持有税查询'
+        lore:
+          - '&7账户超过 10000 南瓜币部分按 1% 周征'
+          - '&7查看已征收统计与销毁额'
+          - '&e用法：/eztax stats'
+        slot: 17
+        permission: eztax.stats
+        actions:
+          - '[close]'
+          - '[player] eztax stats'
+
       sell:
         material: HOPPER
         display-name: '&b出售手中物品'
@@ -735,16 +807,36 @@ menus:
     items:
       skingui:
         material: PLAYER_HEAD
-        display-name: '&a打开皮肤库'
+        display-name: '&a皮肤库浏览'
         lore:
-          - '&7浏览并选择皮肤（Java 端为箱子界面）'
-          - '&8基岩端建议改用指令方式'
-        slot: 11
-        permission: skinsrestorer.command.gui
+          - '&7打开皮肤库选择菜单，点 [皮肤菜单] 进入浏览'
+          - '&8选择菜单含：皮肤菜单 / 历史菜单 / 收藏菜单'
+        slot: 10
         actions:
           - '[close]'
           - '[bedrock-player] skin'
           - '[java-player] skins'
+
+      skinhistory:
+        material: BOOK
+        display-name: '&b历史皮肤'
+        lore:
+          - '&7查看最近使用过的皮肤，点击可再用'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] skin history'
+
+      skinfavourites:
+        material: GOLD_INGOT
+        display-name: '&6收藏皮肤'
+        lore:
+          - '&7查看已收藏的皮肤'
+          - '&8在皮肤库里 Shift+单击 可收藏/取消'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[player] skin favourites'
 
       skinset:
         material: LEATHER_CHESTPLATE
@@ -843,8 +935,7 @@ menus:
           - '&e用法：/ignore 玩家名'
         slot: 12
         actions:
-          - '[close]'
-          - '[message] &7屏蔽玩家：&e/ignore 玩家名'
+          - '[player-selector] ignore {target}'
 
       nick:
         material: NAME_TAG
@@ -1121,6 +1212,20 @@ menus:
         actions:
           - '[menu] admin-qm'
 
+      # ---------- 玩家位置记录 ----------
+      postracker:
+        material: FILLED_MAP
+        display-name: '&6&l玩家位置记录'
+        lore:
+          - '&7查询玩家历史位置轨迹'
+          - '&e用法：/pos radius:10 time:1h'
+        slot: 21
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[message] &7查询玩家位置：&e/pos radius:10 time:1h'
+          - '[message] &7指定玩家：&e/pos radius:10 time:1h name:玩家名'
+
       backmain:
         material: NETHER_STAR
         display-name: '&f返回玩家主菜单'
@@ -1146,50 +1251,45 @@ menus:
         material: CHEST
         display-name: '&e查看玩家背包'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/openinv 玩家名'
         slot: 10
         permission: openinv.open
         actions:
-          - '[close]'
-          - '[message] &7查看背包：&e/openinv 玩家名'
+          - '[player-selector] openinv {target}'
 
       tp:
         material: ENDER_PEARL
         display-name: '&b传送到玩家'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/tp 玩家名'
         slot: 11
         permission: essentials.tp
         actions:
-          - '[close]'
-          - '[message] &7传送到玩家：&e/tp 玩家名'
+          - '[player-selector] tp {target}'
 
       tphere:
         material: ENDER_EYE
         display-name: '&b把玩家拉过来'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/tphere 玩家名'
         slot: 12
         permission: essentials.tphere
         actions:
-          - '[close]'
-          - '[message] &7拉玩家过来：&e/tphere 玩家名'
+          - '[player-selector] tphere {target}'
 
       gamemode:
         material: DIAMOND_PICKAXE
         display-name: '&6切换游戏模式'
         lore:
-          - '&7需手动补充玩家名'
-          - '&e用法：/gamemode creative 玩家名'
+          - '&7先选模式，再从在线列表选玩家'
         slot: 13
         permission: essentials.gamemode
         actions:
           - '[close]'
-          - '[message] &7切换模式：&e/gamemode creative 玩家名'
-          - '[message] &8可选：survival creative adventure spectator'
+          - '[menu] gamemode'
 
       heal:
         material: GOLDEN_APPLE
@@ -1244,32 +1344,30 @@ menus:
         material: HOPPER
         display-name: '&c清空玩家背包'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/ci 玩家名'
           - '&c不可恢复'
         slot: 20
         permission: essentials.clearinventory
         actions:
-          - '[close]'
-          - '[message] &7清空背包：&e/ci 玩家名'
+          - '[player-selector] ci {target}'
 
       whois:
         material: PLAYER_HEAD
         display-name: '&b查看玩家信息'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/whois 玩家名'
         slot: 21
         permission: essentials.whois
         actions:
-          - '[close]'
-          - '[message] &7查看信息：&e/whois 玩家名'
+          - '[player-selector] whois {target}'
 
       seen:
         material: CLOCK
         display-name: '&7查看最后在线'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/seen 玩家名'
         slot: 22
         permission: essentials.seen
@@ -1298,6 +1396,61 @@ menus:
           - '[close]'
           - '[message] &7给物品：&e/give 玩家名 物品 数量'
 
+  # ==================== 切换游戏模式（选模式后再选玩家） ====================
+  gamemode:
+    title: '&b&l切换游戏模式'
+    bedrock-content: '&7先选模式，再从在线列表选玩家'
+    size: 27
+    back-menu: admin-player
+    filler:
+      material: BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      gm_survival:
+        material: GRASS_BLOCK
+        display-name: '&a生存模式'
+        lore:
+          - '&7正常生存玩法'
+          - '&8点击后从在线列表选择玩家'
+        slot: 11
+        permission: essentials.gamemode
+        actions:
+          - '[player-selector] gamemode survival {target}'
+
+      gm_creative:
+        material: EMERALD_BLOCK
+        display-name: '&b创造模式'
+        lore:
+          - '&7可飞行、破坏方块'
+          - '&8点击后从在线列表选择玩家'
+        slot: 12
+        permission: essentials.gamemode
+        actions:
+          - '[player-selector] gamemode creative {target}'
+
+      gm_adventure:
+        material: BRICKS
+        display-name: '&c冒险模式'
+        lore:
+          - '&7不能破坏方块'
+          - '&8点击后从在线列表选择玩家'
+        slot: 13
+        permission: essentials.gamemode
+        actions:
+          - '[player-selector] gamemode adventure {target}'
+
+      gm_spectator:
+        material: OBSERVER
+        display-name: '&d旁观模式'
+        lore:
+          - '&7隐身飞行、无法交互'
+          - '&8点击后从在线列表选择玩家'
+        slot: 14
+        permission: essentials.gamemode
+        actions:
+          - '[player-selector] gamemode spectator {target}'
+
   # ==================== 处罚管理 ====================
   admin-punish:
     title: '&c&l处罚管理'
@@ -1313,44 +1466,41 @@ menus:
         material: LEATHER_BOOTS
         display-name: '&e踢出玩家'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/kick 玩家名 原因'
         slot: 10
         permission: essentials.kick
         actions:
-          - '[close]'
-          - '[message] &7踢出玩家：&e/kick 玩家名 原因'
+          - '[player-selector] kick {target}'
 
       ban:
         material: BARRIER
         display-name: '&c永久封禁'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/ban 玩家名 原因'
         slot: 11
         permission: essentials.ban
         actions:
-          - '[close]'
-          - '[message] &7永久封禁：&e/ban 玩家名 原因'
+          - '[player-selector] ban {target}'
 
       tempban:
         material: CLOCK
         display-name: '&6临时封禁'
         lore:
-          - '&7需手动补充玩家名与时长'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/tempban 玩家名 7d 原因'
           - '&8时长单位：s m h d'
         slot: 12
         permission: essentials.tempban
         actions:
-          - '[close]'
-          - '[message] &7临时封禁：&e/tempban 玩家名 7d 原因'
+          - '[player-selector] tempban {target} 7d'
 
       unban:
         material: EMERALD
         display-name: '&a解除封禁'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/unban 玩家名'
         slot: 13
         permission: essentials.unban
@@ -1362,65 +1512,58 @@ menus:
         material: IRON_BARS
         display-name: '&c封禁 IP'
         lore:
-          - '&7需手动补充玩家名或 IP'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/banip 玩家名'
           - '&c会封禁整个 IP，慎用'
         slot: 14
         permission: essentials.banip
         actions:
-          - '[close]'
-          - '[message] &7封禁 IP：&e/banip 玩家名'
-          - '[message] &c注意：会封禁同 IP 下的所有账号'
+          - '[player-selector] banip {target}'
 
       mute:
         material: NOTE_BLOCK
         display-name: '&7禁言玩家'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/mute 玩家名 [时长]'
         slot: 15
         permission: essentials.mute
         actions:
-          - '[close]'
-          - '[message] &7禁言：&e/mute 玩家名 10m'
+          - '[player-selector] mute {target} 10m'
 
       unmute:
         material: BELL
         display-name: '&a解除禁言'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/unmute 玩家名'
         slot: 16
         permission: essentials.unmute
         actions:
-          - '[close]'
-          - '[message] &7解除禁言：&e/unmute 玩家名'
+          - '[player-selector] unmute {target}'
 
       jail:
         material: IRON_BLOCK
         display-name: '&6关押玩家'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/jail 玩家名 [时长]'
           - '&7需先 /setjail 设置监狱点'
         slot: 17
         permission: essentials.jail
         actions:
-          - '[close]'
-          - '[message] &7关押：&e/jail 玩家名 10m'
-          - '[message] &7首次使用需先执行 &e/setjail &7设置监狱'
+          - '[player-selector] jail {target} 10m'
 
       unjail:
         material: IRON_DOOR
         display-name: '&a释放玩家'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/unjail 玩家名'
         slot: 19
         permission: essentials.unjail
         actions:
-          - '[close]'
-          - '[message] &7释放：&e/unjail 玩家名'
+          - '[player-selector] unjail {target}'
 
       broadcast:
         material: JUKEBOX
@@ -1465,8 +1608,7 @@ menus:
         slot: 10
         permission: essentials.tp
         actions:
-          - '[close]'
-          - '[message] &7强制传送：&e/tp 玩家名'
+          - '[player-selector] tp {target}'
 
       tphere:
         material: ENDER_EYE
@@ -1476,8 +1618,7 @@ menus:
         slot: 11
         permission: essentials.tphere
         actions:
-          - '[close]'
-          - '[message] &7强制拉人：&e/tphere 玩家名'
+          - '[player-selector] tphere {target}'
 
       tpall:
         material: BEACON
@@ -1546,8 +1687,7 @@ menus:
         slot: 17
         permission: essentials.tpo
         actions:
-          - '[close]'
-          - '[message] &7静默传送：&e/tpo 玩家名'
+          - '[player-selector] tpo {target}'
 
       tpohere:
         material: END_CRYSTAL
@@ -1557,8 +1697,7 @@ menus:
         slot: 19
         permission: essentials.tpohere
         actions:
-          - '[close]'
-          - '[message] &7静默拉人：&e/tpohere 玩家名'
+          - '[player-selector] tpohere {target}'
 
   # ==================== 领地管理（Residence 管理员） ====================
   admin-residence:
@@ -2140,13 +2279,12 @@ menus:
         material: PLAYER_HEAD
         display-name: '&b查看玩家权限'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/lp user 玩家名 info'
         slot: 15
         permission: luckperms.info
         actions:
-          - '[close]'
-          - '[message] &7查看玩家权限：&e/lp user 玩家名 info'
+          - '[player-selector] lp user {target} info'
 
       verbose:
         material: SPYGLASS
@@ -2209,13 +2347,12 @@ menus:
         material: CHEST
         display-name: '&6发放触发物品'
         lore:
-          - '&7需手动补充玩家名'
+          - '&7点击后从在线列表选择玩家'
           - '&e用法：/qm give 玩家名'
         slot: 13
         permission: quickmenu.admin
         actions:
-          - '[close]'
-          - '[message] &7发放触发物品：&e/qm give 玩家名'
+          - '[player-selector] qm give {target}'
 
       openmain:
         material: NETHER_STAR
