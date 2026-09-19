@@ -137,6 +137,41 @@ lp group default permission set bedrockplayersupport.msggui
 lp group default permission set bedrockplayersupport.kitgui
 lp group default permission set bedrockplayersupport.warpgui
 
+# --- SimplePets 宠物（玩家可开 GUI / 召唤 / 改名 / 移除）---
+lp group default permission set pet.commands.help
+lp group default permission set pet.commands.gui
+lp group default permission set pet.commands.summon
+lp group default permission set pet.commands.rename
+lp group default permission set pet.commands.remove
+
+# --- 经济插件·第二阶段（2026-09-17 落地，default 已授）---
+# EconomyShop 玩家商店 + 木牌商店
+lp group default permission set economyshop.use
+lp group default permission set economyshop.sell
+lp group default permission set economyshop.chestshop.create
+lp group default permission set economyshop.chestshop.use
+# Quests 每日任务（3.x 节点 quests.command.*；/quests 本体默认 true）
+lp group default permission set quests.command.start
+lp group default permission set quests.command.track
+lp group default permission set quests.command.cancel
+lp group default permission set quests.command.quest
+# EzTax 周持有税
+lp group default permission set eztax.stats
+# AuctionHouse：auction.* 默认 true，无需授予；/ahadmin 给 admin 组
+
+
+# --- RideOnHead 骑玩家（rideonhead.user 默认 true，玩家右键即可骑头，无需额外授权）---
+# rideonhead.admin 默认 op，已属 admin 组；无需手动 set
+
+# --- 空间传送阵 SpacePortal ---
+lp group default permission set spaceportal.use
+
+# --- 自定义死亡信息 / 全息 / 菜单（多数默认 true，这里显式兜底）---
+lp group default permission set cdm.use
+lp group default permission set cdm.broadcast
+lp group default permission set dh.default
+lp group default permission set deluxemenus.open
+
 
 ############################################################
 #  第 4 段：member —— 正式成员
@@ -215,6 +250,9 @@ lp group vip permission set residence.flags.trample
 lp group vip permission set residence.flags.wither
 
 lp group vip permission set skinsrestorer.bypasscooldown
+
+# 赞助组宠物免单（Vault Addon 已注册节点；用 LuckPerms 控制可养数量另配 pet.type.*）
+lp group vip permission set pet.vault.bypass
 
 
 ############################################################
@@ -472,6 +510,20 @@ lp group admin permission set easybot.command.reload
 # Vault 经济（⚠️ 部分版本节点为 vault.admin）
 lp group admin permission set vault.admin
 
+# 经济插件管理（⚠️ admin 子节点名先 /lp tree <插件> 实测再授）
+lp group admin permission set auction.admin
+lp group admin permission set economyshop.admin
+lp group admin permission set eztax.admin
+lp group admin permission set quests.admin
+lp group admin permission set cdm.admin
+lp group admin permission set dh.admin
+lp group admin permission set deluxemenus.admin
+lp group admin permission set spaceportal.admin
+lp group admin permission set postracker.admin
+
+# QuickMenu：工具包按钮已对普通玩家隐藏，admin 仍可见
+lp group admin permission set quickmenu.kit
+
 # ViaVersion 管理
 lp group admin permission set viaversion.admin
 
@@ -569,6 +621,13 @@ lp group bedrock permission set bedrockplayersupport.warpgui
 
 # 热重载使全部改动生效
 lp reload
+
+# ⚠️ 正式开服前清理：若历史授过 Quests 5.x 旧节点（本服已是 3.x），逐条 unset：
+# lp group default permission unset quests.quest
+# lp group default permission unset quests.take
+# lp group default permission unset quests.list
+# lp group default permission unset quests.quit
+# lp group default permission unset quests.stats
 
 # 导出一份快照备份（文件生成在 plugins/LuckPerms/ 下）
 lp export 权限快照-初始化

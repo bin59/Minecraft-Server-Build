@@ -1,0 +1,29 @@
+{
+  "bgm.lobby": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "music/lobby",
+        "stream": true
+      }
+    ]
+  },
+  "bgm.mines": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "music/mines",
+        "stream": true
+      }
+    ]
+  },
+  "bgm.spawn": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "music/spawn",
+        "stream": true
+      }
+    ]
+  }
+}

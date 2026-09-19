@@ -47,6 +47,21 @@
 - **防印钞**：`sell-to-shop: false` + `sell-commands: false` 是手册 §4D 的关键落地，量产物品只能走玩家间交易。
 - **监控**：启动日志确认 `Hooked into LuckPerms`、`AuctionHouse integration enabled`、`Default-shop seeding disabled`。
 
+## 更新配置（修改后重载）
+
+改完 `config.yml` 后按以下流程让配置生效，一般无需重启：
+
+1. **备份**：编辑前先复制一份 `config.yml`，YAML 对缩进敏感，只用空格、别用 Tab。
+2. **重载**：游戏内或控制台执行
+   ```
+   /shop admin reload
+   ```
+   权限节点 `economyshop.admin.reload`（op 默认持有）。该命令会重载 `config.yml`、语言文件和商店 GUI。
+3. **必须重启的场景**：若修改存储后端（将 `storage.type` 从默认改为 `mysql` 并填写 `storage.mysql` 的 host/port/database/user/pass），`reload` 不会切换数据源，**必须整服重启**才生效。
+4. **验证**：重载后观察执行日志无 YAML Exception / 格式报错；再用 `/shop` 开一个店，确认开店费、成交税按新值计算。
+
+> 同名插件说明：EconomyShopGUI 等分支用 `/eshop reload`；本服使用的是 iliüs 版，认准 `/shop admin reload` 即可。
+
 ## 注意事项
 
 - 关闭 `/sell` 后玩家可能不适应，需在公告中说明"量产物品走玩家间交易（/ah /shop）"。

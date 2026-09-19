@@ -1,0 +1,10 @@
+{
+  "pack": {
+    "pack_format": 64,
+    "supported_formats": {
+      "min_inclusive": 46,
+      "max_inclusive": 99
+    },
+    "description": "南瓜国际服 · BGM 音乐包（主城/区域背景音乐）"
+  }
+}

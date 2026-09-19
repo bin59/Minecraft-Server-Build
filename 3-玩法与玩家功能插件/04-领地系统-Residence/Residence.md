@@ -64,6 +64,19 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 | `/res rc join`   | 加入领地频道       |
 | `/res rc leave`  | 离开领地频道       |
 
+### 管理员命令（Admin）
+
+以下命令需 `residence.admin` 权限（op 或 LuckPerms 给 `residence.admin.*`）。注意本服管理命令用单词 `/resadmin`（非 `/res admin` 两词）。
+
+| 命令                                  | 说明                                 |
+| ------------------------------------- | ------------------------------------ |
+| `/resadmin setowner <领地名> <玩家名>` | 将领地归属转移给指定玩家（改主人）   |
+| `/resadmin remove <领地名>`            | 管理员删除任意领地                   |
+| `/resadmin removeall <玩家名>`         | 删除某玩家的全部领地                 |
+| `/resadmin server <领地名>`            | 将领地设为服务器所有                 |
+
+> **基岩玩家注意（Floodgate）**：基岩玩家名带 `.` 前缀（如 `.NoviceMite1987`）。`/resadmin setowner` 的 `<玩家名>` **Tab 补全列不出基岩/离线玩家**，必须**手打全名（含点）**：`/resadmin setowner 我的家 .NoviceMite1987`。若报"找不到玩家"（基岩玩家离线时常有），改用该玩家 UUID：`/resadmin setowner 我的家 <UUID>`（UUID 用 `/res info <领地名>` 的 Owner 字段查，或问玩家 / 查 Floodgate 数据）。
+
 ## 关键配置 (`plugins/Residence/config.yml`)
 
 ```yaml

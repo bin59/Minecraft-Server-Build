@@ -1,0 +1,12 @@
+把音乐 OGG 文件放到本目录，文件名必须与 sounds.json 里的 name 对应：
+
+  lobby.ogg   → 对应 sounds.json 的 bgm.lobby（主城/大厅 BGM）
+  mines.ogg   → 对应 bgm.mines（矿区 BGM）
+  spawn.ogg   → 对应 bgm.spawn（出生点 BGM）
+
+要求：
+- 格式：OGG Vorbis（.ogg），不要 MP3/WAV
+- 采样：建议 44100Hz，码率 128k 左右
+- 声道：BGM 用立体声即可（/playsound 走 music 通道，非方位音）
+- 版权：务必使用无版权音乐（如 Kevin MacLeod / Incompetech / 自录），避免侵权
+- 长度：每首建议 2~4 分钟，循环间隔按此配置 schedule（见部署文档）
