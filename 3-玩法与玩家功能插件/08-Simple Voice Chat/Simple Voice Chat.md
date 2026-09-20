@@ -28,13 +28,26 @@ Simple Voice Chat 由作者 **Max Henkel（henkelmax）** 开发，核心特性�
 | 官方 Wiki   | [官方 Wiki](https://modrepo.de/minecraft/voicechat/wiki/?t=setup)                   |
 | GitHub 源码 | [GitHub 仓库](https://github.com/henkelmax/simple-voice-chat)                       |
 
-**支持的模组加载器**：Forge、Fabric、Quilt、NeoForge
+**支持的模组加载器**：Forge、Fabric、Quilt、NeoForge（仅 **Java 版客户端** 需要，服务端插件端不依赖）
 
 **支持的 MC 版本**：1.12.2 ~ 1.21.x（覆盖面非常广）
 
-**安装方式**：将下载的 `.jar` 文件放入客户端和服务端的 `mods` 文件夹中（服务端如果是插件端如 Paper/Spigot，则放入 `plugins` 文件夹）。
+#### 服务端 / Java 客户端 / 基岩客户端是三种不同的包，务必区分
 
-> **重要**：服务端和客户端**都必须安装**，否则无法使用语音功能。
+SVC 在 Modrinth 下载时要选**加载器**和**安装端**。本服是双端互通（Java + 基岩），三类端的装法完全不同：
+
+| 端 | 下什么 | 放哪里 | 本服对应 |
+| --- | --- | --- | --- |
+| **服务端** | **Bukkit/Paper 插件版**（不是 Forge/Fabric 模组） | 服务端 `plugins/voicechat/` | ✅ 本服 Leaf 就是这样 |
+| **Java 版玩家客户端** | **Fabric/Forge/NeoForge 模组版**（带游戏内语音 UI） | 玩家自己 `.minecraft/mods/` | Java 玩家下这个 |
+| **基岩版玩家客户端** | **不能装任何 Java 模组** | — | 走 Geyser 网页语音，见文末「基岩版语音」 |
+
+> ⚠️ **不要下错包**：
+> - 服务端（本服 Leaf）下 **Bukkit 插件版**，放进 `plugins/`；
+> - Java 玩家客户端下 **Fabric 模组版**（或对应加载器），放进自己 `mods/`；
+> - 服务端与 Java 客户端的 **SVC 版本号必须一致**（如都是 2.6.x），否则连不上。
+
+> **重要**：服务端必须装，Java 客户端也必须装，否则 Java 玩家无法语音；**基岩客户端不需要装任何模组**，走网页方案。
 
 ---
 
@@ -180,7 +193,7 @@ SVC 拥有丰富的生态扩展，以下是截至 2026 年 7 月已知的一些�
 - **Replay Voice Chat**：在 Replay Mod 回放中保留语音录制
 - **REPO Heads**：玩家说话时嘴巴会动态张合
 - **VolumeScroll**：通过鼠标滚轮快速调节玩家音量
-- **SimpleVoice-Geyser**：让基岩版（Bedrock）玩家通过网页界面使用语音聊天
+- **SimpleVoice-Geyser（Geyser Voice Chat）**：让基岩版玩家**不用装任何模组**，通过浏览器网页使用语音聊天。详见文末「📱 基岩版玩家语音」。
 
 ## 云服务器上搭建
 
@@ -463,3 +476,31 @@ services:
 - [ ] 内网穿透场景下，frp 穿透的是 **UDP** 协议
 
 如果你能告诉我你的具体情况（云厂商、是否有公网 IP、MC 版本、模组加载器类型），我可以帮你生成一份更精确的配置方案。
+
+---
+
+## 📱 基岩版玩家语音（网页方案）
+
+基岩版（手机/Win10/主机）玩家**无法安装 Java 版的 Fabric/Forge 模组**，所以不能像 Java 玩家那样按 V 键开语音。本服是双端互通（Geyser + Floodgate），基岩玩家走**网页语音**方案。
+
+### 原理
+- 服务端额外装 **SimpleVoice-Geyser**（第三方插件，作者 Saraose/TheodoreMeyer；Modrinth: `modrinth.com/plugin/simplevoice-geyser`，Bukkit 版放 `plugins/`），与 SVC 主插件、Geyser、Floodgate 配合。
+- 它通过 **Floodgate** 识别谁是基岩玩家，进服后给该玩家发一个**可点击的网页链接**。
+- 基岩玩家在**手机/电脑浏览器**里打开链接、授权麦克风，就能在浏览器里听附近 Java 玩家说话、自己也能说话。
+- 语音数据仍走服务端 UDP 24454，浏览器 ↔ 服务端之间走 WebSocket 桥接。
+
+### 与 Java 端的区别
+| | Java 玩家 | 基岩玩家 |
+| --- | --- | --- |
+| 客户端装模组 | ✅ 装 Fabric 版 SVC | ❌ 不用装 |
+| 开语音方式 | 游戏内按 V | 浏览器打开链接授权麦克风 |
+| 说话/听话 | 游戏内 | 浏览器网页内 |
+| 服务端 | 同一套 SVC + UDP 24454 | 同一套，外加 voicechat-geyser |
+
+### 部署要点
+1. 服务端在 `plugins/` 里除了主 SVC，再放 `voicechat-geyser` 插件 jar。
+2. 确认 Geyser/Floodgate 已正常工作（本服双端互通已具备）。
+3. 浏览器网页需要能访问到服务端，注意**防火墙/端口**放行浏览器连接所需的 WebSocket 端口。
+4. 基岩玩家首次进服按提示点链接、允许麦克风即可，无需任何客户端安装。
+
+> 现状备注：本服 Java 端 SVC 已配置（UDP 24454）；基岩端的 `voicechat-geyser` 插件是否已部署需进 `plugins/` 目录确认，未部署时基岩玩家暂时只能用文字聊天，语音暂不可用。

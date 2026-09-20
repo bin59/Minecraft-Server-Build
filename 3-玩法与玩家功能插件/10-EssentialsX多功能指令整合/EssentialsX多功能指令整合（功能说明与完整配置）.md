@@ -145,6 +145,45 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 
 ---
 
+### 🔔 玩家加入 / 退出消息自定义（custom-join-message / custom-quit-message）
+
+玩家加入 / 退出时在聊天栏广播的「X 加入了游戏 / X 离开了游戏」可用 EssentialsX 覆盖原版广播，做出与服务器主题一致的进出服提示。
+
+**配置文件**：`plugins/Essentials/config.yml`
+
+```yaml
+custom-join-message: "none"             # 默认 "none" = 沿用原版；改为自定义文案即覆盖
+custom-quit-message:  "none"             # 退出广播
+custom-new-username-message: "none"      # 改名后重进专用，一般留 "none" 复用上面两条
+hide-join-quit-messages-above: -1        # -1 = 在线人数再多也显示；设正整数则在人多时隐藏
+```
+
+**可用占位符**：
+
+| 占位符 | 含义 |
+|---|---|
+| `{PLAYER}` | 玩家显示名（含前缀 / 后缀） |
+| `{USERNAME}` | 玩家原始用户名 |
+| `{PREFIX}` / `{SUFFIX}` | 前缀 / 后缀 |
+| `{ONLINE}` | 当前在线人数 |
+| `{UNIQUE}` | 累计加入过的独立玩家数 |
+| `{UPTIME}` | 服务端已运行时长 |
+
+**颜色代码用 `&`（不是 `§`）**：EssentialsX 配置里颜色用 `&`（`&a` 绿、`&c` 红、`&e` 金、`&f` 白、`&5` 紫、`&d` 粉、`&l` 粗体……），与 `server.properties` 的 `§` 不同，勿混。
+
+**贴合本服 MOTD 风格的示例**：
+
+```yaml
+custom-join-message: "&d[&5+&d] &f{PLAYER} &e加入了南瓜国际服"
+custom-quit-message:  "&d[&5-&d] &f{PLAYER} &e离开了南瓜国际服"
+```
+
+效果：`[+] Steve 加入了南瓜国际服` / `[-] Steve 离开了南瓜国际服`（紫金配色）。
+
+**生效**：游戏内 `/ess reload` 或重启后端即生效；云端服务器改同一份配置即可。
+
+---
+
 ### 🌍 世界与重生点管理（EssentialsSpawn 模块）
 
 | 指令             | 功能                 |
@@ -668,6 +707,15 @@ log-command-executions: false
 
 # 是否显示玩家加入/离开消息
 show-join-quit: true
+
+# 自定义加入 / 退出广播（覆盖原版 "X 加入了游戏 / X 离开了游戏"）
+# 设为 "none" 沿用原版；可用占位符 {PLAYER} {USERNAME} {ONLINE} {UPTIME} 等
+custom-join-message: "none"
+custom-quit-message: "none"
+# 改名后重进专用（一般保持 none 复用上方两条）
+custom-new-username-message: "none"
+# 在线人数超过该值时隐藏加入/退出消息；-1 = 始终显示
+hide-join-quit-messages-above: -1
 
 # ==================== 互通服专用设置 ====================
 

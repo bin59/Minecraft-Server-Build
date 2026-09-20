@@ -1,0 +1,31 @@
+teleportenabled: true
+teleportauto: false
+godmode: false
+flymode: false
+muted: false
+jailed: false
+ip-address: 127.0.0.1
+afk: false
+socialspy: false
+npc: false
+powertoolsenabled: true
+accepting-pay: true
+baltop-exempt: false
+timestamps:
+  lastteleport: 0
+  lastheal: 0
+  mute: 0
+  jail: 0
+  onlinejail: 0
+  logout: 1789803956592
+  login: 1789803620631
+money: '0'
+last-account-name: Pumpkin_V
+logoutlocation:
+  world: e04766a5-5c3e-4adf-b2e5-04bf1fe52ce3
+  world-name: world
+  x: 43.2024224629653
+  y: 70.0
+  z: 27.838745127753718
+  yaw: -21.449951171875
+  pitch: -15.899992942810059
