@@ -56,6 +56,11 @@ public final class PluginSettings {
     private String playerSelectorLore = "&7点击向 TA 发送传送请求";
     private String playerSelectorNoPlayers = "&c当前没有其他在线玩家";
 
+    // ===== 物品选择器（估价等选物界面）=====
+    private String itemSelectorTitle = "&6&l选择物品";
+    private String itemSelectorLore = "&7点击后对所选物品执行操作";
+    private String itemSelectorNoItems = "&c背包里没有可选择的物品";
+
     // ===== 菜单注册表 =====
     private final List<Menu> menus = new ArrayList<>();
 
@@ -227,5 +232,29 @@ public final class PluginSettings {
 
     public void setPlayerSelectorNoPlayers(String playerSelectorNoPlayers) {
         this.playerSelectorNoPlayers = playerSelectorNoPlayers;
+    }
+
+    public String getItemSelectorTitle() {
+        return itemSelectorTitle;
+    }
+
+    public void setItemSelectorTitle(String itemSelectorTitle) {
+        this.itemSelectorTitle = itemSelectorTitle;
+    }
+
+    public String getItemSelectorLore() {
+        return itemSelectorLore;
+    }
+
+    public void setItemSelectorLore(String itemSelectorLore) {
+        this.itemSelectorLore = itemSelectorLore;
+    }
+
+    public String getItemSelectorNoItems() {
+        return itemSelectorNoItems;
+    }
+
+    public void setItemSelectorNoItems(String itemSelectorNoItems) {
+        this.itemSelectorNoItems = itemSelectorNoItems;
     }
 }

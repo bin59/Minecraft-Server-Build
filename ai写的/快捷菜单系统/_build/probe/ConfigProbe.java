@@ -31,6 +31,8 @@ public class ConfigProbe {
 
     private static final List<String> KNOWN_PREFIXES = Arrays.asList(
             "[player]", "[console]", "[menu]", "[message]", "[close]",
+            // 选择器动作：打开动态列表界面
+            "[player-selector]", "[item-selector]", "[ah-sell]",
             // 平台条件动作：仅对应客户端执行
             "[bedrock-player]", "[bedrock-console]",
             "[java-player]", "[java-console]");
@@ -233,7 +235,10 @@ public class ConfigProbe {
                             } else if (lower.startsWith("[java-")) {
                                 coversJava = true;
                             } else if (lower.startsWith("[player]") || lower.startsWith("[console]")
-                                    || lower.startsWith("[message]") || lower.startsWith("[menu]")) {
+                                    || lower.startsWith("[message]") || lower.startsWith("[menu]")
+                                    || lower.startsWith("[player-selector]")
+                                    || lower.startsWith("[item-selector]")
+                                    || lower.startsWith("[ah-sell]")) {
                                 // 提供实际功能或反馈，两端通用
                                 coversBedrock = true;
                                 coversJava = true;

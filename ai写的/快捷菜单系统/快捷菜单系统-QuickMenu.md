@@ -449,6 +449,35 @@ actions:
 > 仍保留 `[message]` 的项：需要开放参数输入的（领地名/金额/物品/消息内容/广播内容）与离线玩家操作（unban/seen）——QuickMenu 无输入框，这些只能提示指令用法。
 
 > **2026-09-19 布局调整**：主菜单的`拍卖行`(ah) 与`玩家商店`(shop) 两项已移入`economy` 经济中心子菜单（slot 9/10），主菜单首屏不再保留这两个入口。
+> **2026-09-22 新增：估价界面化（[item-selector] 动作）**：
+> 原`估价手中物品`执行 /worth 只会估价手持的触发物品（时钟），估不了其他物品。
+> 新增 `[item-selector] 命令模板` 动作——点击后动态列出**玩家背包**中的物品（自动排除触发物品，同材质合并显示数量）：
+> Java 端显示为 54 格箱子界面（每个物品一个图标，点击即执行）；基岩端显示为原生表单按钮列表。
+> `{item}` 会被替换为所点物品的材质名（小写，如 diamond）。
+>
+> - economy.worth → `[item-selector] worth {item}`（标题/lore 改为「估价背包物品」）
+>   外观文案在 config.yml `item-selector` 节点可调（标题/说明/无可选物品提示）。
+>   已重新构建 jar（62 KB，18 个 class）并重启生效。
+>   **限制**：/worth 按基础材质估价，带自定义 NBT 的物品（附魔/自定义物品）仍只能估其基础材质价。
+
+> **2026-09-22 中文化收尾（第 2 批）**：
+> 1. Chunky：config language: en → zh_CN（jar 内置 zh_CN.json）。
+> 2. PosTracker：新建 localization/messages_zh.yml 全量中文 + config language: zh（代码按 localization/messages_{lang}.yml 加载，无语言白名单；/pos 轨迹查询变中文）。
+> 3. Quests：config.yml 内 titles/messages 节点 58 条消息全量中文化（任务开始/完成/冷却/管理员命令反馈等；locale 节点是数字格式，未动）。
+> 4. TAB：messages.yml 74 行全量中文（/tab 管理命令反馈）。
+> 5. EzTax：messages.yml 38 行全量中文（税单/免税命令反馈）。
+> 6. CustomDeathMessages：messages.yml 剩余英文消息全量中文（epic 特效/广播/系统/帮助/默认组死亡消息；中文搞笑模板保留）。
+> 7. DecentHolograms：lang.yml 155 行全量中文（/dh 管理命令反馈）。
+> 8. RideOnHead 本已 default: zh + auto-detect（无需改）；Plan 为管理员 Web 面板（jar 仅内置 zh_TW 繁体，保持 Locale: default 跟随系统，玩家不可见）。
+> 说明：全部保留占位符（{quest}、%player% 等）与颜色码；改后重启验证通过（各插件正常启用，无 YAML 解析错误）。
+> **2026-09-22 新增：一键上架鞘翅（[ah-sell] 动作）**：
+> 玩家开菜单时主手是触发物品（时钟），直接 /ah sell 会把时钟上架。新增 `[ah-sell] 价格 材质名` 动作：
+> 插件自动在玩家背包（含快捷栏/盔甲槽/副手）找到该材质物品，临时换到主手执行 /ah sell 价格，再还原主手；
+> 上架失败（如价格低于下限）物品归还原位，背包里没有该物品时给出提示。
+>
+> - 经济中心新增`上架鞘翅`按钮（slot 19，ELYTRA 图标）→ `[ah-sell] 5000 elytra`（默认价 5000 南瓜币，改菜单配置即可调价）
+> - **已取消（2026-09-22）**：经济中心`上架鞘翅`按钮已从服务器 config 与源码模板移除（qm reload 生效，22 菜单正常）。`[ah-sell]` 动作代码保留在 jar 中（未配置引用即不触发），如需恢复只需在菜单配置加回该按钮。
+>   已重新构建 jar（63.2 KB）并重启生效。两端通用（基岩端同样生效）。
 
 > **2026-09-18 更新**： eleport.warps 已改为两端统一打开 QuickMenu 传送点子菜单（[menu] warps），
 > 不再依赖 BPS 表单。子菜单当前列出 主城 传送点（点击即 /warp 主城）；

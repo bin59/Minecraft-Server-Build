@@ -2,6 +2,7 @@ package com.nangua.quickmenu.listener;
 
 import com.nangua.quickmenu.QuickMenuPlugin;
 import com.nangua.quickmenu.gui.ChestMenuRenderer;
+import com.nangua.quickmenu.gui.ItemSelectorHolder;
 import com.nangua.quickmenu.gui.MenuHolder;
 import com.nangua.quickmenu.gui.PlayerSelectorHolder;
 import com.nangua.quickmenu.menu.ActionExecutor;
@@ -67,6 +68,12 @@ public final class MenuClickListener implements Listener {
         // 在线玩家选择器界面（动态构建，非配置化菜单）
         if (holder instanceof PlayerSelectorHolder) {
             handleSelectorClick(event, topInventory);
+            return;
+        }
+
+        // 背包物品选择器界面（动态构建，非配置化菜单）
+        if (holder instanceof ItemSelectorHolder) {
+            handleItemSelectorClick(event, topInventory);
             return;
         }
 
@@ -192,6 +199,63 @@ public final class MenuClickListener implements Listener {
     }
 
     /**
+     * 处理背包物品选择器界面的点击。
+     *
+     * <p>物品通过 PDC 标记区分：
+     * <ul>
+     *   <li>{@code __item_selector__} — 某个背包物品，读取材质名与命令模板，
+     *       关闭界面后以玩家身份执行模板（{item} 替换为材质名小写）</li>
+     *   <li>{@code __close__} — 关闭按钮</li>
+     * </ul>
+     */
+    private void handleItemSelectorClick(InventoryClickEvent event, Inventory topInventory) {
+        event.setCancelled(true);
+
+        HumanEntity whoClicked = event.getWhoClicked();
+        if (!(whoClicked instanceof Player)) {
+            return;
+        }
+        Player player = (Player) whoClicked;
+
+        if (!player.hasPermission("quickmenu.use")) {
+            return;
+        }
+
+        // 只响应菜单区域点击
+        if (event.getClickedInventory() != topInventory) {
+            return;
+        }
+
+        if (isSpamming(player.getUniqueId(), event.getSlot())) {
+            return;
+        }
+
+        ItemStack clickedItem = event.getCurrentItem();
+        String itemId = readItemId(clickedItem);
+        if (itemId == null || itemId.isEmpty()) {
+            return; // 点到了填充物或空格
+        }
+
+        if ("__item_selector__".equals(itemId)) {
+            ItemMeta meta = clickedItem.getItemMeta();
+            if (meta == null) {
+                return;
+            }
+            org.bukkit.persistence.PersistentDataContainer pdc = meta.getPersistentDataContainer();
+            ChestMenuRenderer renderer = plugin.getMenuManager().getChestRenderer();
+            String material = pdc.get(renderer.getSelectorItemMaterialKey(), PersistentDataType.STRING);
+            String template = pdc.get(renderer.getSelectorTemplateKey(), PersistentDataType.STRING);
+            if (material == null || template == null) {
+                return;
+            }
+            player.closeInventory();
+            player.performCommand(template.replace("{item}", material));
+        } else if ("__close__".equals(itemId)) {
+            player.closeInventory();
+        }
+    }
+
+    /**
      * 拦截拖拽行为。
      *
      * <p>触屏玩家（基岩端箱子界面回退时）与部分 Java 客户端可用拖拽把物品
@@ -200,7 +264,8 @@ public final class MenuClickListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
     public void onDrag(InventoryDragEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
-        if (holder instanceof MenuHolder || holder instanceof PlayerSelectorHolder) {
+        if (holder instanceof MenuHolder || holder instanceof PlayerSelectorHolder
+                || holder instanceof ItemSelectorHolder) {
             event.setCancelled(true);
         }
     }

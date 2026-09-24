@@ -176,6 +176,32 @@ public final class MenuManager {
     }
 
     /**
+     * 打开背包物品选择器（估价等选物界面）。
+     *
+     * <p>动态列出玩家背包中的物品，玩家点击某物品后执行传入的命令模板
+     * （{@code {item}} 会被替换为所点物品的材质名小写）。
+     * 两端分发规则与 {@link #openPlayerSelector} 一致。
+     *
+     * @param player          目标玩家
+     * @param commandTemplate 命令模板，如 {@code worth {item}}
+     */
+    public void openItemSelector(Player player, String commandTemplate) {
+        boolean bedrockNative = plugin.getSettings().isBedrockUseNativeForm()
+                && isBedrockPlayer(player);
+
+        if (bedrockNative && formRenderer != null) {
+            boolean sent = formRenderer.renderItemSelector(player, commandTemplate);
+            if (sent) {
+                return;
+            }
+            plugin.getLogger().warning("向 " + player.getName()
+                    + " 发送物品选择器表单失败，回退到箱子界面");
+        }
+
+        chestRenderer.renderItemSelector(player, commandTemplate);
+    }
+
+    /**
      * 关闭所有玩家打开中的菜单界面（服务器关闭时调用）。
      */
     public void closeAll() {

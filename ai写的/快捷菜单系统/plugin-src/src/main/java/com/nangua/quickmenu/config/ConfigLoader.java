@@ -67,6 +67,10 @@ public final class ConfigLoader {
         settings.setPlayerSelectorContent(config.getString("player-selector.content", "请选择要传送的玩家"));
         settings.setPlayerSelectorLore(config.getString("player-selector.lore", "&7点击向 TA 发送传送请求"));
         settings.setPlayerSelectorNoPlayers(config.getString("player-selector.no-players", "&c当前没有其他在线玩家"));
+
+        settings.setItemSelectorTitle(config.getString("item-selector.title", "&6&l选择物品"));
+        settings.setItemSelectorLore(config.getString("item-selector.lore", "&7点击后对所选物品执行操作"));
+        settings.setItemSelectorNoItems(config.getString("item-selector.no-items", "&c背包里没有可选择的物品"));
     }
 
     /** 从主 config.yml 的 menus 节点加载 */
@@ -202,6 +206,11 @@ public final class ConfigLoader {
      *   选择器动作（任何客户端都执行）：
      *     "[player-selector] tpa {target}"   打开在线玩家选择器，
      *                                         点击玩家后执行 /tpa 玩家名
+     *     "[item-selector] worth {item}"     打开背包物品选择器，
+     *                                         点击物品后执行 /worth 材质名
+     *     "[ah-sell] 5000 elytra"            拍卖行上架：自动把背包里的
+     *                                         该材质物品换到主手执行
+     *                                         /ah sell 5000，再还原主手
      *
      *   平台条件动作（仅对应客户端执行）：
      *     "[bedrock-player] warpgui"   仅基岩玩家执行
@@ -236,6 +245,12 @@ public final class ConfigLoader {
             if (lower.startsWith("[player-selector]")) {
                 actions.add(new Action(ActionType.PLAYER_SELECTOR,
                         strip(trimmed, "[player-selector]")));
+            } else if (lower.startsWith("[item-selector]")) {
+                actions.add(new Action(ActionType.ITEM_SELECTOR,
+                        strip(trimmed, "[item-selector]")));
+            } else if (lower.startsWith("[ah-sell]")) {
+                actions.add(new Action(ActionType.AH_SELL,
+                        strip(trimmed, "[ah-sell]")));
             } else if (lower.startsWith("[bedrock-player]")) {
                 actions.add(new Action(ActionType.BEDROCK_PLAYER_COMMAND,
                         strip(trimmed, "[bedrock-player]")));

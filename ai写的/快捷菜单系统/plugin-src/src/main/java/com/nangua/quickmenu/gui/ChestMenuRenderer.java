@@ -45,6 +45,9 @@ public final class ChestMenuRenderer {
     /** 玩家选择器：存储点击后要执行的命令模板（含 {target}） */
     private final NamespacedKey selectorTemplateKey;
 
+    /** 物品选择器：存储所选物品的材质名（小写，供命令模板 {item} 替换） */
+    private final NamespacedKey selectorItemMaterialKey;
+
     private final QuickMenuPlugin plugin;
 
     public ChestMenuRenderer(QuickMenuPlugin plugin) {
@@ -55,6 +58,7 @@ public final class ChestMenuRenderer {
         this.selectorTargetKey = new NamespacedKey(plugin, "selector_target");
         this.selectorNameKey = new NamespacedKey(plugin, "selector_name");
         this.selectorTemplateKey = new NamespacedKey(plugin, "selector_template");
+        this.selectorItemMaterialKey = new NamespacedKey(plugin, "selector_item_material");
     }
 
     public NamespacedKey getTriggerKey() {
@@ -79,6 +83,10 @@ public final class ChestMenuRenderer {
 
     public NamespacedKey getSelectorTemplateKey() {
         return selectorTemplateKey;
+    }
+
+    public NamespacedKey getSelectorItemMaterialKey() {
+        return selectorItemMaterialKey;
     }
 
     /**
@@ -195,6 +203,101 @@ public final class ChestMenuRenderer {
         inventory.setItem(size - 1, buildSelectorCloseButton());
 
         player.openInventory(inventory);
+    }
+
+    /**
+     * 构建并打开"背包物品选择器"箱子界面。
+     *
+     * <p>动态列出玩家背包中的物品（跳过触发物品，同材质合并显示数量），
+     * 点击后执行 {@code commandTemplate}（其中 {@code {item}} 替换为材质名小写）。
+     * 典型用途：估价（{@code worth {item}}），因为触发物品占着主手，
+     * 原本的 {@code /worth} 只会估价手持的时钟。
+     */
+    public void renderItemSelector(Player player, String commandTemplate) {
+        ItemSelectorHolder holder = new ItemSelectorHolder();
+        int size = 54;
+        Inventory inventory = Bukkit.createInventory(holder, size,
+                ActionExecutor.color(plugin.getSettings().getItemSelectorTitle()));
+        holder.setInventory(inventory);
+
+        // 背景填充
+        ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta fillerMeta = filler.getItemMeta();
+        if (fillerMeta != null) {
+            fillerMeta.setDisplayName(" ");
+            fillerMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+            filler.setItemMeta(fillerMeta);
+        }
+        for (int slot = 0; slot < size; slot++) {
+            inventory.setItem(slot, filler);
+        }
+
+        // 背包物品：跳过空位与触发物品，同材质合并数量，保持背包顺序稳定
+        java.util.LinkedHashMap<Material, Integer> counts = new java.util.LinkedHashMap<>();
+        for (ItemStack stack : player.getInventory().getContents()) {
+            if (stack == null || stack.getType() == Material.AIR) {
+                continue;
+            }
+            if (isTriggerItem(stack)) {
+                continue; // 触发物品（时钟）没有估价意义，排除
+            }
+            counts.merge(stack.getType(), stack.getAmount(), Integer::sum);
+        }
+
+        if (counts.isEmpty()) {
+            ItemStack empty = new ItemStack(Material.BARRIER);
+            ItemMeta emptyMeta = empty.getItemMeta();
+            if (emptyMeta != null) {
+                emptyMeta.setDisplayName(ActionExecutor.color(plugin.getSettings().getItemSelectorNoItems()));
+                List<String> emptyLore = new ArrayList<>();
+                emptyLore.add(ActionExecutor.color("&7背包里没有可选择的物品"));
+                emptyLore.add(ActionExecutor.color("&7（触发物品已排除）"));
+                emptyMeta.setLore(emptyLore);
+                empty.setItemMeta(emptyMeta);
+            }
+            inventory.setItem(22, empty);
+        } else {
+            int slot = 0;
+            // 留出右下角关闭按钮，最多展示 size-1 种
+            for (java.util.Map.Entry<Material, Integer> entry : counts.entrySet()) {
+                if (slot >= size - 1) {
+                    break;
+                }
+                inventory.setItem(slot++, buildSelectorItemStack(entry.getKey(), entry.getValue(), commandTemplate));
+            }
+        }
+
+        // 关闭按钮：固定在右下角
+        inventory.setItem(size - 1, buildSelectorCloseButton());
+
+        player.openInventory(inventory);
+    }
+
+    /** 构建可点击的背包物品（标记材质名与命令模板，点击后执行） */
+    private ItemStack buildSelectorItemStack(Material material, int count, String commandTemplate) {
+        ItemStack stack = new ItemStack(material, Math.min(count, 64));
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return stack;
+        }
+
+        // 优先显示自定义显示名（如服务器特色物品），否则显示材质名
+        String displayName = meta.hasDisplayName() ? meta.getDisplayName() : "&f" + material.name();
+        meta.setDisplayName(ActionExecutor.color(displayName));
+
+        List<String> lore = new ArrayList<>();
+        lore.add(ActionExecutor.color(plugin.getSettings().getItemSelectorLore()));
+        lore.add(ActionExecutor.color("&8背包中数量：&e" + count));
+        meta.setLore(lore);
+
+        meta.getPersistentDataContainer().set(itemKey, PersistentDataType.STRING, "__item_selector__");
+        meta.getPersistentDataContainer().set(selectorItemMaterialKey,
+                PersistentDataType.STRING, material.name().toLowerCase());
+        meta.getPersistentDataContainer().set(selectorTemplateKey, PersistentDataType.STRING, commandTemplate);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+
+        stack.setItemMeta(meta);
+        return stack;
     }
 
     /** 构建可点击的玩家头颅（带真实皮肤贴图与选择器标记） */

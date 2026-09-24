@@ -226,6 +226,86 @@ public final class BedrockFormRenderer {
     }
 
     /**
+     * 向基岩玩家发送"背包物品选择器"表单。
+     *
+     * <p>动态为玩家背包中的每种物品（跳过触发物品，同材质去重）添加一个按钮，
+     * 玩家点击后以玩家身份执行命令模板（{@code {item}} 替换为材质名小写）。
+     * 回调在 Netty 网络线程触发，因此命令执行通过主线程调度。
+     *
+     * @return true 表示发送成功；false 表示玩家不是基岩玩家或发送失败
+     */
+    public boolean renderItemSelector(Player player, String commandTemplate) {
+        if (!isBedrockPlayer(player)) {
+            return false;
+        }
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+                .title(ActionExecutor.color(plugin.getSettings().getItemSelectorTitle()))
+                .content(ActionExecutor.color("&7选择背包中的物品，点击后执行操作"));
+
+        // 背包物品：跳过空位与触发物品，同材质去重，保持背包顺序稳定
+        List<String> materials = new ArrayList<>();
+        java.util.LinkedHashMap<org.bukkit.Material, String> labels = new java.util.LinkedHashMap<>();
+        for (org.bukkit.inventory.ItemStack stack : player.getInventory().getContents()) {
+            if (stack == null || stack.getType() == org.bukkit.Material.AIR) {
+                continue;
+            }
+            if (plugin.getMenuManager().getChestRenderer().isTriggerItem(stack)) {
+                continue; // 触发物品（时钟）没有意义，排除
+            }
+            String matName = stack.getType().name().toLowerCase();
+            if (labels.containsKey(stack.getType())) {
+                continue; // 同材质只显示一次
+            }
+            materials.add(matName);
+            org.bukkit.inventory.meta.ItemMeta meta = stack.getItemMeta();
+            String display = (meta != null && meta.hasDisplayName())
+                    ? ActionExecutor.stripColor(meta.getDisplayName())
+                    : stack.getType().name();
+            labels.put(stack.getType(), display);
+            builder.button(display);
+        }
+
+        if (materials.isEmpty()) {
+            builder.button(ActionExecutor.stripColor(plugin.getSettings().getItemSelectorNoItems()));
+        }
+
+        builder.validResultHandler((SimpleFormResponse response) -> {
+            int index = response.clickedButtonId();
+            if (index < 0 || index >= materials.size()) {
+                return;
+            }
+            String item = materials.get(index);
+            // Netty 线程 → 主线程
+            Bukkit.getScheduler().runTask(plugin, () ->
+                    player.performCommand(commandTemplate.replace("{item}", item)));
+        });
+
+        builder.closedResultHandler(() -> {
+            if (plugin.getSettings().isDebug()) {
+                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了物品选择器表单");
+            }
+        });
+
+        builder.invalidResultHandler(() -> {
+            plugin.getLogger().warning("玩家 " + player.getName()
+                    + " 的物品选择器表单响应无效");
+        });
+
+        try {
+            FloodgateApi api = FloodgateApi.getInstance();
+            FloodgatePlayer floodgatePlayer = api.getPlayer(player.getUniqueId());
+            if (floodgatePlayer == null) {
+                return false;
+            }
+            return floodgatePlayer.sendForm(builder);
+        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
+            plugin.getLogger().warning("Floodgate API 不可用，无法发送物品选择器表单: " + ex.getMessage());
+            return false;
+        }
+    }
+
+    /**
      * 获取基岩玩家的客户端信息（用于 /qm info 调试）。
      *
      * <p>此处刻意只调用返回 String 的 API 方法。Floodgate 的

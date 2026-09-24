@@ -4,6 +4,7 @@ import com.nangua.quickmenu.QuickMenuPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import java.util.List;
@@ -99,6 +100,27 @@ public final class ActionExecutor {
                 }
                 break;
 
+            case ITEM_SELECTOR:
+                if (!value.isEmpty()) {
+                    // 打开背包物品选择器，点击物品后执行 value 中的命令模板
+                    plugin.getMenuManager().openItemSelector(player, value);
+                }
+                break;
+
+            case AH_SELL:
+                // 格式："价格 材质名"，如 "5000 elytra"
+                if (!value.isEmpty()) {
+                    String[] parts = value.trim().split("\\s+", 2);
+                    if (parts.length >= 2) {
+                        String price = parts[0];
+                        org.bukkit.Material material = org.bukkit.Material.matchMaterial(parts[1]);
+                        if (material != null) {
+                            sellItemFromInventory(player, price, material);
+                        }
+                    }
+                }
+                break;
+
             case MESSAGE:
                 if (!value.isEmpty()) {
                     player.sendMessage(value);
@@ -128,11 +150,87 @@ public final class ActionExecutor {
     }
 
     /**
+     * 拍卖行上架：从玩家背包（含快捷栏/盔甲槽/副手）查找指定材质物品，
+     * 临时换到主手执行 {@code /ah sell 价格}，随后还原主手。
+     *
+     * <p>背景：菜单触发物品（时钟）占着主手，玩家直接 {@code /ah sell}
+     * 会把时钟上架。此方法把目标物品换到主手执行完再换回，规避该问题。
+     * 若背包里没有该物品则提示；上架失败（如价格低于下限）时物品归还原位。
+     */
+    private void sellItemFromInventory(Player player, String price, org.bukkit.Material material) {
+        org.bukkit.inventory.PlayerInventory inv = player.getInventory();
+
+        // 定位目标物品：优先存储格，其次盔甲槽（鞘翅常穿在身上），最后副手
+        int foundStorage = -1;
+        int foundArmor = -1;
+        boolean foundOffhand = false;
+
+        ItemStack[] storage = inv.getStorageContents();
+        for (int i = 0; i < storage.length; i++) {
+            if (storage[i] != null && storage[i].getType() == material) {
+                foundStorage = i;
+                break;
+            }
+        }
+        if (foundStorage < 0) {
+            ItemStack[] armor = inv.getArmorContents();
+            for (int i = 0; i < armor.length; i++) {
+                if (armor[i] != null && armor[i].getType() == material) {
+                    foundArmor = i;
+                    break;
+                }
+            }
+            if (foundArmor < 0) {
+                ItemStack offhand = inv.getItemInOffHand();
+                if (offhand != null && offhand.getType() == material) {
+                    foundOffhand = true;
+                }
+            }
+        }
+        if (foundStorage < 0 && foundArmor < 0 && !foundOffhand) {
+            player.sendMessage(ActionExecutor.color("&c背包里没有 " + material.name() + "，无法上架。"));
+            return;
+        }
+
+        // 目标物品换到主手，原主手暂存到空出来的位置
+        ItemStack current = inv.getItemInMainHand();
+        if (foundStorage >= 0) {
+            inv.setItemInMainHand(storage[foundStorage]);
+            inv.setItem(foundStorage, current);
+        } else if (foundArmor >= 0) {
+            inv.setItemInMainHand(inv.getArmorContents()[foundArmor]);
+            ItemStack[] armor = inv.getArmorContents();
+            armor[foundArmor] = current;
+            inv.setArmorContents(armor);
+        } else {
+            inv.setItemInMainHand(inv.getItemInOffHand());
+            inv.setItemInOffHand(current);
+        }
+
+        // 执行上架命令（AuctionHouse 读取主手物品上架）
+        player.performCommand("ah sell " + price);
+
+        // 还原：上架成功后主手被扣走（AIR 或剩余）；失败则物品还在主手，归还原位
+        ItemStack after = inv.getItemInMainHand();
+        if (after != null && after.getType() == material) {
+            if (foundStorage >= 0) {
+                inv.setItem(foundStorage, after);
+            } else if (foundArmor >= 0) {
+                ItemStack[] armor = inv.getArmorContents();
+                armor[foundArmor] = after;
+                inv.setArmorContents(armor);
+            } else {
+                inv.setItemInOffHand(after);
+            }
+        }
+        inv.setItemInMainHand(current);
+    }
+
+    /**
      * 判断玩家是否有权使用某个菜单项。
      * 菜单项未配置 permission 时视为公开。
      */
-    public boolean hasItemPermission(Player player, MenuItem item) {
-        String permission = item.getPermission();
+    public boolean hasItemPermission(Player player, MenuItem item) {        String permission = item.getPermission();
         if (permission == null || permission.isEmpty()) {
             return true;
         }
