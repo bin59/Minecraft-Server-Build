@@ -7,7 +7,7 @@
 | 端口 | 协议 | 用途 | 绑定地址 | 公开 |
 |---|---|---|---|---|
 | **55551** | TCP | Java 版游戏主端口 | 0.0.0.0 | 是 |
-| **19132** | UDP | 基岩版游戏端口 (Geyser) | 0.0.0.0 | 是 |
+| **55551** | UDP | 基岩版游戏端口 (Geyser，`clone-remote-port: true` 跟随 Java 端口) | 0.0.0.0 | 是 |
 | **25555** | TCP (HTTP) | OPanel Web 管理面板 | 0.0.0.0 | 建议仅内网 |
 | **25576** | TCP | OPanel MCDR Socket | 127.0.0.1 | 否 |
 | **3001** | TCP (WS) | NapCat OneBot WebSocket 服务 | 127.0.0.1 | 否 |
@@ -34,7 +34,7 @@ NapCat (QQ 框架) ──(WS :3001)──→ EasyBot 主程序 ──(HTTP :5000
                                EasyBot 插件
                                      │
                                      ▼
-Yggdrasil 认证 (:32217) ←── authlib-injector (:14502) ←──→ Leaf 服务端 (:55551 TCP / :19132 UDP)
+Yggdrasil 认证 (:32217) ←── authlib-injector (:14502) ←──→ Leaf 服务端 (:55551 TCP / :55551 UDP)
                                                                │
                                                                ├─ Java 版玩家
                                                                ├─ 基岩版玩家 (via Geyser)
@@ -64,7 +64,7 @@ Yggdrasil 认证 (:32217) ←── authlib-injector (:14502) ←──→ Leaf 
 │  EasyBot 插件                         │
 │    config.yml: ws://<电脑A的IP>:26990 │
 │                                      │
-│  Leaf 服务端 :55551 / :19132         │
+│  Leaf 服务端 :55551 (TCP+UDP)        │
 │    ├─ Java 版玩家                    │
 │    ├─ 基岩版玩家 (via Geyser)         │
 │    └─ OPanel Web UI :25555           │

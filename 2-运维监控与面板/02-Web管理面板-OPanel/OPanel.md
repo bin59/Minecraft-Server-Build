@@ -11,8 +11,8 @@ OPanel 是一个全功能的 Minecraft 服务器 Web 管理面板，提供图形
 ## 关键配置 (`plugins/OPanel/config.yml`)
 
 ```yaml
-accessKey: 3cc0e6c15e7dbfec9554e1dab291cbc9     # API 访问密钥
-salt: dVKENO                                      # 加密盐值
+accessKey: <AccessKey>                         # API 访问密钥（真实值在服务器 config.yml，勿写入文档）
+salt: <Salt>                                      # 加密盐值（真实值在服务器 config.yml，勿写入文档）
 webServerPort: 25555                              # Web 面板端口
 mcdrSocketPort: 25576                             # MCDR Socket 端口（用于 MCDReforged 通信）
 cookieSecure: false                               # Cookie 不使用 HTTPS

@@ -18,7 +18,7 @@ EasyBot 是一个将 Minecraft 服务器与 QQ 群聊互通的插件。它需要
 ```yaml
 service:
   url: 'ws://127.0.0.1:26990/bridge' # WebSocket 连接到本地 EasyBot 主程序
-  token: 'G1qUrrQF0p01foojbF0sK8nKE7CYxdrn' # 鉴权 Token
+  token: '<Token>' # 鉴权 Token
   ignore_error: false # 连接失败时阻止玩家登录
 
 command:
@@ -57,7 +57,7 @@ EasyBot 系统由三层组成，通过 WebSocket 串联：**NapCat（QQ 框架�
 NapCat (QQ框架)
   │  启动后开启 OneBot WebSocket 服务端
   │  监听: ws://127.0.0.1:3001/
-  │  AccessToken: EBPeG30Pm6ig992M
+  │  AccessToken: <AccessToken>
   │
   ▼  (EasyBot 主程序主动连接 NapCat)
   │
@@ -70,7 +70,7 @@ EasyBot 主程序 (C:\mc_serve\EasyBot\EasyBot.exe)
   │
 EasyBot 插件 (plugins/EasyBot-2.3.1.jar)
   │  连接主程序: config.yml → ws://127.0.0.1:26990/bridge
-  │  Token: G1qUrrQF0p01foojbF0sK8nKE7CYxdrn
+  │  Token: <Token>
   │
   ▼
 Minecraft 服务端 (Leaf)
@@ -83,7 +83,7 @@ Minecraft 服务端 (Leaf)
 ```json
 {
   "WsUrl": "ws://127.0.0.1:3001/",
-  "AccessToken": "EBPeG30Pm6ig992M",
+  "AccessToken": "<AccessToken>",
   "HeartBeatInterval": 30000,
   "UseHeartBeat": true
 }
@@ -92,7 +92,7 @@ Minecraft 服务端 (Leaf)
 | 配置项              | 值                     | 说明                             |
 | ------------------- | ---------------------- | -------------------------------- |
 | `WsUrl`             | `ws://127.0.0.1:3001/` | NapCat 的 OneBot WebSocket 地址  |
-| `AccessToken`       | `EBPeG30Pm6ig992M`     | 鉴权令牌（需与 NapCat 配置一致） |
+| `AccessToken`       | `<AccessToken>`     | 鉴权令牌（需与 NapCat 配置一致） |
 | `HeartBeatInterval` | `30000`                | 心跳间隔（毫秒）                 |
 | `UseHeartBeat`      | `true`                 | 启用心跳保活                     |
 
@@ -130,7 +130,7 @@ Minecraft 服务端 (Leaf)
 **鉴权 Token 文件**: `C:\mc_serve\EasyBot\token.txt`
 
 ```
-G1qUrrQF0p01foojbF0sK8nKE7CYxdrn
+<Token>
 ```
 
 此 Token 与 Minecraft 插件端 `config.yml` 中的 `service.token` 必须一致。
@@ -196,7 +196,7 @@ G1qUrrQF0p01foojbF0sK8nKE7CYxdrn
 service:
   # 将 127.0.0.1 改为电脑 A 的 IP 地址
   url: 'ws://<电脑A的IP>:26990/bridge'
-  token: 'G1qUrrQF0p01foojbF0sK8nKE7CYxdrn' # 不变
+  token: '<Token>' # 不变
   ignore_error: false
 ```
 
@@ -256,6 +256,6 @@ service:
 
 ## 关闭EasyBot QQ验证码绑定
 
-- `EasyBot\dp\bind_config.json`: `bind_required_servers":["G1qUrrQF0p01foojbF0sK8nKE7CYxdrn"]` 清空为 `[]`（不再强制此服务器绑定）
+- `EasyBot\dp\bind_config.json`: `bind_required_servers":["<Token>"]` 清空为 `[]`（不再强制此服务器绑定）
 - `plugins\EasyBot\config.yml`: `allow_bind` → `false`（插件端禁用绑定）
 - 重启 Minecraft 服务器 + EasyBot 主程序后生效

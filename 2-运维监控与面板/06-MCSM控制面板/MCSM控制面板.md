@@ -184,4 +184,4 @@ New-NetFirewallRule -DisplayName "MCSM Daemon" -Direction Inbound -Protocol TCP 
 - **绑定内网**：如果 Panel 和 Daemon 都在局域网内，Daemon 无需暴露到公网
 - **修改默认密钥**：首次安装务必修改 `global.json` 中的默认 key
 - **公网穿透**：如果电脑 B 在外网需要管理电脑 A，建议用 VPN（Tailscale/ZeroTier）组虚拟局域网，或 Nginx 反向代理 + SSL，**不要直接暴露 24444 到公网**
-- **Windows 防火墙**：只放行必要端口（24444），游戏端口（55551/19132）如果不需要远程玩家连接可以不放行
+- **Windows 防火墙**：只放行必要端口（24444），游戏端口（55551/TCP、55551/UDP）如果不需要远程玩家连接可以不放行

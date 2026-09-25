@@ -1,0 +1,20 @@
+name: AdvZone
+main: com.hh.advzone.AdvZone
+version: 1.1.0
+api-version: '1.21'
+description: 不规则多边形区域强制冒险模式，离开自动恢复，管理员豁免；支持箭选点在线改坐标
+
+commands:
+  advzone:
+    description: AdvZone 管理命令
+    usage: /az <wand|add|undo|clear|points|create|edit|delete|list|info|reload|check>
+    aliases: [az]
+    permission: advzone.admin
+
+permissions:
+  advzone.bypass:
+    description: 豁免强制冒险模式（进区不改模式）
+    default: op
+  advzone.admin:
+    description: 使用 /az 管理命令（含箭选点建区）
+    default: op
