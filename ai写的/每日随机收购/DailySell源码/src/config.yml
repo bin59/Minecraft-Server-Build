@@ -1,0 +1,76 @@
+# DailySell 每日随机收购配置
+# 每天零点从 pool 随机抽 items-per-day 种物品，作为"今日收购清单"：
+#   - 每种当天额度随机 [min-per-item, max-per-item] 个（每人当天最多卖这么多个）
+#   - 每种单价 = 基础价 × 当日随机浮动系数（price-float-min ~ price-float-max），取整
+#   - 生成时保证 4 种合计（单价×额度）不超过 daily-budget（默认 800），超了自动缩减额度
+# 玩家 /ds sell（卖1个）/ /ds sellall（卖满额度）获得南瓜币；每人每天每种额度上限 + 总收益上限 = 防刷。
+# 重载: /ds reload（不重抽）| /ds reroll（重新生成今日清单）
+
+# 每天随机几种
+items-per-day: 4
+
+# 每种每日额度随机范围（个）
+min-per-item: 10
+max-per-item: 100
+
+# 当日单价浮动系数（基础价 × [min, max]）
+price-float-min: 0.6
+price-float-max: 1.4
+
+# 每人每日收购总收益上限（南瓜币，防刷 Faucet 封顶）
+daily-budget: 800
+
+# 生成/跨天时是否全服广播今日清单
+broadcast: true
+
+# 物品池：Material 名（不区分大小写）: 基础收购价（南瓜币）
+# 当日实价 = 基础价 × 随机浮动系数，管理员可按服务器经济状况调价
+pool:
+  WHEAT: 2
+  POTATO: 2
+  CARROT: 2
+  SWEET_BERRIES: 3
+  MELON_SLICE: 1
+  PUMPKIN: 2
+  SUGAR_CANE: 1
+  COCOA_BEANS: 2
+  BREAD: 3
+  APPLE: 2
+  COAL: 3
+  RAW_IRON: 5
+  RAW_GOLD: 8
+  IRON_INGOT: 5
+  GOLD_INGOT: 8
+  COPPER_INGOT: 2
+  LAPIS_LAZULI: 3
+  REDSTONE: 3
+  DIAMOND: 20
+  EMERALD: 15
+  OAK_LOG: 2
+  BIRCH_LOG: 2
+  SPRUCE_LOG: 2
+  JUNGLE_LOG: 2
+  STONE: 1
+  COBBLESTONE: 1
+  DEEPSLATE: 1
+  STRING: 2
+  BONE: 2
+  GUNPOWDER: 4
+  ROTTEN_FLESH: 1
+  SPIDER_EYE: 3
+  SLIME_BALL: 5
+  BLAZE_ROD: 10
+  ENDER_PEARL: 8
+  NETHER_WART: 3
+  PRISMARINE_SHARD: 4
+  FEATHER: 2
+  LEATHER: 3
+  EGG: 2
+  INK_SAC: 2
+  GLOW_INK_SAC: 3
+  NETHER_QUARTZ: 3
+  AMETHYST_SHARD: 2
+  BONE_MEAL: 1
+  HONEYCOMB: 3
+  GLOWSTONE_DUST: 3
+  OBSIDIAN: 5

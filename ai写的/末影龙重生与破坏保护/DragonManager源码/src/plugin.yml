@@ -1,0 +1,14 @@
+name: DragonManager
+version: 1.0.0
+main: com.hh.dragon.DragonManager
+api-version: 1.20
+description: 末影龙重生管理 - 重生不刷新黑曜石柱，禁止传送门四角水晶触发原版重生
+commands:
+  dragon:
+    description: 末影龙重生（不刷新黑曜石柱）
+    usage: /dragon respawn [世界名]
+    permission: dragon.admin
+permissions:
+  dragon.admin:
+    description: 允许使用 /dragon 命令
+    default: op

@@ -14,11 +14,11 @@ Groups:
       # 一个领地可拥有的最大物理区域数量
       MaxAreasPerResidence: 2
       # 领地东西方向（X 轴）的最大方块数
-      MaxEastWest: 200
+      MaxEastWest: 999999 # 999999≈无限（2026-09-25：已按格收费，不再限面积；注意 -1 会被当成字面限制值）
       # （可选）领地东西方向（X 轴）的最小方块数
       MinEastWest: 3
       # 领地南北方向（Z 轴）的最大方块数
-      MaxNorthSouth: 200
+      MaxNorthSouth: 999999 # 999999≈无限（2026-09-25：已按格收费，不再限面积；注意 -1 会被当成字面限制值）
       # （可选）领地南北方向（Z 轴）的最小方块数
       MinNorthSouth: 3
       # 领地高低方向（Y 轴）的最大方块数
@@ -36,11 +36,11 @@ Groups:
       # 设为 0 以禁用子区域
       SubzoneDepth: 3
       # （可选）领地子区域东西方向（X 轴）的最大方块数
-      SubzoneMaxEastWest: 100
+      SubzoneMaxEastWest: 16
       # （可选）领地子区域东西方向（X 轴）的最小方块数
       SubzoneMinEastWest: 3
       # （可选）领地子区域南北方向（Z 轴）的最大方块数
-      SubzoneMaxNorthSouth: 100
+      SubzoneMaxNorthSouth: 16
       # （可选）领地子区域南北方向（Z 轴）的最小方块数
       SubzoneMinNorthSouth: 3
       # （可选）领地子区域高低方向（Y 轴）的最大方块数
@@ -83,9 +83,9 @@ Groups:
     # 关于租用（Rent）系统的选项
     Rent:
       # 决定该分组玩家可同时租用多少个领地
-      MaxRents: 3
+      MaxRents: 1
       # 决定该分组玩家可同时设置多少个领地进行出租
-      MaxRentables: 3
+      MaxRentables: 1
       # 决定玩家一次可租用领地的最大天数
       MaxRentDays: 31
     # 关于领地经济系统的选项
@@ -96,8 +96,8 @@ Groups:
       CanSell: false
       # 购买领地时是否忽略领地的面积/数量限制
       IgnoreLimits: false
-      # 创建新领地或向其添加区域时每方块的价格
-      BuyCost: 0
+      # 创建新领地或向其添加区域时每方块的价格（手册：领地 Sink，10 南瓜币/格；测试服先用 1 南瓜币/格，256 格≈256 南瓜币）
+      BuyCost: 3.0
       # 移除领地时每方块玩家可收回的价格
       # 注意：此功能需要在配置文件中启用 ResMoneyBack 才能生效
       SellCost: 0

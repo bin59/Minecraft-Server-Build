@@ -177,6 +177,14 @@ effects-broadcast:
 **Q：和另一款同名插件（GitHub sb2bg 版）有什么区别？**
 A：本仓库文档对应的是 **Modrinth 上 SicklySurgeon 的 CustomDeathMessages**（1.x 统一 `/cdm` 命令 + 广播系统）。GitHub 上另有同名 fork，使用 `/cdm set flag/message/number`、`cdm.modify` 权限、`config.yml` 内 `*-messages` 段落与 Discord 转发，命令与配置结构不同。若你实际装的是后者，请告知我替换本文档。
 
+**Q：日志刷 `[CustomDeathMessages] 未找到该世界/组/原因对应的消息。已使用默认值。` 怎么办？**
+A：这是 **WARN 不是报错** —— 三层键（世界 / 组 / 死因）都没命中，插件用了兜底文案 `<玩家> has died.`。按此顺序排查：
+1. 确认死因：让死者复现一次，查日志里实际 cause（`FALL` / `ENTITY_ATTACK` / `CREEPER` / `UNKNOWN`…），再到 `messages.yml` 找同名分段。
+2. **最可能是第 3 层**：`unknown-messages` 被清空，或该死因单独分组为空。补一条文案即可。
+3. 第 2 层「组」：`use-permission-based-messages: true` 时组名走**权限组**（vip / admin / 默认组），玩家所在组没配就会漏；关闭该开关则走语义分组（pvp / mob / environment / unknown）。
+4. 第 1 层「世界」：世界名必须逐字符一致（`world` / `world_nether` / `world_the_end`），自定义世界要单独建段。
+5. 改完 `/cdm reload`；仍不生效就 `/cdm config validate`，再考虑完整重启。
+
 **Q：基岩版（手机/Win10）玩家能看到彩色死亡消息吗？**
 A：能。Geyser 会把带颜色的聊天消息同步给基岩客户端；`&#RRGGBB` 等格式在基岩端按客户端支持渲染。
 

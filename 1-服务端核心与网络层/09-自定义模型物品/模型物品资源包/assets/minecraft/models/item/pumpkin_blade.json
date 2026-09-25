@@ -1,0 +1,13 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "minecraft:item/pumpkin_blade",
+    "layer3": "minecraft:item/pumpkin_blade"
+  },
+  "display": {
+    "thirdperson_righthand": { "rotation": [ 0, 45, -45 ], "scale": [ 0.4, 0.4, 0.4 ] },
+    "firstperson_righthand": { "rotation": [ 0, -90, 0 ], "translation": [ 0, 1, -4 ], "scale": [ 1.6, 1.6, 1.6 ] },
+    "ground":                { "rotation": [ 0, 0, 0 ],   "translation": [ 0, 3, 0 ], "scale": [ 0.6, 0.6, 0.6 ] },
+    "gui":                   { "rotation": [ 0, 0, 0 ],   "scale": [ 1, 1, 1 ] }
+  }
+}

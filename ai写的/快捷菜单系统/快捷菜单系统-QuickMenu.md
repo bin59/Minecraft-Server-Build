@@ -461,19 +461,20 @@ actions:
 >   **限制**：/worth 按基础材质估价，带自定义 NBT 的物品（附魔/自定义物品）仍只能估其基础材质价。
 
 > **2026-09-22 中文化收尾（第 2 批）**：
+>
 > 1. Chunky：config language: en → zh_CN（jar 内置 zh_CN.json）。
-> 2. PosTracker：新建 localization/messages_zh.yml 全量中文 + config language: zh（代码按 localization/messages_{lang}.yml 加载，无语言白名单；/pos 轨迹查询变中文）。
+> 2. PosTracker：新建 localization/messages*zh.yml 全量中文 + config language: zh（代码按 localization/messages*{lang}.yml 加载，无语言白名单；/pos 轨迹查询变中文）。
 > 3. Quests：config.yml 内 titles/messages 节点 58 条消息全量中文化（任务开始/完成/冷却/管理员命令反馈等；locale 节点是数字格式，未动）。
 > 4. TAB：messages.yml 74 行全量中文（/tab 管理命令反馈）。
 > 5. EzTax：messages.yml 38 行全量中文（税单/免税命令反馈）。
 > 6. CustomDeathMessages：messages.yml 剩余英文消息全量中文（epic 特效/广播/系统/帮助/默认组死亡消息；中文搞笑模板保留）。
 > 7. DecentHolograms：lang.yml 155 行全量中文（/dh 管理命令反馈）。
 > 8. RideOnHead 本已 default: zh + auto-detect（无需改）；Plan 为管理员 Web 面板（jar 仅内置 zh_TW 繁体，保持 Locale: default 跟随系统，玩家不可见）。
-> 说明：全部保留占位符（{quest}、%player% 等）与颜色码；改后重启验证通过（各插件正常启用，无 YAML 解析错误）。
-> **2026-09-22 新增：一键上架鞘翅（[ah-sell] 动作）**：
-> 玩家开菜单时主手是触发物品（时钟），直接 /ah sell 会把时钟上架。新增 `[ah-sell] 价格 材质名` 动作：
-> 插件自动在玩家背包（含快捷栏/盔甲槽/副手）找到该材质物品，临时换到主手执行 /ah sell 价格，再还原主手；
-> 上架失败（如价格低于下限）物品归还原位，背包里没有该物品时给出提示。
+>    说明：全部保留占位符（{quest}、%player% 等）与颜色码；改后重启验证通过（各插件正常启用，无 YAML 解析错误）。
+>    **2026-09-22 新增：一键上架鞘翅（[ah-sell] 动作）**：
+>    玩家开菜单时主手是触发物品（时钟），直接 /ah sell 会把时钟上架。新增 `[ah-sell] 价格 材质名` 动作：
+>    插件自动在玩家背包（含快捷栏/盔甲槽/副手）找到该材质物品，临时换到主手执行 /ah sell 价格，再还原主手；
+>    上架失败（如价格低于下限）物品归还原位，背包里没有该物品时给出提示。
 >
 > - 经济中心新增`上架鞘翅`按钮（slot 19，ELYTRA 图标）→ `[ah-sell] 5000 elytra`（默认价 5000 南瓜币，改菜单配置即可调价）
 > - **已取消（2026-09-22）**：经济中心`上架鞘翅`按钮已从服务器 config 与源码模板移除（qm reload 生效，22 菜单正常）。`[ah-sell]` 动作代码保留在 jar 中（未配置引用即不触发），如需恢复只需在菜单配置加回该按钮。
@@ -749,7 +750,7 @@ lp group default permission set essentials.ignore true
 lp group default permission set essentials.nick true
 lp group default permission set essentials.whois true
 
-# ---- Residence：领地 ----
+# ---- Residence：领地 ----ok
 lp group default permission set residence.create true
 lp group default permission set residence.delete true
 lp group default permission set residence.rename true
