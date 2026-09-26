@@ -1,6 +1,6 @@
 # DeluxeMenus 高级 GUI 菜单
 
-本文介绍 DeluxeMenus 这款用 YAML 定义高级 GUI 菜单的插件，支持命令打开、点击执行、物品条件、PlaceholderAPI 占位符、分页与动态物品，适合做帮助菜单、商店、活动菜单等复杂交互。文档先讲它与自研 QuickMenu 的分工和运行服现状，再列目录结构、常用命令权限、菜单文件骨架和动作/条件写法。
+本文介绍 DeluxeMenus 这款用 YAML 定义高级 GUI 菜单的插件，支持命令打开、点击执行、物品条件、PlaceholderAPI 占位符、分页与动态物品，适合做帮助菜单、商店、活动菜单等复杂交互。
 
 > **插件**：DeluxeMenus | **版本**：1.14.1-Release | **状态**：✅ 已安装（测试服）
 > **作者**：extended_clip | **官网**：<https://www.spigotmc.org/resources/deluxemenus.11734/> | **Wiki**：<https://wiki.helpch.at/helpchat-plugins/deluxemenus>
@@ -26,11 +26,11 @@ DeluxeMenus 是一个**高度可定制的高级 GUI 菜单插件**：用 YAML �
 
 | 菜单文件              | open_command          | 说明                       |
 | --------------------- | --------------------- | -------------------------- |
-| `advanced_menu.yml`   | `/advancedmenu`（另有别名 `/advancedexamplemenu`、`/themostadvancedmenuintheworld`） | 高级配置示例（27 格，gui_menus/advanced_menu.yml 第4-7行） |
-| `basics_menu.yml`     | `/basicsmenu`         | 基础配置教程示例（第17行；注意是 `basicsmenu` 非 `basicmenu`） |
-| `requirements_menu.yml` | `/requirementsmenu` | 条件（requirements）教程示例（第14行） |
+| `advanced_menu.yml`   | `/advancedmenu`（另有别名 `/advancedexamplemenu`、`/themostadvancedmenuintheworld`） | 高级配置示例（27 格） |
+| `basics_menu.yml`     | `/basicsmenu`         | 基础配置教程示例（注意是 `basicsmenu` 非 `basicmenu`） |
+| `requirements_menu.yml` | `/requirementsmenu` | 条件（requirements）教程示例 |
 
-> ✅ **运行服校准（2026-09-16）**：`config.yml` 第11-17行 `gui_menus:` 注册了上述 3 个菜单文件，与目录一致；主配置 `check_updates: true`（第6行）、`debug: LOW`（第7行）。示例菜单面向新手学习，正式使用前建议删除或改造成自己的菜单。
+> `config.yml` 的 `gui_menus:` 段注册了上述 3 个菜单文件，与目录一致；主配置 `check_updates: true`、`debug: LOW`。示例菜单面向新手学习，正式使用前建议删除或改造成自己的菜单。
 
 ## 三、目录结构
 
@@ -103,14 +103,14 @@ items:
 **requirements（条件）**：可限制「整个菜单」或「单个物品」仅在满足条件时可用，例如权限、余额、世界、手持物品等：
 
 ```yaml
-  vip_only_item:
+  admin_only_item:
     material: DIAMOND_BLOCK
     slot: 22
     view_requirement:
       requirements:
-        is_vip:
+        is_admin:
           type: has permission
-          permission: vip.use
+          permission: deluxemenus.admin
 ```
 
 ## 六、参考

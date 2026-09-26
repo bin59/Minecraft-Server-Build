@@ -51,14 +51,14 @@
 
 ### 2.1 下载 Velocity
 
-从 PaperMC 官方下载页获取稳定版（当前主流 **3.3.x / 3.4.x**，3.3.0 起默认端口 25565）：
+从 PaperMC 官方下载页获取稳定版（当前主流 **3.3.x / 3.4.x**，默认端口 25565）：
 
 - 官网：<https://papermc.io/downloads/velocity>
 - API 直链（自动取最新构建）：`https://api.papermc.io/v2/projects/velocity/versions/<版本>/builds/latest/downloads`
 - 项目文档：<https://docs.papermc.io/velocity/>
 
 **务必下载 `velocity-x.y.z.jar`（代理端），不要下成其余构建产物。**
-Velocity 3.3 起要求 Java 17+，推荐 Java 21。
+Velocity 要求 Java 17+，推荐 Java 21。
 
 ### 2.2 目录规划（建议独立文件夹）
 
@@ -185,7 +185,7 @@ announce-proxy-commands = true
 基岩玩家  ──UDP 19132──► Geyser(代理) ─┴──────────────────► 同前
 ```
 
-原先是"玩家直连 Leaf:55551"，改造后玩家只连 Velocity，Leaf 变成不对外暴露的后端。
+改造前玩家直连 Leaf:55551，改造后玩家只连 Velocity，Leaf 变成不对外暴露的后端。
 
 ---
 
@@ -214,7 +214,7 @@ server-ip=127.0.0.1
 
 ### 5.2 开启 Velocity 支持（paper-global.yml）
 
-现有 Leaf 是 Paper 分支，配置在 `config/paper-global.yml`（旧版可能是 `paper.yml`）：
+现有 Leaf 是 Paper 分支，配置在 `config/paper-global.yml`：
 
 ```yaml
 proxies:

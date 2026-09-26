@@ -2,7 +2,7 @@
 
 本文介绍 CustomDeathMessages（简称 CDM），它把原版单调的死亡提示替换成可自定义、可随机抽取的彩色整活播报，并支持史诗死亡特效、分范围广播和 Vault 收费。文档按安装、config.yml 与 messages.yml、占位符、/cdm 命令、权限和实战示例展开，是 Paper 服调节聊天氛围的实用参考。
 
-**当前版本**: CustomDeathMessages 1.3（稳定版） | **MC 要求**: Java 1.18 – 26.1.x（含 1.21.11）
+**MC 要求**: Java 1.18 – 26.1.x（含 1.21.11）
 
 **作者/发布**: SicklySurgeon | **协议**: MIT（开源免费）
 
@@ -31,8 +31,8 @@ CustomDeathMessages（简称 CDM）把原版干巴巴的 "x 死了" 替换成可
 
 1. 确认服务端为 **Paper / Purpur / Spigot**（运行 `/version` 查看）。
 2. 从 Modrinth 下载与 MC 版本匹配的 jar：
-   - 1.21.x 服务器首选 **1.3**（最新稳定，支持 1.18–26.1.x）；
-   - 1.2 同样覆盖 1.21.x 并额外列出 26.1.x，若 1.3 有兼容问题可回退。
+   - 从 Modrinth 下载与 MC 版本匹配的最新稳定版 jar；
+
 3. 将 jar 放入 `plugins/` 并**完整重启**服务端（不要用 `/reload`，见文末排错）。
 4. 首次启动生成 `plugins/CustomDeathMessages/` 下的 `config.yml` 与 `messages.yml`。
 5. 可选：安装 **Vault** + 一个经济插件（如 EssentialsX 经济）启用收费；安装 **PlaceholderAPI** 启用外部占位符。
@@ -42,10 +42,10 @@ CustomDeathMessages（简称 CDM）把原版干巴巴的 "x 死了" 替换成可
 ```
 plugins/CustomDeathMessages/
 ├── config.yml        # 全局开关与参数（史诗概率、收费、广播模式、更新检查等）
-└── messages.yml      # 各死亡原因的消息模板列表（1.1 版结构，含 broadcast-system 段）
+└── messages.yml      # 各死亡原因的消息模板列表（含 broadcast-system 段）
 ```
 
-> 早期 0.0.x 版本用 `/cdmreload`、`/cdmconfig` 等独立命令，且 messages.yml 为西语结构；**1.x 已统一为 `/cdm` 单命令体系**并英文化。老版本升级到 1.x 无需改配置即可兼容，但想用新消息结构可删掉 messages.yml 让其重新生成。
+
 
 ## 核心配置 (`config.yml`)
 
@@ -53,40 +53,32 @@ plugins/CustomDeathMessages/
 
 ```yaml
 # 史诗死亡触发概率（0.0 ~ 1.0），如 0.05 = 5% 概率
-# 实际值：epic-death-chance: 0.05（config.yml 第116行）
 epic-death-chance: 0.05
 # 展示死亡消息向玩家收取的费用（需 Vault + 经济插件，0 为免费）
-# 实际值：cost-per-death-message: 0.0（第123行，未启用收费）
 cost-per-death-message: 0
-# 免收费用的权限组（LuckPerms 组名），如 admin / vip
-# 实际值：exempt-groups-from-cost: ["admin"]（第125-126行）
+# 免收费用的权限组（LuckPerms 组名）
 exempt-groups-from-cost:
   - "admin"
-# 旧版颜色兼容：true 时自动剥离现代十六进制颜色码，避免低版本显示为纯文本
-# 实际值：legacy-color-support: false（第161行）
+# 低版本颜色兼容：true 时自动剥离现代十六进制颜色码，避免低版本显示为纯文本
 legacy-color-support: false
-# 启动检查更新
-# 注意：运行服 1.3 的 config.yml 中【没有 update-checker 键】（已核对全文），
-#       更新通知由 cdm.admin 权限控制，无需在此配置。
-# update-checker: true
+# 更新通知由 cdm.admin 权限控制，config.yml 中无 update-checker 键
 # 广播相关：各效果（消息/音效/粒子/标题/暗屏）的可见范围
 # 取值：GLOBAL / WORLD / RADIUS / VICTIM_ONLY
-# ⚠️ 以下为运行服实际值（第79-98行），与旧文档示例不同：
 effects-broadcast:
-  default-mode: "WORLD"          # 第81行（旧文档示例误写 GLOBAL）
+  default-mode: "WORLD"
   default-radius: 50
-  sound-mode: "WORLD"            # 第85行
+  sound-mode: "WORLD"
   sound-radius: 50
-  particle-mode: "WORLD"         # 第88行
+  particle-mode: "WORLD"
   particle-radius: 50
-  title-mode: "VICTIM_ONLY"      # 第91行（旧文档示例误写 WORLD）
+  title-mode: "VICTIM_ONLY"
   title-radius: 0
-  actionbar-mode: "VICTIM_ONLY"  # 第94行
-  darken-effect-mode: "RADIUS"   # 第97行
+  actionbar-mode: "VICTIM_ONLY"
+  darken-effect-mode: "RADIUS"
   darken-effect-radius: 30
 ```
 
-> ✅ **运行服校准（2026-09-16，`plugins\CustomDeathMessages\config.yml` 实测）**：`epic-death-chance:0.05`、`cost-per-death-message:0.0`、`exempt-groups-from-cost:["admin"]`、`legacy-color-support:false` 均与文档一致；广播模式以上述实际值为准。实际文件另有 `play-sound-on-death`（音效 `entity.player.death`）、`play-particles-on-death`（粒子 EXPLOSION）、`respawn-message-enabled:true`、`use-permission-based-messages:true`、`help-permissions` 等键，文档仅列常用项。
+> 实际文件另有 `play-sound-on-death`（音效 `entity.player.death`）、`play-particles-on-death`（粒子 EXPLOSION）、`respawn-message-enabled:true`、`use-permission-based-messages:true`、`help-permissions` 等键，文档仅列常用项。
 
 > `messages.yml` 按死亡原因分组存放消息列表（如 `global-pvp-death-messages`、`melee-death-messages`、`arrow-messages`、`fireball-messages`、`fall-damage-messages`、`creeper-messages`、`warden-sonic-boom-messages`、`unknown-messages` 等），并含 `broadcast-system` 段。该文件首次生成后可直接编辑，或用 `/cdm editor` 在游戏内改。
 
@@ -111,7 +103,7 @@ effects-broadcast:
 
 安装 **PlaceholderAPI** 后还可使用任意外部占位符（如 `%player_displayname%`）。
 
-## 常用命令（统一 `/cdm` 体系，1.x）
+## 常用命令（统一 `/cdm` 体系）
 
 | 命令 | 权限 | 作用 |
 | --- | --- | --- |
@@ -127,7 +119,7 @@ effects-broadcast:
 | `/cdm broadcast message [模式] [文本]` | `cdm.broadcast` | 手动广播一条消息（如 `all "南瓜被苦力怕炸飞了！"`） |
 | `/cdm broadcast global` | `cdm.broadcast` | 立即向所有玩家发送一次效果 |
 
-> 旧版独立命令（`/cdmreload`、`/cdmconfig`、`/cdmhelp` 等）在 1.x 已废弃，统一走 `/cdm` 子命令；**别名**仍可用：`/customdeathmessages`、`/customdeathmessage`、`/deathmessage`、`/deathmessages`。
+> **别名**仍可用：`/customdeathmessages`、`/customdeathmessage`、`/deathmessage`、`/deathmessages`。
 
 ## 权限
 
@@ -139,7 +131,6 @@ effects-broadcast:
 | `cdm.editor` | OP | 游戏内配置编辑器 |
 | `cdm.broadcast` | OP | 广播测试套件 |
 | `cdm.bypass` | false | 拥有者**不触发**死亡消息（适合管理/staff 隐身） |
-| `cdm.message.vip` | false | 将玩家归入 "vip" 消息组（可配置专属文案） |
 | `cdm.message.admin` | false | 将玩家归入 "admin" 消息组 |
 | `cdm.admin` | OP | 接收更新检查通知 |
 
@@ -161,7 +152,7 @@ effects-broadcast:
 
 **3. 史诗死亡演出**：把 `config.yml` 的 `epic-death-chance` 设为 `0.05`，触发时玩家会看到专属 Title + 闪电 + 粒子。
 
-**4. 经济收费**：装好 Vault + 经济后，设 `cost-per-death-message: 5`，并把 `exempt-groups-from-cost` 加 `"vip"`，普通玩家每次死亡展示扣 5 金币，VIP 免单。
+**4. 经济收费**：装好 Vault + 经济后，设 `cost-per-death-message: 5`，`exempt-groups-from-cost` 已含 `"admin"`，普通玩家每次死亡展示扣 5 金币，管理组免单。
 
 ## 性能与排错
 
@@ -169,30 +160,30 @@ effects-broadcast:
 - **群死不卡服**：广播消息的发送已在后台异步处理，大规模死亡事件不会阻塞主线程。
 - **配置缓存**：消息与配置有缓存，频繁文件读取被大幅削减；改完执行 `/cdm reload` 生效。
 - **低版本颜色**：若客户端/服务端低于 1.16 出现 `&#` 颜色显示为纯文本，开启 `legacy-color-support` 自动剥离。
-- **1.21.11 兼容**：1.3 明确支持 1.21.x（及 26.1.x），本服 1.21.11 可直接使用；若遇到边缘报错，先 `/cdm config validate` 排查配置，再考虑回退 1.2。
+- **1.21.11 兼容**：本服 1.21.11 可直接使用；若遇到边缘报错，先 `/cdm config validate` 排查配置。
 - **音效名**：插件已支持新版小写音效名（如 `entity.player.death`），无需旧式大写。
 
 ## 常见问题（FAQ）
 
 **Q：和另一款同名插件（GitHub sb2bg 版）有什么区别？**
-A：本仓库文档对应的是 **Modrinth 上 SicklySurgeon 的 CustomDeathMessages**（1.x 统一 `/cdm` 命令 + 广播系统）。GitHub 上另有同名 fork，使用 `/cdm set flag/message/number`、`cdm.modify` 权限、`config.yml` 内 `*-messages` 段落与 Discord 转发，命令与配置结构不同。若你实际装的是后者，请告知我替换本文档。
+A：本仓库文档对应的是 **Modrinth 上 SicklySurgeon 的 CustomDeathMessages**（统一 `/cdm` 命令 + 广播系统）。GitHub 上另有同名 fork，使用 `/cdm set flag/message/number`、`cdm.modify` 权限、`config.yml` 内 `*-messages` 段落与 Discord 转发，命令与配置结构不同。
 
 **Q：日志刷 `[CustomDeathMessages] 未找到该世界/组/原因对应的消息。已使用默认值。` 怎么办？**
 A：这是 **WARN 不是报错** —— 三层键（世界 / 组 / 死因）都没命中，插件用了兜底文案 `<玩家> has died.`。按此顺序排查：
 1. 确认死因：让死者复现一次，查日志里实际 cause（`FALL` / `ENTITY_ATTACK` / `CREEPER` / `UNKNOWN`…），再到 `messages.yml` 找同名分段。
 2. **最可能是第 3 层**：`unknown-messages` 被清空，或该死因单独分组为空。补一条文案即可。
-3. 第 2 层「组」：`use-permission-based-messages: true` 时组名走**权限组**（vip / admin / 默认组），玩家所在组没配就会漏；关闭该开关则走语义分组（pvp / mob / environment / unknown）。
+3. 第 2 层「组」：`use-permission-based-messages: true` 时组名走**权限组**（admin / 默认组），玩家所在组没配就会漏；关闭该开关则走语义分组（pvp / mob / environment / unknown）。
 4. 第 1 层「世界」：世界名必须逐字符一致（`world` / `world_nether` / `world_the_end`），自定义世界要单独建段。
 5. 改完 `/cdm reload`；仍不生效就 `/cdm config validate`，再考虑完整重启。
 
 **Q：基岩版（手机/Win10）玩家能看到彩色死亡消息吗？**
 A：能。Geyser 会把带颜色的聊天消息同步给基岩客户端；`&#RRGGBB` 等格式在基岩端按客户端支持渲染。
 
-**Q：怎样让某条消息只对 VIP 显示？**
-A：给目标玩家 `cdm.message.vip` 权限（LuckPerms 授予），并在 `messages.yml` 的对应分组里配置 VIP 专属文案。
+**Q：怎样让某条消息只对特定组显示？**
+A：给目标玩家 `cdm.message.admin` 权限（LuckPerms 授予），并在 `messages.yml` 的对应分组里配置专属文案。
 
 **Q：收费功能不扣钱？**
 A：需同时安装 **Vault** 与一个经济插件（如 EssentialsX），且 `cost-per-death-message > 0`；被 `exempt-groups-from-cost` 列出的组不扣费。
 
 **Q：想接 Discord 转发死亡消息？**
-A：1.x 本体不含 Discord 转发；可配合 DiscordSRV 的聊天转发，或选用带 EssentialsDiscord/DiscordSRV 转发的同名 fork（见上条 FAQ）。
+A：本体不含 Discord 转发；可配合 DiscordSRV 的聊天转发，或选用带 EssentialsDiscord/DiscordSRV 转发的同名 fork（见上条 FAQ）。

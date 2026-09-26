@@ -1,4 +1,4 @@
-﻿# EssentialsX 多功能指令整合：功能说明与完整配置
+# EssentialsX 多功能指令整合：功能说明与完整配置
 
 EssentialsX 是 Spigot/Paper 服务器装机量最大的经典指令套件，本文先以功能说明梳理它提供的传送家园、经济、管理审核、物品工具包、聊天、世界保护等全部模块，再给出一份面向 Java 基岩互通服的完整 config.yml，并附 kits.yml、commands.yml 模板与 LuckPerms 权限分配示例，服主可直接照抄后按注释微调。
 
@@ -12,13 +12,13 @@ EssentialsX 是 Spigot/Paper 服务器装机量最大的经典指令套件，本
 
 ### 📦 插件概览
 
-EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社区持续维护。根据 2025 年底至 2026 年初的下载数据，其最近三个版本的核心包累计下载量已超 449 万次，实际装机量远超此数。
+EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社区持续维护。
 
 **基础信息：**
 
 | 项目       | 说明                                                                            |
 | ---------- | ------------------------------------------------------------------------------- |
-| 支持版本   | MC 1.8.8 ~ 1.21.11+（截至 2025 年底的数据，后续版本支持情况请以官方 Wiki 为准） |
+| 支持版本   | MC 1.8.8 ~ 1.21.11+ |
 | 服务端要求 | CraftBukkit / Spigot / **Paper（推荐）**                                        |
 | Java 要求  | Java 8+                                                                         |
 | 核心依赖   | Vault（经济接口）、LuckPerms（权限管理，推荐）                                  |
@@ -32,9 +32,9 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 
 | 指令              | 功能               | 说明                   |
 | ----------------- | ------------------ | ---------------------- |
-| `/home`           | 传送回家           | 支持多个家             |
-| `/sethome [名称]` | 设置家             | 不指定名称则设为默认家 |
-| `/delhome <名称>` | 删除家             | —                      |
+| `/home`           | 传送回家（禁用）   | 支持多个家             |
+| `/sethome [名称]` | 设置家（禁用）     | 不指定名称则设为默认家 |
+| `/delhome <名称>` | 删除家（禁用）     | —                      |
 | `/tpa <玩家>`     | 发送传送请求       | 请求传送到对方位置     |
 | `/tpahere <玩家>` | 请求对方传送到你   | —                      |
 | `/tpaccept`       | 接受传送请求       | —                      |
@@ -121,7 +121,7 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 
 **工具包（Kit）系统详解：**
 
-- 支持按权限组配置不同工具包（如 VIP 专属工具包）
+- 支持按权限组配置不同工具包（如新手包 / 每日奖励包）
 - 支持设置领取冷却时间
 - 支持在工具包中包含附魔物品、药水、刷怪蛋等
 - 支持 Banner 元数据（旗帜图案）
@@ -152,30 +152,30 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 **配置文件**：`plugins/Essentials/config.yml`
 
 ```yaml
-custom-join-message: "none"             # 默认 "none" = 沿用原版；改为自定义文案即覆盖
-custom-quit-message:  "none"             # 退出广播
-custom-new-username-message: "none"      # 改名后重进专用，一般留 "none" 复用上面两条
-hide-join-quit-messages-above: -1        # -1 = 在线人数再多也显示；设正整数则在人多时隐藏
+custom-join-message: 'none' # 默认 "none" = 沿用原版；改为自定义文案即覆盖
+custom-quit-message: 'none' # 退出广播
+custom-new-username-message: 'none' # 改名后重进专用，一般留 "none" 复用上面两条
+hide-join-quit-messages-above: -1 # -1 = 在线人数再多也显示；设正整数则在人多时隐藏
 ```
 
 **可用占位符**：
 
-| 占位符 | 含义 |
-|---|---|
-| `{PLAYER}` | 玩家显示名（含前缀 / 后缀） |
-| `{USERNAME}` | 玩家原始用户名 |
-| `{PREFIX}` / `{SUFFIX}` | 前缀 / 后缀 |
-| `{ONLINE}` | 当前在线人数 |
-| `{UNIQUE}` | 累计加入过的独立玩家数 |
-| `{UPTIME}` | 服务端已运行时长 |
+| 占位符                  | 含义                        |
+| ----------------------- | --------------------------- |
+| `{PLAYER}`              | 玩家显示名（含前缀 / 后缀） |
+| `{USERNAME}`            | 玩家原始用户名              |
+| `{PREFIX}` / `{SUFFIX}` | 前缀 / 后缀                 |
+| `{ONLINE}`              | 当前在线人数                |
+| `{UNIQUE}`              | 累计加入过的独立玩家数      |
+| `{UPTIME}`              | 服务端已运行时长            |
 
 **颜色代码用 `&`（不是 `§`）**：EssentialsX 配置里颜色用 `&`（`&a` 绿、`&c` 红、`&e` 金、`&f` 白、`&5` 紫、`&d` 粉、`&l` 粗体……），与 `server.properties` 的 `§` 不同，勿混。
 
 **贴合本服 MOTD 风格的示例**：
 
 ```yaml
-custom-join-message: "&d[&5+&d] &f{PLAYER} &e加入了南瓜国际服"
-custom-quit-message:  "&d[&5-&d] &f{PLAYER} &e离开了南瓜国际服"
+custom-join-message: '&d[&5+&d] &f{PLAYER} &e加入了南瓜国际服'
+custom-quit-message: '&d[&5-&d] &f{PLAYER} &e离开了南瓜国际服'
 ```
 
 效果：`[+] Steve 加入了南瓜国际服` / `[-] Steve 离开了南瓜国际服`（紫金配色）。
@@ -288,7 +288,6 @@ essentials.home          # 使用 /home
 essentials.sethome       # 使用 /sethome
 essentials.tpa           # 使用 /tpa
 essentials.kit           # 使用 /kit
-essentials.kit.vip       # 使用 VIP 工具包
 essentials.fly           # 使用 /fly
 essentials.god           # 使用 /god
 essentials.ban           # 使用 /ban
@@ -322,8 +321,6 @@ essentials.commandcooldowns.bypass  # 绕过命令冷却
 
 ---
 
-> 📌 **总结：** EssentialsX 是一个"装了就能用"的全能型插件，覆盖了传送、经济、管理、聊天、保护等服务器运营的方方面面。对于大多数服务器来说，它是装机必备的基础插件。
-
 ---
 
 ## 第二部分：完整配置方案
@@ -347,28 +344,6 @@ essentials.commandcooldowns.bypass  # 绕过命令冷却
 ### 📄 config.yml 完整配置
 
 文件路径：`plugins/Essentials/config.yml`
-
-> ✅ **运行服校准说明（2026-09-16，基于 `plugins\Essentials\config.yml` 实际值核对）**
->
-> 下方 yaml 为**面向互通服的推荐模板/框架**，并非运行服逐行实际值。已与运行服核对的关键项：
->
-> | 配置项 | 模板值 | 运行服实际值（config.yml） | 结论 |
-> | --- | --- | --- | --- |
-> | currency-symbol | `'¥'` | `'¥'`（第869行） | ✅ 一致（上一轮已改） |
-> | locale | `zh` | `zh`（第471行） | ✅ 一致（上一轮已改） |
-> | use-bukkit-permissions | `true` | `true`（第358行） | ✅ 一致 |
-> | debug | `false` | `false`（第464行） | ✅ 一致 |
-> | register-back-in-listener | `false` | `false`（第659行） | ✅ 一致 |
-> | spawn-on-join | `false` | `false`（第1308行） | ✅ 一致 |
-> | teleport-delay | `3` | `0`（第120行） | ⚠️ 差异（行为项，需用户决策） |
-> | teleport-cooldown | `10` | `0`（第116行） | ⚠️ 差异（行为项，需用户决策） |
-> | teleport-invulnerability | `5` | `4`（第124行） | ⚠️ 差异（行为项，需用户决策） |
-> | starting-balance | `100.0` | `0`（第856行） | ⚠️ 差异（经济项，需用户决策） |
-> | max-money | `10000000` | `10000000000000`（第877行） | ⚠️ 差异（经济项，需用户决策） |
-> | command-cooldowns | feed/heal/home/tpa/spawn/back | 空（第720-722行全部注释） | ⚠️ 差异（冷却项，需用户决策） |
-> | command-costs | 注释示例 | 空（第860-864行全部注释） | ⚠️ 差异（收费项，需用户决策） |
->
-> 另：实际 `kits.yml`（第19-48行）为 EssentialsX 默认示例包 `tools / dtools / notch / color / firework`，与下方"新手/VIP/每日奖励"模板不同；该模板仅作参考。
 
 ```yaml
 ############################################################
@@ -396,13 +371,13 @@ debug: false
 # ==================== 传送系统 ====================
 
 # 传送延迟（秒）- 发送传送请求后等待的时间，移动则取消
-teleport-delay: 3
+teleport-delay: 0
 
 # 传送冷却时间（秒）- 两次传送之间的最短间隔
-teleport-cooldown: 10
+teleport-cooldown: 0
 
 # 传送无敌时间（秒）- 传送后获得无敌的时间，防止传送中被攻击
-teleport-invulnerability: 5
+teleport-invulnerability: 4
 
 # 传送时是否治愈玩家
 teleport-heal: false
@@ -419,14 +394,28 @@ register-back-in-listener: false
 # /back 命令的冷却时间（秒）
 back-cooldown: 30
 
+# ---- 死亡后"自动弹出返回死亡点"提示的控制 ----
+# 该提示有两个来源，按玩家客户端区分：
+#
+# 1. Java 版玩家：EssentialsX 的 essentials.back.ondeath 权限
+#    - 有该权限：死亡后聊天栏自动出现可点击的"返回死亡点"消息
+#    - 关闭方法（保留 essentials.back，/back 指令仍可手动使用）：
+#      lp group default permission set essentials.back.ondeath false
+#      或彻底取消：lp group default permission unset essentials.back.ondeath
+#
+# 2. 基岩版玩家：BedrockPlayerSupport 的"死亡回传"表单
+#    - 配置在 plugins/BedrockPlayerSupport/config.yml：
+#      form:
+#        back:
+#          enable: false   # 设为 false：重生后不再自动弹出"返回死亡地点"表单
+
 # ==================== 家园系统 ====================
 
 # 每个玩家可设置的家数量上限（默认值，可通过权限覆盖）
 # 权限格式: essentials.sethome.multiple.<数量>
 sethome-multiple:
   default: 3 # 默认玩家可设 3 个家
-  vip: 5 # VIP 玩家可设 5 个家
-  admin: 10 # 管理员可设 10 个家
+  admin: 9999 # 管理员/服主可设无数个家（用大数近似无限）
 
 # 设置家时的冷却时间（秒）
 sethome-cooldown: 0
@@ -446,10 +435,10 @@ enable-economy: true
 currency-symbol: '¥'
 
 # 新玩家初始余额
-starting-balance: 100.0
+starting-balance: 0
 
 # 玩家最大余额上限（-1 表示无上限）
-max-money: 10000000
+max-money: 10000000000000
 
 # 是否允许负余额（欠钱）
 allow-negative-balance: false
@@ -471,12 +460,13 @@ balance-format: '&a余额: {0}{1}'
 
 # 为特定命令设置冷却时间（单位：秒）
 command-cooldowns:
-  feed: 30 # /feed 冷却 30 秒
-  heal: 60 # /heal 冷却 60 秒
-  home: 70 # /home 冷却 1 分 10 秒
-  tpa: 15 # /tpa 冷却 15 秒
-  spawn: 20 # /spawn 冷却 20 秒
-  back: 30 # /back 冷却 30 秒
+  # 运行服未启用命令冷却（以下示例均注释）
+  # feed: 30 # /feed 冷却 30 秒
+  # heal: 60 # /heal 冷却 60 秒
+  # home: 70 # /home 冷却 1 分 10 秒
+  # tpa: 15 # /tpa 冷却 15 秒
+  # spawn: 20 # /spawn 冷却 20 秒
+  # back: 30 # /back 冷却 30 秒
   # 支持通配符匹配
   # '*potato*': 30  # 含 potato 的命令冷却 30 秒
 
@@ -710,10 +700,10 @@ show-join-quit: true
 
 # 自定义加入 / 退出广播（覆盖原版 "X 加入了游戏 / X 离开了游戏"）
 # 设为 "none" 沿用原版；可用占位符 {PLAYER} {USERNAME} {ONLINE} {UPTIME} 等
-custom-join-message: "none"
-custom-quit-message: "none"
+custom-join-message: 'none'
+custom-quit-message: 'none'
 # 改名后重进专用（一般保持 none 复用上方两条）
-custom-new-username-message: "none"
+custom-new-username-message: 'none'
 # 在线人数超过该值时隐藏加入/退出消息；-1 = 始终显示
 hide-join-quit-messages-above: -1
 
@@ -751,16 +741,6 @@ kits:
       - COOKED_BEEF 32
       - OAK_PLANKS 64
       - TORCH 32
-
-  # VIP 工具包
-  vip:
-    delay: 43200 # 冷却 12 小时
-    items:
-      - DIAMOND_SWORD 1 sharpness:2
-      - DIAMOND_PICKAXE 1 efficiency:3
-      - GOLDEN_APPLE 5
-      - ENDER_PEARL 8
-      - EXPERIENCE_BOTTLE 16
 
   # 每日奖励工具包
   daily:
@@ -821,6 +801,9 @@ lp group default permission set essentials.balance true
 lp group default permission set essentials.pay true
 lp group default permission set essentials.kit true
 lp group default permission set essentials.back true
+# 死亡后是否自动弹出"点击返回死亡点"提示，由 essentials.back.ondeath 控制：
+#   关闭（不自动弹出，/back 仍可用）：lp group default permission set essentials.back.ondeath false
+#   彻底取消：lp group default permission unset essentials.back.ondeath
 lp group default permission set essentials.msg true
 lp group default permission set essentials.nick true
 lp group default permission set essentials.help true
@@ -828,15 +811,8 @@ lp group default permission set essentials.list true
 lp group default permission set essentials.motd true
 lp group default permission set essentials.rules true
 
-# VIP 玩家组权限（继承默认组）
-lp group vip inheritance add default
-lp group vip permission set essentials.sethome.multiple.5 true
-lp group vip permission set essentials.kit.vip true
-lp group vip permission set essentials.fly true
-lp group vip permission set essentials.commandcooldowns.bypass true
-
 # 管理员组权限
-lp group admin inheritance add vip
+lp group admin inheritance add default
 lp group admin permission set essentials.* true
 lp group admin permission set essentials.god true
 lp group admin permission set essentials.fly true
@@ -868,6 +844,3 @@ lp group admin permission set essentials.setspawn true
 - 建议定期备份 `plugins/Essentials/` 文件夹，防止数据丢失
 - 如需使用中文消息提示，确保 `plugins/Essentials/messages/messages_zh.properties` 文件存在
 
----
-
-> 💡 以上配置覆盖了 EssentialsX 的所有核心模块。如需某个模块的更详细配置（如 Discord 集成的完整配置、MySQL 数据库迁移方案、BedrockPlayerSupport 的基岩版 GUI 菜单配置等），可进一步补充。

@@ -4,7 +4,7 @@
 
 **文件**: `plugins/Geyser-Spigot.jar`
 
-> ✅ **实际部署位置（校准 2026-09-24）**: 本服为 Leaf 单后端、`online-mode=true` 经外置登录代理，**未部署 Velocity**。Geyser 装在 Leaf 后端 `plugins/` 下，Floodgate 同为后端版（见 02-Floodgate.md）。下方配置取自后端实际 `plugins/Geyser/config.yml`。
+> ✅ **实际部署位置**: 本服为 Leaf 单后端、`online-mode=true` 经外置登录代理，**未部署 Velocity**。Geyser 装在 Leaf 后端 `plugins/` 下，Floodgate 同为后端版（见 02-Floodgate.md）。下方配置取自后端实际 `plugins/Geyser/config.yml`。
 >
 > ℹ️ **Geyser-Spigot 与 Geyser-Velocity 的区别**：前者跑在后端（Bukkit/Spigot/Paper/Leaf 服务端），后者跑在 Velocity 代理层。本服只有 Leaf 后端，用前者；代理层版的配置项与此处基本一致，只是文件路径在 `velocity/plugins/Geyser-Velocity/`。
 

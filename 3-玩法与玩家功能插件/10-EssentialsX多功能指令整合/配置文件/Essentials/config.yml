@@ -821,13 +821,12 @@ world-home-permissions: false
 # Once created, give the matching permission: 'essentials.sethome.multiple.<home_rank>'.
 # Note: The "home ranks" defined below do not need to match your permissions plugin's group names.
 #
-# In this example, someone with 'essentials.sethome.multiple' and 'essentials.sethome.multiple.vip' will have 5 homes.
+# In this example, someone with 'essentials.sethome.multiple' and 'essentials.sethome.multiple.admin' will have many homes.
 # Remember, they must have BOTH permission nodes in order to be able to set multiple homes.
 # For more information, visit https://wiki.ess3.net/wiki/Multihome
 sethome-multiple:
   default: 3
-  vip: 5
-  staff: 10
+  admin: 9999
 
 # Controls whether players need the permission 'essentials.home.compass' in order to point
 # the player's compass toward their first home.

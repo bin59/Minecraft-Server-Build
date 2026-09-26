@@ -1,8 +1,8 @@
 # 17. 网页世界地图 — BlueMap
 
-本文介绍 BlueMap 这款**网页 3D 世界地图**插件：把服务器世界渲染成浏览器里可自由旋转、缩放、平移的 3D 模型，玩家/访客不开游戏也能看地形起伏与建筑立体结构。本服于 **2026-09-19 确定采用**，用于给玩家与访客提供"看世界"的沉浸入口，并把 Residence 领地图层画到地图上。
+本文介绍 BlueMap 这款**网页 3D 世界地图**插件：把服务器世界渲染成浏览器里可自由旋转、缩放、平移的 3D 模型，玩家/访客不开游戏也能看地形起伏与建筑立体结构。用于给玩家与访客提供"看世界"的沉浸入口，并把 Residence 领地图层画到地图上。
 
-**当前版本**: BlueMap 5.x（paper 平台 jar；v5.23 起覆盖 26.1–26.2，向下兼容 1.21.x；本服取匹配 1.21.11 的版本）
+**当前版本**: BlueMap 5.x（paper 平台 jar，本服取匹配 1.21.11 的 5.16 版本）
 
 **MC 要求**: 1.21.x（含 1.21.11，需 Java 21）
 
@@ -10,7 +10,7 @@
 
 **Modrinth**: https://modrinth.com/plugin/bluemap ｜ **Hangar**: https://hangar.papermc.io/BlueMap/BlueMap ｜ **文档**: https://bluemap.bluecolored.de
 
-> 替代方案曾考虑 Squaremap（最轻量 2D 俯视）、Pl3xMap（2D 可美化）、Dynmap（老牌重型 2D+overlay 生态）。本服选 BlueMap：3D 展示冲击力最强、性能适中、活跃维护、支持 1.21.x 与 Folia；生存社交服想给玩家/访客"哇"一下的世界观感。见对话选型对比（网页地图插件四款横评）。
+> 本服选 BlueMap：3D 展示冲击力最强、性能适中、活跃维护、支持 1.21.x 与 Folia；生存社交服想给玩家/访客"哇"一下的世界观感。
 
 ## 功能说明
 
@@ -152,7 +152,7 @@ server {
 
 #### B1. 插件模式（本机跑测试服随开随渲）
 
-与云端部署几乎一致，只是服务器在本机。已在本机测试服 `C:\mc_serve\1.21.11-test` 实测通过（见「部署状态」）。
+与云端部署几乎一致，只是服务器在本机。已在本机测试服实测通过（见「部署状态」）。
 
 **步骤**
 
@@ -231,14 +231,14 @@ server {
 
 ## 部署状态（已验证 ✅）
 
-- **2026-09-19 已在测试服 `C:\mc_serve\1.21.11-test` 完成部署验证。**
+- **已在测试服 `C:\mc_serve\1.21.11-test` 完成部署验证。**
 - 验证环境与结果：
-  1. **jar 加载**：`bluemap-5.16-paper.jar`（5,710,626 字节，Modrinth 校验 1.21.11 兼容）放入 `plugins/`，Leaf 1.21.11-174 在 36 插件列表中正常 `[BlueMap] Enabling BlueMap v5.16`。
-  2. **web 端口可达**：内置 WebServer `bound to all network interfaces on port 8100` 并 `started`；`http://127.0.0.1:8100/` 探测返回 `HTTP 200`、页面标题 `BlueMap`、`CONTENTLEN=1650`。
+  1. **jar 加载**：`bluemap-5.16-paper.jar` 放入 `plugins/`，Leaf 1.21.11 在 36 插件列表中正常 `[BlueMap] Enabling BlueMap v5.16`。
+  2. **web 端口可达**：内置 WebServer `bound to all network interfaces on port 8100` 并 `started`；`http://127.0.0.1:8100/` 探测返回 `HTTP 200`、页面标题 `BlueMap`。
   3. **首渲产出**：资源自动下载 `minecraft-client-1.21.11.jar`（约 31 MB）并 `Resources loaded`；`world` / `world_nether` / `world_the_end` 三张地图均 `Loading map` 成功，已生成大量 `.prbm.gz` 瓦片（位于 `bluemap/web/maps/<world>/tiles/`），证明 3D 渲染正常推进。
   4. **关键配置**：`BlueMap/core.conf` 的 `accept-download` 已从 `false` 改为 **`true`**（接受 Mojang EULA，允许 BlueMap 下载 3D 渲染所需 client.jar），否则 Web 无法工作。这是离线/首次部署必改项。
 - 待生产环境后续确认项（测试服已具备基础条件）：
   - 首次全量渲染耗时与 TPS 影响（建议配合 Chunky 预生成后再全量，降低跑图成本）。
   - Residence 领地图层集成插件对 1.21.11 的兼容（另行核选）。
   - 玩家标记隐私：测试服 `player-markers` 保持关闭，生产如需开启再评估是否仅内网可见。
-- 部署版本：BlueMap **5.16-paper**（兼容 1.21.11；v5.23+ 起支持 26.x，向下覆盖 1.21.x，可后续升级）。
+- 部署版本：BlueMap **5.16-paper**（兼容 1.21.11）。

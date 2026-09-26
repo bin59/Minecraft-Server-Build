@@ -2,7 +2,7 @@
 
 本文介绍 DecentHolograms（简称 DH）这款不依赖 ProtocolLib 的全息投影插件，讲解在世界中生成浮动文字、物品、头颅与方块，以及点击交互、多页翻页、动画和按权限隐藏等玩法。内容按安装、目录结构、config.yml、全息文件格式、命令与权限、实战示例和排错顺序组织，适合 Paper/Spigot/Folia 服主照做。
 
-**当前版本**: DecentHolograms 2.10.1（稳定版） | **MC 要求**: Java 1.8.9 – 26.2（含 1.21.11）
+**MC 要求**: Java 1.8.9 – 26.2（含 1.21.11）
 
 **官方网站**: https://www.decentholograms.eu | **Modrinth**: https://modrinth.com/plugin/decentholograms
 
@@ -12,11 +12,7 @@
 
 > 适用平台：**Paper / Spigot / Folia**（需要 Paper API，CraftBukkit 不可用）。**无任何前置依赖**，不依赖 ProtocolLib。南瓜生存服为 Paper 服务端，直接放入 `plugins/` 即可。
 
-> ⚠️ **命令写法警告（重要）**：网上很多旧博客 / 第三方教程写的是过时或错误语法，本服一律以**下方官方语法**为准：
-> - ❌ 旧写法 `/dh create <名>`、`/dh line add <名> <内容>`、`/dh line action add ...`、`/dh gui <名>` —— **均已失效或不存于 2.x**。
-> - ❌ 旧权限节点 `decentholograms.use` / `decentholograms.admin` / `decentholograms.*` —— **前缀错误**，正确的是 `dh.*`。
-> - ✅ 正确主命令 `/dh`，全息用 `/dh hologram create`，加行用 `/dh lines add <名> <页> [内容]`，点击动作用 `/dh p addaction <名> <页> <点击类型> <动作>`。
-> - 动作数据是**冒号分隔**：`TELEPORT:world:0:64:0`（不是 `world, 0, 64, 0`）。
+> ⚠️ **命令写法**：主命令 `/dh`，全息用 `/dh hologram create`，加行用 `/dh lines add <名> <页> [内容]`，点击动作用 `/dh p addaction <名> <页> <点击类型> <动作>`。权限前缀是 `dh.*`（不是 `decentholograms.*`）。动作数据用**冒号分隔**：`TELEPORT:world:0:64:0`（不是 `world, 0, 64, 0`）。
 
 ## 功能说明
 
@@ -33,15 +29,12 @@ DecentHolograms（简称 DH）是一款轻量但功能极强的全息投影插�
 - **无 ProtocolLib 依赖**——直接发包，大型在线服务器比 Holographic Displays + ProtocolLib 方案更省 TPS。
 - **按全息独立可视距离**：超出 `display-range` 的玩家不收包，静态标牌可把距离调小省带宽。
 - **文件存储**：每个全息存为 `holograms/<name>.yml`，迁移 / 备份就是复制文件，无需数据库。
-- **每全息 / 每行权限**：可设置“只有特定权限节点才看得见”的全息（如仅 VIP 可见的公告）。
+- **每全息 / 每行权限**：可设置“只有特定权限节点才看得见”的全息（如仅管理可见的公告）。
 
 ## 安装与前置
 
 1. 确认服务端为 **Paper / Spigot / Folia**（运行 `/version` 查看；CraftBukkit 会加载失败）。
-2. 从 Modrinth 下载与 MC 版本匹配的 jar：
-   - 1.21.x 服务器首选 **2.10.1**（最新稳定，支持 1.8.9–26.2）；
-   - 若需要更保守，可选 **2.9.10**（稳定线，支持 1.17–26.1）。
-   - 标有 `[EXPERIMENTAL]`（如 2.10.0 / 2.9.0）为实验版，生产环境不推荐。
+2. 从 Modrinth 下载与 MC 版本匹配的**最新稳定版** jar（标有 `[EXPERIMENTAL]` 的为实验版，生产环境不推荐）。
 3. 将 jar 放入 `plugins/` 并**完整重启**服务端（不要用 `/reload`，会破坏全息，详见文末排错）。
 4. 插件首次启动会生成 `plugins/DecentHolograms/` 目录与默认 `config.yml`。
 
@@ -67,6 +60,8 @@ plugins/DecentHolograms/
 
 ```yaml
 defaults:
+  # 默认空行文本
+  text: Blank Line
   # 全息默认可视距离（方块），超出此距离的玩家看不见也不收包
   display-range: 48
   # 全息默认“内容更新”距离（仅此范围内的玩家才会刷新占位符）
@@ -83,10 +78,6 @@ defaults:
     smallhead: 0.6
   # 全息是否以“底部”为原点（true 时 y 坐标代表底部而非中心）
   down-origin: false
-  # 启动是否检查更新
-  update-checker: true
-  # 点击冷却（游戏刻），防连点
-  click-cooldown: 1
   # 是否允许在动画帧里解析占位符；会显著增加 CPU，不需要就保持 false
   allow-placeholders-inside-animations: false
   # 玩家被传送/重生后是否强制刷新全息可见性；默认关（开会有闪烁），遇到不显示再开
@@ -95,6 +86,13 @@ defaults:
   holograms-eye-level-positioning: false
   # 拉取玩家皮肤数据的超时（秒，1–60）；网络差且频繁出现 "Failed to fetch UUID" 再调大
   player-skin-connection-timeout: 5
+
+# 启动是否检查更新
+update-checker: true
+# 点击冷却（游戏刻），防连点
+click-cooldown: 1
+# 全息显示实体是否生成在视线高度
+displays-eye-level-positioning: false
 
 # 伤害飘字（每次成功命中出现的临时全息）
 damage-display:
@@ -131,11 +129,11 @@ custom-replacements:
 
 > `config.yml` 由插件自动生成，键名以实际生成文件为准；如不确定某字段，保留默认值即可，不要照抄过时教程里的键名。
 
-> ✅ **运行服校准（2026-09-16，`plugins\DecentHolograms\config.yml` 实测）**：上表数值与运行服逐项一致——`display-range:48`（第26行）、`update-range:48`（第28行）、`update-interval:20`（第30行）、`lru-cache-size:500`（第36行）、`height.*`（第39-42行）、`damage-display.enabled:false`（第103行）、`healing-display.enabled:false`（第132行）、`player-skin-connection-timeout:5`（第89行）均为默认值。**结构微调**：实际文件中 `update-checker`（第47行）与 `click-cooldown`（第50行）为**顶层键**，不在 `defaults:` 下；另实际多出 `defaults.text: Blank Line`（第24行）与 `displays-eye-level-positioning: false`（第76行）。运行服现有全息文件：`holograms/` 下 `welcome.yml / menu.yml / 1.yml / nanguascunf.yml`。
+> 运行服现有全息文件：`holograms/` 下 `welcome.yml / menu.yml / 1.yml / nanguascunf.yml`。`update-checker`、`click-cooldown`、`displays-eye-level-positioning` 为顶层键。
 
 ## 全息文件结构 (`holograms/<name>.yml`)
 
-每个全息是一个独立 YAML。手写或 `/dh hologram create` 生成后可直接编辑。下面是**官方 2.x 真实文件格式**（注意：行用 `content:` 直接写，动作挂在**整页**下并以点击类型为键）：
+每个全息是一个独立 YAML。手写或 `/dh hologram create` 生成后可直接编辑。下面是**官方真实文件格式**（注意：行用 `content:` 直接写，动作挂在**整页**下并以点击类型为键）：
 
 ```yaml
 location:
@@ -227,7 +225,7 @@ DecentHolograms 的点击交互是**按页（page）绑定**的：整页的任�
 | `CONNECT:<服务器>` | `CONNECT:lobby` | 把玩家转到代理下的子服务器（仅群服/Bungee/Velocity 有效） |
 | `TELEPORT:[世界:]x:y:z[:yaw:pitch]` | `TELEPORT:world:0:64:0` | 传送到坐标；省略世界则用玩家当前世界；可加 yaw:pitch |
 | `SOUND:<音效>[:音量:音高]` | `SOUND:ENTITY_CREEPER_PRIMED` | 为点击者播放音效（音量/音高默认 1.0） |
-| `PERMISSION:<权限>` | `PERMISSION:vip.use` | 校验权限；无权限则**后续动作全部不执行**（可做“权限门槛”） |
+| `PERMISSION:<权限>` | `PERMISSION:essentials.fly` | 校验权限；无权限则**后续动作全部不执行**（可做“权限门槛”） |
 | `NEXT_PAGE[:全息]` | `NEXT_PAGE` | 翻到下一页（仅对点击者本人生效） |
 | `PREV_PAGE[:全息]` | `PREV_PAGE` | 翻到上一页 |
 | `PAGE:[:全息:]页` | `PAGE:2` | 翻到指定页 |
@@ -315,9 +313,9 @@ DecentHolograms 的权限前缀是 **`dh.`**（不是 `decentholograms.`）：
    | `dh.command.<命令>` | 仅允许某个主命令（如 `dh.command.reload` 可用 `/dh reload`） |
    | `dh.command.<命令>.<子命令>` | 仅允许某个子命令（如 `dh.command.hologram.create` 可用 `/dh hologram create`） |
 
-2. **查看权限**（谁能看见某个全息）：由 `/dh hologram setpermission <名> <节点>` 设置，写入该全息文件。例如设为 `vip.board`，则只有被 LuckPerms 授予 `vip.board` 的玩家才看得见该全息；留空则所有人可见。
+2. **查看权限**（谁能看见某个全息）：由 `/dh hologram setpermission <名> <节点>` 设置，写入该全息文件。例如设为 `dh.admin-only`，则只有被 LuckPerms 授予 `dh.admin-only` 的玩家才看得见该全息；留空则所有人可见。
 
-> 实战建议：服主 / 管理组给 `dh.admin`（或 `dh.command`）；普通玩家无需任何 DH 权限即可看到无限制全息。VIP 专属公告用 `setpermission` + LuckPerms 节点即可。
+> 实战建议：服主 / 管理组给 `dh.admin`（或 `dh.command`）；普通玩家无需任何 DH 权限即可看到无限制全息。管理组专属公告用 `setpermission` + LuckPerms 节点即可。
 
 ## PlaceholderAPI 与开发接口
 
@@ -346,10 +344,10 @@ DecentHolograms 的权限前缀是 **`dh.`**（不是 `decentholograms.`）：
 - **务必用 `/dh reload` 而非 Bukkit `/reload`**：`/reload` 会破坏已加载的全息，导致全息消失或报错，必须重启服务端才能恢复。
 - **可视距离省资源**：静态标牌（如规则牌）把 `display-range` 设 32 甚至更小；大型竞技场排行榜设 64。超出距离的玩家完全不收包。
 - **刷新间隔**：含 PAPI 的全息按 `update-interval`（刻）刷新，20=1 秒。变化慢的（如 `top_money`）可设 100–200（5–10 秒）以少调 PAPI，省 CPU。
-- **ProtocolLib 对比**：DH 不依赖 ProtocolLib，直接发包；在 50 人在线、出生点 30 个全息的 Paper 1.21.4 测试中，DH 平均 TPS 19.95，而 HD + ProtocolLib 约 19.4（ProtocolLib 自身在中大型服会吃 5–10% TPS）。
+- **ProtocolLib 对比**：DH 不依赖 ProtocolLib，直接发包；中大型服比 HD + ProtocolLib 方案更省 TPS。
 - **头颅 / 皮肤拉取超时**：日志出现 `Failed to fetch UUID for player` 时，调大 `player-skin-connection-timeout`（默认 5 秒，最高 60）。
 - **全息不显示**：按序排查——`/dh list` 是否在列；`display-range` 是否过小；是否被 `disable`（`/dh hologram enable <名>`）；是否设了 `setpermission` 而当前账号无该节点。
-- **动作不触发**：确认是用 `/dh p addaction`（不是旧版 `/dh line action add`）；点击类型是否对应（左键 / 右键 / 潜行）；`TELEPORT` 等数据是否用冒号分隔；`PERMISSION:` 门槛是否挡住了后续动作。
+- **动作不触发**：确认是用 `/dh p addaction`；点击类型是否对应（左键 / 右键 / 潜行）；`TELEPORT` 等数据是否用冒号分隔；`PERMISSION:` 门槛是否挡住了后续动作。
 - **动画不生效**：确认动画文件在 `animations/` 目录（不是插件根目录）；文件名与 `#ANIMATION:` 引用一致；`speed > 0`；改完执行 `/dh reload`。
 
 ## 常见问题（FAQ）
@@ -364,10 +362,10 @@ A：能。Geyser 会把全息作为显示实体同步给基岩客户端，点击
 A：每个全息是 `holograms/<name>.yml` 文件，备份该目录即备份全部全息；不依赖数据库，不会因 MySQL 故障丢失。
 
 **Q：Folia 能用吗？**
-A：能。DH 支持 Folia（区域化多线程服务端），但注意命令需在正确区域执行；如遇异常优先用最新 2.10.x。
+A：能。DH 支持 Folia（区域化多线程服务端），但注意命令需在正确区域执行；如遇异常优先用最新稳定版。
 
-**Q：想做“仅 VIP 可见”的隐藏公告？**
-A：`/dh hologram setpermission <名> vip.board`，然后在 LuckPerms 给 VIP 组 `vip.board` 节点即可；普通玩家看不到该全息。
+**Q：想做“仅管理可见”的隐藏公告？**
+A：`/dh hologram setpermission <名> dh.admin-only`，然后在 LuckPerms 给管理组 `dh.admin-only` 节点即可；普通玩家看不到该全息。
 
 **Q：为什么我的 `/dh gui` 打不开？**
-A：DecentHolograms 2.x **没有** `/dh gui` 命令。所有编辑都通过 `/dh hologram ...`、`/dh lines ...`、`/dh p addaction ...` 完成，或直接编辑 `holograms/<name>.yml` 文件后 `/dh reload`。
+A：DecentHolograms **没有** `/dh gui` 命令。所有编辑都通过 `/dh hologram ...`、`/dh lines ...`、`/dh p addaction ...` 完成，或直接编辑 `holograms/<name>.yml` 文件后 `/dh reload`。

@@ -2,7 +2,7 @@
 
 本文介绍 SimplePets 这款 GUI 管理的纯服务端宠物插件，支持 90 多种生物当跟随伙伴，可骑乘、戴头、多宠同出并存档重召，本服还已接入 Vault Addon 用主货币购买。文档覆盖安装、目录结构、界面汉化、config.yml、/pet 命令、权限与经济联动，末尾另附一起客户端猫模型错位的排查结论（与服务端无关，升级 Realistic Animals 资源包即可）。
 
-**当前版本**: SimplePets R5-B315（最新构建，2026-09） | **MC 要求**: 1.17 – 26.2（含 1.21.11，需 Java 21）
+**当前版本**: SimplePets R5-B315 | **MC 要求**: 1.17 – 26.2（含 1.21.11，需 Java 21）
 
 **作者/发布**: brainsynder-Dev（BS-Development） | **协议**: GPL-3.0（开源）
 
@@ -10,7 +10,7 @@
 
 **官方 Wiki**: https://github.com/brainsynder-Dev/SimplePets-Wiki
 
-> EchoPets 的精神继任者（自 2015 年起），纯服务端、GUI 管理的宠物插件。「待选插件清单」将其列为宠物玩法的**主力选择**（与 FarPets 二选一，勿同装）。本服 1.21.11 需 **Java 21**。南瓜生存服为 Paper，直接放入 `plugins/` 即可。
+> EchoPets 的精神继任者（自 2015 年起），纯服务端、GUI 管理的宠物插件。本服 1.21.11 需 **Java 21**；南瓜生存服为 Paper，直接放入 `plugins/` 即可。勿与 FarPets / RZXPets 同装（功能重叠，二选一）。
 
 ## 功能说明
 
@@ -33,7 +33,7 @@ SimplePets 把「跟随伙伴」做成了开箱即用的装饰/养成系统，�
    - 1.21.x（含 1.21.11）→ **Java 21**
    - 1.19 – 1.20.4 → Java 17
    - 26.x → Java 25
-3. 下载 **单一 jar**（自 R5-B292 起不再按 MC 版本分 jar，一个文件覆盖全部支持版本），放入 `plugins/` 并**完整重启**服务端。
+3. 下载 **单一 jar**（一个文件覆盖全部支持版本），放入 `plugins/` 并**完整重启**服务端。
 4. 可选依赖：
    - **PlaceholderAPI**：用于外部占位符。
    - **Vault Addon（本服已安装 ✅）**：用服务器主货币（EssentialsX 余额）买宠物，与全服统一账本；无需第二套货币。
@@ -53,7 +53,7 @@ plugins/SimplePets/
 
 > 启用 MySQL 后存档写入数据库，本地 `pets/` 不再为主。消息约 95% 可自定义（少数系统消息除外）。
 
-## 界面汉化（2026-09-16 ✅）
+## 界面汉化（✅）
 
 运行服已做**全界面中文**汉化（无需再改）：
 
@@ -86,7 +86,7 @@ mysql:
 # 召唤冷却（秒），防刷屏
 summon-cooldown: 3
 
-# 每玩家同时可拥有的宠物数量上限（性能与体验平衡，待选清单建议设 1）
+# 每玩家同时可拥有的宠物数量上限（性能与体验平衡，建议设 1）
 max-pets-per-player: 1
 
 # 世界限制：true 时仅 allow-worlds 列表内的世界可召唤宠物
@@ -100,14 +100,14 @@ allow-worlds:
 
 > 具体键名随版本演进，改完用 `/pet reload` 生效；不确定时以插件生成的文件与 Wiki 的 Config 章节为准。
 
-> ✅ **运行服校准（2026-09-16，`plugins\SimplePets\config.yml` 实测）**：上方 yaml 为示意，运行服实际——
-> - 存储：`MySQL.Enabled: false`（config.yml 第180行），即 **SQLite 本地存储**（`storage.db`），未启用 MySQL。
-> - 召唤冷却：实际键为 `pet-cooldown.enabled: false`（第474行，**运行服未启用召唤冷却**），`duration: 5`（第479行，仅在 enabled=true 时生效）；绕过权限 `pet.cooldown.bypass`（第471行注释）。
-> - 经济 Addon：`AddonConfig.yml` 第3行 `Vault.Enabled: true`；`Addons/configs/Vault.yml` 全部宠物默认价 **2000**（如 `type.wolf: 2000` 第409行），一次性购买（`Pay-Per-Use-Enabled: false` 第8行），免付父权限 `pet.vault.bypass`（第59行）。
+> ✅ **运行服实际配置**：上方 yaml 为示意，运行服实际——
+> - 存储：`MySQL.Enabled: false`，即 **SQLite 本地存储**（`storage.db`），未启用 MySQL。
+> - 召唤冷却：`pet-cooldown.enabled: false`，**运行服未启用召唤冷却**（`duration: 5` 仅在 enabled=true 时生效）；绕过权限 `pet.cooldown.bypass`。
+> - 经济 Addon：`AddonConfig.yml` 中 `Vault.Enabled: true`；`Addons/configs/Vault.yml` 全部宠物默认价 **2000**（如 `type.wolf: 2000`），一次性购买（`Pay-Per-Use-Enabled: false`），免付父权限 `pet.vault.bypass`。
 
 ## 宠物独立配置与飞行机制
 
-每只宠物一个独立 JSON 文件（`plugins/SimplePets/Pets/<生物>.json`），控制该宠物的开关、速度与外观。**飞行不是全局配置，而是逐宠开关**（2026-09-19 测试服实测）：
+每只宠物一个独立 JSON 文件（`plugins/SimplePets/Pets/<生物>.json`），控制该宠物的开关、速度与外观。**飞行不是全局配置，而是逐宠开关**：
 
 ```jsonc
 // 蝙蝠 bat.json（会飞）
@@ -131,11 +131,11 @@ allow-worlds:
 2. **给权限**：玩家需要 `Pet.type.<生物>.fly` 权限（如 `Pet.type.bat.fly`；官方 Wiki 权限页写作小写 `pet.type.<mob>.fly`——Bukkit 权限大小写不敏感，两者等价）。
 3. **起飞**：召唤后宠物会**悬空飞行跟随**；`mount: true` 的宠物可骑乘，骑上会飞的宠物（蝙蝠、鹦鹉、幻翼，或任意开了 `fly` 的生物）即可空中飞行。
 
-> **要点**：所有生物都能开飞行（狼、牛、猪都能飞），不限于原生会飞的种类；`fly_speed` 可单独调快慢。当前测试服 89 个宠物 JSON 中，蝙蝠开着飞行、狼关着。
+> **要点**：所有生物都能开飞行（狼、牛、猪都能飞），不限于原生会飞的种类；`fly_speed` 可单独调快慢。当前 89 个宠物 JSON 中，蝙蝠开着飞行、狼关着。
 
 ## 命令
 
-主命令 `/pet`（别名 `/sp`、`/simplepets`、`/pets`、`/pet gui` 打开管理界面）。v5 常用子命令如下：
+主命令 `/pet`（别名 `/sp`、`/simplepets`、`/pets`、`/pet gui` 打开管理界面）。常用子命令如下：
 
 | 命令                                                         | 权限                          | 说明                                                    |
 | ------------------------------------------------------------ | ----------------------------- | ------------------------------------------------------- |
@@ -177,10 +177,10 @@ SimplePets 通过**经济 Addon** 接入经济系统，实现「花钱买宠物 
 
 | Addon | 货币 | 状态 |
 |---|---|---|
-| **Vault Addon**（本服选用） | Hook 进 Vault，用服务器主货币（EssentialsX 余额）购买，与 `/bal`、Residence、死亡收费**同一套账** | ✅ **已安装启用**（2026-09-16） |
+| **Vault Addon**（本服选用） | Hook 进 Vault，用服务器主货币（EssentialsX 余额）购买，与 `/bal`、Residence、死亡收费**同一套账** | ✅ **已安装启用** |
 | GemsEconomy Addon | 用 GemsEconomy 独立货币，两套账 | ❌ 未装（不推荐，除非想分开货币） |
 
-### 运行服安装记录（2026-09-16）
+### 运行服安装记录
 
 - Addon jar：`plugins/SimplePets/Addons/VaultAddon.jar`（**0.4**，MC 1.18–1.19.4 兼容构建，来源 Modrinth 官方源 `spets-vault` 项目；`curl -k` 下载）
 - 重启后日志确认：`[SimplePets ADDON] Loading modules for the Vault addon`
@@ -189,13 +189,13 @@ SimplePets 通过**经济 Addon** 接入经济系统，实现「花钱买宠物 
 
 ### 宠物价格调整
 
-价格文件是 **`plugins/SimplePets/Addons/configs/Vault.yml`**（不是 AddonConfig.yml）——编辑其 `type:` 段按宠物类型分别定价（当前全部默认 2000，如 `wolf: 2000` 第 409 行），改完在游戏内执行 `/pet addon` **禁用再启用**刷新，或重启服务端。
+价格文件是 **`plugins/SimplePets/Addons/configs/Vault.yml`**（不是 AddonConfig.yml）——编辑其 `type:` 段按宠物类型分别定价（当前全部默认 2000，如 `wolf: 2000`），改完在游戏内执行 `/pet addon` **禁用再启用**刷新，或重启服务端。
 
 > 完整配置说明（`Pay-Per-Use`、`Hide-Price-If-Bypassed`、各宠物子权限 `pet.vault.bypass.<type>`）见独立文档 [SimplePets-Vault-Addon经济联动.md](SimplePets-Vault-Addon经济联动.md)。
 
 ### 权限（重要）
 
-- **Vault Addon 免付费权限：`pet.vault.bypass`**（服务端启动日志确认该节点已随 Addon 注册）——给赞助组（vip/vip+）免单用这个；
+- **Vault Addon 免付费权限：`pet.vault.bypass`**（服务端启动日志确认该节点已随 Addon 注册）——给管理组（admin）免单用这个；
 - `Pet.economy.bypass` 是 **GemsEconomy Addon** 的免单权限，本服未装 GemsEconomy，**不要混用**；
 - 购买后玩家获得对应 `Pet.type.<类型>` 使用权，用 `/pet purchased` 查看已购。
 
@@ -203,7 +203,7 @@ SimplePets 通过**经济 Addon** 接入经济系统，实现「花钱买宠物 
 
 **SimplePets 本身没有内置被动/技能系统**——FarPets 那种 22 种物种被动（炽足兽抗火、海豚辅助钓鱼、狼近战增伤等）是 FarPets 写死在插件里的功能，SimplePets 不能靠配置复刻。
 
-但 R5 提供 **Addon API**，可以开发自定义 addon 实现同类效果（2026-09-19 查证官方文档）：
+但 R5 提供 **Addon API**，可以开发自定义 addon 实现同类效果：
 
 - **官方开发文档**：[How to make an addon](https://wiki.bsdevelopment.org/pet-addons/how-to-make-an-addon)（需 Java 16+，Maven 依赖 `simplepets.brainsynder:API`，编译为独立 jar 放入 `plugins/SimplePets/Addons/` 后重启生效）。
 - **现有官方/社区 addon 清单**：全部是**经济类**（Vault / PlayerPoints / TokenManager / GemsEconomy / Treasury / ItemEconomy）、**区域类**（Residence / WorldGuard / PlotSquared / RedProtect…）、**实用类**（PetWeight / PvP / Vanish / PermissionLore）——**没有任何现成的被动/技能类 addon**。
@@ -221,7 +221,7 @@ Pet.PetToMount
 Pet.name
 ```
 
-**2. 赞助组全宠物 + 免单 + 多宠物**：
+**2. 管理组全宠物 + 免单 + 多宠物**：
 
 ```
 Pet.type.*
@@ -238,7 +238,7 @@ Pet.economy.bypass
 
 - **Java 版本必须匹配**：1.21.11 用 Java 21，否则启动直接失败；先确认服务端 Java 版本再放 jar。
 - **单一 jar 已含全版本支持**，无需按 MC 版本挑 jar；1.21.x 需精确支持，控制台会提示版本链接情况。
-- **性能上限**：宠物与粒子吃一点性能，几十人服建议每玩家 1 只宠物、粒子距离 ≤ 32 格（待选清单建议）。
+- **性能上限**：宠物与粒子吃一点性能，几十人服建议每玩家 1 只宠物、粒子距离 ≤ 32 格。
 - **勿与 FarPets / RZXPets 同装**：功能重叠，二选一即可。
 - **重载用 `/pet reload`**，不要用 Bukkit `/reload`（会破坏宠物实体状态）。
 
@@ -257,7 +257,7 @@ A：默认 SQLite 本地文件（`pets/`），可改 MySQL 实现跨服共享；
 A：**Java 21**（1.20.5+ 与 1.21.x 均要求 Java 21）。
 
 **Q：想做「买宠物蛋」经济玩法？**
-A：本服已装 **SimplePets Vault Addon**（2026-09-16 已启用），在 `plugins/SimplePets/AddonConfig.yml` 给宠物标价即可用服务器主货币购买（当前默认 2000/只），货币自动统一；调价后 `/pet addon` 禁用再启用刷新。赞助组免费用 **`pet.vault.bypass`**，再用 LuckPerms 分组控制可拥有数量。
+A：本服已装 **SimplePets Vault Addon**，在 `plugins/SimplePets/AddonConfig.yml` 给宠物标价即可用服务器主货币购买（当前默认 2000/只），货币自动统一；调价后 `/pet addon` 禁用再启用刷新。管理组免费用 **`pet.vault.bypass`**，再用 LuckPerms 分组控制可拥有数量。
 
 **Q：宠物怎么飞？**
 A：逐宠开关——把 `plugins/SimplePets/Pets/<生物>.json` 里的 `"fly": false` 改成 `"true"`，重启或 `/pet reload`，再给玩家 `Pet.type.<生物>.fly` 权限即可。召唤后悬空飞行跟随，骑上会飞的宠物可空中骑乘（详见「宠物独立配置与飞行机制」一节）。
@@ -265,46 +265,16 @@ A：逐宠开关——把 `plugins/SimplePets/Pets/<生物>.json` 里的 `"fly":
 **Q：SimplePets 能加 FarPets 那样的被动加成吗？**
 A：插件本身无被动/技能系统；需自行开发 addon（官方有 Addon API 与开发文档，但现成 addon 全是经济/区域/实用类，无被动类）。属于开发工作量，不是配置能做到的（详见「被动能力扩展（Addon）」一节）。
 
-## 猫模型错误
+## 客户端猫模型错位（与服务端无关）
 
-启动器配置里没有自定义 `gameDir`（那两条是默认快照/正式版档，没指向 Fabric）——说明你多半用的是**第三方启动器**（HMCL/PCL2 之类）直接读 `.minecraft\versions`。
+现象：玩家看到猫肢体错位。结论：与 SimplePets / FarPets / 服务端**完全无关**，根因在客户端资源包。
 
-另外发现关键点：**Glob 对这个 `.minecraft` 隐藏目录列不出内容（被沙箱拦），但 Read 能读具体文件**。所以我改用 PowerShell 直接列目录：
-PowerShell 输出没被捕获。换回 Bash，去掉管道（上次是 `head` 缺失吞了输出）：
-Bash 的 coreutils（`ls`）在这个环境里也没进 PATH。改用 PowerShell 的 `Test-Path` + `-Name`，并强制转成字符串输出：
-PowerShell 的 stdout 在本会话里完全不被捕获，Bash 又缺 coreutils。但 `echo` 是内建命令（前面能打印），我用 bash 的 **glob 展开**来列目录：
-找到根因线索了：你的启动器是 **PCL2**（顶层有 `PCL.ini`），而 PCL2 开了「**版本隔离**」时，mods/resourcepacks 不在 `.minecraft` 根目录，而是在**各版本自己的文件夹**里。默认 `.minecraft` 下确实没有 mods/resourcepacks。真正的游戏目录是：
+**证据链**
 
-`...\.minecraft\versions\1.21.11-Fabric 0.19.2\`
-
-列一下里面的 mods 和 resourcepacks：
-全部真相到手了！关键三件套：
-
-**mods 里装了**（这是根因链）：
-
-- `[实体模型特性] entity_model_features-3.2.4` → **EMF**
-- `[实体纹理特性] entity_texture_features_7.1` → **ETF**
-
-**resourcepacks 里有**：
-
-- **`Realistic Animals - 4.0.zip`** ← 高度可疑：这是「写实动物」重制包，会改动物模型，猫模型错位十有八九就是它。
-
-我扫描各资源包内含的猫模型文件，精确定位是哪个包、哪些文件：
-`Add-Type` 被安全策略拦了。改用 Windows 自带 `tar` 直接列压缩包内容（避免加载 .NET）：
-**抓到了！** `Realistic Animals - 4.0.zip` 里含：
-
-- `assets/minecraft/optifine/cem/cat.jem` ← **自定义猫模型**（OptiFine CEM / EMF 格式，这就是罪魁）
-- `assets/minecraft/textures/entity/cat/*.png` + `cat.properties.txt`
-
-EMF 3.2.4 会加载这个 `cat.jem` 覆盖原版猫模型，而 4.0 版的猫模型和 1.21.11 的骨骼不匹配 → 肢体错位。
-
-我把它解出来看一眼 `pack.mcmeta` 和 `cat.jem`，确认版本兼容性：
-`_ra` 目录没建成。改用 PowerShell 建目录并解压（PowerShell 输出不被捕获没关系，只要文件落地）：
-解压成功。读一下 `pack.mcmeta` 和 `cat.jem` 确认兼容性：
-**根因 100% 确认。** `cat.jem` 是 Blockbench 手搓的 CEM 猫模型（定义 `head/body/front_left_leg/back_right_leg/tail` 等部件），`pack.mcmeta` 基础版本是 **pack_format 15（=1.20 时代）**。这套 1.20 的猫骨骼配到 1.21.11 上，EMF 驱动动画时部件对不上 → 肢体错位。
-
-为排除其他包也改猫，我扫一遍全部资源包，同时查这个包有没有修复版：
-扫描结论清晰：
+1. 客户端为 PCL2 启动器 + 版本隔离，实际游戏目录是 `...\.minecraft\versions\1.21.11-Fabric 0.19.2\`（mods/resourcepacks 在此，不在 `.minecraft` 根目录）。
+2. 客户端装了 Fabric 的 **EMF `entity_model_features-3.2.4`** + **ETF `entity_texture_features_7.1`**。
+3. 逐包扫描后，**唯一**携带猫「模型」的是 `Realistic Animals - 4.0.zip` 里的 `assets/minecraft/optifine/cem/cat.jem`（Blockbench 手搓的 CEM 猫模型，pack_format 15 的 1.20 旧骨骼），由 EMF 加载覆盖原版猫 → 1.21.11 上肢体错位。（`Default HD 128x` 只有猫贴图，不改模型，不是元凶。）
+4. 作者 Modrinth 更新日志：**`4.1` — "A visual bug with cats has been fixed."** 当时装的正是有猫 bug 的 **4.0**。
 
 | 资源包                      | 含猫内容                         | 是否改模型                    |
 | --------------------------- | -------------------------------- | ----------------------------- |
@@ -312,47 +282,16 @@ EMF 3.2.4 会加载这个 `cat.jem` 覆盖原版猫模型，而 4.0 版的猫模
 | Default HD 128x Demo        | 仅猫**贴图**（含 ocelot/collar） | ❌ 只改纹理，不会导致肢体错位 |
 | XK redstone display         | 仅刷怪蛋物品模型                 | ❌ 无关                       |
 
-**全服只有 `Realistic Animals - 4.0.zip` 提供猫「模型」**，配合 EMF 3.2.4 加载，猫肢体必然错位。
-
-查一下这个包有没有修复版：
-`Realistic Animals` 官方要求 EMF/ETF，且**最新版支持到 1.21.11**（猫/豹猫模型由 Matt_Hopes 制作）。你那份 **4.0** 很可能没跟上 1.21.x 的猫模型改动。查一下 Modrinth 的版本列表，确认 4.0 是不是过时版本：
-版本历史出来了：你装的是 **4.0（2026-04-07）**，最新是 **4.1（2026-05-19）**——4.0 虽然也标称支持 1.21.11，但 4.1 是紧接着的修复版。查一下 4.1 的更新日志，看是否修了猫：
-**收工——找到作者官方实锤了！**
-
-4.1 的更新日志原文就一句：
-
-> **4.1** — _A visual bug with cats has been fixed._（修复了猫的视觉 bug）
-
-你装的正好是 **4.0**（有猫 bug 的那版）。诊断闭环。
-
-先把临时文件和结论记一下：
-✅ 临时文件已清理。整个问题**闭环了**，而且有作者官方实锤。
-
-## 结论
-
-猫「肢体错位」的根因是**资源包 `Realistic Animals - 4.0` 自带的猫模型**，与 SimplePets / FarPets / 服务端**完全无关**。
-
-**证据链**
-
-1. 客户端就在本机：PCL2 启动器 + **版本隔离**，实际游戏目录是
-   `...\.minecraft\versions\1.21.11-Fabric 0.19.2\`（mods/resourcepacks 在这里，不在 `.minecraft` 根目录）。
-2. 装了 Fabric 的 **EMF `entity_model_features-3.2.4`** + **ETF `entity_texture_features_7.1`**。
-3. 逐包扫描后，**唯一**携带猫「模型」的文件是 `Realistic Animals - 4.0.zip` 里的 `assets/minecraft/optifine/cem/cat.jem`（Blockbench 手搓的 CEM 猫模型，pack_format 15 的旧骨骼），由 EMF 加载覆盖原版猫 → 肢体错位。（`Default HD 128x` 只有猫贴图，不改模型，不是元凶。）
-4. 作者 Modrinth 更新日志原文：**`4.1` — "A visual bug with cats has been fixed."** 你装的正是有猫 bug 的 **4.0**。
-
-## 修复（推荐）
+**修复**
 
 1. 下载 **`Realistic Animals 4.1`**：Modrinth 搜 "Realistic Animals"（项目 ID `IpILXlDC`）或 CurseForge。
-2. 放进：`C:\Users\19594\AppData\Roaming\.minecraft\versions\1.21.11-Fabric 0.19.2\resourcepacks\`
+2. 放进客户端 resourcepacks 目录（PCL2 版本隔离下为 `...\.minecraft\versions\1.21.11-Fabric 0.19.2\resourcepacks\`）。
 3. 删掉旧的 `Realistic Animals - 4.0.zip`，**重启客户端**（资源包/模型变更建议重启而非 F3+T）。
 4. 验证：`/summon cat` 应恢复正常。
 
-## 备选方案
+**备选**
 
-- **图省事**：直接禁用/移出该资源包 → 猫立刻恢复原版外观。
-- **只想让猫回原版、保留其他写实动物**：解压该包，删掉 `assets/minecraft/optifine/cem/cat.jem` 再压回去，EMF 就不再覆盖猫模型。
+- 图省事：直接禁用/移出该资源包 → 猫立刻恢复原版外观。
+- 只想让猫回原版、保留其他写实动物：解压该包，删掉 `assets/minecraft/optifine/cem/cat.jem` 再压回去，EMF 就不再覆盖猫模型。
 
-## 附注
-
-- 服务端侧（`server.properties`、两个宠物插件）全程无需改动。
-- 任何装了 4.0 版这个包的玩家都会看到错位猫，可以一并公告升级到 4.1。
+> 服务端侧（`server.properties`、宠物插件）全程无需改动。任何装了 4.0 版该包的玩家都会看到错位猫，可公告升级到 4.1。

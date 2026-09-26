@@ -1,18 +1,15 @@
 # 14. 核心依赖库 — CMILib
 
-CMILib 是 CMI 系列插件的共享依赖库，提供自定义 Hex 颜色解析、GUI 创建工具、皮肤获取 API 与物品/NBT 处理等底层能力。本服并未安装 CMI 主插件，它的存在应是其他插件自动引入的依赖。本文档列出了 config.yml 的关键配置项，供排查插件依赖问题时参考。
+CMILib 是 CMI 系列插件的共享依赖库，提供 Hex 颜色解析、GUI 工具、皮肤 API、物品/NBT 处理等底层能力。本服未装 CMI 主插件，CMILib 由其他插件自动引入。
 
 **文件**: 内置于 `plugins/CMILib/` 目录
 
-## 功能说明
+## 功能
 
-CMILib 是 CMI 系列插件的**共享依赖库**，提供了：
 - 自定义 Hex 颜色解析
 - GUI 创建工具
 - 皮肤获取 API
 - 物品/NBT 处理工具
-
-> ⚠️ 本服并未安装 CMI 主插件，CMILib 的存在可能是其他插件的依赖项自动安装的。
 
 ## 关键配置 (`plugins/CMILib/config.yml`)
 

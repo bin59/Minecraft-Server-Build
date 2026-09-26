@@ -8,8 +8,6 @@
 
 **官方网站**: https://luckperms.net | **Wiki**: https://luckperms.net/wiki
 
-> ✅ **当前状态（2026-09-16 校准）**：主插件 JAR（5.5.81）已在 `plugins/` 目录并正常加载，存储后端为 H2 本地库（`config.yml` 第86行 `storage-method: h2`），此前「缺少主 JAR、需手动下载」的说明已过时，现删除。
-
 ## 📁 本目录配置文件索引
 
 面向「南瓜生存服」当前插件组合的完整权限方案，按使用顺序阅读：

@@ -90,5 +90,5 @@ global:
 
 - 上级目录：[../](../)（2-运维监控与面板）
 - 兄弟章节：[04-核心依赖库-CMILib](../04-%E6%A0%B8%E5%BF%83%E4%BE%9D%E8%B5%96%E5%BA%93-CMILib/CMILib.md)、[03-性能分析-spark](../03-%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-spark/spark.md)
-- 被依赖方：AntiLitematica 文档（`7-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-.../`）
+- 被依赖方：AntiLitematica 文档（`6-工具与常见问题约束/03-禁用影响平衡的插件功能/AntiLitematica-.../`）
 - 官方：https://github.com/dmulloy2/ProtocolLib

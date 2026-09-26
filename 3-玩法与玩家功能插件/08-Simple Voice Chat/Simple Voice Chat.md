@@ -62,48 +62,37 @@ SVC 在 Modrinth 下载时要选**加载器**和**安装端**。本服是双端�
 
 #### 关键配置项
 
-> 以下为运行服实际生成的 `plugins/voicechat/voicechat-server.properties`（v2.6.21）真实键值，已与运行服逐项核对。
+> 以下为运行服实际生成的 `plugins/voicechat/voicechat-server.properties` 真实键值。
 
 ```properties
 # 语音服务端口（UDP），默认 24454
-# 实际值：port=24454（见 plugins\voicechat\voicechat-server.properties 第9行）
 port=24454
 
 # 绑定地址，留空使用 server.properties 中的 server-ip；绑通配地址用 *
-# 实际值：bind_address=（空，第13行）
 bind_address=
 
 # 最大语音距离（方块数）
-# 实际值：max_voice_distance=48.0（第15行）
 max_voice_distance=48.0
 
-# 小声说话（whisper）时的语音距离（方块数）
-# 实际值：whisper_distance=24.0（第17行）
-# 注意：v2.6.21 使用绝对距离 whisper_distance，而非旧版的 whisper/crouch_distance_multiplier 倍率
+# 小声说话（whisper）时的语音距离（方块数，绝对距离，非倍率）
 whisper_distance=24.0
 
 # Opus 编码：VOIP / AUDIO / RESTRICTED_LOWDELAY
-# 实际值：codec=VOIP（第20行）
 codec=VOIP
 
 # 语音包最大字节数
-# 实际值：mtu_size=1275（第23行）
 mtu_size=1275
 
 # 客户端连接语音服务的地址（内网穿透时必填，含端口）
-# 实际值：voice_host=（空，第37行）
 voice_host=
 
 # 是否强制玩家安装模组，未安装则踢出
-# 实际值：force_voice_chat=false（第45行）
 force_voice_chat=false
 
 # 是否允许群聊
-# 实际值：enable_groups=true（第33行）
 enable_groups=true
 
 # 是否允许录音
-# 实际值：allow_recording=true（第39行）
 allow_recording=true
 ```
 
@@ -185,7 +174,7 @@ port=24454
 
 ### 🔌 扩展插件
 
-SVC 拥有丰富的生态扩展，以下是截至 2026 年 7 月已知的一些扩展模组：
+SVC 拥有丰富的生态扩展，常见扩展模组：
 
 - **Simple Voice Chat Soundboard**：通过快捷键播放音效，其他玩家可通过语音听到
 - **Voice Chat Interaction**：让语音与游戏内机制互动
@@ -474,8 +463,6 @@ services:
 - [ ] `bind_address` 设为 `0.0.0.0`（云服务器必须）
 - [ ] 服务器防火墙（如有）已放行对应端口
 - [ ] 内网穿透场景下，frp 穿透的是 **UDP** 协议
-
-如果你能告诉我你的具体情况（云厂商、是否有公网 IP、MC 版本、模组加载器类型），我可以帮你生成一份更精确的配置方案。
 
 ---
 

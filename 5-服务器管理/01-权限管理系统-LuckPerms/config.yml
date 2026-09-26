@@ -88,7 +88,7 @@ storage-method: h2
 #   parents-by-first         取第一个继承的父组
 #   stored                   用 /lp user <玩家> setprimarygroup 手动指定
 #
-# 本服前缀（[VIP] / [管理] 等）依赖主组正确解析，故用 parents-by-weight。
+# 本服前缀（[新手] / [管理] / [服主] 等）依赖主组正确解析，故用 parents-by-weight。
 primary-group-calculation: parents-by-weight
 
 # 继承树的遍历算法
@@ -192,7 +192,7 @@ vault:
 world-rewrite: {}
 
 # 组名重写。用于把外部插件传来的组名映射到 LuckPerms 组名。
-# 例：某些插件把 VIP 写成 vip+，可在此映射：
+# 例：某些插件把组名写成别的名字，可在此映射：
 # group-name-rewrite:
-#   'vip+': 'vip'
+#   '外部组名': 'luckperms组名'
 group-name-rewrite: {}

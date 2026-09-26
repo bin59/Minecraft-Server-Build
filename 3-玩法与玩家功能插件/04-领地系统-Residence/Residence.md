@@ -1,6 +1,6 @@
 # 8. 领地系统 — Residence
 
-Residence 是 Minecraft 中流行的领地保护插件，允许玩家创建私人领地并细粒度设置建造、破坏、容器、PVP 等权限，支持领地买卖、租赁与子区域。本文档汇总了圈地、传送、领地频道等常用命令，config.yml 与 flags.yml 的实际校准值，并针对配置不生效给出旧领地缓存、权限组覆盖、子区域继承三层排查思路。供管理员管理领地权限与排查问题时使用。
+Residence 是 Minecraft 中流行的领地保护插件，允许玩家创建私人领地并细粒度设置建造、破坏、容器、PVP 等权限，支持领地买卖、租赁与子区域。本文档汇总了圈地、传送、领地频道等常用命令，config.yml 与 flags.yml 的实际取值，并针对配置不生效给出旧领地缓存、权限组覆盖、子区域继承三层排查思路。供管理员管理领地权限与排查问题时使用。
 
 [Github Residence](https://github.com/Zrips/Residence)
 
@@ -116,34 +116,33 @@ Global:
     setRemove: LIGHT_GRAY_WOOL            # 移除状态: 灰色羊毛
 
   DynMap:
-    Use: true                             # DynMap 地图支持启用（实际 config.yml 第 522 行）
+    Use: true                             # DynMap 地图支持启用
     ShowFlags: true                       # 显示旗帜信息
   Pl3xMap:
-    Use: true                             # Pl3xMap 地图支持启用（实际 config.yml 第 556 行）
+    Use: true                             # Pl3xMap 地图支持启用
     ShowFlags: true                       # 显示旗帜信息
-  # 实际配置无 WebMap 段，在线地图走 DynMap / Pl3xMap。
+  # 在线地图走 DynMap / Pl3xMap。
 
   # 以下功能均已禁用:
-  EnableEconomy: false                    # 经济系统
   UseLeaseSystem: false                   # 租赁系统
   EnableRentSystem: false                 # 出租系统
   Sell.Subzone: false                     # 子区域出售
 ```
 
-> **经济开关实际值**：本服领地当前 EnableEconomy: false（config.yml 第 355 行）、Type: Vault（第 367 行）、UseLeaseSystem: false（第 334 行）、EnableRentSystem: false（第 374 行）——圈地不扣钱、不可买卖/出租。Vault.md §4.1 描述的「开启经济、领地买卖」是目标方案，当前运行服为关闭状态；如需开启属经济行为项，需用户决策（见校准报告）。
+> **经济开关实际值**：本服领地当前 `EnableEconomy: false`、`Type: Vault`、`UseLeaseSystem: false`、`EnableRentSystem: false`——圈地不扣钱、不可买卖/出租。
 
 ## flags.yml 权限配置文件
 
-全局默认权限，主要定义了游戏世界和领地的默认行为规则。以下是该文件的核心配置总结：
+全局默认权限，主要定义了游戏世界和领地的默认行为规则。以下是该文件的核心配置：
 
 ### 🌍 全局世界规则 (Global Flags)
 
 这部分定义了玩家**不在任何领地内**时的世界默认行为。
 
-- **核心保护**：野外**允许**玩家建造 (`build: true`，flags.yml 第 9 行)、使用 (`use: true`，第 8 行)；全局 `Global` 段未单独列出 `destroy`。
-- **PVP 与伤害**：野外**开启**玩家对战 (`pvp: true`，flags.yml 第 15 行) 和生物伤害 (`damage: true`，第 12 行)。
-- **爆炸与火灾**：野外**允许** TNT 爆炸 (`tnt: true`，flags.yml 第 14 行)、火焰蔓延 (`firespread: true`，第 11 行)、点燃 (`ignite: true`，第 10 行)，苦力怕爆炸 (`creeper: true`，第 13 行) 亦为允许。
-- **结论**：本服野外（无人圈地区域）几乎不做规则限制，保护完全靠玩家自建领地实现。_（本节已按运行服 flags.yml 第 7–15 行实际值于 2026-09-16 校准，旧版此处数值全部相反。）_
+- **核心保护**：野外**允许**玩家建造 (`build: true`)、使用 (`use: true`)；全局 `Global` 段未单独列出 `destroy`。
+- **PVP 与伤害**：野外**开启**玩家对战 (`pvp: true`) 和生物伤害 (`damage: true`)。
+- **爆炸与火灾**：野外**允许** TNT 爆炸 (`tnt: true`)、火焰蔓延 (`firespread: true`)、点燃 (`ignite: true`)，苦力怕爆炸 (`creeper: true`) 亦为允许。
+- **结论**：本服野外（无人圈地区域）几乎不做规则限制，保护完全靠玩家自建领地实现。
 
 ### 🚩 权限标志管理 (FlagPermission)
 
@@ -157,9 +156,9 @@ Global:
 
 当玩家创建一个新的领地时，该领地会自动应用以下默认权限：
 
-- **基础操作**：新领地默认**禁止**建造 (`build: false`)、破坏 (`destroy: false`)、使用容器 (`container: false`)、使用 (`use: false`) 和 PVP (`pvp: false`，flags.yml 第 412 行)。
-- **生物与动物**：禁止动物捕杀 (`animalkilling: false`，flags.yml 第 399 行) 和剪羊毛 (`shear: false`，第 413 行)。
-- **特殊保护**：禁止 TNT 爆炸 (`tnt: false`，flags.yml 第 415 行)、禁止爆炸 (`explode: false`)、火焰蔓延 (`firespread: false`)，开启活塞保护 (`pistonprotection: true`，第 411 行)。
+- **基础操作**：新领地默认**禁止**建造 (`build: false`)、破坏 (`destroy: false`)、使用容器 (`container: false`)、使用 (`use: false`) 和 PVP (`pvp: false`)。
+- **生物与动物**：禁止动物捕杀 (`animalkilling: false`) 和剪羊毛 (`shear: false`)。
+- **特殊保护**：禁止 TNT 爆炸 (`tnt: false`)、禁止爆炸 (`explode: false`)、火焰蔓延 (`firespread: false`)，开启活塞保护 (`pistonprotection: true`)。
 
 ### 👤 创建者与租客权限 (CreatorDefault & RentedDefault)
 
@@ -173,7 +172,7 @@ Global:
 
 ## 配置不生效时
 
-既然修改了默认配置依然无效，说明问题可能不在“新领地”的生成规则上，而是**旧领地的权限残留**，或者是**更上层的权限组**在作祟。
+修改默认配置后依然无效，说明问题可能不在“新领地”的生成规则上，而是**旧领地的权限残留**，或者是**更上层的权限组**在作祟。
 
 请按照以下 3 个步骤进行深度排查，这通常能解决 99% 的“配置不生效”问题：
 
@@ -199,7 +198,7 @@ Global:
 **排查**：
 
 - 打开 `plugins/Residence/groups.yml`。
-- 找到 `Default`（默认组）或者玩家所在的 VIP 组。
+- 找到 `Default`（默认组）或者玩家所在的权限组。
 - 检查里面是否有类似下面的配置：
   ```yaml
   Groups:

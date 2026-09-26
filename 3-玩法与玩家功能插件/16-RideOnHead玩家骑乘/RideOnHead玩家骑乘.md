@@ -8,8 +8,6 @@
 
 **Modrinth**: https://modrinth.com/plugin/rideonhead ｜ **官网**: https://deelter.ru
 
-> 替代方案曾考虑 CarryMe（SpigotMC，命令为西班牙语 `/cargar`/`/aceptar`/`/soltar` 且发起权限默认 false），因不如 RideOnHead 顺手而弃用——RideOnHead 玩家权限 `rideonhead.user` 默认 true，开箱即用。见《各种插件（待选）》§十二。
-
 ## 功能说明
 
 - **骑头**：空手右键另一名玩家，即可骑到其头顶。
@@ -45,7 +43,7 @@
 | `/ride reload` | `rideonhead.admin` | op | 重载配置 |
 | `/ridehead` | — | — | `/ride` 别名 |
 
-> ✅ 玩家侧**无需额外授权**：`rideonhead.user` 默认 true。admin 节点默认 op，已随 admin 组生效。
+> ✅ 玩家侧**无需额外授权**：`rideonhead.user` 默认 true，开箱即用。admin 节点默认 op，已随 admin 组生效。
 > 权限节点已登记进《权限节点速查》与《权限导入脚本》。
 
 ## 配置要点

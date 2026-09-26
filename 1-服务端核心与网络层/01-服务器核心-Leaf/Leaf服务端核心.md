@@ -23,7 +23,7 @@ Leaf 是 [Gale](https://github.com/GaleMC/Gale) 的一个高性能分支，而 G
 | **网络** | 数据包压缩优化、Netty 线程池调优 |
 | **原版修复** | 继承 Paper 所有 bug 修复，同时保持原版特性 |
 
-> **版本说明**: `leaf-1.21.11-174.jar` 对应 Minecraft 1.21.1，Leaf 构建号 174。此版本与 Paper 1.21.11-132 同属一个 Minecraft 版本，可直接替换。
+> **版本**: `leaf-1.21.11-174.jar`（构建号 174），与 Paper 同 Minecraft 版本，可直接替换。
 
 ### 从 Paper 迁移注意事项
 
@@ -94,11 +94,11 @@ async:
 
 > ⚠️ `async-mob-spawning` 需要 Paper 配置中 `per-player-mob-spawns: true` 才能生效。
 
-#### 旧版遗留配置
+#### 配置文件有效性
 
 | 文件 | 状态 | 说明 |
 |---|---|---|
-| `purpur.yml` | ❌ 不再读取 | 从 Purpur 迁移后的遗留文件，Leaf 不读取此配置 |
+| `purpur.yml` | ❌ 不再读取 | 遗留文件，Leaf 不读取此配置 |
 | `spigot.yml` | ✅ 仍有效 | Leaf 继承 Spigot → Paper 的配置链 |
 | `bukkit.yml` | ✅ 仍有效 | Leaf 继承 Bukkit 的配置链 |
 

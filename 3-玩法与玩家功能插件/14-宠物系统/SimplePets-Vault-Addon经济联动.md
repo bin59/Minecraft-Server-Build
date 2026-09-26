@@ -1,8 +1,8 @@
 # SimplePets Vault Addon 经济联动
 
-本文是 SimplePets 主文档的经济扩展篇，专门讲本服已启用的 Vault Addon：让玩家用服务器主货币（EssentialsX 余额，与全服同一套账）花钱购买或解锁宠物，而不是另起一套货币。内容包括安装记录、AddonConfig.yml 与 Vault.yml 价格配置、按生物类型调价的方法，以及 pet.vault.bypass 免付权限的用法。
+本文是 SimplePets 主文档的经济扩展篇，专门讲本服已启用的 Vault Addon：让玩家用服务器主货币（EssentialsX 余额，与全服同一套账）花钱购买或解锁宠物，而不是另起一套货币。内容包括 AddonConfig.yml 与 Vault.yml 价格配置、按生物类型调价的方法，以及 pet.vault.bypass 免付权限的用法。
 
-> **状态**：✅ 已安装启用（2026-09-16） | **Addon 版本**：0.4（MC 1.18–1.19.4 兼容构建，适配本服 1.21.11）
+> **状态**：✅ 已安装启用 | **Addon 版本**：0.4（适配本服 1.21.11）
 > **所属**：[宠物系统 SimplePets](宠物系统simplepets.md) 的经济扩展 | **上层经济**：[Vault](../02-经济系统-Vault/Vault.md) + [EssentialsX](../10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md)
 
 ## 一、这是什么
@@ -16,11 +16,11 @@ SimplePets 通过「经济 Addon」实现**花钱买宠物 / 解锁宠物类型*
 
 > 若改换 GemsEconomy Addon，货币会与全服经济脱钩，本服不推荐。
 
-## 二、安装记录（2026-09-16）
+## 二、安装记录
 
 | 项 | 值 |
 |---|---|
-| Addon jar | `plugins/SimplePets/Addons/VaultAddon.jar`（9,085 字节） |
+| Addon jar | `plugins/SimplePets/Addons/VaultAddon.jar` |
 | 来源 | Modrinth 官方源（项目 `spets-vault`，版本 0.4；下载需 `curl -k`） |
 | 启用方式 | 放入 `Addons/` 目录后**重启服务端**（非热加载） |
 | 启动日志证据 | `[SimplePets ADDON] Loading modules for the Vault addon` |
@@ -35,8 +35,8 @@ plugins/SimplePets/
 ├── Addons/
 │   ├── VaultAddon.jar          # Addon 本体
 │   └── configs/
-│       └── Vault.yml           # ★ 价格与购买行为配置（421 行，自动生成）
-├── AddonConfig.yml             # Addon 总开关（59 字节，仅 Vault.Enabled）
+│       └── Vault.yml           # ★ 价格与购买行为配置（自动生成）
+├── AddonConfig.yml             # Addon 总开关（仅 Vault.Enabled）
 └── config.yml                  # SimplePets 主配置
 ```
 
@@ -55,14 +55,14 @@ Vault:
 
 ### 4.2 Addons/configs/Vault.yml（价格与行为）★
 
-关键项（行号以当前自动生成版本为准）：
+关键项：
 
 | 配置项 | 当前值 | 含义 |
 |---|---|---|
-| `Pay-Per-Use-Enabled`（第 8 行） | `false` | **一次性购买**：花钱解锁后永久可用，不再重复扣费；`true` 则每次召唤都要付费 |
-| `Hide-Price-If-Bypassed`（第 3 行） | `true` | 有免付权限时隐藏价格、显示 `BYPASSED` |
+| `Pay-Per-Use-Enabled` | `false` | **一次性购买**：花钱解锁后永久可用，不再重复扣费；`true` 则每次召唤都要付费 |
+| `Hide-Price-If-Bypassed` | `true` | 有免付权限时隐藏价格、显示 `BYPASSED` |
 | `Price.Free` / `Price.Bypassed` | `Free` / `BYPASSED` | 免费用/免付时 lore 显示文案 |
-| `type.<生物>`（第 380–421 行） | **全部 `2000`** | ★ **每只宠物的价格**，按生物类型分别定价 |
+| `type.<生物>` | **全部 `2000`** | ★ **每只宠物的价格**，按生物类型分别定价 |
 
 **调价方法**：编辑 `Addons/configs/Vault.yml` 的 `type:` 段，例如把狼改成 500：
 
@@ -77,7 +77,7 @@ type:
 
 | 权限 | 说明 |
 |---|---|
-| **`pet.vault.bypass`** | **父权限（免付总开关）**：持有者购买任何宠物都免单；给赞助组（vip/vip+）发这个 |
+| **`pet.vault.bypass`** | **父权限（免付总开关）**：持有者购买任何宠物都免单；给管理组（admin）发这个 |
 | `pet.vault.bypass.<生物>` | 单种宠物免付（如 `pet.vault.bypass.wolf`），父权限包含全部子权限 |
 | `pet.commands.purchased` | 查看已购宠物（`/pet purchased`） |
 | `pet.commands.addon` | Addon 管理（`/pet addon` 禁用/启用/更新）——管理用 |

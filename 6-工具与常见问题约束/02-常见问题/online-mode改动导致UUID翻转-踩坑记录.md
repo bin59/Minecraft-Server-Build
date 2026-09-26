@@ -92,7 +92,7 @@
 2. **基岩玩家漏 `.` 前缀**：`/resadmin setowner` 的玩家名若是基岩玩家，必须手打全名带 `.`，否则当成不存在的 Java 玩家 → 静默失败。
 3. **玩家不在线**：setowner 按名字解析 UUID，离线玩家可能解析不到正确 UUID → 写歪。
 
-## 七、相关踩坑索引（本次会话其他已记录）
+## 七、相关文档索引
 
 - **BlueMap 命令修正**：正确暂停/恢复是 `/bluemap stop` / `/bluemap start`（**不是** `pause`/`resume`）；详见 `3-玩法与玩家功能插件/17-网页世界地图-BlueMap/BlueMap.md`。
 - **Residence 管理员命令**：单字 `/resadmin setowner <领地名> <玩家名>`（非 `/res admin` 两词）；基岩带 `.`、Tab 不补全。详见 `3-玩法与玩家功能插件/04-领地系统-Residence/Residence.md`。

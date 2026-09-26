@@ -1,6 +1,7 @@
 ############################################################
 #  LuckPerms 权限一键导入脚本
 #  服务器：南瓜生存服 | Leaf 1.21.11 | MC 1.21.11
+#  版本：v2（2026-09-26，身份精简：default / admin / owner + bedrock）
 #
 #  【使用方法】
 #  1. 确认 plugins/ 下已有 LuckPerms-Bukkit-*.jar 主插件并已启动过一次
@@ -24,48 +25,32 @@
 ############################################################
 
 lp creategroup default
-lp creategroup member
-lp creategroup vip
-lp creategroup mvp
-lp creategroup helper
 lp creategroup admin
 lp creategroup owner
 lp creategroup bedrock
 
 lp group default setweight 1
-lp group member  setweight 5
-lp group vip     setweight 20
-lp group mvp     setweight 30
-lp group helper  setweight 50
 lp group admin   setweight 80
 lp group owner   setweight 100
 lp group bedrock setweight 0
 
 lp group default meta setprefix 1 "&8[&7新手&8]&r"
-lp group member  meta setprefix 1 "&8[&a成员&8]&r"
-lp group vip     meta setprefix 1 "&8[&6VIP&8]&r"
-lp group mvp     meta setprefix 1 "&8[&bMVP&8]&r"
-lp group helper  meta setprefix 1 "&8[&9协管&8]&r"
 lp group admin   meta setprefix 1 "&8[&c管理&8]&r"
 lp group owner   meta setprefix 1 "&8[&4服主&8]&r"
 
 
 ############################################################
 #  第 2 段：继承链
-#    default <- member <- vip <- mvp
-#    default <- member <- helper <- admin <- owner
+#    default <- admin <- owner
+#    bedrock 为独立附加组，不参与继承
 ############################################################
 
-lp group member  parent add default
-lp group vip     parent add member
-lp group mvp     parent add vip
-lp group helper  parent add member
-lp group admin   parent add helper
-lp group owner   parent add admin
+lp group admin parent add default
+lp group owner parent add admin
 
 
 ############################################################
-#  第 3 段：default —— 新手基础权限
+#  第 3 段：default —— 玩家
 ############################################################
 
 # --- EssentialsX 基础 ---
@@ -90,7 +75,7 @@ lp group default permission set essentials.back
 lp group default permission set essentials.home
 lp group default permission set essentials.sethome
 lp group default permission set essentials.delhome
-lp group default permission set essentials.sethome.multiple.1
+lp group default permission set essentials.sethome.multiple.3
 
 # --- EssentialsX 经济 ---
 lp group default permission set essentials.balance
@@ -102,12 +87,28 @@ lp group default permission set essentials.worth
 # --- EssentialsX 工具包 ---
 lp group default permission set essentials.kit
 lp group default permission set essentials.kits.starter
+lp group default permission set essentials.kits.daily
+
+# --- EssentialsX 玩家日常 ---
+lp group default permission set essentials.nick
+lp group default permission set essentials.nick.color
+lp group default permission set essentials.chat.color
+lp group default permission set essentials.chat.format
+lp group default permission set essentials.workbench
+lp group default permission set essentials.anvil
+lp group default permission set essentials.enderchest
+lp group default permission set essentials.hat
+lp group default permission set essentials.ptime
+lp group default permission set essentials.keepinv
 
 # --- Residence 领地 ---
 lp group default permission set residence.create
 lp group default permission set residence.group.default
 lp group default permission set residence.select.basic
 lp group default permission set residence.select.area
+lp group default permission set residence.select.chunk
+lp group default permission set residence.select.expand
+lp group default permission set residence.select.worldedit
 lp group default permission set residence.info
 lp group default permission set residence.info.others
 lp group default permission set residence.list
@@ -117,15 +118,24 @@ lp group default permission set residence.message
 lp group default permission set residence.unstuck
 lp group default permission set residence.delete
 lp group default permission set residence.rename
+lp group default permission set residence.kick
+lp group default permission set residence.flags.build
+lp group default permission set residence.flags.container
+lp group default permission set residence.flags.use
+lp group default permission set residence.flags.tp
+lp group default permission set residence.flags.move
+lp group default permission set residence.flags.pvp
 
 # --- SkinsRestorer 皮肤 ---
 lp group default permission set skinsrestorer.command
 lp group default permission set skinsrestorer.command.set
 lp group default permission set skinsrestorer.command.clear
+lp group default permission set skinsrestorer.command.gui
 
 # --- Simple Voice Chat 语音 ---
 lp group default permission set voicechat.speak
 lp group default permission set voicechat.listen
+lp group default permission set voicechat.groups
 
 # --- EasyBot QQ 绑定（⚠️ 节点名以插件实际版本为准）---
 lp group default permission set easybot.command.bind
@@ -159,7 +169,6 @@ lp group default permission set quests.command.quest
 lp group default permission set eztax.stats
 # AuctionHouse：auction.* 默认 true，无需授予；/ahadmin 给 admin 组
 
-
 # --- RideOnHead 骑玩家（rideonhead.user 默认 true，玩家右键即可骑头，无需额外授权）---
 # rideonhead.admin 默认 op，已属 admin 组；无需手动 set
 
@@ -172,205 +181,16 @@ lp group default permission set cdm.broadcast
 lp group default permission set dh.default
 lp group default permission set deluxemenus.open
 
+# --- 只读审计（玩家可查自己被破坏的方块）---
+lp group default permission set coreprotect.inspect
+lp group default permission set coreprotect.help
 
-############################################################
-#  第 4 段：member —— 正式成员
-############################################################
-
-lp group member permission set essentials.sethome.multiple.3
-lp group member permission set essentials.kits.daily
-lp group member permission set essentials.nick
-lp group member permission set essentials.nick.color
-lp group member permission set essentials.chat.color
-lp group member permission set essentials.chat.format
-lp group member permission set essentials.workbench
-lp group member permission set essentials.anvil
-lp group member permission set essentials.enderchest
-lp group member permission set essentials.hat
-lp group member permission set essentials.ptime
-lp group member permission set essentials.keepinv
-
-# Residence：更多领地
-lp group member permission set residence.group.member
-lp group member permission set residence.select.chunk
-lp group member permission set residence.select.expand
-lp group member permission set residence.select.worldedit
-lp group member permission set residence.kick
-lp group member permission set residence.flags.build
-lp group member permission set residence.flags.container
-lp group member permission set residence.flags.use
-lp group member permission set residence.flags.tp
-lp group member permission set residence.flags.move
-lp group member permission set residence.flags.pvp
-
-# SkinsRestorer：可用皮肤库 GUI
-lp group member permission set skinsrestorer.command.gui
-
-# Simple Voice Chat：可开群聊
-lp group member permission set voicechat.groups
-
-# CoreProtect：只能查自己被破坏的方块（inspect），不可查他人记录
-lp group member permission set coreprotect.inspect
-lp group member permission set coreprotect.help
-
-# ViaVersion：允许旧版客户端直连（本服已在 config 全局开启，此处仅保险）
-lp group member permission set viaversion.updatebypass
+# --- ViaVersion：允许旧版客户端直连（本服已在 config 全局开启，此处仅保险）---
+lp group default permission set viaversion.updatebypass
 
 
 ############################################################
-#  第 5 段：vip —— 赞助玩家
-############################################################
-
-lp group vip permission set essentials.sethome.multiple.6
-lp group vip permission set essentials.fly
-lp group vip permission set essentials.fly.safelogin
-lp group vip permission set essentials.commandcooldowns.bypass
-lp group vip permission set essentials.teleport.cooldown.bypass
-lp group vip permission set essentials.teleport.delay.bypass
-lp group vip permission set essentials.kits.vip
-lp group vip permission set essentials.repair
-lp group vip permission set essentials.repair.all
-lp group vip permission set essentials.chat.magic
-lp group vip permission set essentials.chat.url
-lp group vip permission set essentials.back.ondeath
-lp group vip permission set essentials.skull
-
-lp group vip permission set residence.group.vip
-lp group vip permission set residence.lease
-lp group vip permission set residence.rent
-lp group vip permission set residence.flags.animalkilling
-lp group vip permission set residence.flags.creeper
-lp group vip permission set residence.flags.damage
-lp group vip permission set residence.flags.fire
-lp group vip permission set residence.flags.flow
-lp group vip permission set residence.flags.ignite
-lp group vip permission set residence.flags.mobkilling
-lp group vip permission set residence.flags.tnt
-lp group vip permission set residence.flags.trample
-lp group vip permission set residence.flags.wither
-
-lp group vip permission set skinsrestorer.bypasscooldown
-
-# 赞助组宠物免单（Vault Addon 已注册节点；用 LuckPerms 控制可养数量另配 pet.type.*）
-lp group vip permission set pet.vault.bypass
-
-
-############################################################
-#  第 6 段：mvp —— 高级赞助
-############################################################
-
-lp group mvp permission set essentials.sethome.multiple.unlimited
-lp group mvp permission set essentials.kits.mvp
-lp group mvp permission set essentials.enchant
-lp group mvp permission set essentials.speed
-lp group mvp permission set essentials.speed.others
-lp group mvp permission set essentials.god.pvp   # 仅禁止被玩家伤害，非完全无敌
-lp group mvp permission set essentials.nick.hideprefix
-
-lp group mvp permission set residence.group.mvp
-
-
-############################################################
-#  第 7 段：helper —— 协管（可查可调解，不可处罚）
-############################################################
-
-lp group helper permission set essentials.sethome.multiple.10
-lp group helper permission set essentials.commandcooldowns.bypass
-lp group helper permission set essentials.teleport.cooldown.bypass
-lp group helper permission set essentials.teleport.delay.bypass
-
-# 传送：可主动传送、可拉人（用于调解纠纷，不含强制 tpo）
-lp group helper permission set essentials.tp
-lp group helper permission set essentials.tphere
-lp group helper permission set essentials.tpall   # 可选：全员传送，按需保留
-lp group helper permission set essentials.top
-lp group helper permission set essentials.tpo
-lp group helper permission set essentials.tpohere
-
-# 查询类
-lp group helper permission set essentials.whois
-lp group helper permission set essentials.seen
-lp group helper permission set essentials.invsee
-lp group helper permission set essentials.invsee.preventmodify
-lp group helper permission set essentials.list.others
-lp group helper permission set essentials.afk.others
-lp group helper permission set essentials.balance.others
-
-# 轻度干预（可 Kick，不可 Ban/Mute/Jail）
-lp group helper permission set essentials.kick
-lp group helper permission set essentials.kick.notify
-lp group helper permission set essentials.broadcast
-lp group helper permission set essentials.setwarp
-lp group helper permission set essentials.delwarp
-
-# Residence：可进他人领地处理纠纷，但不给 admin
-lp group helper permission set residence.group.helper
-lp group helper permission set residence.admin.select
-lp group helper permission set residence.admin.tp
-lp group helper permission set residence.flags.bypass
-
-# CoreProtect：可读审计
-lp group helper permission set coreprotect.inspect
-lp group helper permission set coreprotect.inspect.others
-lp group helper permission set coreprotect.lookup
-lp group helper permission set coreprotect.near
-lp group helper permission set coreprotect.help
-
-# OpenInv：只读查看，不可编辑
-lp group helper permission set openinv.open
-lp group helper permission set openinv.open.self
-lp group helper permission set openinv.search
-lp group helper permission set openinv.crossworld
-
-# spark：只读诊断命令
-lp group helper permission set spark.tps
-lp group helper permission set spark.health
-
-# 原版命令（Kick 之外的常规运维）
-lp group helper permission set minecraft.command.gamemode
-lp group helper permission set minecraft.command.teleport
-lp group helper permission set minecraft.command.give
-lp group helper permission set minecraft.command.effect
-lp group helper permission set minecraft.command.time
-lp group helper permission set minecraft.command.weather
-lp group helper permission set minecraft.command.summon
-lp group helper permission set minecraft.command.tp
-
-# WorldEdit：基础选区（用于复原被破坏的建筑，不给无限选区）
-lp group helper permission set worldedit.wand
-lp group helper permission set worldedit.selection.pos
-lp group helper permission set worldedit.selection.hpos
-lp group helper permission set worldedit.selection.chunk
-lp group helper permission set worldedit.selection.size
-lp group helper permission set worldedit.selection.expand
-lp group helper permission set worldedit.selection.contract
-lp group helper permission set worldedit.selection.shift
-lp group helper permission set worldedit.region.info
-lp group helper permission set worldedit.region.set
-lp group helper permission set worldedit.region.replace
-lp group helper permission set worldedit.region.walls
-lp group helper permission set worldedit.region.faces
-lp group helper permission set worldedit.clipboard.copy
-lp group helper permission set worldedit.clipboard.paste
-lp group helper permission set worldedit.clipboard.cut
-lp group helper permission set worldedit.clipboard.rotate
-lp group helper permission set worldedit.history.undo
-lp group helper permission set worldedit.history.redo
-lp group helper permission set worldedit.history.clear
-lp group helper permission set worldedit.limit.50000      # 单次最大 5 万方块
-lp group helper permission set worldedit.navigation.ceiling
-lp group helper permission set worldedit.navigation.thru.command
-lp group helper permission set worldedit.navigation.up
-lp group helper permission set worldedit.navigation.unstuck
-lp group helper permission set worldedit.tool.none
-lp group helper permission set worldedit.tool.info
-
-# 可选：若希望协管也能飞行，取消下一行注释
-# lp group helper permission set essentials.fly
-
-
-############################################################
-#  第 8 段：admin —— 管理员（完整管理工具，含处罚）
+#  第 4 段：admin —— 管理员（完整管理工具，含处罚与只读审计）
 ############################################################
 
 lp group admin permission set essentials.sethome.multiple.unlimited
@@ -424,6 +244,17 @@ lp group admin permission set essentials.setwarp
 lp group admin permission set essentials.delwarp
 lp group admin permission set essentials.setspawn
 lp group admin permission set essentials.setfirstspawn
+
+# 查询类（管理组）
+lp group admin permission set essentials.whois
+lp group admin permission set essentials.seen
+lp group admin permission set essentials.invsee
+lp group admin permission set essentials.invsee.preventmodify
+lp group admin permission set essentials.list.others
+lp group admin permission set essentials.afk.others
+lp group admin permission set essentials.balance.others
+lp group admin permission set essentials.kick.notify
+lp group admin permission set essentials.broadcast
 
 # OpenInv：可读可改
 lp group admin permission set openinv.open
@@ -551,7 +382,7 @@ lp group admin permission set bukkit.command.*
 
 
 ############################################################
-#  第 9 段：owner —— 服主
+#  第 5 段：owner —— 服主
 ############################################################
 
 # LuckPerms 自身管理（仅服主）
@@ -587,7 +418,7 @@ lp group owner permission set bedrockplayersupport.*
 
 
 ############################################################
-#  第 10 段：bedrock —— 基岩版附加组
+#  第 6 段：bedrock —— 基岩版附加组
 #  权重 0、无主前缀，仅承载基岩专属权限，不与主组前缀冲突
 ############################################################
 
@@ -605,9 +436,8 @@ lp group bedrock permission set bedrockplayersupport.warpgui
 # 可选：基岩客户端输入 § 不便，可关闭其颜色权限（按需开启）
 # lp group bedrock permission set essentials.chat.color false
 
-
 ############################################################
-#  第 11 段：默认组兜底（新玩家进服自动进 default）
+#  第 7 段：默认组兜底（新玩家进服自动进 default）
 ############################################################
 
 # LuckPerms 默认行为即把无组玩家视为 default，一般无需修改。
@@ -616,7 +446,7 @@ lp group bedrock permission set bedrockplayersupport.warpgui
 
 
 ############################################################
-#  第 12 段：收尾
+#  第 8 段：收尾
 ############################################################
 
 # 热重载使全部改动生效
