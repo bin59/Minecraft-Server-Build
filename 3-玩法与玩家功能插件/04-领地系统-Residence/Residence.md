@@ -24,8 +24,23 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 | `/res auto <名称> <半径>` | 自动创建领地        |
 | `/res remove <名称>`      | 移除领地            |
 | `/res expand <数量>`      | 扩展领地            |
+| `/res contract <数量>`    | 缩小领地            |
+| `/res subzone <父领地> <子领地>` | 创建子领地    |
+| `/res select size`        | 查看当前选区大小    |
 | `/res info`               | 查看当前领地信息    |
 | `/res list`               | 列出自己的领地      |
+
+### 成员管理
+
+| 命令                              | 说明                     |
+| --------------------------------- | ------------------------ |
+| `/res padd <玩家>`                | 将玩家加入为领地成员     |
+| `/res padd <玩家> true`           | 加入并给予全部权限（build/destroy/use/container） |
+| `/res padd <领地> <玩家>`         | 指定领地添加成员         |
+| `/res pdel <玩家>`                | 移除领地成员             |
+| `/res plist`                      | 查看领地成员列表         |
+
+> **基岩玩家注意（Floodgate）**：基岩玩家名带 `.` 前缀（如 `.shangxin2179`），`/res padd` 必须手打全名（含点），否则报"找不到玩家"。
 
 ### 领地权限 (Flags)
 
@@ -54,7 +69,16 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 | 命令             | 说明       |
 | ---------------- | ---------- |
 | `/res tp <领地>` | 传送到领地 |
+| `/res tpset`     | 设置当前站立位置为领地传送点 |
 | `/res rt`        | 随机传送   |
+| `/res unstuck`   | 卡住时脱困回出生点/安全位置 |
+
+### 领地提示
+
+| 命令                              | 说明             |
+| --------------------------------- | ---------------- |
+| `/res message <领地> enter <消息>` | 设置进入领地提示 |
+| `/res message <领地> leave <消息>` | 设置离开领地提示 |
 
 ### 领地聊天
 
@@ -74,6 +98,7 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 | `/resadmin remove <领地名>`            | 管理员删除任意领地                   |
 | `/resadmin removeall <玩家名>`         | 删除某玩家的全部领地                 |
 | `/resadmin server <领地名>`            | 将领地设为服务器所有                 |
+| `/resadmin setall <flag> <true/false>` | 批量设置所有领地的某权限（如 `setall build false`，操作前备份） |
 
 > **基岩玩家注意（Floodgate）**：基岩玩家名带 `.` 前缀（如 `.NoviceMite1987`）。`/resadmin setowner` 的 `<玩家名>` **Tab 补全列不出基岩/离线玩家**，必须**手打全名（含点）**：`/resadmin setowner 我的家 .NoviceMite1987`。若报"找不到玩家"（基岩玩家离线时常有），改用该玩家 UUID：`/resadmin setowner 我的家 <UUID>`（UUID 用 `/res info <领地名>` 的 Owner 字段查，或问玩家 / 查 Floodgate 数据）。
 
@@ -121,7 +146,7 @@ Global:
   Pl3xMap:
     Use: true                             # Pl3xMap 地图支持启用
     ShowFlags: true                       # 显示旗帜信息
-  # 在线地图走 DynMap / Pl3xMap。
+  # 在线地图：本服采用 BlueMap（Residence 原生支持 DynMap/Pl3xMap 配置，未采用）
 
   # 以下功能均已禁用:
   UseLeaseSystem: false                   # 租赁系统

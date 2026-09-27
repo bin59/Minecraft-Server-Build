@@ -56,5 +56,5 @@
 ## 💰 每日随机收购（DailySell）
 
 - [x] 需求已定：每天随机 4 种物品换**南瓜币**，每种额度随机 10-100、单价当日浮动、总价 ≤ 800、防刷
-- [x] 插件已做并部署：`plugins/DailySell.jar` **v1.2.1（27格GUI多页 + 命令 + QuickMenu入口）**（源码+文档：`ai写的/每日随机收购/`）
+- [x] 插件已做并部署：`plugins/DailySell.jar`（27格GUI多页 + 命令 + QuickMenu入口）（源码+文档：`ai写的/每日随机收购/`）
 - [ ] **重启后验证**：`/ds` GUI（左键卖1/Shift卖满/翻页）、`/qm reload` 后快捷菜单入口、`/ds today` 清单、`/ds sell` 到账、额度/预算上限、跨天重抽

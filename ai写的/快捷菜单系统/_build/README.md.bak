@@ -308,7 +308,7 @@ Simple Voice Chat ──► 独立 UDP 通道，与上面三者无耦合
 | 组件 | 配置文件 | 必改项 |
 |---|---|---|
 | EssentialsX | `plugins/Essentials/config.yml` | `use-bukkit-permissions: true`（交给 LuckPerms）；`currency-symbol: '¥'`；`locale: zh`；`command-cooldowns`；`sethome-multiple` |
-| EssentialsX | `plugins/Essentials/kits.yml` | 定义 `starter` / `daily` / `vip` 工具包 |
+| EssentialsX | `plugins/Essentials/kits.yml` | 定义 `starter` / `daily` 工具包 |
 | Chunky | `plugins/Chunky/config.yml` | 一般无需改；用命令操作即可 |
 | Simple Voice Chat | `plugins/voicechat/voicechat-server.properties` | `port=24454`；`bind_address=0.0.0.0`（云服务器）；`voice_host=<公网IP>`；`force_voice_chat=false` |
 | BedrockPlayerSupport | `plugins/BedrockPlayerSupport/config.yml` | `language: zh_CN`；`bedrock-only: true`；各 GUI 开关 |

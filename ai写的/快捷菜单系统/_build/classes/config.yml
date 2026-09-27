@@ -806,19 +806,6 @@ menus:
           - '[close]'
           - '[player] kit daily'
 
-      vipkit:
-        material: DIAMOND_SWORD
-        display-name: '&6VIP 专属工具包'
-        lore:
-          - '&7钻石装备 + 附魔'
-          - '&c仅 VIP 可领取'
-        slot: 15
-        permission: essentials.kit.vip
-        glowing: true
-        actions:
-          - '[close]'
-          - '[player] kit vip'
-
   # ==================== 皮肤子菜单（SkinsRestorer） ====================
   skin:
     title: '&d&l皮肤管理'

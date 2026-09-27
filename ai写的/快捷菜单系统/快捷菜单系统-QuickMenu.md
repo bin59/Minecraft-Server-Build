@@ -6,8 +6,7 @@
 > **菜单已整合本服全部插件**：22 套菜单 / 173 个菜单项，分**玩家线**（11 套）
 > 与**管理线**（11 套），管理入口靠权限门控，普通玩家看不到。
 
-本章交付的是**可直接部署的自研插件**（含编译好的 jar 与完整源码工程），
-而非第三方插件的配置教程。
+插件 jar：`dist/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
 
 **插件与菜单的对应关系**（本菜单已覆盖的后端）：
 
@@ -29,74 +28,12 @@
 
 ---
 
-## 1. 选型结论：为什么是自研单插件
+## 1. 两端界面策略
 
-需求是「通过某个物品使用的快捷菜单，基岩版用表单、Java 版用箱子 GUI」。
-调研后对比了三条技术路线：
-
-| 方案              | 组成                                        | 性能   | 实用性 | 结论        |
-| ----------------- | ------------------------------------------- | ------ | ------ | ----------- |
-| **A. 三插件组合** | DeluxeMenus + BedrockPlayerSupport + Skript | 差     | 中     | ❌ 否决     |
-| **B. 单插件双端** | HexaForms / zMenu 等小众插件                | 中     | 中     | ⚠️ 备选     |
-| **C. 自研单插件** | QuickMenu（本方案）                         | **优** | **优** | ✅ **采用** |
-
-### 1.1 为什么否决方案 A（三插件组合）
-
-最初设想是「DeluxeMenus 画箱子 + BedrockPlayerSupport 出基岩表单 + Skript 监听物品右键」。否决理由：
-
-1. **菜单插件无法自己监听物品右键**。DeluxeMenus 官方论坛明确回复
-   「there is not a feature in this plugin」
-   （来源：[SpigotMC 讨论](https://www.spigotmc.org/threads/deluxemenus.89587/page-48)）。
-   所以必须额外引入 Skript 来补这个缺口。
-2. **Skript 是解释执行的**。脚本在运行时解析文本并逐行解释，物品右键是高频事件，
-   每个玩家每次右键都要走一遍解释器，性能明显劣于编译好的 Java 字节码。
-3. **三个插件、三套配置、三套权限**，排查问题时要跨插件追踪，维护成本高。
-
-### 1.2 为什么否决方案 B（现成双端插件）
-
-HexaForms 确实能「一份 YAML 定义两端界面」，功能对口，但：
-
-- 仅 **719 次下载、2 个关注者**，属于小众新插件
-- 当前版本 1.1.2，社区支持薄弱
-- 一旦作者停更或新版 Minecraft 不兼容，没有退路
-
-（来源：[Modrinth - HexaForms](https://modrinth.com/plugin/hexaforms)）
-
-### 1.3 为什么采用方案 C（自研）
-
-**性能层面**：
-
-- 菜单配置在**服务器启动时解析一次**，转为内存中的 Java 对象树。
-  玩家打开界面时零 IO、零 YAML 解析、零表达式求值。
-  对比 DeluxeMenus 运行时解析 YAML 表达式、Skript 解释执行，这是数量级的差距。
-- 插件 jar 仅 **43.5 KB**，16 个 class，无 shade 依赖打包，启动加载开销极低。
-- 打开界面时按权限过滤菜单项，过滤结果是直接遍历内存 List，无反射、无查表。
-
-**实用层面**：
-
-- **单插件搞定两端**，一份 `config.yml` 同时描述箱子布局与基岩按钮，行为不会分歧。
-- 菜单项动作两端共用同一个执行器，Java 点图标和基岩点按钮执行的是同一份动作列表。
-- 不依赖 PlaceholderAPI、不依赖 Vault，**零硬依赖**（Floodgate 为软依赖，未装也能跑）。
-
----
-
-## 2. 关键技术决策：基岩端为什么不用箱子
-
-这是整个方案最重要的判断，**与需求原话相反**，必须先说明。
-
-需求原话是「基岩版用箱子装各种插件或者原生的功能」。但实测调研发现，
-**Geyser 的箱子界面在基岩端有多个未解决的缺陷**：
-
-| 问题           | 表现                               | 来源                                                                              |
-| -------------- | ---------------------------------- | --------------------------------------------------------------------------------- |
-| 物品可被拖出   | 玩家误操作会把菜单物品拽出来掉地上 | [GeyserMC#211](https://github.com/GeyserMC/Geyser/issues/211)                     |
-| 移动端高亮异常 | 触屏选中物品时高亮渲染错误         | [GeyserMC#5896](https://github.com/GeyserMC/Geyser/issues/5896)                   |
-| 界面打不开     | 特定方块环境下箱子界面无法打开     | [GeyserMC#6134](https://github.com/GeyserMC/Geyser/issues/6134)                   |
-| 只能左键交互   | 基岩玩家在箱子界面无法右键操作     | [SpigotMC 讨论](https://www.spigotmc.org/threads/bedrock-java-geyser-gui.645599/) |
-
-**原生 Form 由基岩客户端自己渲染**，点击、滚动、按钮反馈全部正常，不存在上述问题。
-
-因此本插件的实际策略是：
+**Java 玩家用箱子 GUI，基岩玩家用原生 SimpleForm 表单**，不强制基岩端也看箱子。
+原因：Geyser 把服务端箱子界面翻译成基岩界面存在物品可被拖出、移动端高亮异常、
+特定环境打不开、只能左键交互等缺陷；原生 Form 由基岩客户端自己渲染，点击/滚动/
+按钮反馈全部正常。
 
 ```
             手持触发物品 → 右键
@@ -112,39 +49,27 @@ HexaForms 确实能「一份 YAML 定义两端界面」，功能对口，但：
          共用同一套动作执行器
 ```
 
-> ⚠️ 如果你确实要让基岩玩家也看箱子，把 `config.yml` 的
-> `platform.bedrock-native-form` 改为 `false` 即可回退，但会继承上述 Geyser 缺陷。
-> 插件在箱子界面里已做了**无条件取消点击 + 拦截拖拽**的防护，能缓解物品被拖出的问题。
+> 若确实要让基岩玩家也看箱子，把 `config.yml` 的 `platform.bedrock-native-form`
+> 改为 `false` 即可回退，但会继承上述 Geyser 缺陷。插件在箱子界面里已做**无条件取消
+> 点击 + 拦截拖拽**的防护，可缓解物品被拖出的问题。
 
-### 2.1 为什么普通 Bukkit 插件能发原生表单
-
-这是本方案能成立的技术前提，已核实：
-
-**Floodgate 自带 Cumulus 表单 API，普通 Bukkit 插件即可调用，不需要写 Geyser 扩展。**
+实现原理：Floodgate 自带 Cumulus 表单 API，普通 Bukkit 插件即可调用，无需写 Geyser 扩展：
 
 ```java
 FloodgateApi api = FloodgateApi.getInstance();
-if (api.isFloodgatePlayer(uuid)) {          // 判断是否基岩玩家
-    api.getPlayer(uuid).sendForm(form);     // 发送原生表单
+if (api.isFloodgatePlayer(uuid)) {
+    api.getPlayer(uuid).sendForm(form);   // 发送原生表单
 }
 ```
 
-（来源：[GeyserMC Wiki - Forms and Cumulus](https://geysermc.org/wiki/geyser/forms/)、
-[Floodgate API](https://geysermc.org/wiki/floodgate/api/)）
+基岩端两个内置处理：
 
-### 2.2 基岩端两个必须处理的坑
-
-开发中实测踩到，已在代码里解决：
-
-1. **表单回调在 Netty 网络线程触发**。直接在回调里操作背包会导致服务器崩溃。
-   → `ActionExecutor.runAsyncSafe()` 统一检测线程并切回主线程。
-2. **原生 Form 按钮不支持 `&` / `§` 颜色码**，会显示成乱码字符。
-   → 按钮文本统一经 `stripColor()` 去除颜色码；表单标题保留颜色（标题支持）。
-   → 配置项 `button-label` 可单独指定基岩端按钮文本。
+1. **表单回调在 Netty 网络线程触发**，直接在回调里操作背包会崩溃 → `ActionExecutor.runAsyncSafe()` 统一切回主线程。
+2. **原生 Form 按钮不支持 `&` / `§` 颜色码**（会显示乱码）→ 按钮文本统一经 `stripColor()` 去色；表单标题保留颜色。配置项 `button-label` 可单独指定基岩端按钮文本。
 
 ---
 
-## 3. 目录结构
+## 2. 目录结构
 
 ```
 ai写的/快捷菜单系统/
@@ -157,42 +82,31 @@ ai写的/快捷菜单系统/
 │   └── src/main/
 │       ├── java/com/nangua/quickmenu/
 │       │   ├── QuickMenuPlugin.java     主类，装配与 Floodgate 探测
-│       │   ├── command/
-│       │   │   └── QuickMenuCommand.java  /qm 命令与 Tab 补全
-│       │   ├── config/
-│       │   │   ├── ConfigLoader.java      YAML → 内存对象（启动时一次）
-│       │   │   └── PluginSettings.java    设置与菜单注册表
-│       │   ├── gui/
-│       │   │   ├── ChestMenuRenderer.java Java 端箱子渲染
-│       │   │   ├── BedrockFormRenderer.java 基岩端原生表单渲染
-│       │   │   └── MenuHolder.java        界面持有者标记（识别自家界面）
-│       │   ├── listener/
-│       │   │   ├── TriggerItemListener.java 物品右键 / 进服发放 / 防丢弃
-│       │   │   └── MenuClickListener.java     点击处理 / 防拖出 / 防连点
-│       │   └── menu/
-│       │       ├── MenuManager.java       ★ 两端分发决策中枢
-│       │       ├── ActionExecutor.java    ★ 动作执行（两端共用）
-│       │       ├── Menu.java  MenuItem.java  Action.java  ActionType.java
+│       │   ├── command/QuickMenuCommand.java  /qm 命令与 Tab 补全
+│       │   ├── config/                  YAML → 内存对象（启动时一次）
+│       │   ├── gui/                    Java 箱子渲染 / 基岩表单渲染 / 界面持有者
+│       │   ├── listener/               物品右键 / 进服发放 / 防丢弃 / 点击处理
+│       │   └── menu/                   两端分发决策中枢 / 动作执行 / 菜单与动作模型
 │       └── resources/
-│           ├── plugin.yml             插件描述（命令与权限）
-│           └── config.yml             ★ 菜单配置（22 套：玩家 11 + 管理 11）
-└── _build/                            构建中间目录（依赖库、class、探针）
+│           ├── plugin.yml              插件描述（命令与权限）
+│           └── config.yml              ★ 菜单配置（22 套：玩家 11 + 管理 11）
+└── _build/                            构建中间目录
 ```
 
 ---
 
-## 4. 安装部署
+## 3. 安装部署
 
-### 4.1 环境要求
+### 3.1 环境要求
 
-| 项目       | 要求               | 你的环境                      |
-| ---------- | ------------------ | ----------------------------- |
+| 项目       | 要求               | 本服                         |
+| ---------- | ------------------ | ---------------------------- |
 | 服务端核心 | Paper 或其分支     | ✅ Leaf 1.21.11（Paper 分支） |
 | Java       | 21+                | ✅ 已装 JDK 21                |
 | Minecraft  | 1.21.x             | ✅ 1.21.11                    |
-| Floodgate  | 基岩端原生表单必需 | 见 `03-Java-Bedrock互通层`    |
+| Floodgate  | 基岩端原生表单必需 | 已装（见互通层章节）          |
 
-### 4.2 部署步骤
+### 3.2 部署步骤
 
 ```
 1. 复制 dist\QuickMenu-1.0.0.jar  →  服务器 plugins\ 目录
@@ -201,14 +115,10 @@ ai写的/快捷菜单系统/
 4. 按需修改配置，然后 /qm reload 热重载（无需重启）
 ```
 
-> **未装 Floodgate 也能正常启动**。插件已做延迟加载处理：
-> 只在确认 Floodgate 可用后才触碰 Cumulus 相关类，
-> 纯 Java 服务器上会自动跳过基岩端渲染，全部玩家走箱子界面。
+> **未装 Floodgate 也能正常启动**：只在确认 Floodgate 可用后才触碰 Cumulus 相关类，
+> 纯 Java 服务器自动跳过基岩端渲染，全部玩家走箱子界面。
 
-### 4.3 权限授予（**必须做，否则打不开菜单**）
-
-参照第 24 章发现的问题——你的 `default` 组此前只有 3 条 Residence 权限，
-**没有任何 EssentialsX 权限**。菜单同理，不显式授权就是用不了：
+### 3.3 权限授予（必须做，否则打不开菜单）
 
 ```bash
 # 菜单本身的使用权限（default 已是 true，通常无需设置）
@@ -220,17 +130,14 @@ lp group owner permission set quickmenu.admin true
 ```
 
 > **菜单能打开但点了没反应 / 提示无权限**，几乎都是只给了 `quickmenu.use`
-> 而漏了底层的插件权限。菜单只是前端，真正干活的还是 EssentialsX / Residence /
-> SkinsRestorer 等后端插件。
-
-**完整的授权命令见 [第 10 章 LuckPerms 权限授予清单](#10-luckperms-权限授予清单)**，
-按「玩家组 / 管理组 / 危险操作」分组，覆盖本菜单用到的全部 60+ 个权限节点。
+> 而漏了底层插件权限。菜单只是前端，真正干活的是 EssentialsX / Residence /
+> SkinsRestorer 等后端插件。完整授权命令见 [第 8 章 LuckPerms 权限授予清单](#8-luckperms-权限授予清单)。
 
 ---
 
-## 5. 命令与配置
+## 4. 命令与配置
 
-### 5.1 命令一览
+### 4.1 命令一览
 
 | 命令                | 作用                             | 权限                          |
 | ------------------- | -------------------------------- | ----------------------------- |
@@ -243,7 +150,7 @@ lp group owner permission set quickmenu.admin true
 
 别名：`/quickmenu`。全部命令带 Tab 补全（子命令、菜单 id、在线玩家名）。
 
-### 5.2 配置结构
+### 4.2 配置结构
 
 `plugins/QuickMenu/config.yml` 分四块：
 
@@ -254,7 +161,7 @@ lp group owner permission set quickmenu.admin true
 | `sound` / `messages` | 音效与全部提示文本（可本地化）       |
 | `menus`              | **菜单定义**（核心）                 |
 
-### 5.3 菜单项字段说明
+### 4.3 菜单项字段说明
 
 ```yaml
 menus:
@@ -281,7 +188,7 @@ menus:
           - '[menu] home'
 ```
 
-### 5.4 动作类型
+### 4.4 动作类型
 
 **无条件动作**（任何客户端都执行）：
 
@@ -300,15 +207,21 @@ menus:
 | ------------------- | ---------------------------- |
 | `[bedrock-player]`  | 仅基岩玩家，以玩家身份执行   |
 | `[java-player]`     | 仅 Java 玩家，以玩家身份执行 |
-| `[bedrock-console]` | 仅基岩玩家，控制台身份       |
-| `[java-console]`    | 仅 Java 玩家，控制台身份     |
+| `[bedrock-console]`  | 仅基岩玩家，控制台身份       |
+| `[java-console]`     | 仅 Java 玩家，控制台身份      |
 
-动作可叠加，按列表顺序执行。常见组合：先 `[close]` 关界面，再执行指令，
-避免指令输出被界面遮挡。
+**动态目标动作**：
 
-### 5.5 两端分发：解决「同一功能两端指令不同」
+| 前缀                         | 作用                                                                                    |
+| ---------------------------- | --------------------------------------------------------------------------------------- |
+| `[player-selector] 命令模板` | 点击后列出在线玩家（排除自己），`{target}` 替换为所选玩家名                            |
+| `[item-selector] 命令模板`    | 点击后列出背包物品（自动排除触发物品、同材质合并），`{item}` 替换为材质名（小写）      |
 
-这是平台条件动作存在的意义。**不要**把基岩专属指令写成无条件动作：
+动作可叠加，按列表顺序执行。常见组合：先 `[close]` 关界面，再执行指令，避免指令输出被界面遮挡。
+
+### 4.5 两端分发：同一功能两端指令不同
+
+**不要**把基岩专属指令写成无条件动作：
 
 ```yaml
 # ❌ 错误：Java 玩家点击后毫无反应（/warpgui 在 Java 端不存在）
@@ -323,7 +236,7 @@ actions:
   - '[java-player] warp'         # Java → EssentialsX 传送点列表
 ```
 
-也可以给缺功能的一端用 `[message]` 做**文字指引降级**：
+也可给缺功能的一端用 `[message]` 做文字指引降级。玩家选择器示例：
 
 ```yaml
 # 两端统一走 QuickMenu 玩家选择器：动态列出在线玩家，点谁就发给谁
@@ -332,53 +245,45 @@ actions:
   # tpahere 同理：- '[player-selector] tpahere {target}'
 ```
 
-> `[message]` 是两端通用动作，上例中基岩玩家也会看到这句提示，属可接受的冗余。
-> 若要严格只在 Java 端提示，可再加一条 `[java-player]` 类动作，或接受这点冗余。
+> ⚠️ 构建脚本会自动检查覆盖缺口：某菜单项只配了 `[bedrock-*]` 而 Java 端连
+> `[message]` 都没有，会告警「该动作对 Java 玩家无任何有效反馈」。`[close]` 不算有效反馈。
 
-> ⚠️ **构建时会自动检查覆盖缺口**。若某菜单项只配了 `[bedrock-*]` 而 Java 端
-> 连 `[message]` 都没有，构建脚本会告警「该动作对 Java 玩家无任何有效反馈」。
-> 判据是：`[player]`/`[console]`/`[message]`/`[menu]` 算两端覆盖，
-> `[close]` **不算**（它只是关界面，没有功能价值）。
-
-### 5.6 权限过滤行为
+### 4.6 权限过滤行为
 
 菜单项配了 `permission` 且玩家无权时，**该项直接被跳过**，而不是显示为灰色不可点：
 
 - Java 端：该槽位显示填充物品
-- 基岩端：该按钮不出现，**后续按钮序号自动前移**
-
-> 这个「序号前移」是基岩端容易出 bug 的点：`SimpleFormResponse.clickedButtonId()`
-> 返回的是玩家点击的**按钮序号**，不是菜单项 id。若菜单项因权限被跳过而序号未重映射，
-> 玩家点 A 会执行 B 的动作。代码里用 `visibleItems` 列表按序记录，确保索引正确。
+- 基岩端：该按钮不出现，**后续按钮序号自动前移**（代码用 `visibleItems` 按序重映射，避免点 A 执行 B）
 
 ---
 
-## 6. 菜单结构总览（22 套，玩家 / 管理双线）
+## 5. 菜单结构总览（22 套，玩家 / 管理双线）
 
 `config.yml` 已配好 **22 套菜单**，把本服所有插件的常用功能全部收进菜单。
-校验结果：**22 菜单 / 173 菜单项 / 0 错误 0 警告**。
 
-### 6.1 玩家菜单（11 套）
+### 5.1 玩家菜单（11 套）
 
-| 菜单 id     | 名称       | 对接插件                  | 主要内容                                                                                                                                                                                                                                 |
-| ----------- | ---------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `main`      | 主菜单     | —                         | 一级入口，16 个功能项 + 管理面板入口。含**宠物系统**（`/pet gui`，SimplePets + Vault 联动）与**传送阵**（`/csz gui`，SpacePortal 自研）直达项；经济第二阶段新增 拍卖行 / 玩家商店 / 每日任务 三项直达（2026-09-19 集成；家扩位入口取消） |
-| `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、返回、回主城、附近玩家                                                                                                                                                                       |
-| `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                         |
-| `home`      | 我的家园   | EssentialsX + BPS         | 家列表、回家、设置家、删除家。**入口已从主菜单隐藏**（2026-09-19），菜单定义保留：可用 `/qm open home` 或直接 `/home` 指令                                                                                                               |
-| `residence` | 我的领地   | **Residence**             | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                                                                  |
-| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、卖物品（/sell）、估价（/worth）。按钮需 `essentials.*` / `eztax.stats` 权限，default 组已授                                                             |
-| `kit`       | 工具包     | EssentialsX               | 新手包、每日奖励、VIP 包                                                                                                                                                                                                                 |
-| `skin`      | 皮肤管理   | **SkinsRestorer**         | 皮肤库、换肤、清除、刷新、随机、撤销                                                                                                                                                                                                     |
-| `social`    | 社交设置   | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                                  |
-| `info`      | 服务器信息 | EssentialsX               | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                                                 |
-| `voice`     | 语音聊天   | **Simple Voice Chat**     | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                                   |
+| 菜单 id     | 名称       | 对接插件                  | 主要内容                                                                                                                                                                                                                          |
+| ----------- | ---------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main`      | 主菜单     | —                         | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务直达                                                                                                |
+| `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、返回、回主城、附近玩家                                                                                                                                                                |
+| `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                 |
+| `home`      | 我的家园   | EssentialsX + BPS         | 家列表、回家、设置家、删除家。**入口已从主菜单隐藏**：可用 `/qm open home` 或直接 `/home` 指令                                                                                                                                    |
+| `residence` | 我的领地   | **Residence**             | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                                                           |
+| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、卖物品（/sell）、估价背包物品（/worth）、拍卖行、玩家商店                                                                                          |
+| `kit`       | 工具包     | EssentialsX               | 新手包、每日奖励                                                                                                                                                                                                                  |
+| `skin`      | 皮肤管理   | **SkinsRestorer**         | 皮肤库浏览（/skins 选择菜单，含皮肤/历史/收藏三入口）、历史皮肤（/skin history）、收藏皮肤（/skin favourites）、清除、刷新、随机、撤销                                                                                              |
+| `social`    | 社交设置   | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                           |
+| `info`      | 服务器信息 | EssentialsX               | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                                          |
+| `voice`     | 语音聊天   | **Simple Voice Chat**     | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                            |
 
-> **2026-09-19 经济系统第二阶段集成**：主菜单新增 3 个直达项——**拍卖行**（`/ah`，slot 9）、**玩家商店**（`/shop`，slot 11）、**每日任务**（`/quests`，slot 18）；经济中心新增**周持有税查询**（`/eztax stats`，slot 17，权限 `eztax.stats`）。**家扩位**（`/homeshop`）入口同日（2026-09-19）已从主菜单取消（命令仍可用）。涉及权限已授 default 组：`economyshop.*`、`quests.command.*`、`eztax.stats`（AuctionHouse `auction.*` 默认 true）。
+> **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
+> `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah）、玩家商店（/shop）已放在
+> `economy` 经济中心子菜单，主菜单首屏不保留。
 
 层级：所有二级菜单的 `back-menu` 均为 `main`，返回按钮固定在右下角（`size-1` 槽位）。
 
-### 6.2 管理菜单（11 套）
+### 5.2 管理菜单（11 套）
 
 | 菜单 id           | 名称         | 对接插件                                              | 主要内容                                                                                     |
 | ----------------- | ------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
@@ -392,33 +297,34 @@ actions:
 | `admin-server`    | 服务器监控   | **spark** + **Geyser** + **ViaVersion** + **EasyBot** | TPS、健康报告、延迟、性能采样、堆内存、Geyser 重载/诊断/统计、版本分布、机器人重载、插件列表 |
 | `admin-perm`      | 权限管理     | **LuckPerms**                                         | 网页编辑器、同步、重载、权限树、信息、查玩家权限、实时追踪                                   |
 | `admin-qm`        | 菜单管理     | QuickMenu 自身                                        | 重载配置、菜单列表、客户端诊断、发放触发物品                                                 |
-| `postracker`      | 玩家位置记录 | **PosTracker**                                        | 位于 `admin` 菜单内（非独立菜单），查询玩家历史位置轨迹（`/pos radius:10 time:1h`）          |
+| `postracker`       | 玩家位置记录 | **PosTracker**                                        | 位于 `admin` 菜单内（非独立菜单），查询玩家历史位置轨迹（`/pos radius:10 time:1h`）          |
 
 层级：9 个二级菜单的 `back-menu` 均为 `admin`，`admin` 的 `back-menu` 为 `main`，
 管理员可在两条线之间自由往返。
 
-### 6.3 管理面板如何进入
+### 5.3 管理面板如何进入
 
 插件只有**一个触发物品**（时钟 CLOCK），右键打开的是玩家主菜单 `main`。
 
-> 触发物品固定使用时钟材质，与 WorldEdit 导航魔杖（默认指南针 COMPASS）互不冲突：指南针右键归 WorldEdit 穿墙导航，时钟右键归快捷菜单。
-> 材质切换后，玩家背包里的旧材质触发物品会在进服/`/qm give` 时**自动升级**为新材质，并提示「已自动升级」，无需手动处理。
-> **右键空气/天空也能打开菜单**（2026-09-16 修复）：Spigot 1.21.x 中右键空气的 `PlayerInteractEvent` 以**已取消状态**派发，监听器因此改为 `EventPriority.LOWEST` 且**不过滤已取消事件**（关闭 `ignoreCancelled`）——对空气、天空、方块右键均能触发；若对空气无反应，先确认触发物品仍在快捷栏第 9 格（give-slot: 8）。
-> 管理菜单靠**权限门控**进入，两种途径：
+> 触发物品固定使用时钟材质，与 WorldEdit 导航魔杖（默认指南针 COMPASS）互不冲突。
+> 材质切换后，玩家背包里的旧材质触发物品会在进服/`/qm give` 时**自动升级**为新材质。
+> **右键空气/天空也能打开菜单**：监听器用 `EventPriority.LOWEST` 且不过滤已取消事件；
+> 若对空气无反应，先确认触发物品仍在快捷栏第 9 格（give-slot: 8）。
+
+管理菜单靠**权限门控**进入，两种途径：
 
 | 途径                      | 说明                                                                                                  |
 | ------------------------- | ----------------------------------------------------------------------------------------------------- |
 | 主菜单点「管理面板」      | `main.admin` 配了 `permission: quickmenu.admin`，**只有管理员能看到这一项**，普通玩家界面里根本不出现 |
-| 直接执行 `/qm open admin` | 适合管理员快速直达，也可绑到其他命令/菜单                                                             |
+| 直接执行 `/qm open admin` | 适合管理员快速直达，也可绑到其他命令/菜单                                                              |
 
 > **纵深防御**：管理菜单里**每一个**菜单项都单独配了 `permission`
-> （如 `essentials.ban`、`coreprotect.rollback`、`chunky.trim`）。
-> 即便有人知道 `/qm open admin` 强行打开，没有对应权限也**看不到任何按钮**——
-> 权限过滤在渲染阶段就把项跳过了，不是「显示灰色点不动」。
+> （如 `essentials.ban`、`coreprotect.rollback`、`chunky.trim`）。即便有人知道
+> `/qm open admin` 强行打开，没有对应权限也**看不到任何按钮**——权限过滤在渲染阶段就跳过。
 
-### 6.4 已做的两端分发
+### 5.4 已做的两端分发
 
-以下菜单项对两端调用不同指令（详见第 5.5 节）：
+以下菜单项对两端调用不同指令：
 
 | 菜单项                                                      | 基岩端                                                               | Java 端                                                                                |
 | ----------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
@@ -426,84 +332,23 @@ actions:
 | `teleport.tpa` / `teleport.tpahere`                         | 统一 QuickMenu 玩家选择器（`[player-selector]`，两端从在线列表选人） | 同左                                                                                   |
 | `home.listhomes`                                            | `/homegui`（BPS 家园表单）                                           | `/homes`（EssentialsX 列表）                                                           |
 | `social.msg`                                                | `/msggui`（BPS 私信表单）                                            | 文字提示 `/msg` 用法                                                                   |
-| `skin.skingui` / `skin.skinhistory` / `skin.skinfavourites` | `/skin`（指令方式）                                                  | `/skins`（GUI 选择菜单，含皮肤/历史/收藏三入口）+ `/skin history` + `/skin favourites` |
+| `skin.skin*`                                                | `/skin`（指令方式）                                                  | `/skins`（GUI 选择菜单）+ `/skin history` + `/skin favourites`                          |
 
-> **2026-09-19 最终调整**：首屏`打开皮肤库`按钮已移除；皮肤管理子菜单新增三个入口：
-> **皮肤库浏览**（打开 /skins 选择菜单，内含 [皮肤菜单]/[历史菜单]/[收藏菜单] 三入口——这是 SkinsRestorer 固定界面，无法跳过，点 [皮肤菜单] 即进入浏览页）、**历史皮肤**（`/skin history`）、**收藏皮肤**（`/skin favourites`）。
-> 已给 default 组授权 `skinsrestorer.command` 与 `skinsrestorer.command.gui`（玩家此前看不到按钮即为缺此权限）。
+> **未安装 BedrockPlayerSupport 时**：基岩玩家点击这些项，`[bedrock-player] xxxgui`
+> 会执行一个不存在的指令，客户端提示「未知指令」，不崩溃但无效果。若不打算装 BPS，
+> 把这些项改回无条件动作即可（如 `[player] warp`、`[player] homes`）。
 
-> **2026-09-19 新增：tpa / tpahere 界面化（[player-selector] 动作）**：
-> 新增 `[player-selector] 命令模板` 动作——点击菜单项后动态列出全部在线玩家（排除自己）：
-> Java 端显示为 54 格箱子界面（每位玩家一个带真实皮肤的头颅，点击即执行）；基岩端显示为原生表单按钮列表。
-> `{target}` 会被替换为所点玩家的名字。
->
-> - `teleport.tpa` → `[player-selector] tpa {target}`（原 BPS tpgui + 文字提示已移除）
-> - `teleport.tpahere` → `[player-selector] tpahere {target}`
->   外观文案在 config.yml `player-selector` 节点可调（标题/说明/无人在线提示）。
->   需要重新构建 jar（新动作需类支持），已部署 QuickMenu-1.0.0.jar（57.6 KB）并重启生效。
+### 5.5 为什么很多项是「文字指引」而不是直接执行
 
-> **2026-09-19 管理命令批量界面化**：
-> 下列原本「聊天栏提示指令用法」的管理项全部改为 `[player-selector]`（点击后从在线列表选人）：
-> 查看背包(openinv) / 传送(tp) / 拉人(tphere) / 清空背包(ci) / 查看信息(whois) / 踢出(kick) / 封禁(ban) / 临时封禁(tempban 7d) / 封 IP(banip) / 禁言(mute 10m) / 解禁言(unmute) / 关押(jail 10m) / 释放(unjail) / 静默传送(tpo) / 静默拉人(tpohere) / 查看玩家权限(lp user) / 发放触发物品(qm give) / 屏蔽玩家(ignore)。
-> 另新增 `gamemode` 子菜单（第 22 套）：先选 生存/创造/冒险/旁观，再从在线列表选玩家。
-> 仍保留 `[message]` 的项：需要开放参数输入的（领地名/金额/物品/消息内容/广播内容）与离线玩家操作（unban/seen）——QuickMenu 无输入框，这些只能提示指令用法。
-
-> **2026-09-19 布局调整**：主菜单的`拍卖行`(ah) 与`玩家商店`(shop) 两项已移入`economy` 经济中心子菜单（slot 9/10），主菜单首屏不再保留这两个入口。
-> **2026-09-22 新增：估价界面化（[item-selector] 动作）**：
-> 原`估价手中物品`执行 /worth 只会估价手持的触发物品（时钟），估不了其他物品。
-> 新增 `[item-selector] 命令模板` 动作——点击后动态列出**玩家背包**中的物品（自动排除触发物品，同材质合并显示数量）：
-> Java 端显示为 54 格箱子界面（每个物品一个图标，点击即执行）；基岩端显示为原生表单按钮列表。
-> `{item}` 会被替换为所点物品的材质名（小写，如 diamond）。
->
-> - economy.worth → `[item-selector] worth {item}`（标题/lore 改为「估价背包物品」）
->   外观文案在 config.yml `item-selector` 节点可调（标题/说明/无可选物品提示）。
->   已重新构建 jar（62 KB，18 个 class）并重启生效。
->   **限制**：/worth 按基础材质估价，带自定义 NBT 的物品（附魔/自定义物品）仍只能估其基础材质价。
-
-> **2026-09-22 中文化收尾（第 2 批）**：
->
-> 1. Chunky：config language: en → zh_CN（jar 内置 zh_CN.json）。
-> 2. PosTracker：新建 localization/messages*zh.yml 全量中文 + config language: zh（代码按 localization/messages*{lang}.yml 加载，无语言白名单；/pos 轨迹查询变中文）。
-> 3. Quests：config.yml 内 titles/messages 节点 58 条消息全量中文化（任务开始/完成/冷却/管理员命令反馈等；locale 节点是数字格式，未动）。
-> 4. TAB：messages.yml 74 行全量中文（/tab 管理命令反馈）。
-> 5. EzTax：messages.yml 38 行全量中文（税单/免税命令反馈）。
-> 6. CustomDeathMessages：messages.yml 剩余英文消息全量中文（epic 特效/广播/系统/帮助/默认组死亡消息；中文搞笑模板保留）。
-> 7. DecentHolograms：lang.yml 155 行全量中文（/dh 管理命令反馈）。
-> 8. RideOnHead 本已 default: zh + auto-detect（无需改）；Plan 为管理员 Web 面板（jar 仅内置 zh_TW 繁体，保持 Locale: default 跟随系统，玩家不可见）。
->    说明：全部保留占位符（{quest}、%player% 等）与颜色码；改后重启验证通过（各插件正常启用，无 YAML 解析错误）。
->    **2026-09-22 新增：一键上架鞘翅（[ah-sell] 动作）**：
->    玩家开菜单时主手是触发物品（时钟），直接 /ah sell 会把时钟上架。新增 `[ah-sell] 价格 材质名` 动作：
->    插件自动在玩家背包（含快捷栏/盔甲槽/副手）找到该材质物品，临时换到主手执行 /ah sell 价格，再还原主手；
->    上架失败（如价格低于下限）物品归还原位，背包里没有该物品时给出提示。
->
-> - 经济中心新增`上架鞘翅`按钮（slot 19，ELYTRA 图标）→ `[ah-sell] 5000 elytra`（默认价 5000 南瓜币，改菜单配置即可调价）
-> - **已取消（2026-09-22）**：经济中心`上架鞘翅`按钮已从服务器 config 与源码模板移除（qm reload 生效，22 菜单正常）。`[ah-sell]` 动作代码保留在 jar 中（未配置引用即不触发），如需恢复只需在菜单配置加回该按钮。
->   已重新构建 jar（63.2 KB）并重启生效。两端通用（基岩端同样生效）。
-
-> **2026-09-18 更新**： eleport.warps 已改为两端统一打开 QuickMenu 传送点子菜单（[menu] warps），
-> 不再依赖 BPS 表单。子菜单当前列出 主城 传送点（点击即 /warp 主城）；
-> **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的 warps: 子菜单里手动添加对应菜单项。
-
-> **未安装 BedrockPlayerSupport 时会怎样**：基岩玩家点击这些项，
-> `[bedrock-player] xxxgui` 会执行一个不存在的指令，客户端提示「未知指令」，
-> 不会崩溃但无效果。若你不打算装 BPS，把这些项改回无条件动作即可，例如：
-> `[player] warp`、`[player] homes`、`[message] 提示 /msg 用法`。
-
-### 6.5 为什么很多项是「文字指引」而不是直接执行
-
-这是**刻意设计，不是偷懒**，先看结论再看原因。
-
-菜单只有「按钮列表」，**没有输入框**。本插件渲染的是 Bukkit 箱子界面和基岩
-`SimpleForm`（纯按钮），两者都**无法在点击后弹出输入框让你填参数**。
-
-因此：
+菜单只有「按钮列表」，**没有输入框**（Bukkit 箱子界面与基岩 SimpleForm 纯按钮都无法
+在点击后弹出输入框填参数）。因此：
 
 | 指令类型       | 例子                                                   | 菜单里的做法               |
 | -------------- | ------------------------------------------------------ | -------------------------- |
 | **不需要参数** | `/fly` `/heal` `/spark tps` `/res list`                | ✅ 直接执行 `[player] fly` |
 | **需要参数**   | `/kick 玩家名` `/ban 玩家名 原因` `/res create 领地名` | ⚠️ 关闭界面 + 发送用法提示 |
 
-后者的动作形如：
+后者动作形如：
 
 ```yaml
 actions:
@@ -511,189 +356,100 @@ actions:
   - '[message] &7踢出玩家：&e/kick 玩家名 原因'
 ```
 
-玩家点一下就拿到完整指令格式，复制粘贴补个名字即可——比手打整条命令快，
-也避免了「菜单点了没反应」的困惑（直接执行 `/kick` 不带参数只会报用法错误）。
+需要从在线列表选目标的项（踢人/封禁/传送/查背包等）已改用 `[player-selector]`；
+需要开放文本输入的项（领地名/金额/物品/消息/广播）与离线玩家操作（unban/seen）仍保留文字指引。
 
-这类项在 `lore` 里都写了「需手动补充参数」。
-
-> 如果你确实需要「点玩家头像就能踢人」这类交互，必须扩展代码加入
-> 动态菜单（按在线玩家生成按钮）与 Anvil/Modal 输入，这超出当前插件范围。
-
-### 6.6 权限过滤示范
+### 5.6 权限过滤示范
 
 - `main.admin` 配 `permission: quickmenu.admin` —— 管理员才看到管理面板
-- `kit.vipkit` 配 `permission: essentials.kit.vip` —— VIP 专属工具包
 - `teleport.tpahere` 配 `permission: essentials.tpahere` —— 需额外授权
 - `admin-inspect.purge` 配 `permission: coreprotect.purge` —— 危险操作仅供服主
 - `admin-world.ctrim` 配 `permission: chunky.trim` —— 会删区块，单独隔离
 
-基岩端同样生效：被过滤的按钮**不出现且序号自动前移**，不会留下空位。
-
 ---
 
-## 7. 自行修改与重新构建
+## 6. 自行修改与重新构建
 
-### 7.1 只改配置（最常见）
+### 6.1 只改配置（最常见）
 
 改 `plugins/QuickMenu/config.yml` 后执行 `/qm reload`，即时生效，不用重启。
 
-### 7.2 改代码后重新构建（无需 Maven）
+### 6.2 改代码后重新构建（无需 Maven）
 
-本机没有 Maven，`build.ps1` 直接用 JDK 的 javac / jar 完成全流程：
+`build.ps1` 直接用 JDK 的 javac / jar 完成全流程：
 
 ```powershell
 cd F:\game\pc\MC\开服\Minecraft-Server-Build\ai写的\快捷菜单系统
 powershell -ExecutionPolicy Bypass -File build.ps1
 ```
 
-脚本执行 6 步：
-
-| 步骤 | 内容                                                                                                            |
-| ---- | --------------------------------------------------------------------------------------------------------------- |
-| 0    | 自动定位 JDK 21+                                                                                                |
-| 1    | 下载编译依赖到 `_build\libs`（已存在则跳过）                                                                    |
-| 2    | 编译源码（UTF-8，开启 `-Xlint`）                                                                                |
-| 3    | **静态校验** config.yml：材质名有效性、size 合法性、槽位越界、槽位冲突、`[menu]` 目标是否存在、动作前缀是否识别 |
-| 4    | 打包 jar 并复制到 `dist\`                                                                                       |
-| 5    | 校验 plugin.yml 与 jar 内主类一致性                                                                             |
+脚本流程：自动定位 JDK 21+ → 下载编译依赖到 `_build\libs`（已存在则跳过）→ 编译源码
+（UTF-8，开启 `-Xlint`）→ 静态校验 config.yml（材质名、size、槽位越界/冲突、
+`[menu]` 目标、动作前缀）→ 打包 jar 并复制到 `dist\` → 校验 plugin.yml 主类一致性。
 
 参数：
 
 - `-SkipDeps` 离线构建，跳过依赖下载
 - `-Clean` 清理上次产物。**删除或重命名过源文件后必须加**，否则会残留旧 class
 
-一键打包
-
 ```powershell
 powershell -ExecutionPolicy Bypass -File build.ps1 -SkipDeps
 ```
 
-### 7.3 用 IDE 改代码
+### 6.3 用 IDE 改代码
 
-`plugin-src/pom.xml` 已配好，用 IntelliJ IDEA 导入该目录即可获得代码补全与即时错误提示。
-4 个依赖全部 `scope=provided`，不会被打进 jar 造成类冲突。
+`plugin-src/pom.xml` 已配好，用 IntelliJ IDEA 导入该目录即可。依赖全部 `scope=provided`，
+不会被打进 jar 造成类冲突。
 
-### 7.4 依赖版本已锁定，勿随意升级
+### 6.4 依赖版本已锁定，勿随意升级
 
-| 依赖          | 锁定版本              | 原因                           |
-| ------------- | --------------------- | ------------------------------ |
-| spigot-api    | 1.21.11-R0.1-SNAPSHOT | 对应 Leaf 1.21.11 核心         |
-| floodgate api | 2.2.5-SNAPSHOT        | Floodgate 当前 API             |
-| **cumulus**   | **1.1.2**             | ⚠️ **不可换成 2.0.0-SNAPSHOT** |
+| 依赖           | 锁定版本              | 原因                           |
+| -------------- | --------------------- | ------------------------------ |
+| spigot-api     | 1.21.11-R0.1-SNAPSHOT | 对应 Leaf 1.21.11 核心         |
+| floodgate api  | 2.2.5-SNAPSHOT        | Floodgate 当前 API             |
+| **cumulus**    | **1.1.2**             | ⚠️ **不可换成 2.0.0-SNAPSHOT** |
 
-> cumulus 版本是实测踩过的坑：Floodgate 2.2.5 依赖 cumulus **1.1.2**。
-> 2.0.0-SNAPSHOT 缺少 `org.geysermc.cumulus.util.FormBuilder` 旧路径，
-> 而 `FloodgatePlayer.sendForm()` 有新旧两组重载，缺一个会导致
-> **重载决议失败、编译报错**。
+> Floodgate 2.2.5 依赖 cumulus **1.1.2**；2.0.0-SNAPSHOT 缺少旧版 `FormBuilder`
+> 路径，会导致 `FloodgatePlayer.sendForm()` 重载决议失败、编译报错。
 
 ---
 
-## 8. 已验证与未验证事项
-
-按实际验证程度如实区分，不夸大。
-
-### 8.1 ✅ 已实测验证
-
-| 验证项              | 方法                                               | 结果                                                                                    |
-| ------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| 源码编译            | javac 实际编译 15 个源文件                         | 通过，生成 16 个 class，无错误                                                          |
-| 字节码版本          | `javap -v` 读取 class 文件头                       | major version **65 = Java 21**，匹配 Leaf 核心                                          |
-| 内存回收            | `javap -p` 反编译交付 jar                          | `onQuit(PlayerQuitEvent)` 处理器已编入，退出即时清理防连点记录，无泄漏                  |
-| config.yml 结构     | snakeyaml 真实解析 + 逐项校验                      | **0 错误 0 警告**（22 菜单 / 173 菜单项）                                               |
-| 全插件整合配置校验  | 用含缺陷的坏配置实测过探针准确性                   | 本次唯一报错 `CHAIN` 非有效材质已修正；槽位冲突、返回按钮占位、双端覆盖缺口均为 0       |
-| 材质名有效性        | `Material.matchMaterial()` 运行时校验              | 本次校验覆盖 100+ 材质，发现并修复 1 个错误（`CHAIN` → `IRON_BLOCK`）                   |
-| 槽位冲突检测        | 按渲染逻辑模拟槽位占用                             | 20 个菜单 0 冲突，且所有配了 `back-menu` 的菜单均未占用 `size-1`                        |
-| 双端覆盖检查        | 逐项判定某一端是否「点了完全没反馈」               | 160 项全部两端有反馈，0 告警                                                            |
-| 平台覆盖检查准确性  | 用含 7 类缺陷 + 4 个正反对照组的坏配置实测         | 7 个缺陷全部命中，4 个对照组**零误报**（含「基岩专属表单 + Java 文字指引」的降级设计）  |
-| 平台条件动作已编入  | `javap` 反编译交付 jar                             | ActionType 含 9 个枚举常量；config.yml 内 4 处 `[bedrock-player]`、2 处 `[java-player]` |
-| 材质名有效性        | `Material.matchMaterial()` 运行时校验 34 个材质    | 发现并修复 1 个错误（`SIGN` → `OAK_SIGN`）                                              |
-| 槽位冲突检测        | 按渲染逻辑模拟槽位占用                             | 发现并修复 1 处冲突（teleport 菜单返回按钮与 spawn 抢 slot 22）                         |
-| plugin.yml 合法性   | YAML 解析 + 字段校验                               | 通过，主类确实存在于 jar 中                                                             |
-| jar 内中文完整性    | 解压 jar 读回 config.yml                           | 含「快捷菜单」「南瓜国际服」等，**0 个乱码替换符**                                      |
-| 无 Floodgate 可启动 | JVM 实测：编译期含 cumulus、**运行期移除 cumulus** | 宿主类实例化成功，**未抛 NoClassDefFoundError**，核心功能正常                           |
-| 空安全检查必要性    | 同上实验的对照组                                   | 依赖存在时功能正常；缺失且强行使用时崩溃 → 证明 `formRenderer != null` 检查必需         |
-| 构建脚本            | 端到端实际执行                                     | exit code 0，产出 43.5 KB jar                                                           |
-
-### 8.2 ✅ 已在测试服实际加载验证（2026-09-16 更新）
-
-插件已部署到 `C:\mc_serve\1.21.11-test` 并成功加载，`plugins/QuickMenu/config.yml` 已按生产配置生成（22 套菜单全部就位）。以下项已确认真实生效：
-
-| 验证项                    | 实际值 / 结果                                                | 证据                                       |
-| ------------------------- | ------------------------------------------------------------ | ------------------------------------------ |
-| 插件被 Leaf 核心正常加载  | ✅ 已加载，jar 为 `QuickMenu-1.0.0.jar`                      | `plugins/QuickMenu-1.0.0.jar` 存在         |
-| 触发物品材质              | `CLOCK`（钟表），显示名 `&6&l快捷菜单`                       | `plugins/QuickMenu/config.yml` 第 71-74 行 |
-| 进服自动发放              | `give-on-join: true`，发到快捷栏第 9 格（`give-slot: 8`）    | config.yml 第 88/92 行                     |
-| 严格匹配模式              | `strict-match: true`（仅 PDC 标记物品可触发）                | config.yml 第 97 行                        |
-| 基岩端原生表单            | `platform.bedrock-native-form: true`                         | config.yml 第 62 行                        |
-| Java 端箱子 GUI           | `platform.java-chest-gui: true`                              | config.yml 第 65 行                        |
-| 默认菜单                  | `default-menu: main`                                         | config.yml 第 54 行                        |
-| 已加载菜单数              | 22 套（玩家 11 + 管理 11），与本文档第 6 章清单一致          | config.yml `menus:` 节                     |
-| 与 WorldEdit 导航魔杖错开 | 触发物 CLOCK；WorldEdit navigation-wand 为 COMPASS，互不冲突 | 见 config.yml trigger-item.material        |
-
-> 下方「历史未验证事项」保留为开发期记录。其中大部分已在测试服验证通过；仍需正式服/玩家端实测的项已在备注中标注。
-
-### 8.3 历史未验证事项（开发期记录）
-
-以下行为是**基于 API 文档与代码逻辑的推断**，部分已在测试服验证通过，剩余需玩家端实测：
-
-| 待验证项                           | 如何验证                                                                                                 |
-| ---------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| 插件能否被 Leaf 核心正常加载       | 放入 plugins 重启，看控制台有无 `QuickMenu 已启用`                                                       |
-| 箱子 GUI 实际渲染效果              | Java 客户端进服，`/qm` 打开看排版                                                                        |
-| **基岩端原生 Form 实际弹出**       | 基岩客户端进服，右键触发物品看是否出现按钮列表                                                           |
-| 表单回调线程切换是否真的避免了崩溃 | 基岩端点击菜单项，观察控制台有无异步异常                                                                 |
-| 触发物品右键能否正常打开           | 手持时钟右键（对空气与对方块各试一次）                                                                   |
-| 物品防拖出是否生效                 | 箱子界面里尝试把图标拖到背包                                                                             |
-| `/qm info` 的客户端识别是否准确    | Java 与基岩各执行一次，对比输出                                                                          |
-| 与 EssentialsX 指令的联动          | 菜单点「回家」是否真的触发 `/home`                                                                       |
-| **管理面板门控是否生效**           | 先用普通玩家账号 `/qm open admin`，应看不到任何按钮；再换成 admin 组确认可见                             |
-| **WorldEdit 双斜杠指令** ⚠️        | 点「获取选区木斧」看是否真的给出木斧。`//wand` 经 `performCommand` 分发，若无效请改用 `wand`（去掉斜杠） |
-| Residence 指令联动                 | 点「我的领地列表」是否执行 `/res list`；`/res ?` 帮助能否打开                                            |
-| CoreProtect 查询模式               | 点「开启查询模式」后点方块，看是否输出改动记录                                                           |
-| 各菜单项的指令格式提示             | 点几个「文字指引」项，确认提示文字中的指令可直接使用                                                     |
-
-> 建议先在**测试服**验证基岩端表单弹出与点击行为，确认无误再上正式服。
-> 若基岩端表单不弹出，先执行 `/qm info` 看「Floodgate」与「将使用的界面」两行。
-
----
-
-## 9. 故障排查
+## 7. 故障排查
 
 | 现象                                       | 原因                                                              | 处理                                                                                                                               |
 | ------------------------------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | 右键物品没反应                             | 物品不是插件发放的（`strict-match: true` 时要求 PDC 标记）        | 用 `/qm give` 重新获取；或把 `strict-match` 设为 `false`                                                                           |
-| 菜单打开但点击提示无权限                   | 只给了 `quickmenu.use`，漏了底层 `essentials.*`                   | 按第 4.3 节补齐权限                                                                                                                |
-| 某个菜单项不显示                           | 配了 `permission` 且玩家无权，被过滤跳过                          | 属正常行为；要显示就去掉该项的 permission                                                                                          |
-| 基岩玩家也看到箱子界面                     | Floodgate 未装 / `bedrock-native-form: false` / 表单发送失败回退  | 执行 `/qm info` 诊断；检查控制台回退警告                                                                                           |
-| 基岩表单按钮显示乱码                       | 在 `button-label` 里写了 `&` 颜色码                               | 原生按钮不支持颜色码，删掉即可（插件会自动去除 `display-name` 的色码）                                                             |
+| 菜单打开但点击提示无权限                   | 只给了 `quickmenu.use`，漏了底层 `essentials.*`                   | 按第 3.3 / 第 8 节补齐权限                                                                                                         |
+| 某个菜单项不显示                           | 配了 `permission` 且玩家无权，被过滤跳过                          | 属正常行为；要显示就去掉该项的 permission                                                                                           |
+| 基岩玩家也看到箱子界面                     | Floodgate 未装 / `bedrock-native-form: false` / 表单发送失败回退 | 执行 `/qm info` 诊断；检查控制台回退警告                                                                                           |
+| 基岩表单按钮显示乱码                       | 在 `button-label` 里写了 `&` 颜色码                                | 原生按钮不支持颜色码，删掉即可（插件会自动去除 `display-name` 的色码）                                                             |
 | 返回按钮不显示                             | 右下角槽位（`size-1`）被其他菜单项占用                            | 控制台会有警告；把该物品的 slot 改开                                                                                               |
 | 改配置不生效                               | 未热重载                                                          | 执行 `/qm reload`；若改的是 `plugin.yml` 需重启                                                                                    |
 | 物品被玩家丢弃后丢失                       | `strict-match: true` 时插件会阻止丢弃                             | 若被丢（如死亡掉落），用 `/qm give` 补发                                                                                           |
 | 进服时背包满没拿到触发物品                 | 自动发放失败（背包已满），插件会提示「请用 /qm」                  | 腾出背包空位（快捷栏第 9 格）后重进服自动补发；或直接输入 `/qm` 打开菜单                                                           |
-| 右键触发物品被其他插件抢走（如被绑定传送） | 其他插件在同一右键事件上抢先处理                                  | 已内置 LOWEST 最早优先级拦截：识别为触发物品即取消右键并打开菜单，其他插件不再有机会处理；仍异常时检查其他插件的右键绑定           |
+| 右键触发物品被其他插件抢走（如被绑定传送） | 其他插件在同一右键事件上抢先处理                                  | 插件已用 LOWEST 最早优先级拦截：识别为触发物品即取消右键并打开菜单；仍异常时检查其他插件的右键绑定                                 |
 | **Java 玩家点某项没反应**                  | 该项只配了 `[bedrock-*]` 动作，Java 端被跳过                      | 补一条 `[java-player] 指令` 或 `[message] 指引`；开 `debug: true` 看控制台「跳过平台条件动作」日志                                 |
 | **基岩玩家点某项没反应**                   | 该项只配了 `[java-*]` 动作，基岩端被跳过                          | 补一条 `[bedrock-player] 指令`；同上开 debug 查日志                                                                                |
-| **点了报「未知指令」**                     | 用了 `[bedrock-player] warpgui` 但未装 BedrockPlayerSupport       | 装上 BPS，或按第 6.1 节把该项改回无条件动作（如 `[player] warp`）                                                                  |
-| 构建告警「无任何有效反馈」                 | 菜单项某一端只有 `[close]`，没有实际功能或提示                    | 属真实缺陷，按第 5.5 节补齐另一端动作                                                                                              |
-| 构建报 `cumulus` 找不到                    | 依赖版本被改成 2.0.0-SNAPSHOT                                     | 改回 **1.1.2**，见第 7.4 节                                                                                                        |
-| **主菜单看不到「管理面板」**               | 没有 `quickmenu.admin`，该项被权限过滤跳过                        | 按第 10.3 节给组授权；先确认自己所在组 `/lp user <自己> info`                                                                      |
-| **`/qm open admin` 打开后是空的**          | 管理项每个都单独配了 permission，你一个都没有                     | 按第 10.3 / 10.4 节补齐 EssentialsX / Residence / CoreProtect 等权限                                                               |
-| 管理项点了提示无权限                       | 有 `quickmenu.admin` 但缺该插件自身的权限                         | 例：点「封禁」需 `essentials.ban`（仅服主组），见第 10.4 节                                                                        |
-| 菜单项只显示指令用法、不执行               | 该项需要参数（玩家名/领地名），设计如此                           | 见第 6.5 节；复制提示里的指令补上参数即可                                                                                          |
+| **点了报「未知指令」**                      | 用了 `[bedrock-player] warpgui` 但未装 BedrockPlayerSupport       | 装上 BPS，或把该项改回无条件动作（如 `[player] warp`）                                                                            |
+| 构建告警「无任何有效反馈」                 | 菜单项某一端只有 `[close]`，没有实际功能或提示                    | 属真实缺陷，按第 4.5 节补齐另一端动作                                                                                              |
+| 构建报 `cumulus` 找不到                    | 依赖版本被改成 2.0.0-SNAPSHOT                                     | 改回 **1.1.2**，见第 6.4 节                                                                                                        |
+| **主菜单看不到「管理面板」**               | 没有 `quickmenu.admin`，该项被权限过滤跳过                        | 按第 8.3 节给组授权；先确认自己所在组 `/lp user <自己> info`                                                                        |
+| **`/qm open admin` 打开后是空的**          | 管理项每个都单独配了 permission，你一个都没有                      | 按第 8.3 / 8.4 节补齐 EssentialsX / Residence / CoreProtect 等权限                                                                  |
+| 管理项点了提示无权限                       | 有 `quickmenu.admin` 但缺该插件自身的权限                         | 例：点「封禁」需 `essentials.ban`（仅服主组），见第 8.4 节                                                                         |
+| 菜单项只显示指令用法、不执行               | 该项需要参数（玩家名/领地名），设计如此                           | 见第 5.5 节；复制提示里的指令补上参数即可                                                                                          |
 | 点「获取选区木斧」没反应                   | //wand 经 performCommand 分发可能无效                             | 把 config.yml 里该项改为 [player] wand（去掉双斜杠）后 /qm reload                                                                  |
-| **「回主城」点了报未知指令/没反应**        | 未装 EssentialsSpawn 模块，/spawn 命令不存在（RCON 实测 Unknown） | 已在 Essentials 建 warp 传送点 主城（主城阵法坐标 47.67,71,30.82），并把主菜单 spawn 按钮动作改为 [player] warp 主城（2026-09-18） |
+| **「回主城」点了报未知指令/没反应**        | 未装 EssentialsSpawn 模块，/spawn 命令不存在                      | 已在 Essentials 建 warp 传送点 主城，并把主菜单 spawn 按钮动作改为 `[player] warp 主城`                                            |
 
 ---
 
-## 10. LuckPerms 权限授予清单
+## 8. LuckPerms 权限授予清单
 
 菜单只是前端，**真正干活的是各插件的指令**。菜单项点了没反应，
-99% 是对应的插件权限没给。下面按组整理本菜单用到的全部节点。
+99% 是对应的插件权限没给。
 
-> 权限组结构（default / member / vip / mvp / helper / admin / owner）
-> 见 [`2-玩法与玩家功能插件/01-权限管理系统-LuckPerms/权限组设计方案.md`](../../5-服务器管理/01-权限管理系统-LuckPerms/权限组设计方案.md)。
+> 权限组结构（default / admin / owner + bedrock 附加组）见权限管理章节。
 
-### 10.1 玩家组（default）
+### 8.1 玩家组（default）
 
 ```bash
 # ---- 菜单自身 ----
@@ -708,7 +464,7 @@ lp group default permission set essentials.tpa true
 lp group default permission set essentials.tpaccept true
 lp group default permission set essentials.tpdeny true
 lp group default permission set essentials.warp true
-lp group default permission set essentials.spawn true   # 注：未装 EssentialsSpawn 模块，/spawn 命令实际不存在；主菜单「回主城」按钮已改用 essentials.warp + /warp 主城（2026-09-18）
+lp group default permission set essentials.spawn true   # 注：未装 EssentialsSpawn 模块，/spawn 命令实际不存在；主菜单「回主城」按钮已改用 essentials.warp + /warp 主城
 lp group default permission set essentials.back true
 lp group default permission set essentials.back.ondeath true
 lp group default permission set essentials.near true
@@ -720,7 +476,7 @@ lp group default permission set essentials.pay true
 lp group default permission set essentials.sell true
 lp group default permission set essentials.worth true
 
-# ---- 经济系统第二阶段插件（2026-09-19）----
+# ---- 经济系统插件 ----
 # 拍卖行（AuctionHouse auction.* 默认 true，无需授予）
 lp group default permission set economyshop.use true
 lp group default permission set economyshop.sell true
@@ -750,7 +506,7 @@ lp group default permission set essentials.ignore true
 lp group default permission set essentials.nick true
 lp group default permission set essentials.whois true
 
-# ---- Residence：领地 ----ok
+# ---- Residence：领地 ----
 lp group default permission set residence.create true
 lp group default permission set residence.delete true
 lp group default permission set residence.rename true
@@ -784,9 +540,8 @@ lp group default permission set skinsrestorer.command.update true
 # ---- EasyBot：绑定 QQ ----
 lp group default permission set easybot.command.bind true
 
-
 # ---- SimplePets：宠物系统 ----
-# 菜单项「宠物系统」执行 /pet gui，需以下命令权限（default 组已授 2026-09-16）
+# 菜单项「宠物系统」执行 /pet gui，需以下命令权限
 lp group default permission set pet.commands.gui true
 lp group default permission set pet.commands.help true
 lp group default permission set pet.commands.summon true
@@ -800,17 +555,7 @@ lp group default permission set voicechat.listen true
 lp group default permission set voicechat.groups true
 ```
 
-### 10.2 VIP 组（vip）
-
-```bash
-lp group vip permission set essentials.kit.vip true
-lp group vip permission set essentials.kits.vip true
-lp group vip permission set essentials.tpahere true
-lp group vip permission set essentials.sethome.multiple.10 true
-lp group vip permission set skinsrestorer.bypasscooldown true
-```
-
-### 10.3 管理组（admin / helper）
+### 8.3 管理组（admin / owner）
 
 ```bash
 # ---- 菜单管理入口（关键：没有这个看不到「管理面板」）----
@@ -867,7 +612,7 @@ lp group admin permission set residence.admin.select true
 lp group admin permission set residence.admin.tp true
 lp group admin permission set residence.flags.bypass true
 
-# ---- CoreProtect：审计与回滚（purge 不给，见 10.4）----
+# ---- CoreProtect：审计与回滚（purge 不给，见 8.4）----
 lp group admin permission set coreprotect.inspect true
 lp group admin permission set coreprotect.inspect.others true
 lp group admin permission set coreprotect.lookup true
@@ -877,7 +622,7 @@ lp group admin permission set coreprotect.restore true
 lp group admin permission set coreprotect.reload true
 lp group admin permission set coreprotect.help true
 
-# ---- Chunky：区块预生成（trim 不给，见 10.4）----
+# ---- Chunky：区块预生成（trim 不给，见 8.4）----
 lp group admin permission set chunky.start true
 lp group admin permission set chunky.pause true
 lp group admin permission set chunky.continue true
@@ -929,7 +674,7 @@ lp group admin permission set bukkit.command.plugins true
 lp group admin permission set minecraft.command.time true
 lp group admin permission set minecraft.command.weather true
 
-# ---- LuckPerms：日常查询（危险项不给，见 10.4）----
+# ---- LuckPerms：日常查询（危险项不给，见 8.4）----
 lp group admin permission set luckperms.info true
 lp group admin permission set luckperms.sync true
 lp group admin permission set luckperms.reload true
@@ -937,7 +682,7 @@ lp group admin permission set luckperms.tree true
 lp group admin permission set luckperms.verbose true
 ```
 
-### 10.4 服主组（owner）——仅危险操作
+### 8.4 服主组（owner）——仅危险操作
 
 这些会**造成不可恢复的破坏**或**提权**，只给服主：
 
@@ -966,7 +711,7 @@ lp group owner permission set openinv.override true
 
 > ☠️ `minecraft.command.op` / `deop` / `stop` **绝不给任何组**。
 
-### 10.5 验证方法
+### 8.5 验证方法
 
 ```bash
 # 检查某个玩家是否真的有某权限（含继承）
@@ -983,24 +728,7 @@ lp group owner permission set openinv.override true
 
 ---
 
-## 11. 与其他章节的关系
-
-| 章节                                                                                                                                                                  | 关系                                            |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| [1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate](../1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/)                                        | 提供 Floodgate，基岩端原生表单的前提            |
-| [2-玩法与玩家功能插件/01-权限管理系统-LuckPerms](../../5-服务器管理/01-权限管理系统-LuckPerms/)                                                                       | 菜单可见性与指令权限均由此控制，见第 10 章清单  |
-| [2-玩法与玩家功能插件/03-方块记录与回滚-CoreProtect](../../5-服务器管理/03-方块记录与回滚-CoreProtect/)                                                               | `admin-inspect` 菜单对接的后端                  |
-| [2-玩法与玩家功能插件/04-领地系统-Residence](../../3-玩法与玩家功能插件/04-领地系统-Residence/)                                                                       | `residence` 与 `admin-residence` 菜单对接的后端 |
-| [2-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer](../../3-玩法与玩家功能插件/05-皮肤管理-SkinsRestorer/)                                                               | `skin` 菜单对接的后端                           |
-| [2-玩法与玩家功能插件/06-离线背包查看-OpenInv](../../5-服务器管理/06-离线背包查看-OpenInv/)                                                                           | `admin-player` 查背包对接的后端                 |
-| [3-运维监控与面板/03-性能分析-spark](../3-运维监控与面板/03-性能分析-spark/)                                                                                          | `admin-server` 性能监控对接的后端               |
-| [2-玩法与玩家功能插件/07-创世神WorldEdit](../../3-玩法与玩家功能插件/07-创世神WorldEdit/)                                                                             | `admin-world` 创世神部分的后端与指令参考        |
-| [2-玩法与玩家功能插件/08-Simple Voice Chat](<../../3-玩法与玩家功能插件/08-Simple Voice Chat/>)                                                                       | `voice` 菜单与 UDP 24454 端口说明               |
-| [2-玩法与玩家功能插件/09-chunky区块加载优化](../../5-服务器管理/09-chunky区块加载优化/)                                                                               | `admin-world` 区块预生成的指令参考              |
-| [2-玩法与玩家功能插件/10-EssentialsX多功能指令整合](../../3-玩法与玩家功能插件/10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md)       | **菜单动作的主要执行者**，本插件是其 GUI 前端   |
-| [2-玩法与玩家功能插件/11-BedrockPlayerSupport基岩版GUI表单界面](../../5-服务器管理/11-BedrockPlayerSupport基岩版GUI表单界面/BedrockPlayerSupport基岩版GUI表单界面.md) | 功能有重叠，见下方说明                          |
-
-### 与 BedrockPlayerSupport 是否冲突
+## 9. 与 BedrockPlayerSupport 的关系
 
 两者都给基岩玩家提供表单，但定位不同：
 
@@ -1011,14 +739,7 @@ lp group owner permission set openinv.override true
 | 触发方式 | 物品右键 / `/qm`                 | 各自的 `/tpgui` `/homegui` 等指令                      |
 | Java 端  | 有箱子 GUI                       | 无（仅基岩端）                                         |
 
-**建议**：
-
-- 只想要「一个物品打开的总菜单」→ 装 QuickMenu 即可（示例菜单中的 `[bedrock-player] xxxgui`
-  会因 BPS 未安装而对基岩玩家无效，按第 6.1 节说明改回无条件动作即可）
-- 想要菜单 + 收到 tpa 请求时自动弹接受/拒绝表单、死亡后弹回传表单 → **两个都装**，
-  这是推荐组合。QuickMenu 负责「物品右键唤出的总菜单」，BPS 负责「事件驱动的自动表单」
-  （收到传送请求、死亡重生时主动弹出，这类场景菜单插件无法覆盖）
-- **两者已在本配置中集成**：`config.yml` 已把 `teleport.warps`、`teleport.tpa`、
-  `home.listhomes`、`settings.msg` 四项配成两端分发，基岩玩家点击后直接进入
-  BPS 的原生表单（带玩家/传送点/家园选择），Java 玩家走 EssentialsX 指令。
-  无需再手动修改，装上 BPS 即生效（详见第 6.1 节对照表）
+**推荐组合**：QuickMenu 负责「物品右键唤出的总菜单」，BPS 负责「事件驱动的自动表单」
+（收到传送请求、死亡重生时主动弹出，这类场景菜单插件无法覆盖）。本配置已把
+`teleport.warps`、`teleport.tpa`、`home.listhomes`、`social.msg` 四项配成两端分发，
+基岩玩家点击后直接进入 BPS 原生表单，Java 玩家走 EssentialsX 指令。
