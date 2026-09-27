@@ -313,6 +313,19 @@ menus:
           - '[close]'
           - '[player] quests'
 
+      # ---------- 每日收购 ----------
+      daily-sell:
+        material: EMERALD_BLOCK
+        display-name: '&a&l每日收购'
+        lore:
+          - '&7查看今日收购物品与单价'
+          - '&7出售收购物品赚南瓜币'
+          - '&8点击打开收购界面'
+        slot: 19
+        actions:
+          - '[close]'
+          - '[player] ds'
+
       # ---------- 服务器信息 ----------
       info:
         material: BOOK
@@ -738,6 +751,18 @@ menus:
         actions:
           - '[close]'
           - '[player] eztax stats'
+
+      daily-sell:
+        material: PAPER
+        display-name: '&a每日收购'
+        lore:
+          - '&7查看今日 4 种收购物品与单价'
+          - '&7出售收购物品赚南瓜币'
+          - '&8点击打开收购界面'
+        slot: 19
+        actions:
+          - '[close]'
+          - '[player] ds'
 
       sell:
         material: HOPPER

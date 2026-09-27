@@ -265,12 +265,12 @@ actions:
 
 | 菜单 id     | 名称       | 对接插件                  | 主要内容                                                                                                                                                                                                                          |
 | ----------- | ---------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `main`      | 主菜单     | —                         | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务直达                                                                                                |
+| `main`      | 主菜单     | —                         | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达                                                                                                |
 | `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、返回、回主城、附近玩家                                                                                                                                                                |
 | `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                 |
 | `home`      | 我的家园   | EssentialsX + BPS         | 家列表、回家、设置家、删除家。**入口已从主菜单隐藏**：可用 `/qm open home` 或直接 `/home` 指令                                                                                                                                    |
 | `residence` | 我的领地   | **Residence**             | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                                                           |
-| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、卖物品（/sell）、估价背包物品（/worth）、拍卖行、玩家商店                                                                                          |
+| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、卖物品（/sell）、估价背包物品（/worth）、**每日收购（/ds）**、拍卖行、玩家商店                                                                                          |
 | `kit`       | 工具包     | EssentialsX               | 新手包、每日奖励                                                                                                                                                                                                                  |
 | `skin`      | 皮肤管理   | **SkinsRestorer**         | 皮肤库浏览（/skins 选择菜单，含皮肤/历史/收藏三入口）、历史皮肤（/skin history）、收藏皮肤（/skin favourites）、清除、刷新、随机、撤销                                                                                              |
 | `social`    | 社交设置   | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                           |
@@ -280,6 +280,11 @@ actions:
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah）、玩家商店（/shop）已放在
 > `economy` 经济中心子菜单，主菜单首屏不保留。
+
+**每日收购入口**（配合 DailySell 插件，详见 `ai写的/每日随机收购/每日随机收购-DailySell.md`）：
+
+- 主菜单 `main` 与 `economy` 经济中心各有一个「每日收购」按钮（均占 **slot 19**，动作 `[player] ds`），配置见 config.yml 模板中 `daily-sell:` 条目
+- **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时，替换 jar 不会更新它——需手动把 `daily-sell:` 两段插入到对应菜单（主菜单 slot 19、经济中心 slot 19），再 `/qm reload` 生效
 
 层级：所有二级菜单的 `back-menu` 均为 `main`，返回按钮固定在右下角（`size-1` 槽位）。
 

@@ -313,6 +313,19 @@ menus:
           - '[close]'
           - '[player] quests'
 
+      # ---------- 每日收购 ----------
+      daily-sell:
+        material: EMERALD_BLOCK
+        display-name: '&a&l每日收购'
+        lore:
+          - '&7查看今日收购物品与单价'
+          - '&7出售收购物品赚南瓜币'
+          - '&8点击打开收购界面'
+        slot: 19
+        actions:
+          - '[close]'
+          - '[player] ds'
+
       # ---------- 服务器信息 ----------
       info:
         material: BOOK
@@ -739,17 +752,17 @@ menus:
           - '[close]'
           - '[player] eztax stats'
 
-      ah-sell-elytra:
-        material: ELYTRA
-        display-name: '&d&l上架鞘翅'
+      daily-sell:
+        material: PAPER
+        display-name: '&a每日收购'
         lore:
-          - '&7把背包里的鞘翅上架拍卖行'
-          - '&e默认价格：&65000 南瓜币'
-          - '&7背包里没有鞘翅时提示，可改配置'
+          - '&7查看今日 4 种收购物品与单价'
+          - '&7出售收购物品赚南瓜币'
+          - '&8点击打开收购界面'
         slot: 19
-        permission: auctionhouse.command
         actions:
-          - '[ah-sell] 5000 elytra'
+          - '[close]'
+          - '[player] ds'
 
       sell:
         material: HOPPER
