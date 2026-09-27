@@ -8,16 +8,6 @@
   - 下载：Modrinth `modrinth.com/plugin/simplevoice-geyser`（Bukkit 版，作者 TheodoreMeyer）
 - [ ] **SVC 网络**：确认路由器/防火墙放行 **UDP 24454**（语音直连，不过 Velocity），否则 Java 玩家语音无声
 
-## 📢 侧边公告栏（TAB sidebar）
-
-- [x] 已启用 `plugins/TAB/config.yml` 的 scoreboard（`enabled: true`）
-- [x] 设计：金橙渐变标题「南瓜生存服」+ 玩家/在线/世界 + 余额/时长/延迟 + 「欢迎回家」+ 底部 `/sb` 提示
-- [x] 玩家个人开关：`/sb`，`remember-toggle-choice: true`（重进游戏记住隐藏/显示选择）
-- [ ] **进服执行 `/tab reload` 生效并截图验证效果**
-- [ ] 验证 `%plan_player_playtime%` 在线时长占位符能解析（若显示成 `%...%` 原文，改 PAPI playtime 扩展或换 `%playtime%`）
-- [ ] 确认基岩端（Geyser）能正常显示 sidebar 计分板
-- [ ] 把「`/sb` 可隐藏公告栏」写进玩家手册
-
 ## 💰 经济 / 排行榜
 
 - [ ] **财富榜上线验证**：进服执行 `/dh reload` → `/papi parse me %vault_eco_balance_top_1_player%` 验证占位符 → `/ess reload`
@@ -45,16 +35,11 @@
 ## 🎮 玩法插件
 
 - [ ] **RideOnHead**：重启服务器后完全生效；首次生成 `config.yml` 后把实际键名补进文档
-- [ ] **末影龙管理**：`DragonManager.jar`（`/dragon respawn` 重生不刷柱子 + 禁传送门四角水晶）+ `dragon-block-plugin`（龙不破坏任何方块）已放 `plugins/` → 重启后验证（文档+源码：`ai写的/末影龙重生与破坏保护/`）
+- [ ] **末影龙管理**：`DragonManager.jar`（`/dragon respawn` 重生不刷柱子 + 禁传送门四角水晶）+ `dragon-block-plugin`（龙不破坏任何方块）已放 `plugins/` → 重启后验证（文档+源码：`自研/末影龙重生与破坏保护/`）
 - [ ] **BGM 资源包**：补 OGG 音乐文件 + HTTPS 托管 URL，配置 `server.properties` 后上线（骨架已建在 `1-服务端核心与网络层/08-服务器资源包-BGM/`）
-
-## 📊 在线时间显示
-
-- [x] **TAB 显示在线时间**：已并入侧边公告栏（sidebar 里「时长」行，`%plan_player_playtime%`），待 `/tab reload` 后验证
-- [ ] **主城显示在线时间**：主城用 DecentHolograms + PAPI 做全息，显示在线时间（确认是个人在线时间还是当前在线人数/服总在线时长）
 
 ## 💰 每日随机收购（DailySell）
 
 - [x] 需求已定：每天随机 4 种物品换**南瓜币**，每种额度随机 10-100、单价当日浮动、总价 ≤ 800、防刷
-- [x] 插件已做并部署：`plugins/DailySell.jar`（27格GUI多页 + 命令 + QuickMenu入口）（源码+文档：`ai写的/每日随机收购/`）
+- [x] 插件已做并部署：`plugins/DailySell.jar`（27格GUI多页 + 命令 + QuickMenu入口）（源码+文档：`自研/每日随机收购/`）
 - [ ] **重启后验证**：`/ds` GUI（左键卖1/Shift卖满/翻页）、`/qm reload` 后快捷菜单入口、`/ds today` 清单、`/ds sell` 到账、额度/预算上限、跨天重抽

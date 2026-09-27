@@ -476,7 +476,7 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 | [03 Java-Bedrock互通层-Geyser-Floodgate](../1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/) | Geyser+Floodgate 迁到代理端，后端按需装 floodgate |
 | [05 权限管理-LuckPerms](../../5-服务器管理/01-权限管理系统-LuckPerms/) | LuckPerms 切 MySQL 实现跨服权限同步 |
 | [17 端口与网络架构总览](../1-服务端核心与网络层/05-端口与网络架构总览/README.md) | 端口表需按本章重规划（对外仅 Velocity+Geyser） |
-| [26 快捷菜单系统](../../ai写的/快捷菜单系统/快捷菜单系统-QuickMenu.md) | 后端需装 floodgate-bukkit 才能继续按客户端分流 |
+| [26 快捷菜单系统](../../自研/快捷菜单系统/快捷菜单系统-QuickMenu.md) | 后端需装 floodgate-bukkit 才能继续按客户端分流 |
 
 > **演进路线图**（对齐 README §15）：单服 → 本章 Velocity → 多子服分区 →
 > 共享 MySQL 数据层。本章是"单服 → 网络"的桥。

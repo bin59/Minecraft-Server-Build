@@ -143,6 +143,7 @@
 | 全息           | DecentHolograms                           | 浮动文字 / 物品 / 头颅 / 动画                         |
 | 死亡信息       | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题 / 收费）             |
 | 宠物           | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                       |
+| 摸头互动       | PatPat（Modrinth）                      | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用 |
 | 玩家骑乘       | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                        |
 | 语音           | Simple Voice Chat                         | 近距离语音聊天                                        |
 | 菜单（自研）   | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 11 套 + 管理线 11 套） |

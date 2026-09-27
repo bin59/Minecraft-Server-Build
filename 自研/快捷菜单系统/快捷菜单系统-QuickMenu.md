@@ -8,6 +8,8 @@
 
 插件 jar：`dist/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
 
+> 相关文档：`快捷菜单系统-QuickMenu-与通用菜单对比.md`（为什么不用 DeluxeMenus 等通用插件、不可替代点与边界）
+
 **插件与菜单的对应关系**（本菜单已覆盖的后端）：
 
 | 插件                 | 玩家菜单                                  | 管理菜单                   |
@@ -72,7 +74,7 @@ if (api.isFloodgatePlayer(uuid)) {
 ## 2. 目录结构
 
 ```
-ai写的/快捷菜单系统/
+自研/快捷菜单系统/
 ├── 快捷菜单系统-QuickMenu.md        ← 本文档
 ├── build.ps1                        ← 一键构建脚本（无需 Maven）
 ├── dist/
@@ -281,7 +283,7 @@ actions:
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah）、玩家商店（/shop）已放在
 > `economy` 经济中心子菜单，主菜单首屏不保留。
 
-**每日收购入口**（配合 DailySell 插件，详见 `ai写的/每日随机收购/每日随机收购-DailySell.md`）：
+**每日收购入口**（配合 DailySell 插件，详见 `自研/每日随机收购/每日随机收购-DailySell.md`）：
 
 - 主菜单 `main` 与 `economy` 经济中心各有一个「每日收购」按钮（均占 **slot 19**，动作 `[player] ds`），配置见 config.yml 模板中 `daily-sell:` 条目
 - **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时，替换 jar 不会更新它——需手动把 `daily-sell:` 两段插入到对应菜单（主菜单 slot 19、经济中心 slot 19），再 `/qm reload` 生效
@@ -384,7 +386,7 @@ actions:
 `build.ps1` 直接用 JDK 的 javac / jar 完成全流程：
 
 ```powershell
-cd F:\game\pc\MC\开服\Minecraft-Server-Build\ai写的\快捷菜单系统
+cd F:\game\pc\MC\开服\Minecraft-Server-Build\自研\快捷菜单系统
 powershell -ExecutionPolicy Bypass -File build.ps1
 ```
 
