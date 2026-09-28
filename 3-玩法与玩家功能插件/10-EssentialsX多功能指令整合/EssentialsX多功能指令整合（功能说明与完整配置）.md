@@ -16,13 +16,13 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 
 **基础信息：**
 
-| 项目       | 说明                                                                            |
-| ---------- | ------------------------------------------------------------------------------- |
-| 支持版本   | MC 1.8.8 ~ 1.21.11+ |
-| 服务端要求 | CraftBukkit / Spigot / **Paper（推荐）**                                        |
-| Java 要求  | Java 8+                                                                         |
-| 核心依赖   | Vault（经济接口）、LuckPerms（权限管理，推荐）                                  |
-| 配置文件   | `plugins/Essentials/config.yml`                                                 |
+| 项目       | 说明                                           |
+| ---------- | ---------------------------------------------- |
+| 支持版本   | MC 1.8.8 ~ 1.21.11+                            |
+| 服务端要求 | CraftBukkit / Spigot / **Paper（推荐）**       |
+| Java 要求  | Java 8+                                        |
+| 核心依赖   | Vault（经济接口）、LuckPerms（权限管理，推荐） |
+| 配置文件   | `plugins/Essentials/config.yml`                |
 
 ---
 
@@ -109,15 +109,15 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 
 ### 📦 物品与工具包系统
 
-| 指令                          | 功能               |
-| ----------------------------- | ------------------ |
-| `/item <物品> [数量]` 或 `/i` | 给予物品           |
-| `/give <玩家> <物品> [数量]`  | 给指定玩家物品     |
-| `/enchant <附魔> [等级]`      | 附魔手中物品       |
-| `/repair`                     | 修复手中物品耐久   |
-| `/repair all`                 | 修复背包内所有物品 |
-| `/kit`                        | 查看可用工具包列表 |
-| `/kit <名称>`                 | 领取指定工具包     |
+| 指令                          | 功能                       |
+| ----------------------------- | -------------------------- |
+| `/item <物品> [数量]` 或 `/i` | 给予物品                   |
+| `/give <玩家> <物品> [数量]`  | 给指定玩家物品             |
+| `/enchant <附魔> [等级]`      | 附魔手中物品               |
+| `/repair`                     | 修复手中物品耐久           |
+| `/repair all`                 | 修复背包内所有物品         |
+| `/kit`                        | （禁用）查看可用工具包列表 |
+| `/kit <名称>`                 | （禁用）领取指定工具包     |
 
 **工具包（Kit）系统详解：**
 
@@ -315,8 +315,8 @@ essentials.commandcooldowns.bypass  # 绕过命令冷却
 对于 GeyserMC 互通服场景：
 
 - EssentialsX 的所有指令对 Java 和基岩版玩家**同样生效**
-- 基岩版玩家通过 GeyserMC + Floodgate 可以直接使用 `/tpa`、`/home`、`/kit` 等指令
-- 经济系统、工具包、权限控制对两端玩家统一生效
+- 基岩版玩家通过 GeyserMC + Floodgate 可以直接使用 `/tpa`、`/home`（禁用）、`/kit`（禁用） 等指令
+- 经济系统、工具包（禁用）、权限控制对两端玩家统一生效
 - 如果基岩版玩家输入指令不便，可搭配 GUI 插件（如 BedrockPlayerSupport）提供表单界面辅助操作
 
 ---
@@ -535,7 +535,7 @@ allow-color-nicknames: true
 # 昵称格式
 nickname-format: '{DISPLAYNAME}'
 
-# ==================== 工具包系统 ====================
+# ==================== 工具包系统（禁用） ====================
 
 # 工具包领取冷却时间（秒）- 默认值
 kit-cooldown: 86400
@@ -760,11 +760,11 @@ kits:
 ```yaml
 aliases:
   # 快捷传送命令
-  家:
+  家:（禁用）
     - 'essentials:home'
-  回家:
+  回家:（禁用）
     - 'essentials:home'
-  设置家:
+  设置家:（禁用）
     - 'essentials:sethome'
   传送:
     - 'essentials:tpa $1-'
@@ -776,9 +776,9 @@ aliases:
     - 'essentials:balance'
   转账:
     - 'essentials:pay $1-'
-  工具包:
+  工具包:（禁用）
     - 'essentials:kit'
-  出生点:
+  出生点:（禁用）
     - 'essentials:spawn'
 ```
 
@@ -790,17 +790,17 @@ aliases:
 
 ```
 # 默认玩家组权限
-lp group default permission set essentials.home true
-lp group default permission set essentials.sethome true
-lp group default permission set essentials.sethome.multiple.3 true
+lp group default permission set essentials.home false
+lp group default permission set essentials.sethome false
+lp group default permission set essentials.sethome.multiple.3 false
 lp group default permission set essentials.tpa true
 lp group default permission set essentials.tpaccept true
 lp group default permission set essentials.tpdeny true
 lp group default permission set essentials.spawn true
 lp group default permission set essentials.balance true
 lp group default permission set essentials.pay true
-lp group default permission set essentials.kit true
-lp group default permission set essentials.back true
+lp group default permission set essentials.kit false
+lp group default permission set essentials.back false
 # 死亡后是否自动弹出"点击返回死亡点"提示，由 essentials.back.ondeath 控制：
 #   关闭（不自动弹出，/back 仍可用）：lp group default permission set essentials.back.ondeath false
 #   彻底取消：lp group default permission unset essentials.back.ondeath
@@ -843,4 +843,3 @@ lp group admin permission set essentials.setspawn true
 - 互通服中基岩版玩家通过 Floodgate 登录后，权限系统与 Java 玩家统一，可通过 LuckPerms 的 `floodgate` 前缀为基岩版玩家单独设置权限
 - 建议定期备份 `plugins/Essentials/` 文件夹，防止数据丢失
 - 如需使用中文消息提示，确保 `plugins/Essentials/messages/messages_zh.properties` 文件存在
-
