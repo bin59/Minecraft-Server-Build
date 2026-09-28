@@ -3,8 +3,8 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：22 套菜单 / 173 个菜单项，分**玩家线**（11 套）
-> 与**管理线**（11 套），管理入口靠权限门控，普通玩家看不到。
+> **菜单已整合本服全部插件**：23 套菜单 / 183 个菜单项，分**玩家线**（11 套）
+> 与**管理线**（12 套），管理入口靠权限门控，普通玩家看不到。
 
 插件 jar：`dist/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
 
@@ -91,7 +91,7 @@ if (api.isFloodgatePlayer(uuid)) {
 │       │   └── menu/                   两端分发决策中枢 / 动作执行 / 菜单与动作模型
 │       └── resources/
 │           ├── plugin.yml              插件描述（命令与权限）
-│           └── config.yml              ★ 菜单配置（22 套：玩家 11 + 管理 11）
+│           └── config.yml              ★ 菜单配置（23 套：玩家 11 + 管理 12）
 └── _build/                            构建中间目录
 ```
 
@@ -218,6 +218,7 @@ menus:
 | ---------------------------- | --------------------------------------------------------------------------------------- |
 | `[player-selector] 命令模板` | 点击后列出在线玩家（排除自己），`{target}` 替换为所选玩家名                            |
 | `[item-selector] 命令模板`    | 点击后列出背包物品（自动排除触发物品、同材质合并），`{item}` 替换为材质名（小写）      |
+| `[ah-sell] 价格 材质名`       | 拍卖行上架：自动把背包中该材质物品换到主手执行 `/ah sell 价格`，再还原主手（解决触发物品占主手无法直接上架），如 `[ah-sell] 5000 elytra` |
 
 动作可叠加，按列表顺序执行。常见组合：先 `[close]` 关界面，再执行指令，避免指令输出被界面遮挡。
 
@@ -259,9 +260,9 @@ actions:
 
 ---
 
-## 5. 菜单结构总览（22 套，玩家 / 管理双线）
+## 5. 菜单结构总览（23 套，玩家 / 管理双线）
 
-`config.yml` 已配好 **22 套菜单**，把本服所有插件的常用功能全部收进菜单。
+`config.yml` 已配好 **23 套菜单**，把本服所有插件的常用功能全部收进菜单。
 
 ### 5.1 玩家菜单（11 套）
 
@@ -272,7 +273,7 @@ actions:
 | `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                 |
 | `home`      | 我的家园   | EssentialsX + BPS         | 家列表、回家、设置家、删除家。**入口已从主菜单隐藏**：可用 `/qm open home` 或直接 `/home` 指令                                                                                                                                    |
 | `residence` | 我的领地   | **Residence**             | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                                                           |
-| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、卖物品（/sell）、估价背包物品（/worth）、**每日收购（/ds）**、拍卖行、玩家商店                                                                                          |
+| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**、卖物品（/sell）、估价背包物品（/worth）。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                                          |
 | `kit`       | 工具包     | EssentialsX               | 新手包、每日奖励                                                                                                                                                                                                                  |
 | `skin`      | 皮肤管理   | **SkinsRestorer**         | 皮肤库浏览（/skins 选择菜单，含皮肤/历史/收藏三入口）、历史皮肤（/skin history）、收藏皮肤（/skin favourites）、清除、刷新、随机、撤销                                                                                              |
 | `social`    | 社交设置   | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                           |
@@ -280,22 +281,23 @@ actions:
 | `voice`     | 语音聊天   | **Simple Voice Chat**     | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                            |
 
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
-> `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah）、玩家商店（/shop）已放在
-> `economy` 经济中心子菜单，主菜单首屏不保留。
+> `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah，slot 9）、玩家商店（/shop，slot 11）
+> 在主菜单首屏直达，不放在 `economy` 经济中心子菜单。
 
 **每日收购入口**（配合 DailySell 插件，详见 `自研/每日随机收购/每日随机收购-DailySell.md`）：
 
 - 主菜单 `main` 与 `economy` 经济中心各有一个「每日收购」按钮（均占 **slot 19**，动作 `[player] ds`），配置见 config.yml 模板中 `daily-sell:` 条目
 - **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时，替换 jar 不会更新它——需手动把 `daily-sell:` 两段插入到对应菜单（主菜单 slot 19、经济中心 slot 19），再 `/qm reload` 生效
 
-层级：所有二级菜单的 `back-menu` 均为 `main`，返回按钮固定在右下角（`size-1` 槽位）。
+层级：玩家线所有二级菜单的 `back-menu` 均为 `main`（`warps` 为三级菜单，`back-menu: teleport`），返回按钮固定在右下角（`size-1` 槽位）。
 
-### 5.2 管理菜单（11 套）
+### 5.2 管理菜单（12 套）
 
 | 菜单 id           | 名称         | 对接插件                                              | 主要内容                                                                                     |
 | ----------------- | ------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | `admin`           | 管理面板     | —                                                     | 一级入口，10 个分类 + 返回玩家菜单                                                           |
 | `admin-player`    | 玩家管理     | **OpenInv** + EssentialsX                             | 看背包、传送/拉人、切模式、治疗、飞行、无敌、喂食、隐身、清背包、查信息、修复、发物品        |
+| `gamemode`        | 切换游戏模式 | EssentialsX                                           | `admin-player` 的子菜单：生存/创造/冒险/旁观四种模式，选模式后再从在线列表选玩家执行        |
 | `admin-punish`    | 处罚管理     | EssentialsX                                           | 踢出、封禁、临时封禁、解封、封 IP、禁言、解禁、关押、释放、广播、私信监视                    |
 | `admin-teleport`  | 传送管理     | EssentialsX                                           | 强制传送/拉人、全员传送、头顶、设出生点、建/删传送点、静默传送                               |
 | `admin-residence` | 领地管理     | **Residence**                                         | 全服领地列表、查看/删除/转移归属、传送、选取他人领地                                         |
@@ -304,10 +306,172 @@ actions:
 | `admin-server`    | 服务器监控   | **spark** + **Geyser** + **ViaVersion** + **EasyBot** | TPS、健康报告、延迟、性能采样、堆内存、Geyser 重载/诊断/统计、版本分布、机器人重载、插件列表 |
 | `admin-perm`      | 权限管理     | **LuckPerms**                                         | 网页编辑器、同步、重载、权限树、信息、查玩家权限、实时追踪                                   |
 | `admin-qm`        | 菜单管理     | QuickMenu 自身                                        | 重载配置、菜单列表、客户端诊断、发放触发物品                                                 |
+| `admin-economy` | 经济管理     | EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell | 财富榜、查余额（选人）、发钱/扣钱/设余额（指引）、拍卖行管理、系统商店管理、税务统计、每日收购重生成/重载 |
 | `postracker`       | 玩家位置记录 | **PosTracker**                                        | 位于 `admin` 菜单内（非独立菜单），查询玩家历史位置轨迹（`/pos radius:10 time:1h`）          |
 
-层级：9 个二级菜单的 `back-menu` 均为 `admin`，`admin` 的 `back-menu` 为 `main`，
+层级：`admin` 的二级菜单共 10 个（`back-menu` 均为 `admin`），`admin-player` 另有三级子菜单 `gamemode`（选模式）；`admin` 的 `back-menu` 为 `main`，
 管理员可在两条线之间自由往返。
+
+### 5.2b 经济管理菜单（admin-economy）
+
+管理面板「经济管理」入口（**slot 17**，金锭，仅管理员可见）→ `admin-economy` 菜单（size 27，back 到 admin）。功能与权限：
+
+| 菜单项 | 功能 | 命令 | 权限 |
+|---|---|---|---|
+| `baltop` | 财富排行榜 | `/baltop` | `essentials.balancetop` |
+| `balance` | 查询玩家余额（在线列表选人） | `/balance <玩家>` | `essentials.balance.others` |
+| `eco-give` | 给玩家发钱（文字指引） | `/eco give 玩家 金额` | `essentials.eco` |
+| `eco-take` | 扣回玩家余额（文字指引） | `/eco take 玩家 金额` | `essentials.eco` |
+| `eco-set` | 设置玩家余额（文字指引） | `/eco set 玩家 金额` | `essentials.eco` |
+| `ahadmin` | 拍卖行管理（删单/查记录） | `/ahadmin` | `auction.admin` |
+| `shopadmin` | 系统商店管理（加物品/定价） | `/shop admin` | `economyshop.admin` |
+| `eztax` | 税务统计 | `/eztax stats` | `eztax.stats` |
+| `ds-reroll` | 每日收购·重新生成今日清单 | `/ds reroll` | `dailysell.admin` |
+| `ds-reload` | 每日收购·重载配置 | `/ds reload` | `dailysell.admin` |
+
+> **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时替换 jar 不会更新它——需手动插入以下两段（段一进 `admin` 菜单，段二追加到 `menus:` 末尾），再 `/qm reload` 生效。完整 YAML 亦可解压 jar 内嵌 config.yml 复制 `admin-economy` 相关段。
+
+**段一：admin 面板入口（加在 `admin-qm` 定义后）**
+
+```yaml
+      admin-economy:
+        material: GOLD_INGOT
+        display-name: '&6&l经济管理'
+        lore:
+          - '&7查余额、发钱/扣钱、财富榜'
+          - '&7拍卖行 / 系统商店 / 税务 / 每日收购'
+        slot: 17
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-economy'
+```
+
+**段二：admin-economy 菜单定义（追加到 `menus:` 末尾）**
+
+```yaml
+  admin-economy:
+    title: '&6&l经济管理'
+    bedrock-content: '&7经济系统管理'
+    size: 27
+    back-menu: admin
+    filler:
+      material: YELLOW_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      baltop:
+        material: GOLD_BLOCK
+        display-name: '&e财富排行榜'
+        lore:
+          - '&7查看全服最富有玩家'
+        slot: 10
+        permission: essentials.balancetop
+        actions:
+          - '[close]'
+          - '[player] baltop'
+
+      balance:
+        material: PLAYER_HEAD
+        display-name: '&6查询玩家余额'
+        lore:
+          - '&7点击后从在线列表选择玩家'
+        slot: 11
+        permission: essentials.balance.others
+        actions:
+          - '[player-selector] balance {target}'
+
+      eco-give:
+        material: EMERALD
+        display-name: '&a给玩家发钱'
+        lore:
+          - '&7需手动补充玩家名与金额'
+          - '&e用法：/eco give 玩家名 金额'
+        slot: 12
+        permission: essentials.eco
+        actions:
+          - '[close]'
+          - '[message] &7发钱：&e/eco give 玩家名 金额'
+          - '[message] &7例：&e/eco give Steve 500'
+
+      eco-take:
+        material: BARRIER
+        display-name: '&c扣回玩家余额'
+        lore:
+          - '&7需手动补充玩家名与金额'
+          - '&e用法：/eco take 玩家名 金额'
+        slot: 13
+        permission: essentials.eco
+        actions:
+          - '[close]'
+          - '[message] &7扣钱：&e/eco take 玩家名 金额'
+
+      eco-set:
+        material: DIAMOND
+        display-name: '&b设置玩家余额'
+        lore:
+          - '&7需手动补充玩家名与金额'
+          - '&e用法：/eco set 玩家名 金额'
+        slot: 14
+        permission: essentials.eco
+        actions:
+          - '[close]'
+          - '[message] &7设余额：&e/eco set 玩家名 金额'
+
+      ahadmin:
+        material: GOLD_INGOT
+        display-name: '&6拍卖行管理'
+        lore:
+          - '&7删除违规上架、查看拍卖记录'
+        slot: 15
+        permission: auction.admin
+        actions:
+          - '[close]'
+          - '[player] ahadmin'
+
+      shopadmin:
+        material: CHEST
+        display-name: '&e系统商店管理'
+        lore:
+          - '&7添加/调整商店物品与价格'
+        slot: 16
+        permission: economyshop.admin
+        actions:
+          - '[close]'
+          - '[player] shop admin'
+
+      eztax:
+        material: WRITABLE_BOOK
+        display-name: '&c税务统计'
+        lore:
+          - '&7查看周持有税与交易税征收'
+        slot: 17
+        permission: eztax.stats
+        actions:
+          - '[close]'
+          - '[player] eztax stats'
+
+      ds-reroll:
+        material: EMERALD_BLOCK
+        display-name: '&a每日收购·重新生成'
+        lore:
+          - '&7重新随机今日 4 种收购物品'
+        slot: 19
+        permission: dailysell.admin
+        actions:
+          - '[close]'
+          - '[player] ds reroll'
+
+      ds-reload:
+        material: PAPER
+        display-name: '&a每日收购·重载配置'
+        lore:
+          - '&7改完配置后应用（今日清单不变）'
+        slot: 20
+        permission: dailysell.admin
+        actions:
+          - '[close]'
+          - '[player] ds reload'
+```
 
 ### 5.3 管理面板如何进入
 
@@ -680,6 +844,12 @@ lp group admin permission set voicechat.admin true
 lp group admin permission set bukkit.command.plugins true
 lp group admin permission set minecraft.command.time true
 lp group admin permission set minecraft.command.weather true
+
+# ---- 经济系统管理（管理菜单 admin-economy 用）----
+lp group admin permission set auction.admin true
+lp group admin permission set economyshop.admin true
+lp group admin permission set dailysell.admin true
+# eztax.stats 已在 default 授予（玩家经济中心 + 管理菜单共用）；调整税率/征收改 config.yml
 
 # ---- LuckPerms：日常查询（危险项不给，见 8.4）----
 lp group admin permission set luckperms.info true

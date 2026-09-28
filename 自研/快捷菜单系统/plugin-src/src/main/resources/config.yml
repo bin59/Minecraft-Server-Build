@@ -7,12 +7,13 @@
 # 修改后执行 /qm reload 即时生效，无需重启服务器
 #
 # ============================================================
-# 菜单总览（20 套，分「玩家」与「管理」两条线）
+# 菜单总览（23 套，分「玩家」与「管理」两条线）
 # ============================================================
 #
 # 【玩家线】所有人可见，default-menu 指向 main
 #   main          主菜单（一级入口）
 #   teleport      传送功能     EssentialsX + BedrockPlayerSupport
+#   warps         传送点       EssentialsX（teleport 的子菜单）
 #   home          我的家园     EssentialsX + BedrockPlayerSupport
 #   residence     我的领地     Residence
 #   economy       经济中心     EssentialsX + Vault
@@ -26,6 +27,7 @@
 #           普通玩家看不到、也点不到；管理员也可直接 /qm open admin
 #   admin           管理面板（一级入口）
 #   admin-player    玩家管理     OpenInv + EssentialsX
+#   gamemode        切换游戏模式 EssentialsX（admin-player 的子菜单）
 #   admin-punish    处罚管理     EssentialsX
 #   admin-teleport  传送管理     EssentialsX
 #   admin-residence 领地管理     Residence
@@ -34,6 +36,7 @@
 #   admin-server    服务器监控   spark + Geyser + ViaVersion + EasyBot
 #   admin-perm      权限管理     LuckPerms
 #   admin-qm        菜单管理     QuickMenu 自身
+#   admin-economy   经济管理     EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell
 #
 # ============================================================
 # 重要：为什么大量菜单项是「文字指引」而不是直接执行
@@ -183,6 +186,9 @@ item-selector:
 #   [menu] 菜单id      打开另一个菜单
 #   [message] 文本     发送消息，支持 & 颜色码
 #   [close]            关闭界面/表单
+#   [player-selector] 命令模板  打开在线玩家选择器，{target} 替换为所选玩家名
+#   [item-selector] 命令模板    打开背包物品选择器，{item} 替换为材质名（小写）
+#   [ah-sell] 价格 材质名        自动把背包中该材质物品换到主手执行 /ah sell 价格（解决触发物品占主手无法直接上架）
 #   不带前缀的命令      等同于 [player]
 #
 # 平台条件动作（两端需要调用不同指令时用）：
@@ -1236,6 +1242,16 @@ menus:
         permission: quickmenu.admin
         actions:
           - '[menu] admin-qm'
+      admin-economy:
+        material: GOLD_INGOT
+        display-name: '&6&l经济管理'
+        lore:
+          - '&7查余额、发钱/扣钱、财富榜'
+          - '&7拍卖行 / 系统商店 / 税务 / 每日收购'
+        slot: 17
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-economy'
 
       # ---------- 玩家位置记录 ----------
       postracker:
@@ -2386,3 +2402,130 @@ menus:
         permission: quickmenu.use
         actions:
           - '[menu] main'
+  # ==================== 经济管理 ====================
+  admin-economy:
+    title: '&6&l经济管理'
+    bedrock-content: '&7经济系统管理'
+    size: 27
+    back-menu: admin
+    filler:
+      material: YELLOW_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      baltop:
+        material: GOLD_BLOCK
+        display-name: '&e财富排行榜'
+        lore:
+          - '&7查看全服最富有玩家'
+        slot: 10
+        permission: essentials.balancetop
+        actions:
+          - '[close]'
+          - '[player] baltop'
+
+      balance:
+        material: PLAYER_HEAD
+        display-name: '&6查询玩家余额'
+        lore:
+          - '&7点击后从在线列表选择玩家'
+        slot: 11
+        permission: essentials.balance.others
+        actions:
+          - '[player-selector] balance {target}'
+
+      eco-give:
+        material: EMERALD
+        display-name: '&a给玩家发钱'
+        lore:
+          - '&7需手动补充玩家名与金额'
+          - '&e用法：/eco give 玩家名 金额'
+        slot: 12
+        permission: essentials.eco
+        actions:
+          - '[close]'
+          - '[message] &7发钱：&e/eco give 玩家名 金额'
+          - '[message] &7例：&e/eco give Steve 500'
+
+      eco-take:
+        material: BARRIER
+        display-name: '&c扣回玩家余额'
+        lore:
+          - '&7需手动补充玩家名与金额'
+          - '&e用法：/eco take 玩家名 金额'
+        slot: 13
+        permission: essentials.eco
+        actions:
+          - '[close]'
+          - '[message] &7扣钱：&e/eco take 玩家名 金额'
+
+      eco-set:
+        material: DIAMOND
+        display-name: '&b设置玩家余额'
+        lore:
+          - '&7需手动补充玩家名与金额'
+          - '&e用法：/eco set 玩家名 金额'
+        slot: 14
+        permission: essentials.eco
+        actions:
+          - '[close]'
+          - '[message] &7设余额：&e/eco set 玩家名 金额'
+
+      ahadmin:
+        material: GOLD_INGOT
+        display-name: '&6拍卖行管理'
+        lore:
+          - '&7删除违规上架、查看拍卖记录'
+          - '&8点击打开拍卖行管理界面'
+        slot: 15
+        permission: auction.admin
+        actions:
+          - '[close]'
+          - '[player] ahadmin'
+
+      shopadmin:
+        material: CHEST
+        display-name: '&e系统商店管理'
+        lore:
+          - '&7添加/调整商店物品与价格'
+          - '&8点击打开商店管理界面'
+        slot: 16
+        permission: economyshop.admin
+        actions:
+          - '[close]'
+          - '[player] shop admin'
+
+      eztax:
+        material: WRITABLE_BOOK
+        display-name: '&c税务统计'
+        lore:
+          - '&7查看周持有税与交易税征收'
+          - '&8点击查询统计'
+        slot: 17
+        permission: eztax.stats
+        actions:
+          - '[close]'
+          - '[player] eztax stats'
+
+      ds-reroll:
+        material: EMERALD_BLOCK
+        display-name: '&a每日收购·重新生成'
+        lore:
+          - '&7重新随机今日 4 种收购物品'
+          - '&7旧清单作废'
+        slot: 19
+        permission: dailysell.admin
+        actions:
+          - '[close]'
+          - '[player] ds reroll'
+
+      ds-reload:
+        material: PAPER
+        display-name: '&a每日收购·重载配置'
+        lore:
+          - '&7改完配置后应用（今日清单不变）'
+        slot: 20
+        permission: dailysell.admin
+        actions:
+          - '[close]'
+          - '[player] ds reload'
