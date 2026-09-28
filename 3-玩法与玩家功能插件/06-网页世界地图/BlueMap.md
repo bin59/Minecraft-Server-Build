@@ -32,12 +32,12 @@
 
 ## 玩家如何使用
 
-| 操作 | 效果 |
-|---|---|
-| 浏览器打开地图地址（`http://服务器:8100`） | 查看 3D 世界 |
-| 拖拽 / 滚轮 | 旋转、缩放、平移 |
-| 点标记 | 看领地名 / 说明文字 |
-| （若开玩家标记）看在线头像 | 实时位置 |
+| 操作                                       | 效果                |
+| ------------------------------------------ | ------------------- |
+| 浏览器打开地图地址（`http://服务器:8100`） | 查看 3D 世界        |
+| 拖拽 / 滚轮                                | 旋转、缩放、平移    |
+| 点标记                                     | 看领地名 / 说明文字 |
+| （若开玩家标记）看在线头像                 | 实时位置            |
 
 > 查看地图**不需要任何游戏内权限**——它是公开的网页。仅管理命令需要权限（见下）。
 
@@ -45,19 +45,19 @@
 
 BlueMap **没有标记命令**（标记靠配置文件或第三方插件 API，见下"领地图层"）。实际命令表（来源：官方 Wiki Commands and Permissions）：
 
-| 命令 | 权限节点 | 默认 | 说明 |
-|---|---|---|---|
-| `/bluemap` | `bluemap.status` | op | 显示渲染状态 |
-| `/bluemap version` | `bluemap.version` | op | 版本与系统信息 |
-| `/bluemap help` | `bluemap.help` | op | 官方 Wiki / Discord 链接 |
-| `/bluemap reload [light]` | `bluemap.reload` / `bluemap.reload.light` | op | 重载资源/配置/Web 服务（`light` 更快） |
-| `/bluemap maps` | `bluemap.maps` | op | 列出已加载地图 |
-| `/bluemap stop` / `start` | `bluemap.stop` / `bluemap.start` | op | 暂停 / 恢复全部渲染（重启后保持） |
-| `/bluemap freeze <map-id>` / `unfreeze` | `bluemap.freeze` / `bluemap.unfreeze` | op | 冻结 / 解冻某张地图更新（重启后保持） |
-| `/bluemap purge <map-id>` | `bluemap.purge` | op | 清空某地图渲染数据（之后自动重渲） |
-| `/bluemap update [map-id] [x z] [半径]` | `bluemap.update` | op | 手动更新（默认全图，只渲变化区块） |
-| `/bluemap tasks` / `tasks cancel` | `bluemap.tasks` / `bluemap.tasks.cancel` | op | 查看 / 取消渲染队列 |
-| `/bluemap troubleshoot [map] [x z]` | `bluemap.troubleshoot` | op | 排查地图/世界问题并给建议 |
+| 命令                                    | 权限节点                                  | 默认 | 说明                                   |
+| --------------------------------------- | ----------------------------------------- | ---- | -------------------------------------- |
+| `/bluemap`                              | `bluemap.status`                          | op   | 显示渲染状态                           |
+| `/bluemap version`                      | `bluemap.version`                         | op   | 版本与系统信息                         |
+| `/bluemap help`                         | `bluemap.help`                            | op   | 官方 Wiki / Discord 链接               |
+| `/bluemap reload [light]`               | `bluemap.reload` / `bluemap.reload.light` | op   | 重载资源/配置/Web 服务（`light` 更快） |
+| `/bluemap maps`                         | `bluemap.maps`                            | op   | 列出已加载地图                         |
+| `/bluemap stop` / `start`               | `bluemap.stop` / `bluemap.start`          | op   | 暂停 / 恢复全部渲染（重启后保持）      |
+| `/bluemap freeze <map-id>` / `unfreeze` | `bluemap.freeze` / `bluemap.unfreeze`     | op   | 冻结 / 解冻某张地图更新（重启后保持）  |
+| `/bluemap purge <map-id>`               | `bluemap.purge`                           | op   | 清空某地图渲染数据（之后自动重渲）     |
+| `/bluemap update [map-id] [x z] [半径]` | `bluemap.update`                          | op   | 手动更新（默认全图，只渲变化区块）     |
+| `/bluemap tasks` / `tasks cancel`       | `bluemap.tasks` / `bluemap.tasks.cancel`  | op   | 查看 / 取消渲染队列                    |
+| `/bluemap troubleshoot [map] [x z]`     | `bluemap.troubleshoot`                    | op   | 排查地图/世界问题并给建议              |
 
 > 权限节点以官方为准；`admin`/`owner` 给 `bluemap.*` 即可。完整命令列表见官方 Wiki（Commands and Permissions）。
 > 玩家**查看地图无任何权限要求**（网页匿名访问）；上面只是管理命令。
@@ -72,11 +72,16 @@ BlueMap **没有标记命令**（标记靠配置文件或第三方插件 API，�
 - **每世界设置**：`map-type`（正常 3D）、`player-markers`（开/关）、`marker-sets`（标记集）。
 
 **隐私设置（重要）**：本服重视玩家隐私（信任传送都需对方同意）。公开网页若开 `player-markers`，等于把全员实时坐标暴露给任何人。建议：
+
 - 关掉 `player-markers`；或
 - 仅内网 / 白名单访问地图；或
 - 仅对特定世界开启玩家标记。
 
 **首渲很重**：第一次全量渲染大世界可能几十分钟~几小时，且占盘（meshes 随探索增长，几百 MB~数 GB）。务必低峰期执行，并用下面 Chunky 配合减少"跑图"成本。
+
+## 如何只渲染加载主世界?
+
+BlueMap 5.x 是**一张地图 = `plugins/BlueMap/maps/` 下一个 `.conf` 文件**。删掉下界 / 末地的 conf 文件，BlueMap 就不再加载 / 渲染它们，网页上只剩主世界一个标签。
 
 ## 领地图层（Residence 集成）——重点
 
@@ -102,10 +107,10 @@ BlueMap **没有标记命令**（标记靠配置文件或第三方插件 API，�
 
 **命令与权限**
 
-| 命令 | 权限节点 | 默认 | 说明 |
-|---|---|---|---|
-| `/bluemapresidence`（别名 `blueres` / `bluemapres`） | `blueres.reload` | op | 重载插件配置并重建全部领地标记 |
-| （加入服务器时的更新检查提示） | `blueres.updatecheck` | op | 新版本检测提示 |
+| 命令                                                 | 权限节点              | 默认 | 说明                           |
+| ---------------------------------------------------- | --------------------- | ---- | ------------------------------ |
+| `/bluemapresidence`（别名 `blueres` / `bluemapres`） | `blueres.reload`      | op   | 重载插件配置并重建全部领地标记 |
+| （加入服务器时的更新检查提示）                       | `blueres.updatecheck` | op   | 新版本检测提示                 |
 
 **配置详解**（`plugins/BlueMap_Residence/config.yml`，全部可改，注释为中文说明）：
 
@@ -120,17 +125,17 @@ update:
 
 marker:
   # 地图左侧标记集名称（显示为菜单条目）
-  name: "Residences"
+  name: 'Residences'
   # 点击领地时弹出的详情文字。
   # 占位符：[ResName] 领地名、[OwnerName] 领主名；支持基础 HTML（<b>粗体、<br>换行）
-  detail: "<b>[ResName]</b> owned by [OwnerName]<br><br><b>Flags:</b><br>"
+  detail: '<b>[ResName]</b> owned by [OwnerName]<br><br><b>Flags:</b><br>'
   # 详情里最多显示多少个旗帜；0 = 不显示旗帜，-1 = 不限
   maxFlags: -1
   # 每条旗帜的显示格式，占位符：[FlagKey] 旗帜名、[FlagValue] 旗帜值
-  flagDetail: "[FlagKey]: [FlagValue]<br>"
+  flagDetail: '[FlagKey]: [FlagValue]<br>'
   # 标记形态：rectangle（3D 立体矩形，默认）/ circle / ellipse / point
   #               2D 平面：rectangle2d / circle2d / ellipse2d
-  type: "rectangle"
+  type: 'rectangle'
   # 仅 2D 标记有效：标记贴在地图上的高度（Y 坐标）
   Yheight: 60
   # true = point 标记的高度取领地中心 Y；false = 取上面的 Yheight
@@ -147,17 +152,17 @@ marker:
   LineWidth: 3
   # 仅 point 类型：图标 URL 与锚点偏移
   icon:
-    url: "https://raw.githubusercontent.com/BlueMap-Minecraft/BlueMap/master/BlueMapCommon/webapp/public/assets/poi.svg"
+    url: 'https://raw.githubusercontent.com/BlueMap-Minecraft/BlueMap/master/BlueMapCommon/webapp/public/assets/poi.svg'
     anchorX: 25
     anchorY: 45
 
 # 子领地单独一套配置（与上面 marker 相同字段；想区分主领地/子领地外观就改这里）
 subzone:
-  name: "Residences"
-  detail: "<b>[ResName]</b> owned by [OwnerName]<br><br><b>Flags:</b><br>"
+  name: 'Residences'
+  detail: '<b>[ResName]</b> owned by [OwnerName]<br><br><b>Flags:</b><br>'
   maxFlags: -1
-  flagDetail: "[FlagKey]: [FlagValue]<br>"
-  type: "rectangle"
+  flagDetail: '[FlagKey]: [FlagValue]<br>'
+  type: 'rectangle'
   Yheight: 60
   centerPointerMarkerHeight: true
   depth-test: true
@@ -166,16 +171,16 @@ subzone:
   FillColor: { r: 200, g: 0, b: 0, a: 0.3 }
   LineWidth: 3
   icon:
-    url: "https://raw.githubusercontent.com/BlueMap-Minecraft/BlueMap/master/BlueMapCommon/webapp/public/assets/poi.svg"
+    url: 'https://raw.githubusercontent.com/BlueMap-Minecraft/BlueMap/master/BlueMapCommon/webapp/public/assets/poi.svg'
     anchorX: 25
     anchorY: 45
 
 # 出售中的领地单独一套配置（如绿色填充方便玩家找地买房）
 marker-For_Sale:
-  detail: "<b>[ResName]</b> owned by [OwnerName]<br><br><b>Flags:</b><br>"
+  detail: '<b>[ResName]</b> owned by [OwnerName]<br><br><b>Flags:</b><br>'
   maxFlags: -1
-  flagDetail: "[FlagKey]: [FlagValue]<br>"
-  type: "rectangle"
+  flagDetail: '[FlagKey]: [FlagValue]<br>'
+  type: 'rectangle'
   Yheight: 60
   centerPointerMarkerHeight: true
   depth-test: true
@@ -184,7 +189,7 @@ marker-For_Sale:
   FillColor: { r: 200, g: 0, b: 0, a: 0.3 }
   LineWidth: 3
   icon:
-    url: "https://raw.githubusercontent.com/BlueMap-Minecraft/BlueMap/master/BlueMapCommon/webapp/public/assets/poi.svg"
+    url: 'https://raw.githubusercontent.com/BlueMap-Minecraft/BlueMap/master/BlueMapCommon/webapp/public/assets/poi.svg'
     anchorX: 25
     anchorY: 45
 
@@ -230,14 +235,14 @@ marker-sets: {
 
 ### 三方案怎么选
 
-| 维度 | 方案一 BlueMap Residence 插件 | 方案二 静态 marker-sets | Dynmap 原生集成（对照） |
-|---|---|---|---|
-| 动态跟随领地变化 | ✅（周期+事件） | ❌（纯静态） | ✅（原生） |
-| 安装成本 | 一个 jar + 重启 | 手写 config | 装 Dynmap + Residence 开 Use |
-| 3D 显示 | ✅ 立体矩形 | ✅（shape/extrude） | 仅 2D 平面（可 3dRegions 立体块） |
-| 自定义配色/出售出租区分 | ✅ 三套独立配置 | 手写每个标记 | ✅（Fill 多色） |
-| 领地量大的性能 | 需调大 period | 无动态开销 | 原生、较轻 |
-| 1.21.11 兼容风险 | 需实测（1.21 起支持） | 无 | 需实测（3.x 版本线） |
+| 维度                    | 方案一 BlueMap Residence 插件 | 方案二 静态 marker-sets | Dynmap 原生集成（对照）           |
+| ----------------------- | ----------------------------- | ----------------------- | --------------------------------- |
+| 动态跟随领地变化        | ✅（周期+事件）               | ❌（纯静态）            | ✅（原生）                        |
+| 安装成本                | 一个 jar + 重启               | 手写 config             | 装 Dynmap + Residence 开 Use      |
+| 3D 显示                 | ✅ 立体矩形                   | ✅（shape/extrude）     | 仅 2D 平面（可 3dRegions 立体块） |
+| 自定义配色/出售出租区分 | ✅ 三套独立配置               | 手写每个标记            | ✅（Fill 多色）                   |
+| 领地量大的性能          | 需调大 period                 | 无动态开销              | 原生、较轻                        |
+| 1.21.11 兼容风险        | 需实测（1.21 起支持）         | 无                      | 需实测（3.x 版本线）              |
 
 > **实务建议**：本服已定 BlueMap，直接采用**方案一**（BlueMap Residence 插件），装后实测 1.21.11 兼容；领地数量中等（百~千级）性能无忧。若日后发现该插件不兼容或想加"洞穴视图 + 原生领地"，可并行装 Dynmap（Residence 原生段零成本开）——两个地图互不冲突。
 
@@ -350,6 +355,7 @@ server {
    ```
 
    渲染产出的静态站点在 `config/../web/`（即 `bluemap/` 同级的 `web/` 目录，含 `maps/<world>/tiles/`）。
+
 7. 预览 / 托管，二选一：
    - 本地预览：跑 `java -jar BlueMap-cli.jar -w -c <config目录>` 起内置 WebServer（`http://127.0.0.1:8100`）；
    - 正式托管：把 `web/` 目录丢进 **nginx / Caddy / 对象存储 / GitHub Pages**，无需 Java，纯静态。
@@ -365,14 +371,14 @@ server {
 
 ### 两种路径怎么选
 
-| 维度 | A 云端部署 | B1 本机插件 | B2 本机 CLI |
-|---|---|---|---|
-| 是否跑游戏服 | 是（线上） | 是（本机测试服） | 否 |
-| 实时性 | 实时增量 | 随本机服更新 | 手动重渲 |
-| 占用线上资源 | 是 | 否（占本机） | 否 |
-| 对外访问 | 反代后公网 | 仅本机 | 静态托管可公网 |
-| 适合场景 | 玩家日常看地图 | 服主预览/演示 | 对外发布/归档 |
-| 复杂度 | 中（反代） | 低 | 中（写 CLI 配置） |
+| 维度         | A 云端部署     | B1 本机插件      | B2 本机 CLI       |
+| ------------ | -------------- | ---------------- | ----------------- |
+| 是否跑游戏服 | 是（线上）     | 是（本机测试服） | 否                |
+| 实时性       | 实时增量       | 随本机服更新     | 手动重渲          |
+| 占用线上资源 | 是             | 否（占本机）     | 否                |
+| 对外访问     | 反代后公网     | 仅本机           | 静态托管可公网    |
+| 适合场景     | 玩家日常看地图 | 服主预览/演示    | 对外发布/归档     |
+| 复杂度       | 中（反代）     | 低               | 中（写 CLI 配置） |
 
 > 实务建议：生产用 **A**（玩家实时看），对外只读展示/存档可视化用 **B2**（不占服资源），服主本机想随手看用 **B1**。
 
@@ -383,13 +389,13 @@ server {
 
 ## 排错
 
-| 现象 | 排查 |
-|---|---|
-| 地图打不开 | 端口是否开放 / 反代是否正确；核对 `webserver.port` 与防火墙 |
-| 大片空白 | 区块未渲染或未预生成；先 Chunky 预生成再全量渲染 |
-| 首渲卡服 | `render-threads` 调低、低峰期渲染，或用 `radiusrender` 限制范围 |
+| 现象                      | 排查                                                                  |
+| ------------------------- | --------------------------------------------------------------------- |
+| 地图打不开                | 端口是否开放 / 反代是否正确；核对 `webserver.port` 与防火墙           |
+| 大片空白                  | 区块未渲染或未预生成；先 Chunky 预生成再全量渲染                      |
+| 首渲卡服                  | `render-threads` 调低、低峰期渲染，或用 `radiusrender` 限制范围       |
 | 玩家标记不显示 / 暴露隐私 | 核对 `player-markers` 配置；要隐藏给对应权限（/lp tree bluemap 核对） |
-| 更新慢 / 不动 | 确认未处于 `freeze` 状态；增量渲染需区块实际变化才更新 |
+| 更新慢 / 不动             | 确认未处于 `freeze` 状态；增量渲染需区块实际变化才更新                |
 
 ## 部署状态（已验证 ✅）
 

@@ -46,8 +46,8 @@ water-flow: true # 记录水流
 lava-flow: true # 记录岩浆流
 liquid-tracking: true # 液体追踪
 item-transactions: true # 记录物品交易
-item-drops: true # 记录物品丢弃
-item-pickups: true # 记录物品拾取
+item-drops: false # 记录物品丢弃
+item-pickups: false # 记录物品拾取
 hopper-transactions: true # 记录漏斗交易
 player-interactions: true # 记录玩家交互
 player-messages: true # 记录聊天消息
@@ -55,6 +55,11 @@ player-commands: true # 记录执行命令
 player-sessions: true # 记录登录登出
 username-changes: true # 记录改名
 worldedit: true # 记录 WorldEdit 操作
+```
+
+```
+item-drop: false         # 丢物品日志，建议关
+item-pickup: false       # 拾取物品日志【强烈关闭，这就是百万条记录元凶】
 ```
 
 ## MySQL 数据库配置（推荐生产环境）
@@ -124,6 +129,22 @@ SQLite 适合小型服务器，但数据量增长后查询和回滚速度会明�
 | `/co lookup a:<操作类型>`               | 查询特定操作类型                      |
 | `/co near`                              | 查询附近最近变更                      |
 
+| 表名             | 中文名称               | 作用说明                                                                                                                                                              | 运维备注（对你锁等待问题很关键）                                                                                        |
+| ---------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| co_block         | 方块操作日志表         | **主表**，记录方块放置/破坏/爆炸/火烧/液体流动。存储：时间、玩家ID、世界、X/Y/Z、旧方块、新方块、方块状态。`/co lookup`、`/co rollback`、`/co purge` 主要操作这张表。 | 这张表数据量最大！`/co purge` /大范围rollback会对这张表执行大量DELETE，极易触发行锁，就是你报错的源头。**必须建立索引** |
+| co_container     | 容器库存操作表         | 箱子、潜影盒、熔炉等容器物品增减记录。记录谁拿了/放入物品、坐标、容器NBT。                                                                                            | 容器查询专用，数据量一般小于co_block                                                                                    |
+| co_item          | 实体物品日志表         | 掉落物、物品展示框、盔甲架物品变化。拾取、放置、丢失物品。                                                                                                            | 可在config关闭item记录，减少写入压力                                                                                    |
+| co_sign          | 告示牌文本记录表       | 记录告示牌文字修改。                                                                                                                                                  | 体积很小                                                                                                                |
+| co_chat          | 聊天记录表             | 玩家公屏聊天内容。                                                                                                                                                    | 独立表，不参与方块回滚                                                                                                  |
+| co_command       | 命令执行日志表         | 玩家执行的服务器指令（需要开启记录命令选项）                                                                                                                          | 小表                                                                                                                    |
+| co_session       | 玩家会话表             | 玩家上下线记录，登录/退出时间。                                                                                                                                       | 小表                                                                                                                    |
+| co_user          | 用户映射表             | 玩家UUID → 用户ID映射。CoreProtect内部用数字id代替UUID，减少主表体积。                                                                                                | 缓存玩家信息，**不要手动删**，否则日志全部无法匹配玩家                                                                  |
+| co_world         | 世界映射表             | 世界名称→内部数字ID，减少主表重复存储世界名字。                                                                                                                       | 小表                                                                                                                    |
+| co_username_log  | 玩家昵称变更日志       | 记录玩家改名历史，旧昵称关联UUID。                                                                                                                                    | 处理玩家改名后查询历史记录                                                                                              |
+| co_material_map  | 物品/方块材质映射表    | 方块ID、物品名称的数字编码映射。                                                                                                                                      | 内部字典，几乎只读，很少锁冲突                                                                                          |
+| co_entity_map    | 实体类型映射表         | 实体类型（僵尸、村民等）编码字典。                                                                                                                                    | 只读字典表                                                                                                              |
+| co_blockdata_map | 方块状态字典表（可选） | 方块附加状态，例如台阶方向、门开关状态。新版CE才有。                                                                                                                  | 只读字典                                                                                                                |
+
 #### #explosion 排查
 
 在 CoreProtect 中排查 `#explosion`（爆炸事件）通常分为三步：**定位 → 确认来源 → 处理**。
@@ -135,6 +156,7 @@ SQLite 适合小型服务器，但数据量增长后查询和回滚速度会明�
 ```
 
 这会列出你周围 30 格范围内、最近 24 小时内所有爆炸事件。日志会显示：
+
 - 爆炸发生的**坐标位置**
 - 被破坏的**方块类型**
 - 爆炸的**时间**
@@ -161,12 +183,12 @@ SQLite 适合小型服务器，但数据量增长后查询和回滚速度会明�
 
 - **常见爆炸来源判断**：
 
-| 场景特征 | 可能来源 |
-|---------|---------|
-| 附近有玩家放置 TNT 的记录 | 玩家使用 TNT |
+| 场景特征                         | 可能来源          |
+| -------------------------------- | ----------------- |
+| 附近有玩家放置 TNT 的记录        | 玩家使用 TNT      |
 | 发生在夜晚、户外、无玩家操作记录 | 苦力怕（Creeper） |
-| 发生在下界或末地 | 床爆炸 / 末影水晶 |
-| 大面积破坏、无玩家附近 | 恶魂火球 / 凋灵 |
+| 发生在下界或末地                 | 床爆炸 / 末影水晶 |
+| 大面积破坏、无玩家附近           | 恶魂火球 / 凋灵   |
 
 **第三步：处理爆炸破坏**
 
@@ -206,13 +228,13 @@ SQLite 适合小型服务器，但数据量增长后查询和回滚速度会明�
 
 CoreProtect **本体没有官方网页端**，查询只能靠游戏内聊天命令。若想在浏览器里翻记录，可使用第三方 PHP 面板 **CoreProtect Lookup Web Interface（CoLWI）**——它不经过插件，直接读取 CoreProtect 的数据库表。
 
-| 项目 | 信息 |
-| --- | --- |
-| 现维护版本 | CoreProtect Lookup Web Interface（CoLWI）— CommunityCraft rework for **CoreProtect 23.2** |
-| 仓库 | https://github.com/CommunityCraftMC/CoreProtect-Lookup-Web |
-| 原项目 | https://github.com/chuushi/CoreProtect-Lookup-Web-Interface （Simon OrJ，CoreProtect 2 时代） |
-| SpigotMC | https://www.spigotmc.org/resources/135396 |
-| 许可/形态 | 纯 PHP 网页，与服务器本体的插件目录无关 |
+| 项目       | 信息                                                                                          |
+| ---------- | --------------------------------------------------------------------------------------------- |
+| 现维护版本 | CoreProtect Lookup Web Interface（CoLWI）— CommunityCraft rework for **CoreProtect 23.2**     |
+| 仓库       | https://github.com/CommunityCraftMC/CoreProtect-Lookup-Web                                    |
+| 原项目     | https://github.com/chuushi/CoreProtect-Lookup-Web-Interface （Simon OrJ，CoreProtect 2 时代） |
+| SpigotMC   | https://www.spigotmc.org/resources/135396                                                     |
+| 许可/形态  | 纯 PHP 网页，与服务器本体的插件目录无关                                                       |
 
 ### 能查什么
 
@@ -346,23 +368,23 @@ sudo bash deploy.sh conf       # 只重新生成 Nginx 站点配置
 
 ### 网页端 vs 游戏内命令
 
-| 维度 | 网页面板 | 游戏内 `/co lookup` |
-| --- | --- | --- |
-| 需要进游戏 | 否，服主不在电脑前也能查 | 是 |
-| 结果展示 | 分页、超 4 条、可过滤已回滚、可看元数据 | 聊天框翻页，每页 4 条 |
-| 坐标/世界筛选 | 支持，可视化选区 | 依赖 `r:` 半径与所在位置 |
-| 回滚 / 还原 | **不支持**（只读） | 支持 `/co rollback`、`/co restore` |
-| 维护成本 | 需额外 PHP 环境 + 安全加固 | 零 |
+| 维度          | 网页面板                                | 游戏内 `/co lookup`                |
+| ------------- | --------------------------------------- | ---------------------------------- |
+| 需要进游戏    | 否，服主不在电脑前也能查                | 是                                 |
+| 结果展示      | 分页、超 4 条、可过滤已回滚、可看元数据 | 聊天框翻页，每页 4 条              |
+| 坐标/世界筛选 | 支持，可视化选区                        | 依赖 `r:` 半径与所在位置           |
+| 回滚 / 还原   | **不支持**（只读）                      | 支持 `/co rollback`、`/co restore` |
+| 维护成本      | 需额外 PHP 环境 + 安全加固              | 零                                 |
 
 > 结论：网页端用于**审计与排查**，真正动手恢复仍需回到游戏内执行 `/co rollback`。偶尔自查用 `/co lookup u:玩家 t:1d r:100` 就够，网页端的价值在于远程、批量、可翻页的历史追溯。
 
 ### 常见故障
 
-| 现象 | 原因 / 处理 |
-| --- | --- |
-| 页面空白或 500 | `php -l index.php`、`php -l lookup.php` 查语法；确认 PHP 版本与扩展 |
-| `could not find driver` | 未启用 `pdo_mysql` / `pdo_sqlite`，在 php.ini 打开对应扩展并重启 |
-| 连接被拒 / 超时 | MySQL 账号 host 不是网页服务器 IP；防火墙未放行 3306 |
-| 查询报 unsupported schema | 数据库缺少 v23.2 新表/列（多见于 v24.0 新记录），属已知兼容滞后 |
+| 现象                                  | 原因 / 处理                                                          |
+| ------------------------------------- | -------------------------------------------------------------------- |
+| 页面空白或 500                        | `php -l index.php`、`php -l lookup.php` 查语法；确认 PHP 版本与扩展  |
+| `could not find driver`               | 未启用 `pdo_mysql` / `pdo_sqlite`，在 php.ini 打开对应扩展并重启     |
+| 连接被拒 / 超时                       | MySQL 账号 host 不是网页服务器 IP；防火墙未放行 3306                 |
+| 查询报 unsupported schema             | 数据库缺少 v23.2 新表/列（多见于 v24.0 新记录），属已知兼容滞后      |
 | `Query too large` / `Query timed out` | 调小选区，或调 `form.max` / `maxCoordinateVolume` / `timeoutSeconds` |
-| 数据不更新（SQLite） | 网页与 MC 服务器不同机，或指向了旧的 `database.db` 副本 |
+| 数据不更新（SQLite）                  | 网页与 MC 服务器不同机，或指向了旧的 `database.db` 副本              |

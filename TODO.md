@@ -37,9 +37,3 @@
 - [ ] **RideOnHead**：重启服务器后完全生效；首次生成 `config.yml` 后把实际键名补进文档
 - [ ] **末影龙管理**：`DragonManager.jar`（`/dragon respawn` 重生不刷柱子 + 禁传送门四角水晶）+ `dragon-block-plugin`（龙不破坏任何方块）已放 `plugins/` → 重启后验证（文档+源码：`自研/末影龙重生与破坏保护/`）
 - [ ] **BGM 资源包**：补 OGG 音乐文件 + HTTPS 托管 URL，配置 `server.properties` 后上线（骨架已建在 `1-服务端核心与网络层/08-服务器资源包-BGM/`）
-
-## 💰 每日随机收购（DailySell）
-
-- [x] 需求已定：每天随机 4 种物品换**南瓜币**，每种额度随机 10-100、单价当日浮动、总价 ≤ 800、防刷
-- [x] 插件已做并部署：`plugins/DailySell.jar`（27格GUI多页 + 命令 + QuickMenu入口）（源码+文档：`自研/每日随机收购/`）
-- [ ] **重启后验证**：`/ds` GUI（左键卖1/Shift卖满/翻页）、`/qm reload` 后快捷菜单入口、`/ds today` 清单、`/ds sell` 到账、额度/预算上限、跨天重抽
