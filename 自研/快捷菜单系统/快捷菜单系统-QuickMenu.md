@@ -331,7 +331,7 @@ actions:
 
 > **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时替换 jar 不会更新它——需手动插入以下两段（段一进 `admin` 菜单，段二追加到 `menus:` 末尾），再 `/qm reload` 生效。完整 YAML 亦可解压 jar 内嵌 config.yml 复制 `admin-economy` 相关段。
 
-**段一：admin 面板入口（加在 `admin-qm` 定义后）**
+**段一：admin 面板入口（加在 `admin` 菜单 items 里 `admin-qm` 按钮项之后，即管理面板「菜单管理」下方；源码中紧随其后的是 postracker、backmain）**
 
 ```yaml
       admin-economy:

@@ -25,6 +25,7 @@
 左键点击物品 = 卖 1 个；`Shift+左键` = 卖满今日额度（自动扣背包对应物品，最多到额度/预算上限）；
 未卖完的物品图标发光，卖完显示"今日额度已用完"；底部「今日收益」格实时显示已获/800；卖出后界面即时刷新；ESC 关闭。
 **快捷菜单入口**：主菜单（slot 19）与经济中心子菜单（slot 19）均有「每日收购」按钮 → `[player] ds`。
+**快捷菜单管理入口**：管理面板 →「经济管理」（`admin-economy`）含「每日收购·重新生成」（`/ds reroll`）与「每日收购·重载配置」（`/ds reload`），权限 `dailysell.admin`（默认 op，admin 组需补授）。
 
 > 已随 QuickMenu 源码模板（`plugin-src/.../resources/config.yml` 的 `daily-sell:` 条目）打包进 `QuickMenu-1.0.0.jar`。
 > **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时替换 jar 不会更新它，需手动把两段 `daily-sell:` 按钮配置（主菜单 slot 19 `EMERALD_BLOCK`、经济中心 slot 19 `PAPER`，动作均为 `[player] ds`）插入对应菜单，再 `/qm reload` 生效。
