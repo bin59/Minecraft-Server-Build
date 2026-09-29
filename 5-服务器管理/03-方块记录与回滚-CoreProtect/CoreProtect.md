@@ -62,6 +62,30 @@ item-drop: false         # 丢物品日志，建议关
 item-pickup: false       # 拾取物品日志【强烈关闭，这就是百万条记录元凶】
 ```
 
+## 黑名单（blacklist.txt）——按用户/伪用户/命令/方块/实体禁用记录
+
+黑名单可整体禁用指定**用户（含伪用户 `#`）、命令、方块、实体**的记录。文件：`plugins/CoreProtect/blacklist.txt`（无则新建），每行一条，改完 `/co reload` 生效（无需重启）：
+
+```
+#hopper      ; 漏斗自动传输（矿车漏斗轨道循环会疯狂刷库，见下）
+#dispenser   ; 发射器自动传输
+#dropper     ; 投掷器自动传输
+#tnt         ; TNT 爆炸
+#creeper     ; 苦力怕
+/help        ; 命令
+minecraft:stone   ; 方块（需带命名空间，仅影响 block 动作，v23+）
+minecraft:creeper ; 实体（需带命名空间，禁用其死亡记录，v24+）
+```
+
+要点（官方文档确认）：
+
+- **伪用户条目不需要命名空间**（`#hopper` 直接写）；方块/实体/物品必须带 `minecraft:`
+- **普通物品/方块条目不影响 item / container 动作**，只有过滤条目（`id@user`）才影响它们
+- **过滤语法**（v24+）：`id@user` 只禁用"指定来源操作指定物品"的记录，如 `minecraft:minecart@#hopper`——只挡漏斗传输矿车，其余漏斗操作照常记录
+- 实体黑名单与 `id@user` 过滤需要 **v24+**（本服 v24.0 满足）；方块黑名单需要 v23+
+
+**本服用途：防漏斗刷库**——矿车在漏斗轨道上循环时 `#hopper` / `#dispenser` 伪用户记录剧增（可占 91%、单时段数万条）。推荐先写 `#hopper` / `#dispenser` / `#dropper` 三条（跳过自动传输、保留玩家手动容器记录）；要更彻底可另设 `hopper-transactions: false`（见「数据库过大」文档方案五）。已有历史数据用 `/co purge t:30d #optimize` 清理。
+
 ## MySQL 数据库配置（推荐生产环境）
 
 SQLite 适合小型服务器，但数据量增长后查询和回滚速度会明显下降。生产环境建议改用 MySQL，具体步骤如下。
