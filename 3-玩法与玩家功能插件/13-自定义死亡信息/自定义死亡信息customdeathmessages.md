@@ -30,9 +30,7 @@ CustomDeathMessages（简称 CDM）把原版干巴巴的 "x 死了" 替换成可
 ## 安装与前置
 
 1. 确认服务端为 **Paper / Purpur / Spigot**（运行 `/version` 查看）。
-2. 从 Modrinth 下载与 MC 版本匹配的 jar：
-   - 从 Modrinth 下载与 MC 版本匹配的最新稳定版 jar；
-
+2. 从 Modrinth 下载与 MC 版本匹配的最新稳定版 jar。
 3. 将 jar 放入 `plugins/` 并**完整重启**服务端（不要用 `/reload`，见文末排错）。
 4. 首次启动生成 `plugins/CustomDeathMessages/` 下的 `config.yml` 与 `messages.yml`。
 5. 可选：安装 **Vault** + 一个经济插件（如 EssentialsX 经济）启用收费；安装 **PlaceholderAPI** 启用外部占位符。
@@ -44,8 +42,6 @@ plugins/CustomDeathMessages/
 ├── config.yml        # 全局开关与参数（史诗概率、收费、广播模式、更新检查等）
 └── messages.yml      # 各死亡原因的消息模板列表（含 broadcast-system 段）
 ```
-
-
 
 ## 核心配置 (`config.yml`)
 
@@ -81,6 +77,53 @@ effects-broadcast:
 > 实际文件另有 `play-sound-on-death`（音效 `entity.player.death`）、`play-particles-on-death`（粒子 EXPLOSION）、`respawn-message-enabled:true`、`use-permission-based-messages:true`、`help-permissions` 等键，文档仅列常用项。
 
 > `messages.yml` 按死亡原因分组存放消息列表（如 `global-pvp-death-messages`、`melee-death-messages`、`arrow-messages`、`fireball-messages`、`fall-damage-messages`、`creeper-messages`、`warden-sonic-boom-messages`、`unknown-messages` 等），并含 `broadcast-system` 段。该文件首次生成后可直接编辑，或用 `/cdm editor` 在游戏内改。
+
+## 消息配置规范 (`messages.yml`)
+
+正确编写消息模板，必须遵守以下三条硬性规范，否则会匹配失败并回退默认文案。
+
+### 1. 死因键名必须用 Bukkit 枚举
+
+`conditional-messages` 与 `groups.<组>.cause-messages` 下的**原因键**必须是 Bukkit 的 `EntityDamageEvent.DamageCause` 枚举，大小写严格一致：
+
+| 正确键 | 对应死亡 | 易错写法（错误） |
+| --- | --- | --- |
+| `ENTITY_ATTACK` | 近战击杀（玩家 / 怪物 / 蜜蜂） | `pvp`、`monster`、`bee` |
+| `FALL` | 摔落 | `fall` |
+| `FIRE_TICK` | 持续燃烧烧死 | `fire`（错误，见下） |
+| `FIRE` | 火焰方块 | `fire` |
+| `LAVA` | 岩浆 | `lava` |
+| `DROWNING` | 溺水 | `drown` |
+| `SUFFOCATION` | 窒息（方块夹压） | `suffocation` |
+| `VOID` | 虚空 | `void` |
+| `LIGHTNING` | 闪电 | `lightning` |
+| `ENTITY_EXPLOSION` | 爆炸（苦力怕 / TNT） | `explosion` |
+| `STARVATION` | 饥饿 | `starvation` |
+| `CACTUS` | 仙人掌 | `cactus` |
+
+> **关键陷阱**：`FIRE_TICK`（持续燃烧）与 `FIRE`（火焰方块）是**两个不同的枚举**。玩家"被烧死"（`burned to death`）实际原因是 `FIRE_TICK`，若只配了 `FIRE` 就匹配不到，会回退默认值。同类陷阱还有 `DROWNING`（不是 `drown`）等。
+
+### 2. 占位符统一用花括号 `{xx}`，禁用 `%xx%`
+
+本插件 v1.3 的占位符是花括号格式：
+
+```yaml
+# ✅ 正确
+- '&c{victim} &e被 &c{killer_name} &e用 &6{killer_source} &e送走了。'
+# ❌ 错误（旧版格式，不会被替换，显示为字面量）
+- '&c%victim% &e被 &c%killer% &e用 &6%kill-weapon% &e送走了。'
+```
+
+| `%xx%`（错误） | `{xx}`（正确） |
+| --- | --- |
+| `%victim%` | `{victim}` |
+| `%killer%` | `{killer_name}` |
+| `%kill-weapon%` | `{killer_source}` |
+| `%player%` | `{player}` |
+
+### 3. 结构完整：原因键下用列表，条目不写成裸字符串
+
+`cause-messages` 下的每条文案都是列表元素；`conditional-messages` 的条目则是 `condition:` + `message:`（或 `default:`）结构，不要把二者混用。
 
 ## 占位符（Placeholders）
 
@@ -136,6 +179,30 @@ effects-broadcast:
 
 > 实战：给服主/管理组 `cdm.admin` + `cdm.reload` + `cdm.editor`；普通玩家无需任何权限即可正常看到死亡播报（`cdm.use` 默认开启）。用 `cdm.bypass` 让管理人员测试时不刷屏。
 
+### ⚠️ 关键权限陷阱：OP 玩家不显示自定义死亡消息
+
+这是本服（南瓜生存服）实际踩过的坑，务必了解：
+
+- **原因**：`onPlayerDeath` 逻辑第一行即判断 `hasPermission("cdm.bypass")`，有该权限则**直接 `return` 跳过**，保留原版死亡消息，且**不打印任何 `[CustomDeathMessages] Death Message:` 日志**。
+- **OP 默认拥有通配权限 `*`**：Bukkit/Paper 中，`ops.json` 里登记的 OP（如 `PumpkinVegetable`，level 2）会自动获得所有权限，`cdm.bypass`（虽 default 为 false）对 OP 会解析为 `true` → **OP 死亡时永远走原版消息**。
+- **表现**：日志里只有 `PumpkinVegetable was shot by Pillager` 这类原版消息，没有任何 CDM 输出；非 OP 普通玩家则正常显示自定义整活文案。
+- **排查口诀**：`日志里只有原版死亡消息 + 无 CDM 输出` → 先查该玩家是否为 OP / 是否持有 `cdm.bypass`。
+
+**如何区分 OP / 非 OP 生效情况：**
+
+| 玩家身份 | `cdm.bypass` 实际值 | 死亡时表现 |
+| --- | --- | --- |
+| OP（ops.json 登记） | `true`（靠 `*` 通配吃到） | 走**原版**死亡消息，CDM 不生效 |
+| 非 OP 普通玩家 | `false` | 走**自定义**死亡消息（中文整活文案） |
+| 被显式授予 `cdm.message.admin/vip` | 组权限命中 | 走对应组文案 |
+| 被显式 `unset cdm.bypass` 的 OP | 视通配而定（通常仍为 true） | 多数仍走原版 |
+
+**解决方案（按推荐顺序）：**
+1. **测试时用非 OP 账号**——最直接，死亡即见中文整活文案。
+2. **`deop 玩家名`** 临时降权后再测；测试完再 `op` 恢复。
+3. 若确需让某个 OP 也触发自定义消息：`/lp user <名> permission unset cdm.bypass`，但**注意通配权限通常无法被 unset 覆盖**，更可靠是方案 1/2，或等待作者在 v1.4 调整该机制（日志提示 1.3 → 1.4 有更新）。
+4. `cdm.bypass` 是插件源码写死的（无配置项开关），无法通过 config.yml 关闭。
+
 ## 实战示例
 
 **1. 整活广播**（待选清单推荐玩法）：
@@ -144,10 +211,12 @@ effects-broadcast:
 /cdm broadcast message all "🎃 南瓜被苦力怕炸飞了！"
 ```
 
-**2. 配置一条 PvP 搞怪文案**（`messages.yml` 的 PvP 列表追加）：
+**2. 配置一条 PvP 搞怪文案**（`messages.yml` 的 `ENTITY_ATTACK` 列表追加）：
 
 ```yaml
-- '&6{victim} &r被 &c{killer_name} &r用 &e{victim_weapon} &r送走了，距离 {distance} 格'
+ENTITY_ATTACK:
+  - '&6{victim} &r被 &c{killer_name} &r用 &e{killer_source} &r送走了，距离 {distance} 格'
+  - '&c{victim} &e被 &c{killer_name} &e用 &6{killer_source} &e送回了重生点，走得很安详。'
 ```
 
 **3. 史诗死亡演出**：把 `config.yml` 的 `epic-death-chance` 设为 `0.05`，触发时玩家会看到专属 Title + 闪电 + 粒子。
@@ -165,14 +234,11 @@ effects-broadcast:
 
 ## 常见问题（FAQ）
 
-**Q：和另一款同名插件（GitHub sb2bg 版）有什么区别？**
-A：本仓库文档对应的是 **Modrinth 上 SicklySurgeon 的 CustomDeathMessages**（统一 `/cdm` 命令 + 广播系统）。GitHub 上另有同名 fork，使用 `/cdm set flag/message/number`、`cdm.modify` 权限、`config.yml` 内 `*-messages` 段落与 Discord 转发，命令与配置结构不同。
-
 **Q：日志刷 `[CustomDeathMessages] 未找到该世界/组/原因对应的消息。已使用默认值。` 怎么办？**
 A：这是 **WARN 不是报错** —— 三层键（世界 / 组 / 死因）都没命中，插件用了兜底文案 `<玩家> has died.`。按此顺序排查：
-1. 确认死因：让死者复现一次，查日志里实际 cause（`FALL` / `ENTITY_ATTACK` / `CREEPER` / `UNKNOWN`…），再到 `messages.yml` 找同名分段。
-2. **最可能是第 3 层**：`unknown-messages` 被清空，或该死因单独分组为空。补一条文案即可。
-3. 第 2 层「组」：`use-permission-based-messages: true` 时组名走**权限组**（admin / 默认组），玩家所在组没配就会漏；关闭该开关则走语义分组（pvp / mob / environment / unknown）。
+1. 确认死因：让死者复现一次，查日志里实际 cause（`FALL` / `ENTITY_ATTACK` / `FIRE_TICK` / `LAVA` / `UNKNOWN`…），再到 `messages.yml` 找同名分段。
+2. **最可能死因键命名错误**：见上文「消息配置规范」——键名必须用 Bukkit 枚举（`FIRE_TICK` ≠ `FIRE`，`DROWNING` ≠ `drown`），且 `%xx%` 占位符不会被替换。用 `/cdm test <原因>` 复现验证。
+3. 第 2 层「组」：`use-permission-based-messages: true` 时组名走**权限组**（admin / 默认组），玩家所在组没配就会漏；关闭该开关则走语义分组。
 4. 第 1 层「世界」：世界名必须逐字符一致（`world` / `world_nether` / `world_the_end`），自定义世界要单独建段。
 5. 改完 `/cdm reload`；仍不生效就 `/cdm config validate`，再考虑完整重启。
 
@@ -184,6 +250,9 @@ A：给目标玩家 `cdm.message.admin` 权限（LuckPerms 授予），并在 `m
 
 **Q：收费功能不扣钱？**
 A：需同时安装 **Vault** 与一个经济插件（如 EssentialsX），且 `cost-per-death-message > 0`；被 `exempt-groups-from-cost` 列出的组不扣费。
+
+**Q：我是 OP/管理员，怎么测试死亡都不显示自定义消息，普通玩家却正常？**
+A：这是 `cdm.bypass` 权限陷阱，详见上文「权限」章节的专项说明。OP 自动拥有通配 `*`，`cdm.bypass` 对 OP 生效，死亡时插件直接跳过（保留原版消息、无 CDM 日志）。**测试时改用非 OP 账号，或 `deop 自己` 再测**；这不是配置或插件故障，无需改 messages.yml。
 
 **Q：想接 Discord 转发死亡消息？**
 A：本体不含 Discord 转发；可配合 DiscordSRV 的聊天转发，或选用带 EssentialsDiscord/DiscordSRV 转发的同名 fork（见上条 FAQ）。

@@ -1,4 +1,4 @@
-# 4. PlaceholderAPI 占位符桥接
+# PlaceholderAPI 占位符
 
 本文介绍 PlaceholderAPI（PAPI）这款占位符解析中间层：它本身不提供数据，而是让 TAB、DecentHolograms、聊天等插件通过 %占位符% 引用其他插件的数据。文档列出本服已装的 player、server、vault 三个扩展、config.yml 实测键值、/papi 系列命令权限，以及与本服 TAB、称号、全息等插件的挂钩关系。
 
@@ -82,8 +82,8 @@ PlaceholderAPI 本身**不提供任何占位符**，它只是一个"字典"：�
 
 | 使用方                               | 用到的占位符                                                                                 | 参考文档                                                                                                                                     |
 | ------------------------------------ | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| **TAB**（Tab 列表 / 头顶称号）       | `%luckperms_prefix%` `%luckperms_suffix%` `%player_name%` `%vault_eco_balance_formatted%` 等 | [3.TAB信息展示.md](./3.TAB信息展示.md)                                                                                                       |
-| **炫彩多层称号**                     | `%luckperms_prefix%` 配合 TAB 的多行 `\n`                                                    | [4.1.LuckPerms + TAB + PlaceholderAPI 实现炫彩多层称号效果.md](./3.1.LuckPerms%20%2B%20TAB%20%2B%20PlaceholderAPI%20实现炫彩多层称号效果.md) |
+| **TAB**（Tab 列表 / 头顶称号）       | `%luckperms_prefix%` `%luckperms_suffix%` `%player_name%` `%vault_eco_balance_formatted%` 等 | [03-TAB信息展示.md](./03-TAB信息展示.md)                                                                                                       |
+| **炫彩多层称号**                     | `%luckperms_prefix%` 配合 TAB 的多行 `\n`                                                    | [05-LuckPerms炫彩称号.md](./05-LuckPerms炫彩称号.md) |
 | **DecentHolograms**（欢迎 hologram） | `%player_name%` `%server_online%` `%luckperms_prefix%`                                       | 见 `plugins/DecentHolograms/holograms/welcome.yml`                                                                                           |
 | **SimplePets**（宠物菜单）           | `%player_name%` 等                                                                           | 见 SimplePets 文档                                                                                                                           |
 | **EasyBot**（QQ 联动）               | 在线人数 / 玩家名等                                                                          | 见 EasyBot 文档                                                                                                                              |
@@ -101,6 +101,6 @@ PlaceholderAPI 本身**不提供任何占位符**，它只是一个"字典"：�
 
 ## 八、与文档体系链接
 
-- 上级：[1.玩家信息收集与展示.md](./1.玩家信息收集与展示.md)
-- 兄弟章节：[3.TAB信息展示.md](./3.TAB信息展示.md)、[4.1.LuckPerms + TAB + PlaceholderAPI 实现炫彩多层称号效果.md](./3.1.LuckPerms%20%2B%20TAB%20%2B%20PlaceholderAPI%20实现炫彩多层称号效果.md)、[2.Plan (Player Analytics).md](<./plan-服务器、玩家数据分析工具/2.Plan%20(Player%20Analytics).md>)
+- 上级：[01-玩家信息收集与展示.md](./01-玩家信息收集与展示.md)
+- 兄弟章节：[03-TAB信息展示.md](./03-TAB信息展示.md)、[05-LuckPerms炫彩称号.md](./05-LuckPerms炫彩称号.md)、[Plan使用文档](<./02-plan-服务器、玩家数据分析工具/01-Plan使用文档.md>)
 - 官方：https://wiki.placeholderapi.com/ ｜ ecloud：https://placeholderapi.com/ecloud

@@ -144,7 +144,7 @@ footer:
 3. 下载对应的 PAPI 扩展：`/papi ecloud download <扩展名>`
 4. 在 TAB 配置中使用 `%占位符%` 格式调用
 
-如： '&7余额: $%vault_eco_balance%'没有正确显示，需要：`/papi ecloud download Vault`,然后需要重启：`/papi reload`
+> `%vault_eco_balance%` 不显示时：`/papi ecloud download Vault` → `/papi reload`。
 
 ### 🛠 常用指令
 
@@ -196,6 +196,61 @@ TAB 插件本身性能开销极低，即使在玩家数量众多的服务器上�
 | **Plan**           | 提供在线时长、击杀等统计数据占位符 |
 | **Vault**          | 经济系统桥接，显示余额等信息       |
 
-TAB 的配置非常灵活，建议从默认配置开始，逐步修改和测试，打造适合你服务器风格的 TAB 列表。
+
+---
+
+### 📌 侧边公告栏（Scoreboard）
+
+TAB 的右侧面板（scoreboard）就是本服的**公告栏**，玩家可以**个人手动取消**。
+
+**启用并配置**（`plugins/TAB/config.yml`）：
+
+```yaml
+scoreboard:
+  enabled: true
+  default-scoreboard: main
+  toggle-command: /sb # 玩家个人开关命令
+  remember-toggle-choice: false
+  hidden-by-default: false # 默认显示
+  scoreboards:
+    main:
+      title: <gradient:#FFD54A:#FF8C00>&l南瓜生存服</gradient>
+      lines:
+        - <#555555>&m                    </#555555>
+        - '&7▸ 玩家 &f%player%'
+        - '&7▸ 在线 &e%online%&7人'
+        - '&7▸ 世界 &a%world%'
+        - ''
+        - '&7▸ 余额 &e%vault_eco_balance% 币'
+        - '&7▸ 在线时长 &b%plan_player_current_session_length%'
+        - '&7▸ 总时长 &b%plan_player_time_total%'
+        - '&7▸ 生物: &a%entitycount_living%'
+        - '&7▸ 实体: &a%entitycount_count%'
+        - '&7▸ TPS: &a%tps%'
+        - '&7▸ 延迟 &a%ping%ms'
+        - '&7▸ 时间 &a%date%'
+        - ''
+        - <gradient:#FFD54A:#FF8C00>&l欢迎回家</gradient>
+        - <#555555>&m                    </#555555>
+        - '&8&o输入 /sb 隐藏本栏'
+```
+
+**占位符**：
+
+| 占位符                      | 来源                      | 说明                           |
+| --------------------------- | ------------------------- | ------------------------------ |
+| `%online%` / `%maxplayers%` | TAB 内置                  | 在线人数 / 最大人数            |
+| `%tps%`                     | TAB 内置                  | 服务器 TPS（满 20.0）          |
+| `%entitycount_count%`       | 自研 **EntityCount** 扩展 | 已加载实体总数（含物品掉落物） |
+| `%entitycount_living%`      | 自研 **EntityCount** 扩展 | 生物总数（不含物品）           |
+
+**为什么实体数不用 PAPI 官方 Server 扩展（`%server_total_entities%`）？** 该扩展在请求时**同步遍历 chunk 取实体**，而 TAB 在**异步线程**（`TAB Placeholder Refreshing Thread`）刷新占位符，Leaf/Paper 的 AsyncCatcher 会拦截并**周期性刷屏报错**（`failed main thread check: Chunk getEntities call`），生物数因此取不到。**这是 TAB + Server 扩展的组合问题，改配置无效**。
+
+**自研 EntityCount 扩展**（`plugins/EntityCount-1.0.0.jar`）：主线程每 5 秒统计一次全服实体数并缓存到内存，占位符请求只读缓存（纯 int，异步安全、零开销、零报错）。部署：jar 放进 `plugins/` → 重启服务器 → `/papi reload` → `/tab reload`。
+
+**玩家个人取消**：输入 `/sb` 或 `/tab scoreboard off` 隐藏，再输一次恢复。权限 `tab.scoreboard.toggle`（默认开放，见权限速查）。
+
+
+**性能**：TPS / 实体数占位符走 TAB 内置刷新周期，开销可忽略；侧边栏避免堆太多 PAPI 占位符即可。
 
 ---
