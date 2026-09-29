@@ -3,7 +3,7 @@
 本文是 SimplePets 主文档的经济扩展篇，专门讲本服已启用的 Vault Addon：让玩家用服务器主货币（EssentialsX 余额，与全服同一套账）花钱购买或解锁宠物，而不是另起一套货币。内容包括 AddonConfig.yml 与 Vault.yml 价格配置、按生物类型调价的方法，以及 pet.vault.bypass 免付权限的用法。
 
 > **状态**：✅ 已安装启用 | **Addon 版本**：0.4（适配本服 1.21.11）
-> **所属**：[宠物系统 SimplePets](宠物系统simplepets.md) 的经济扩展 | **上层经济**：[Vault](../02-经济系统-Vault/Vault.md) + [EssentialsX](../10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md)
+> **所属**：[宠物系统 SimplePets](宠物系统simplepets.md) 的经济扩展 | **上层经济**：[Vault](../01-经济系统-Vault/Vault.md) + [EssentialsX](../07-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md)
 
 ## 一、这是什么
 
@@ -97,8 +97,8 @@ type:
 | 文档 | 关系 |
 |---|---|
 | [宠物系统simplepets.md](宠物系统simplepets.md) | SimplePets 主文档（本文件是其经济章节的展开） |
-| [Vault.md](../02-经济系统-Vault/Vault.md) | Vault 经济 API 本身 |
-| [EssentialsX 文档](../10-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) | 主货币来源（currency-symbol `¥`） |
+| [Vault.md](../01-经济系统-Vault/Vault.md) | Vault 经济 API 本身 |
+| [EssentialsX 文档](../07-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md) | 主货币来源（currency-symbol `¥`） |
 | [权限节点速查](../../5-服务器管理/01-权限管理系统-LuckPerms/权限节点速查.md) | 权限落地与 LuckPerms 配置 |
 
-> 链接为相对路径，从 `3-玩法与玩家功能插件/14-宠物系统/` 出发。
+> 链接为相对路径，从 `3-玩法与玩家功能插件/10-宠物系统/` 出发。

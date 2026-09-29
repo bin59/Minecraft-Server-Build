@@ -94,8 +94,8 @@
 
 ## 七、相关文档索引
 
-- **Residence 管理员命令**：单字 `/resadmin setowner <领地名> <玩家名>`（非 `/res admin` 两词）；基岩带 `.`、Tab 不补全。详见 `3-玩法与玩家功能插件/04-领地系统-Residence/Residence.md`。
-- **EconomyShop 更新配置**：改 `config.yml` 后执行 `/shop admin reload`（权限 `economyshop.admin.reload`，op 默认有）；切 MySQL 存储需整服重启。详见 `3-玩法与玩家功能插件/02-经济系统-Vault/经济插件/EconomyShop玩家商店.md`。
+- **Residence 管理员命令**：单字 `/resadmin setowner <领地名> <玩家名>`（非 `/res admin` 两词）；基岩带 `.`、Tab 不补全。详见 `3-玩法与玩家功能插件/02-领地系统-Residence/Residence.md`。
+- **EconomyShop 更新配置**：改 `config.yml` 后执行 `/shop admin reload`（权限 `economyshop.admin.reload`，op 默认有）；切 MySQL 存储需整服重启。详见 `3-玩法与玩家功能插件/01-经济系统-Vault/经济插件/EconomyShop玩家商店.md`。
 
 ## 八、命令 / 配置速查
 

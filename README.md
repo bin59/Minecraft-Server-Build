@@ -22,6 +22,7 @@
 - [九、故障排查](#九故障排查)
 - [十、安全基线](#十安全基线)
 - [十一、文档导航（详细分册）](#十一文档导航详细分册)
+- [十二、仓库文件目录树](#十二仓库文件目录树)
 
 ---
 
@@ -454,9 +455,9 @@
 | ------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服                       |
 | **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动              | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                       |
-| **3-玩法与玩家功能插件/** | 经济、领地、皮肤等玩法插件                             | Vault · Residence · SkinsRestorer · WorldEdit · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 |
+| **3-玩法与玩家功能插件/** | 经济、领地、皮肤等玩法插件                             | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 |
 | **4-玩家信息与数据展示/** | 行为分析、TAB、称号、坐标轨迹                          | Plan · TAB · 炫彩多层称号 · PosTracker                                                                  |
-| **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移               | LuckPerms · CoreProtect · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID                        |
+| **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移               | LuckPerms · CoreProtect · WorldEdit · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID                        |
 | **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                  | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · AntiLitematica                                 |
 
 > 完整目录与逐篇链接见仓库根目录 `README.md`（南瓜生存服主索引）。
@@ -465,3 +466,91 @@
 
 > ⚠️ 本文档依据服务器当前插件配置编写（2026-09-18 核对）。若服务器调整配置，以游戏内实际可用为准。
 > 管理命令（封禁、回滚、修改世界等）不属于玩家权限范围，详细见各管理分册。
+
+---
+
+## 十二、仓库文件目录树
+
+```
+Minecraft-Server-Build/
+├── README.md                       # 本文档：总导航
+├── TODO.md                         # 待办事项
+├── 下次更新26.2版本.md              # 版本升级规划
+│
+├── 1-服务端核心与网络层/
+│   ├── 01-服务器核心-Leaf/          Leaf服务端核心.md
+│   ├── 02-外置登录代理-YggdrasilOfficialProxy/   YggdrasilOfficialProxy.md
+│   ├── 03-Java-Bedrock互通层-Geyser-Floodgate/   01-Geyser / 02-Floodgate / 03-基岩皮肤排查 / README
+│   ├── 04-跨版本协议兼容-ViaVersion/  ViaVersion.md
+│   ├── 05-端口与网络架构总览/        README.md
+│   ├── 06-Velocity 多服/            Velocity 多服.md
+│   ├── 07-服务器配置文件补充/        README.md
+│   └── 08-服务器资源包-BGM/          部署与配置说明.md（BGM资源包源文件 / 循环BGM数据包）
+│
+├── 2-运维监控与面板/
+│   ├── 01-QQ机器人联动-EasyBot/     EasyBot.md
+│   ├── 02-Web管理面板-OPanel/       OPanel.md
+│   ├── 03-性能分析-spark/           spark.md
+│   ├── 04-核心依赖库-CMILib/        CMILib.md
+│   ├── 05-统计系统-bStats/          bStats.md
+│   ├── 06-MCSM控制面板/             MCSM控制面板.md
+│   └── 07-协议库-ProtocolLib/       ProtocolLib.md
+│
+├── 3-玩法与玩家功能插件/
+│   ├── 01-经济系统-Vault/
+│   │   ├── Vault.md
+│   │   ├── 经济插件/                AuctionHouse拍卖行 / EconomyShop玩家商店 / EzTax周持有税 / Quests每日任务
+│   │   └── 南瓜生存服经济体系探索/   经济系统设计手册 / 落地实施 / 扣费点清单
+│   ├── 02-领地系统-Residence/       Residence.md + 领地插件使用指南（配置文件/）
+│   ├── 03-皮肤管理-SkinsRestorer/   SkinsRestorer.md
+│   ├── 04-网页世界地图/             BlueMap / Dynmap / 地图选择
+│   ├── 05-Simple Voice Chat/        Simple Voice Chat.md
+│   ├── 06-PatPat摸头/               PatPat摸头.md
+│   ├── 07-EssentialsX多功能指令整合/ EssentialsX（功能说明与完整配置）.md
+│   ├── 08-DecentHolograms全息插件/  DecentHolograms全息插件.md
+│   ├── 09-自定义死亡信息/           自定义死亡信息customdeathmessages.md
+│   ├── 10-宠物系统/                 SimplePets / 宠物对比 / Vault经济联动
+│   ├── 11-DeluxeMenus高级GUI菜单/   DeluxeMenus高级GUI菜单.md
+│   └── 12-RideOnHead玩家骑乘/       RideOnHead玩家骑乘.md
+│
+├── 4-玩家信息与数据展示/
+│   ├── 01-玩家信息收集与展示.md
+│   ├── 02-plan-服务器、玩家数据分析工具/  01-Plan使用文档.md
+│   ├── 03-TAB信息展示.md
+│   ├── 04-PlaceholderAPI占位符.md
+│   ├── 05-LuckPerms炫彩称号.md
+│   ├── 06-PosTracker玩家位置记录.md
+│   └── 07-在线时间排行榜（PlayTime）.md
+│
+├── 5-服务器管理/
+│   ├── 01-权限管理系统-LuckPerms/   LuckPerms / 权限组设计方案 / 权限节点速查
+│   ├── 02-常用管理命令速查/         README.md
+│   ├── 03-方块记录与回滚-CoreProtect/  CoreProtect / 一些操作（数据库过大 / 网页端面板部署）
+│   ├── 04-离线背包查看-OpenInv/     OpenInv.md
+│   ├── 05-玩家独立战利品/           LootrInstancer.md
+│   ├── 06-chunky区块加载优化/       chunky区块加载优化.md
+│   ├── 07-BedrockPlayerSupport基岩版GUI表单界面/  BedrockPlayerSupport基岩版GUI表单界面.md
+│   ├── 08-创世神WorldEdit/          创世神WorldEdit.md
+│   ├── 09-玩家数据迁移-UserOverUUID/  UserOverUUID-玩家数据管迁移.md
+│   └── 反作弊（开了一会问题太多，已关闭）/  NovaAC / 反作弊部署与配置指南
+│
+├── 6-工具与常见问题约束/
+│   ├── 01-服务器优化/               Plan、CoreProtect、PosTracker 性能优化
+│   ├── 02-常见问题/                 常见问题排查 / UUID踩坑 / 发消息闪退（服务器内存相关）
+│   ├── 03-禁用影响平衡的插件功能/    AntiLitematica（1.禁用影响平衡的插件功能.md）
+│   ├── 云数据库备份到本地/          增量备份技术文档 + sync/verify/register 脚本
+│   └── 数据转换/                    使用文档.md
+│
+├── 各种插件插件（待选）/
+│   └── 各种插件（待选）.md           # 待选插件清单
+│
+└── 自研/                            # 自研插件：文档 + 源码 + 构建产物
+    ├── AdvZone/                     AdvZone.md（区域强制冒险模式）
+    ├── 传送阵/                      SpacePortal 空间传送阵（文档 + 源码 + jar）
+    ├── 实体计数占位符/              EntityCount（PAPI 占位符扩展 1.1.0）
+    ├── 快捷菜单系统/                QuickMenu（主文档 + 与通用菜单对比）
+    ├── 末影龙重生与破坏保护/        DragonManager（文档 + 源码 + jar）
+    ├── 每日随机收购/                DailySell（文档 + 源码 + jar）
+    ├── 综合RPG框架/                 rpg_framework 开发过程总结
+    └── 自定义模型物品/              模型物品资源包 + 方案与部署
+```
