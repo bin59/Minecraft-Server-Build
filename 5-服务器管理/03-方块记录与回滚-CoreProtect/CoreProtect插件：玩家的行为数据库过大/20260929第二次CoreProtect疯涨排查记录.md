@@ -3,7 +3,7 @@
 | 项目 | 内容 |
 |---|---|
 | 排查日期 | 2026-09-29 |
-| 服务器 | 腾讯云广州 123.207.3.73（/data 20G 云硬盘 lhdisk-fqukyb8m） |
+| 服务器 | 腾讯云广州 xxx.xxx.x.x（/data 20G 云硬盘 lhdisk-xxxx） |
 | 数据库 | MariaDB / 库 `coreprotect` |
 | 触发问题 | `co_entity` 体积异常膨胀，/data 使用率 97%（剩余 588M） |
 | 结论 | **非脏数据，是挂机装置导致的真实写入暴增 + 长期未回收的表碎片** |
@@ -212,7 +212,7 @@ sudo rm -f /etc/cron.d/cp-burst-cleanup
 
 ## 六、未解决 / 需用户在自己服务端处理
 
-本机（123.207.3.73）**未安装任何 CoreProtect 的 jar**（`/opt` 下仅 MCSManager、mcstats、omg、napcat 等），插件运行在**用户自己的国际服服务端**上，因此以下三项无法在本机完成：
+本机（xxx.xxx.x.x）**未安装任何 CoreProtect 的 jar**（`/opt` 下仅 MCSManager、mcstats、omg、napcat 等），插件运行在**用户自己的国际服服务端**上，因此以下三项无法在本机完成：
 
 | 项 | 建议 |
 |---|---|
