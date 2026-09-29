@@ -6,11 +6,11 @@
 
     <groupId>com.mc</groupId>
     <artifactId>entitycount</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>EntityCount</name>
-    <description>实体/生物计数占位符：主线程低频统计 + 内存缓存，异步读取零开销（解决 PAPI Server 扩展在 TAB 异步刷新下触发 Leaf 主线程检查的报错）</description>
+    <description>实体/生物/掉落物计数占位符：主线程低频统计 + 内存缓存，异步读取零开销（解决 PAPI Server 扩展在 TAB 异步刷新下触发 Leaf 主线程检查的报错）</description>
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>

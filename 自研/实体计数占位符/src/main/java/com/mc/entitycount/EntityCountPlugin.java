@@ -4,6 +4,9 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -20,11 +23,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  * 占位符：
  *   %entitycount_count%  - 全部已加载实体数（含物品掉落物，Paper getEntityCount O(1)）
  *   %entitycount_living% - 生物数（主线程遍历）
+ *   %entitycount_items%  - 掉落物数（主线程遍历，统计 item 实体）
  */
 public final class EntityCountPlugin extends JavaPlugin {
 
     private volatile int entityCount = 0;
     private volatile int livingCount = 0;
+    private volatile int itemCount = 0;
 
     @Override
     public void onEnable() {
@@ -34,18 +39,27 @@ public final class EntityCountPlugin extends JavaPlugin {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new EntityCountExpansion().register();
         }
-        getLogger().info("实体计数占位符已启用：%entitycount_count% / %entitycount_living%");
+        getLogger().info("实体计数占位符已启用：%entitycount_count% / %entitycount_living% / %entitycount_items%");
     }
 
     private void refresh() {
         int entities = 0;
         int living = 0;
+        int items = 0;
         for (World world : Bukkit.getWorlds()) {
             entities += world.getEntityCount();
-            living += world.getLivingEntities().size();
+            // 一次遍历同时统计生物与掉落物，避免重复遍历
+            for (Entity e : world.getEntities()) {
+                if (e instanceof LivingEntity) {
+                    living++;
+                } else if (e instanceof Item) {
+                    items++;
+                }
+            }
         }
         entityCount = entities;
         livingCount = living;
+        itemCount = items;
     }
 
     int getEntityCount() {
@@ -54,6 +68,10 @@ public final class EntityCountPlugin extends JavaPlugin {
 
     int getLivingCount() {
         return livingCount;
+    }
+
+    int getItemCount() {
+        return itemCount;
     }
 
     /** PAPI 占位符扩展：只读内存缓存，任何线程安全 */
@@ -71,7 +89,7 @@ public final class EntityCountPlugin extends JavaPlugin {
 
         @Override
         public String getVersion() {
-            return "1.0.0";
+            return "1.1.0";
         }
 
         @Override
@@ -86,6 +104,9 @@ public final class EntityCountPlugin extends JavaPlugin {
             }
             if ("living".equalsIgnoreCase(params)) {
                 return String.valueOf(getLivingCount());
+            }
+            if ("items".equalsIgnoreCase(params)) {
+                return String.valueOf(getItemCount());
             }
             return null;
         }
