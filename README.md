@@ -456,7 +456,7 @@
 | ------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
 | **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服                 |
 | **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动              | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                 |
-| **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件             | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants |
+| **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件             | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · LeashablePlayers · ClickMobs |
 | **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                    | Plan · TAB · 炫彩多层称号 · DecentHolograms · PosTracker                                          |
 | **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移               | LuckPerms · CoreProtect · WorldEdit · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID      |
 | **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                  | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · AntiLitematica                           |
@@ -517,7 +517,10 @@ Minecraft-Server-Build/
 │   ├── 11-RideOnHead玩家骑乘/       RideOnHead玩家骑乘.md
 │   ├── 12-自定义玩家模型/  Free Minecraft Models.md
 │   ├── 13-玩家独立战利品/           LootrInstancer.md
-│   └── 14-自定义附魔-ExcellentEnchants/  ExcellentEnchants自定义附魔.md
+│   ├── 14-自定义附魔-ExcellentEnchants/  ExcellentEnchants自定义附魔.md
+│   ├── 15-坐下插件-GSit/            GSit.md
+│   ├── 16-拴绳牵玩家-LeashablePlayers/  LeashablePlayers.md
+│   └── 17-点击收纳生物-ClickMobs/   ClickMobs.md
 │
 ├── 4-玩家信息与数据展示/
 │   ├── 01-玩家信息收集与展示.md
