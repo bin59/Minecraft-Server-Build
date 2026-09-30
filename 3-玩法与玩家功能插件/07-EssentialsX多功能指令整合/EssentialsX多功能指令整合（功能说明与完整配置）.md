@@ -728,7 +728,7 @@ bedrock-home-limit: 3
 
 ### 📄 kits.yml 工具包配置示例
 
-文件路径：`plugins/Essentials/kits.yml`
+文件路径：`plugins/Essentials/kits.yml`（本服运行服实际配置）
 
 ```yaml
 kits:
@@ -736,18 +736,26 @@ kits:
   starter:
     delay: -1 # -1 = 一次性
     items:
-      - STONE_SWORD 1
-      - STONE_PICKAXE 1
-      - STONE_AXE 1
-      - STONE_SHOVEL 1
-      - LEATHER_HELMET 1
-      - LEATHER_CHESTPLATE 1
-      - LEATHER_LEGGINGS 1
-      - LEATHER_BOOTS 1
-      - BREAD 16
-      - TORCH 16
-      - OAK_LOG 32
+      - stone_sword 1
+      - stone_pickaxe 1
+      - stone_axe 1
+      - stone_shovel 1
+      - leather_helmet 1
+      - leather_chestplate 1
+      - leather_leggings 1
+      - leather_boots 1
+      - bread 16
+      - torch 16
+      - oak_log 32
+  # 每日包：面包×2 + 南瓜币×5，每 6 小时可领一次（一天最多 4 次）
+  daily:
+    delay: 21600 # 秒；21600 = 6 小时冷却
+    items:
+      - bread 2
+      - /eco give {USERNAME} 5 # 控制台执行，给 5 南瓜币（Vault 货币）
 ```
+
+> 权限：`essentials.kit` 使用 /kit；`essentials.kits.starter`、`essentials.kits.daily` 分别授予对应包。
 
 ---
 

@@ -55,3 +55,9 @@
 30093.581104843528, 128.0, 29764.520788865135
 
 ## 按离线时长下次上线自动发南瓜币
+
+## 插件
+
+PacketEvents 简化数据包的处理与传输流程 https://modrinth.com/plugin/packetevents
+
+Customizable Player Models可自定义的玩家模型
