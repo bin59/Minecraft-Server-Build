@@ -71,11 +71,11 @@ lp group default permission set essentials.tpaccept
 lp group default permission set essentials.tpdeny
 lp group default permission set essentials.spawn
 lp group default permission set essentials.warp
-lp group default permission set essentials.back
-lp group default permission set essentials.home
-lp group default permission set essentials.sethome
-lp group default permission set essentials.delhome
-lp group default permission set essentials.sethome.multiple.3
+# 家园（/home /sethome /delhome）与 /back 本服已禁用，不授予
+# lp group default permission set essentials.home
+# lp group default permission set essentials.sethome
+# lp group default permission set essentials.delhome
+# lp group default permission set essentials.sethome.multiple.3
 
 # --- EssentialsX 经济 ---
 lp group default permission set essentials.balance
@@ -142,7 +142,7 @@ lp group default permission set easybot.command.bind
 
 # --- BedrockPlayerSupport 基岩 GUI（仅基岩客户端实际可用）---
 lp group default permission set bedrockplayersupport.tpgui
-lp group default permission set bedrockplayersupport.homegui
+# lp group default permission set bedrockplayersupport.homegui   # 家园禁用
 lp group default permission set bedrockplayersupport.msggui
 lp group default permission set bedrockplayersupport.kitgui
 lp group default permission set bedrockplayersupport.warpgui
@@ -193,7 +193,7 @@ lp group default permission set viaversion.updatebypass
 #  第 4 段：admin —— 管理员（完整管理工具，含处罚与只读审计）
 ############################################################
 
-lp group admin permission set essentials.sethome.multiple.unlimited
+# lp group admin permission set essentials.sethome.multiple.unlimited   # 家园禁用
 lp group admin permission set essentials.commandcooldowns.bypass
 lp group admin permission set essentials.teleport.cooldown.bypass
 lp group admin permission set essentials.teleport.delay.bypass
@@ -423,8 +423,8 @@ lp group owner permission set bedrockplayersupport.*
 ############################################################
 
 lp group bedrock permission set bedrockplayersupport.tpgui
-lp group bedrock permission set bedrockplayersupport.homegui
-lp group bedrock permission set bedrockplayersupport.phomegui
+# lp group bedrock permission set bedrockplayersupport.homegui      # 家园禁用
+# lp group bedrock permission set bedrockplayersupport.phomegui     # 家园禁用
 lp group bedrock permission set bedrockplayersupport.msggui
 lp group bedrock permission set bedrockplayersupport.kitgui
 lp group bedrock permission set bedrockplayersupport.warpgui

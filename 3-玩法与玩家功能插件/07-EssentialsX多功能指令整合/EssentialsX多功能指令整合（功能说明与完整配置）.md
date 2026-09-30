@@ -1,6 +1,6 @@
 # EssentialsX 多功能指令整合：功能说明与完整配置
 
-EssentialsX 是 Spigot/Paper 服务器装机量最大的经典指令套件，本文先以功能说明梳理它提供的传送家园、经济、管理审核、物品工具包、聊天、世界保护等全部模块，再给出一份面向 Java 基岩互通服的完整 config.yml，并附 kits.yml、commands.yml 模板与 LuckPerms 权限分配示例，服主可直接照抄后按注释微调。
+EssentialsX 是 Spigot/Paper 服务器装机量最大的经典指令套件，本文先以功能说明梳理它提供的传送、经济、管理审核、物品工具包、聊天、世界保护等全部模块，再给出一份面向 Java 基岩互通服的完整 config.yml，并附 kits.yml、commands.yml 模板与 LuckPerms 权限分配示例，服主可直接照抄后按注释微调。
 
 ---
 
@@ -26,7 +26,7 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 
 ---
 
-### 🏠 传送与家园系统
+### 🏠 传送系统（家园 /home 系列已禁用）
 
 这是 EssentialsX 最核心的功能之一：
 
@@ -45,7 +45,7 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 | `/warp <名称>`    | 传送到指定传送点   | —                      |
 | `/setwarp <名称>` | 设置公共传送点     | 管理员权限             |
 | `/delwarp <名称>` | 删除公共传送点     | —                      |
-| `/back`           | 返回上一个位置     | 传送/死亡后可用        |
+| `/back`           | （已取消）返回上一个位置 | 本服未启用 |
 | `/spawn`          | 传送到服务器出生点 | —                      |
 
 **可配置项：**
@@ -116,16 +116,16 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 | `/enchant <附魔> [等级]`      | 附魔手中物品               |
 | `/repair`                     | 修复手中物品耐久           |
 | `/repair all`                 | 修复背包内所有物品         |
-| `/kit`                        | （禁用）查看可用工具包列表 |
-| `/kit <名称>`                 | （禁用）领取指定工具包     |
+| `/kit`                        | 查看可用工具包列表         |
+| `/kit <名称>`                 | 领取指定工具包             |
 
 **工具包（Kit）系统详解：**
 
-- 支持按权限组配置不同工具包（如新手包 / 每日奖励包）
-- 支持设置领取冷却时间
+- 支持按权限组配置不同工具包（新手包 `starter` 一次性）
+- 支持设置领取冷却时间（`delay: -1` = 一次性，只能领一次）
 - 支持在工具包中包含附魔物品、药水、刷怪蛋等
 - 支持 Banner 元数据（旗帜图案）
-- 可通过配置文件精确定义每个工具包的内容
+- 可通过配置文件精确定义每个工具包的内容（`plugins/Essentials/kits.yml`）
 
 ---
 
@@ -284,8 +284,8 @@ command-cooldowns:
 EssentialsX 为每条命令都提供独立的权限节点，可配合 LuckPerms 精细控制：
 
 ```
-essentials.home          # 使用 /home
-essentials.sethome       # 使用 /sethome
+essentials.home          # 使用 /home（本服禁用，不授予）
+essentials.sethome       # 使用 /sethome（本服禁用，不授予）
 essentials.tpa           # 使用 /tpa
 essentials.kit           # 使用 /kit
 essentials.fly           # 使用 /fly
@@ -315,8 +315,8 @@ essentials.commandcooldowns.bypass  # 绕过命令冷却
 对于 GeyserMC 互通服场景：
 
 - EssentialsX 的所有指令对 Java 和基岩版玩家**同样生效**
-- 基岩版玩家通过 GeyserMC + Floodgate 可以直接使用 `/tpa`、`/home`（禁用）、`/kit`（禁用） 等指令
-- 经济系统、工具包（禁用）、权限控制对两端玩家统一生效
+- 基岩版玩家通过 GeyserMC + Floodgate 可以直接使用 `/tpa`、`/kit` 等指令
+- 经济系统、工具包、权限控制对两端玩家统一生效
 - 如果基岩版玩家输入指令不便，可搭配 GUI 插件（如 BedrockPlayerSupport）提供表单界面辅助操作
 
 ---
@@ -394,13 +394,13 @@ register-back-in-listener: false
 # /back 命令的冷却时间（秒）
 back-cooldown: 30
 
-# ---- 死亡后"自动弹出返回死亡点"提示的控制 ----
-# 该提示有两个来源，按玩家客户端区分：
+# ---- /back（返回上一个位置）本服已取消 ----
+# default 组不授予 essentials.back 与 essentials.back.ondeath，菜单无入口。
+# 若日后要恢复，开启方法：default 组授予 essentials.back true；并注意死亡自动弹出提示：
 #
 # 1. Java 版玩家：EssentialsX 的 essentials.back.ondeath 权限
 #    - 有该权限：死亡后聊天栏自动出现可点击的"返回死亡点"消息
-#    - 关闭方法（保留 essentials.back，/back 指令仍可手动使用）：
-#      lp group default permission set essentials.back.ondeath false
+#    - 关闭（保留 /back 手动使用）：lp group default permission set essentials.back.ondeath false
 #      或彻底取消：lp group default permission unset essentials.back.ondeath
 #
 # 2. 基岩版玩家：BedrockPlayerSupport 的"死亡回传"表单
@@ -409,7 +409,9 @@ back-cooldown: 30
 #        back:
 #          enable: false   # 设为 false：重生后不再自动弹出"返回死亡地点"表单
 
-# ==================== 家园系统 ====================
+# ==================== 家园系统（本服已禁用） ====================
+# 家园功能（/home /sethome /delhome）已禁用：不授予 essentials.home / essentials.sethome / essentials.delhome 等权限。
+# 以下为 config.yml 原生默认项，仅供日后恢复参考：
 
 # 每个玩家可设置的家数量上限（默认值，可通过权限覆盖）
 # 权限格式: essentials.sethome.multiple.<数量>
@@ -535,7 +537,7 @@ allow-color-nicknames: true
 # 昵称格式
 nickname-format: '{DISPLAYNAME}'
 
-# ==================== 工具包系统（禁用） ====================
+# ==================== 工具包系统 ====================
 
 # 工具包领取冷却时间（秒）- 默认值
 kit-cooldown: 86400
@@ -730,25 +732,21 @@ bedrock-home-limit: 3
 
 ```yaml
 kits:
-  # 新手工具包
+  # 新手工具包（一次性，每人限领一次）
   starter:
-    delay: 86400 # 冷却 24 小时（秒）
+    delay: -1 # -1 = 一次性
     items:
-      - IRON_SWORD 1
-      - IRON_PICKAXE 1
-      - IRON_AXE 1
-      - IRON_SHOVEL 1
-      - COOKED_BEEF 32
-      - OAK_PLANKS 64
-      - TORCH 32
-
-  # 每日奖励工具包
-  daily:
-    delay: 86400 # 冷却 24 小时
-    items:
-      - GOLDEN_APPLE 2
-      - DIAMOND 3
-      - EXPERIENCE_BOTTLE 10
+      - STONE_SWORD 1
+      - STONE_PICKAXE 1
+      - STONE_AXE 1
+      - STONE_SHOVEL 1
+      - LEATHER_HELMET 1
+      - LEATHER_CHESTPLATE 1
+      - LEATHER_LEGGINGS 1
+      - LEATHER_BOOTS 1
+      - BREAD 16
+      - TORCH 16
+      - OAK_LOG 32
 ```
 
 ---
@@ -776,7 +774,7 @@ aliases:
     - 'essentials:balance'
   转账:
     - 'essentials:pay $1-'
-  工具包:（禁用）
+  工具包:
     - 'essentials:kit'
   出生点:（禁用）
     - 'essentials:spawn'
@@ -799,11 +797,8 @@ lp group default permission set essentials.tpdeny true
 lp group default permission set essentials.spawn true
 lp group default permission set essentials.balance true
 lp group default permission set essentials.pay true
-lp group default permission set essentials.kit false
-lp group default permission set essentials.back false
-# 死亡后是否自动弹出"点击返回死亡点"提示，由 essentials.back.ondeath 控制：
-#   关闭（不自动弹出，/back 仍可用）：lp group default permission set essentials.back.ondeath false
-#   彻底取消：lp group default permission unset essentials.back.ondeath
+lp group default permission set essentials.kit true
+# /back（返回上一个位置）已取消：不授予 essentials.back / essentials.back.ondeath
 lp group default permission set essentials.msg true
 lp group default permission set essentials.nick true
 lp group default permission set essentials.help true

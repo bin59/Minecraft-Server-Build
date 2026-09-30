@@ -11,7 +11,7 @@
 | 分类 | 指令 | 状态 |
 | --- | --- | --- |
 | 传送 | `/tpgui`、`/warpgui`、收到 tpa/tpahere 自动弹接受/拒绝表单 | ✅ 启用 |
-| 家园 | `/homegui`、`/phomegui` | ✅ 启用 |
+| 家园 | `/homegui`、`/phomegui` | ❌ 关闭（家园功能已禁用，2026-09-30） |
 | 消息 | `/msggui` | ✅ 启用 |
 | 工具包 | `/kitgui` | ✅ 启用 |
 | 经济 | `/paygui` | ❌ 关闭（`form.money.enable=false`） |
@@ -52,7 +52,7 @@ form:
     enable: false        # /paygui（运行服关闭）
     pay-command: 'pay %playerName% %amount%'
   home:
-    enable: true         # /homegui
+    enable: false        # /homegui（家园功能已禁用，2026-09-30）
   points:
     enable: false        # /pointsgui（运行服关闭）
     pay-command: '/points pay %playerName% %amount%'
@@ -96,11 +96,12 @@ lp group admin permission set bedrockplayersupport.* true
 
 | 玩家操作 | 表单 | 底层命令 |
 | --- | --- | --- |
-| 回家 | `/homegui` | → `/home <名称>` |
 | 传送到玩家 | `/tpgui` | → `/tpa <玩家>` |
 | 收到传送请求 | 自动弹出 | → `/tpaccept` 或 `/tpdeny` |
 | 领工具包 | `/kitgui` | → `/kit <名称>` |
 | 传送点 | `/warpgui` | → `/warp <名称>` |
+
+> 家园表单（`/homegui` `/phomegui`）随家园功能禁用，不再可用。
 
 ## 语言文件（`lang/zh_CN.yml`）
 
@@ -124,12 +125,12 @@ warpgui:
   content: '点击传送点即可传送'
   no-warps: '{prefix}&c当前没有可用的传送点'
 
-homegui:
+homegui: # 已随家园功能禁用（form.home.enable=false）
   title: '我的家园'
   content: '点击家园即可传送'
   no-homes: '{prefix}&c你还没有设置任何家园，使用 /sethome 设置一个吧'
 
-phomegui:
+phomegui: # 已随家园功能禁用
   title: '公共家园'
   content: '点击即可访问公共家园'
   no-homes: '{prefix}&c当前没有可用的公共家园'
@@ -164,6 +165,6 @@ form:
 
 - **必须**配合 GeyserMC + Floodgate 使用，纯 Java 服无需安装
 - 表单仅对基岩版玩家生效
-- 表单底层调用 EssentialsX 命令，玩家需同时有对应 EssentialsX 权限（如 `/homegui` 需 `essentials.home`）
+- 表单底层调用 EssentialsX 命令，玩家需同时有对应 EssentialsX 权限（如 `/kitgui` 需 `essentials.kit`）
 - 若用 HuskHomes 替代 EssentialsX，`/phomegui` 自动适配；自动注册需 AuthMe 配合
 - 建议为基岩版玩家配中文别名指令（`commands.yml`），与 GUI 表单互补
