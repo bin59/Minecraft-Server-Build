@@ -33,6 +33,9 @@ public final class SpacePortalPlugin extends JavaPlugin {
     private double activateRadius;
     private double renderDistance;
     private boolean freeInCreative;
+    private boolean entityFollowEnabled;
+    private double petFollowRadius;
+    private int costPerEntity;
 
     /** 游戏内指令修改的配置（存于 override.yml，优先级高于 config.yml） */
     private YamlConfiguration override;
@@ -118,6 +121,9 @@ public final class SpacePortalPlugin extends JavaPlugin {
         activateRadius = Math.max(1.0, getConfig().getDouble("activate-radius", 2.2));
         renderDistance = Math.max(8.0, getConfig().getDouble("render-distance", 40.0));
         freeInCreative = getConfig().getBoolean("free-in-creative", true);
+        entityFollowEnabled = getConfig().getBoolean("entity-follow-enabled", true);
+        petFollowRadius = Math.max(0.5, getConfig().getDouble("pet-follow-radius", 3.0));
+        costPerEntity = Math.max(0, getConfig().getInt("cost-per-entity", 5));
         // 粒子刷新间隔可能刚被改过，据此重启特效任务
         startEffectTask();
     }
@@ -184,5 +190,20 @@ public final class SpacePortalPlugin extends JavaPlugin {
 
     public boolean isFreeInCreative() {
         return freeInCreative;
+    }
+
+    /** 是否允许坐骑/宠物随行传送 */
+    public boolean isEntityFollowEnabled() {
+        return entityFollowEnabled;
+    }
+
+    /** 宠物随行检测半径（格） */
+    public double getPetFollowRadius() {
+        return petFollowRadius;
+    }
+
+    /** 每个随行实体额外消耗的钻石数 */
+    public int getCostPerEntity() {
+        return costPerEntity;
     }
 }

@@ -1,0 +1,10 @@
+{
+  "pack": {
+    "pack_format": 64,
+    "supported_formats": {
+      "min_inclusive": 46,
+      "max_inclusive": 99
+    },
+    "description": "南瓜国际服 · 自定义模型物品包（示例：南瓜刃 / 虚空核）"
+  }
+}

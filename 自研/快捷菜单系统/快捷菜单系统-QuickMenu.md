@@ -3,7 +3,7 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：23 套菜单 / 183 个菜单项，分**玩家线**（11 套）
+> **菜单已整合本服全部插件**：27 套菜单 / 217 个菜单项，分**玩家线**（15 套）
 > 与**管理线**（12 套），管理入口靠权限门控，普通玩家看不到。
 
 插件 jar：`dist/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
@@ -14,7 +14,7 @@
 
 | 插件                 | 玩家菜单                                  | 管理菜单                   |
 | -------------------- | ----------------------------------------- | -------------------------- |
-| EssentialsX          | 传送 / 家园 / 经济 / 工具包 / 社交 / 信息 | 玩家管理 / 处罚 / 传送管理 |
+| EssentialsX          | 传送 / 经济 / 工具包 / 社交 / 信息 | 玩家管理 / 处罚 / 传送管理 |
 | Residence            | 我的领地                                  | 领地管理                   |
 | SkinsRestorer        | 皮肤管理                                  | —                          |
 | Simple Voice Chat    | 语音聊天                                  | 服务器监控（语音管理）     |
@@ -26,7 +26,7 @@
 | spark                | —                                         | 服务器监控                 |
 | Geyser / ViaVersion  | —                                         | 服务器监控                 |
 | LuckPerms            | —                                         | 权限管理                   |
-| BedrockPlayerSupport | 传送 / 家园 / 皮肤（表单）                | —                          |
+| BedrockPlayerSupport | 传送 / 皮肤（表单）                | —                          |
 
 ---
 
@@ -91,7 +91,7 @@ if (api.isFloodgatePlayer(uuid)) {
 │       │   └── menu/                   两端分发决策中枢 / 动作执行 / 菜单与动作模型
 │       └── resources/
 │           ├── plugin.yml              插件描述（命令与权限）
-│           └── config.yml              ★ 菜单配置（23 套：玩家 11 + 管理 12）
+│           └── config.yml              ★ 菜单配置（27 套：玩家 15 + 管理 12）
 └── _build/                            构建中间目录
 ```
 
@@ -177,11 +177,11 @@ menus:
       name: '&8'
 
     items:
-      home: # ← 菜单项 id（唯一）
-        material: RED_BED # 物品材质（仅 Java 箱子用）
-        display-name: '&a我的家园' # 显示名（两端通用）
+      kit: # ← 菜单项 id（唯一）
+        material: STONE_PICKAXE # 物品材质（仅 Java 箱子用）
+        display-name: '&a新手工具包' # 显示名（两端通用）
         lore: # 描述行（仅 Java 箱子用）
-          - '&7回家、设置家'
+          - '&7石头工具 + 皮装备 + 基础物资'
         slot: 11 # 箱子格子序号，从 0 开始（仅 Java 箱子用）
         glowing: true # 是否发光（无附魔副作用）
         permission: '' # 需要的权限，留空=所有人可见
@@ -260,25 +260,29 @@ actions:
 
 ---
 
-## 5. 菜单结构总览（23 套，玩家 / 管理双线）
+## 5. 菜单结构总览（27 套，玩家 / 管理双线）
 
-`config.yml` 已配好 **23 套菜单**，把本服所有插件的常用功能全部收进菜单。
+`config.yml` 已配好 **27 套菜单**，把本服所有插件的常用功能全部收进菜单。
 
-### 5.1 玩家菜单（11 套）
+### 5.1 玩家菜单（15 套）
 
 | 菜单 id     | 名称       | 对接插件                  | 主要内容                                                                                                                                                                                                                          |
 | ----------- | ---------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `main`      | 主菜单     | —                         | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达                                                                                                |
-| `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、返回、回主城、附近玩家                                                                                                                                                                |
+| `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                                |
 | `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                 |
-| `home`      | 我的家园   | EssentialsX + BPS         | 家列表、回家、设置家、删除家。**入口已从主菜单隐藏**：可用 `/qm open home` 或直接 `/home` 指令                                                                                                                                    |
 | `residence` | 我的领地   | **Residence**             | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                                                           |
 | `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**、卖物品（/sell）、估价背包物品（/worth）。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                                          |
-| `kit`       | 工具包     | EssentialsX               | 新手包、每日奖励                                                                                                                                                                                                                  |
+| `kit`       | 工具包     | EssentialsX               | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次） |
 | `skin`      | 皮肤管理   | **SkinsRestorer**         | 皮肤库浏览（/skins 选择菜单，含皮肤/历史/收藏三入口）、历史皮肤（/skin history）、收藏皮肤（/skin favourites）、清除、刷新、随机、撤销                                                                                              |
 | `social`    | 社交设置   | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                           |
 | `info`      | 服务器信息 | EssentialsX               | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                                          |
 | `voice`     | 语音聊天   | **Simple Voice Chat**     | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                            |
+| `guide`     | 新人指南   | —（说明书）               | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                                  |
+| `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、卖物品、背包估价、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                              |
+| `guide-build`   | 领地建房   | **Residence**             | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                             |
+| `guide-move`    | 传送出行   | EssentialsX + SpacePortal | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                             |
+| `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SkinsRestorer + SVC + PatPat + EssentialsX | 宠物、骑玩家、皮肤、语音、摸头、工具包、服务器信息                                                                                                               |
 
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah，slot 9）、玩家商店（/shop，slot 11）
@@ -289,7 +293,35 @@ actions:
 - 主菜单 `main` 与 `economy` 经济中心各有一个「每日收购」按钮（均占 **slot 19**，动作 `[player] ds`），配置见 config.yml 模板中 `daily-sell:` 条目
 - **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时，替换 jar 不会更新它——需手动把 `daily-sell:` 两段插入到对应菜单（主菜单 slot 19、经济中心 slot 19），再 `/qm reload` 生效
 
-层级：玩家线所有二级菜单的 `back-menu` 均为 `main`（`warps` 为三级菜单，`back-menu: teleport`），返回按钮固定在右下角（`size-1` 槽位）。
+层级：玩家线所有二级菜单的 `back-menu` 均为 `main`（`warps` 为三级菜单，`back-menu: teleport`），返回按钮固定在右下角（`size-1` 槽位）。`guide` 系列为三级结构：`main` → `guide` → 四个分册，分册的 `back-menu` 均为 `guide`。
+
+### 5.1b 新人指南（游戏内说明书）
+
+**入口**：主菜单 `main` 的「新人指南」按钮（**slot 17**，WRITABLE_BOOK，所有玩家可见），或 `/qm open guide`。
+
+**设计原则**：这是给新玩家的游戏内说明书——不是命令手册，而是"该做什么、怎么做"。分 5 套菜单：
+
+| 菜单 | 内容 | 呈现方式 |
+|---|---|---|
+| `guide` 首页 | 新人必做 3 件事（领新手包→圈领地→熟悉菜单）、4 个分册入口、常用指令速查、服务器规则 | 说明类按钮 = 关闭界面 + 逐行 `[message]` 图文提示（两端通用） |
+| `guide-economy` 怎么赚钱 | 每日任务 / 每日收购 / 卖物品 / 估价 / 玩家商店 / 拍卖行 / 转账 / 余额财富榜 / 周税 | 能直接执行的（`/quests` `/ds` `/sell hand` `/balance`）点击即执行；需参数的（`/pay`）给用法提示 |
+| `guide-build` 领地建房 | 建领地步骤、传送点、邀请玩家、flag 开关、子领地、卡住脱身 | 建领地给出完整 3 步圈地流程；其余给命令示例 |
+| `guide-move` 传送出行 | 回主城、传送点、tpa、传送阵 | 回主城 / 传送阵直接执行，其余给命令示例 |
+| `guide-play` 玩法大全 | 宠物、骑玩家、皮肤、语音、摸头、工具包、服务器信息 | 宠物 / 皮肤 / 工具包直接执行，骑玩家 / 摸头给说明 |
+
+**基岩端兼容**：全部说明类按钮走 `[message]`（原生表单按钮不支持 lore），基岩玩家点击同样看到完整说明文字；按钮文本自动去色。
+
+**给新人的完整链路**（建议）：
+1. 进服自动发放触发时钟（`give-on-join: true`）+ TAB footer / 公告栏提示"右键时钟打开快捷菜单"；
+2. 新人打开主菜单 → 点「新人指南」→ 先看「新人必做 4 件事」；
+3. 按需进入 赚钱 / 领地 / 出行 / 玩法 分册学习。
+
+**维护提醒**：新增玩法插件后，在主菜单加对应按钮时，顺手在 `guide-play` 或对应分册补一条说明项，说明书与功能同步更新。
+
+**部署到线上服务器**（config.yml 已存在的服务器不会随 jar 更新）：
+1. 用仓库模板 `自研/快捷菜单系统/config.yml` **整体替换**服务器 `plugins/QuickMenu/config.yml`（模板已含全部线上菜单 + guide 系列；若线上有本地化自定义，先备份再替换后手工合并）；
+2. 执行 `/qm reload` 即时生效，无需重启；
+3. 验证：主菜单 slot 17 出现「新人指南」，`/qm open guide` 可进入。
 
 ### 5.2 管理菜单（12 套）
 
@@ -501,7 +533,6 @@ actions:
 | ----------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | `teleport.warps`                                            | 统一 QuickMenu 传送点 GUI（`[menu] warps`，双端通用）                | 同左                                                                                   |
 | `teleport.tpa` / `teleport.tpahere`                         | 统一 QuickMenu 玩家选择器（`[player-selector]`，两端从在线列表选人） | 同左                                                                                   |
-| `home.listhomes`                                            | `/homegui`（BPS 家园表单）                                           | `/homes`（EssentialsX 列表）                                                           |
 | `social.msg`                                                | `/msggui`（BPS 私信表单）                                            | 文字提示 `/msg` 用法                                                                   |
 | `skin.skin*`                                                | `/skin`（指令方式）                                                  | `/skins`（GUI 选择菜单）+ `/skin history` + `/skin favourites`                          |
 
@@ -626,18 +657,13 @@ powershell -ExecutionPolicy Bypass -File build.ps1 -SkipDeps
 # ---- 菜单自身 ----
 lp group default permission set quickmenu.use true
 
-# ---- EssentialsX：传送与家园 ----
-lp group default permission set essentials.home true
-lp group default permission set essentials.sethome true
-lp group default permission set essentials.delhome true
-lp group default permission set essentials.homes true
+# ---- EssentialsX：传送（家园功能已禁用）----
 lp group default permission set essentials.tpa true
 lp group default permission set essentials.tpaccept true
 lp group default permission set essentials.tpdeny true
 lp group default permission set essentials.warp true
 lp group default permission set essentials.spawn true   # 注：未装 EssentialsSpawn 模块，/spawn 命令实际不存在；主菜单「回主城」按钮已改用 essentials.warp + /warp 主城
-lp group default permission set essentials.back true
-lp group default permission set essentials.back.ondeath true
+# /back（返回上一个位置）功能已取消：菜单无入口，default 组不授予 essentials.back / essentials.back.ondeath
 lp group default permission set essentials.near true
 
 # ---- EssentialsX：经济 ----
@@ -662,7 +688,6 @@ lp group default permission set eztax.stats true
 # ---- EssentialsX：工具包与物品 ----
 lp group default permission set essentials.kit true
 lp group default permission set essentials.kits.starter true
-lp group default permission set essentials.kits.daily true
 lp group default permission set essentials.repair true
 lp group default permission set essentials.workbench true
 
@@ -892,7 +917,7 @@ lp group owner permission set openinv.override true
 
 ```bash
 # 检查某个玩家是否真的有某权限（含继承）
-/lp user <玩家> permission check essentials.home
+/lp user <玩家> permission check essentials.kit
 
 # 实时追踪权限判定过程 —— 排查「菜单点了没反应」的神器
 /lp verbose on <玩家> essentials
@@ -911,9 +936,9 @@ lp group owner permission set openinv.override true
 
 |          | QuickMenu（本章）                | BedrockPlayerSupport                                   |
 | -------- | -------------------------------- | ------------------------------------------------------ |
-| 定位     | **自定义菜单**，内容完全由你配置 | **既有指令的表格外壳**，把 `/tpa` `/home` 等包装成表单 |
-| 覆盖面   | 任意指令、任意层级菜单           | 固定的传送/家园/私信/工具包表单                        |
-| 触发方式 | 物品右键 / `/qm`                 | 各自的 `/tpgui` `/homegui` 等指令                      |
+| 定位     | **自定义菜单**，内容完全由你配置 | **既有指令的表格外壳**，把 `/tpa` `/kit` 等包装成表单 |
+| 覆盖面   | 任意指令、任意层级菜单           | 固定的传送/私信/工具包表单                        |
+| 触发方式 | 物品右键 / `/qm`                 | 各自的 `/tpgui` `/kitgui` 等指令                      |
 | Java 端  | 有箱子 GUI                       | 无（仅基岩端）                                         |
 
 **推荐组合**：QuickMenu 负责「物品右键唤出的总菜单」，BPS 负责「事件驱动的自动表单」

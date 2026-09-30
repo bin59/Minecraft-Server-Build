@@ -11,11 +11,16 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -156,8 +161,12 @@ public class TeleportService {
         // 充能完成特效
         EffectController.chargeComplete(player, fromCenter, from.getHue());
 
-        // 结算费用（传送前再次确认，走通用扣费）
-        if (!chargeFee(player)) {
+        // 收集随行实体（当前坐骑 + 属于本人的已驯服宠物），非本人宠物会收到提示
+        Entity vehicle = player.getVehicle();
+        List<Entity> followers = collectFollowers(player);
+
+        // 结算费用（传送前再次确认，走通用扣费，含随行实体附加费）
+        if (!chargeFee(player, followers)) {
             return;
         }
 
@@ -173,6 +182,8 @@ public class TeleportService {
             }
             EffectController.teleportBurst(fromCenter, destLoc, hue);
             player.teleport(destLoc);
+            // 坐骑/宠物随行：先传实体，再让玩家重新骑上坐骑
+            teleportFollowers(player, vehicle, destLoc, followers);
             applyCooldown(player);
             player.sendMessage(msg("&a✦ 空间跳跃完成，已抵达 &f" + dest.getName()));
             startTimeTunnel(player, hue);
@@ -201,21 +212,112 @@ public class TeleportService {
      * @return true 表示扣费成功或本就免费，可以继续传送；false 表示钻石不足，已提示玩家
      */
     public boolean chargeFee(Player player) {
+        return chargeFee(player, Collections.emptyList());
+    }
+
+    /**
+     * 带随行实体的扣费：总费用 = 基础传送费 + 随行实体数 × 每实体附加费。
+     * 免费权限或创造/旁观免费时直接放行。
+     *
+     * @param followers 随行实体列表（坐骑 + 宠物），用于计算附加费
+     * @return true 表示扣费成功或本就免费；false 表示钻石不足，已提示玩家
+     */
+    public boolean chargeFee(Player player, List<Entity> followers) {
         if (isFree(player)) {
             return true;
         }
         int cost = plugin.getCost();
-        if (cost <= 0) {
+        int per = Math.max(0, plugin.getCostPerEntity());
+        int extra = Math.max(0, followers.size()) * per;
+        int total = cost + extra;
+        if (total <= 0) {
             return true;
         }
-        if (countDiamonds(player) < cost) {
-            player.sendMessage(msg("&c钻石不足！传送需要 &b" + cost + " 颗钻石"));
+        if (countDiamonds(player) < total) {
+            if (extra > 0) {
+                player.sendMessage(msg("&c钻石不足！传送需要 &b" + total + " &c颗（基础 &f" + cost
+                        + " &c+ 随行实体 &f" + followers.size() + "×" + per + "&c）"));
+            } else {
+                player.sendMessage(msg("&c钻石不足！传送需要 &b" + total + " 颗钻石"));
+            }
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
             return false;
         }
-        removeDiamonds(player, cost);
-        player.sendMessage(msg("&b已支付 &f" + cost + " 颗钻石"));
+        removeDiamonds(player, total);
+        if (extra > 0) {
+            player.sendMessage(msg("&b已支付 &f" + total + " &b颗钻石（基础 &f" + cost
+                    + " &b+ 随行实体 &f" + followers.size() + "×" + per + "&b）"));
+        } else {
+            player.sendMessage(msg("&b已支付 &f" + total + " 颗钻石"));
+        }
         return true;
+    }
+
+    /**
+     * 收集随行实体：当前坐骑（玩家骑着的实体）+ 检测半径内属于本人的已驯服宠物。
+     * 其他人的宠物会收到"不是你的宠物"提示且不随行；野生/非宠物实体静默忽略。
+     */
+    public List<Entity> collectFollowers(Player player) {
+        List<Entity> followers = new ArrayList<>();
+        if (!plugin.isEntityFollowEnabled()) {
+            return followers;
+        }
+        Entity vehicle = player.getVehicle();
+        if (vehicle != null) {
+            followers.add(vehicle);
+        }
+        double radius = plugin.getPetFollowRadius();
+        for (Entity e : player.getWorld().getNearbyEntities(
+                player.getLocation(), radius, radius, radius)) {
+            if (e == player || e.equals(vehicle)) {
+                continue;
+            }
+            if (!(e instanceof Tameable tame)) {
+                continue;
+            }
+            if (tame.getOwner() != null
+                    && player.getUniqueId().equals(tame.getOwner().getUniqueId())) {
+                followers.add(e);
+            } else if (tame.getOwner() != null) {
+                player.sendMessage(msg("&c&f" + entityName(e) + " &c不是你的宠物，无法随行传送"));
+            }
+        }
+        return followers;
+    }
+
+    /** 实体的显示名：优先自定义名，否则英文类型名 */
+    private String entityName(Entity e) {
+        if (e.getCustomName() != null) {
+            return e.getCustomName();
+        }
+        return e.getType().name().toLowerCase();
+    }
+
+    /**
+     * 随行实体传送：把坐骑/宠物传送到玩家落点，宠物分散 0.6 格避免重叠，
+     * 最后让玩家重新骑回坐骑。
+     */
+    public void teleportFollowers(Player player, Entity vehicle, Location destLoc,
+                                  List<Entity> followers) {
+        if (followers == null || followers.isEmpty()) {
+            return;
+        }
+        int index = 0;
+        for (Entity e : followers) {
+            if (!e.isValid() || e.isDead()) {
+                continue;
+            }
+            Location loc = destLoc.clone();
+            if (e != vehicle) {
+                double angle = Math.toRadians(60.0 * index);
+                loc.add(Math.cos(angle) * 0.6, 0, Math.sin(angle) * 0.6);
+            }
+            e.teleport(loc);
+            index++;
+        }
+        if (vehicle != null && vehicle.isValid() && !vehicle.isDead()) {
+            vehicle.addPassenger(player);
+        }
     }
 
     /** 传送后设置冷却，防止落地在阵法中心时被立刻重新触发充能 */

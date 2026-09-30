@@ -7,14 +7,13 @@
 # 修改后执行 /qm reload 即时生效，无需重启服务器
 #
 # ============================================================
-# 菜单总览（23 套，分「玩家」与「管理」两条线）
+# 菜单总览（27 套，分「玩家」与「管理」两条线）
 # ============================================================
 #
 # 【玩家线】所有人可见，default-menu 指向 main
 #   main          主菜单（一级入口）
 #   teleport      传送功能     EssentialsX + BedrockPlayerSupport
 #   warps         传送点       EssentialsX（teleport 的子菜单）
-#   home          我的家园     EssentialsX + BedrockPlayerSupport
 #   residence     我的领地     Residence
 #   economy       经济中心     EssentialsX + Vault
 #   kit           工具包       EssentialsX
@@ -22,6 +21,11 @@
 #   social        社交设置     EssentialsX + EasyBot
 #   info          服务器信息   EssentialsX
 #   voice         语音聊天     Simple Voice Chat
+#   guide         新人指南     游戏内说明书（main → guide → 分册）
+#   guide-economy 怎么赚钱     DailySell / Quests / EconomyShop / AuctionHouse / EzTax
+#   guide-build   领地建房     Residence
+#   guide-move    传送出行     EssentialsX + SpacePortal
+#   guide-play    玩法大全     SimplePets / RideOnHead / SkinsRestorer / SVC / PatPat
 #
 # 【管理线】入口在 main 菜单，靠 permission: quickmenu.admin 门控，
 #           普通玩家看不到、也点不到；管理员也可直接 /qm open admin
@@ -379,6 +383,19 @@ menus:
         actions:
           - '[player] csz gui'
 
+      # ---------- 新人指南 ----------
+      guide:
+        material: WRITABLE_BOOK
+        display-name: '&a&l新人指南'
+        lore:
+          - '&7游戏玩法说明书'
+          - '&7赚钱、领地、传送、玩法大全、指令速查'
+          - '&8点击查看'
+        slot: 17
+        glowing: true
+        actions:
+          - '[menu] guide'
+
       # ---------- 管理面板（权限门控） ----------
       # 只有带 quickmenu.admin 的管理组能看到这一项，普通玩家界面里不会出现，
       # 基岩端按钮序号也会自动重排，不会留下空位。
@@ -441,16 +458,6 @@ menus:
         actions:
           - '[player-selector] tpahere {target}'
 
-      back:
-        material: CLOCK
-        display-name: '&e返回上一个位置'
-        lore:
-          - '&7传送或死亡后可用'
-        slot: 16
-        actions:
-          - '[close]'
-          - '[player] back'
-
       spawn:
         material: GRASS_BLOCK
         display-name: '&f&l回主城'
@@ -490,62 +497,6 @@ menus:
         actions:
           - '[close]'
           - '[player] warp 主城'
-  # ==================== 家园子菜单 ====================
-  home:
-    title: '&a&l我的家园'
-    bedrock-content: '&7家园管理'
-    size: 27
-    back-menu: main
-    filler:
-      material: GREEN_STAINED_GLASS_PANE
-      name: '&8'
-
-    items:
-      listhomes:
-        material: PAPER
-        display-name: '&a查看我的家列表'
-        lore:
-          - '&7列出所有已设置的家'
-          - '&8基岩端打开原生家园表单，点选即传送'
-        slot: 10
-        actions:
-          - '[close]'
-          - '[bedrock-player] homegui'
-          - '[java-player] homes'
-
-      gohome:
-        material: OAK_DOOR
-        display-name: '&b传送回家'
-        lore:
-          - '&7回到默认家'
-        slot: 12
-        actions:
-          - '[close]'
-          - '[player] home'
-
-      sethome:
-        material: RED_BED
-        display-name: '&e在当前位置设置家'
-        lore:
-          - '&7将设为默认家'
-          - '&8输入 /sethome 名称 可命名'
-        slot: 14
-        actions:
-          - '[close]'
-          - '[player] sethome'
-
-      delhome:
-        material: BARRIER
-        display-name: '&c删除一个家'
-        lore:
-          - '&7需手动补充家名称'
-          - '&e用法：/delhome 家的名称'
-        slot: 16
-        permission: essentials.delhome
-        actions:
-          - '[close]'
-          - '[message] &7删除家：&e/delhome 家的名称'
-          - '[message] &7先执行 &e/homes &7查看有哪些家'
 
   # ==================== 领地子菜单（Residence） ====================
   residence:
@@ -805,11 +756,11 @@ menus:
 
     items:
       starter:
-        material: IRON_SWORD
+        material: STONE_PICKAXE
         display-name: '&a新手工具包'
         lore:
-          - '&7铁制工具套装 + 食物'
-          - '&8冷却 24 小时'
+          - '&7石头工具 + 皮装备 + 基础物资'
+          - '&8一次性，每人限领一次'
         slot: 11
         actions:
           - '[close]'
@@ -1055,7 +1006,7 @@ menus:
         actions:
           - '[close]'
           - '[message] &6南瓜国际服 &7支持 Java / 基岩双端互通'
-          - '[message] &7基岩版玩家可直接使用 &e/tpa &7&7/home &7等指令'
+          - '[message] &7基岩版玩家可直接使用 &e/tpa &7&7/kit &7等指令'
 
       help:
         material: BOOK
@@ -1127,6 +1078,485 @@ menus:
           - '[message] &71) 确认客户端已安装语音模组且版本匹配'
           - '[message] &72) 服务器 UDP 端口 &e24454 &7已在防火墙与云安全组放行'
           - '[message] &73) 游戏内音频输出设备选择正确'
+
+  ##########################################################
+  # ██████  新 人 指 南  ██████
+  # 入口：main 菜单「新人指南」（slot 17）
+  # 游戏内说明书：赚钱 / 领地 / 出行 / 玩法 / 指令速查
+  # 说明类按钮统一「关闭界面 + 发送图文提示」，两端通用
+  ##########################################################
+
+  # ==================== 新人指南首页 ====================
+  guide:
+    title: '&a&l新人指南'
+    bedrock-content: '&7游戏玩法说明书：选择分类'
+    size: 27
+    back-menu: main
+    filler:
+      material: BLACK_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      start:
+        material: GOLDEN_APPLE
+        display-name: '&6&l新人必做 3 件事'
+        lore:
+          - '&7领新手包、圈领地、熟悉菜单'
+          - '&8点击查看步骤'
+        slot: 10
+        glowing: true
+        actions:
+          - '[close]'
+          - '[message] &e======== 新人必做 3 件事 ========'
+          - '[message] &61) &f领新手包：打开菜单 → 工具包 → 新手包'
+          - '[message] &62) &f圈领地：&6/res create <领地名> &7（用木斧选两个对角点）'
+          - '[message] &63) &f熟悉菜单：右键时钟随时打开快捷菜单，本指南也在里面'
+
+      economy:
+        material: GOLD_INGOT
+        display-name: '&6&l怎么赚钱'
+        lore:
+          - '&7每日任务、每日收购、卖物品、商店、拍卖'
+          - '&8点击查看分册'
+        slot: 11
+        actions:
+          - '[menu] guide-economy'
+
+      build:
+        material: DIAMOND_BLOCK
+        display-name: '&2&l领地建房'
+        lore:
+          - '&7圈地、传送领地、邀请玩家、设置权限'
+          - '&8点击查看分册'
+        slot: 12
+        actions:
+          - '[menu] guide-build'
+
+      move:
+        material: ENDER_PEARL
+        display-name: '&b&l传送出行'
+        lore:
+          - '&7回主城、传送点、申请传送、传送阵'
+          - '&8点击查看分册'
+        slot: 13
+        actions:
+          - '[menu] guide-move'
+
+      play:
+        material: BONE
+        display-name: '&f&l玩法大全'
+        lore:
+          - '&7宠物、骑乘、皮肤、语音、摸头等娱乐玩法'
+          - '&8点击查看分册'
+        slot: 14
+        actions:
+          - '[menu] guide-play'
+
+      commands:
+        material: WRITABLE_BOOK
+        display-name: '&e&l常用指令速查'
+        lore:
+          - '&7一页看完所有常用指令'
+          - '&8点击查看'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[message] &e======== 常用指令速查 ========'
+          - '[message] &6/warp 主城 &7回主城 &6/tpa <玩家> &7申请传送 &6/tpaccept &7接受'
+          - '[message] &6/res create <名> &7圈领地 &6/balance &7余额 &6/pay <玩家> <金额> &7转账'
+          - '[message] &6/quests &7每日任务 &6/ds &7每日收购 &6/sell hand &7卖手上物品'
+          - '[message] &6/skins &7皮肤 &6/pet gui &7宠物 &6/pat <玩家> &7摸头'
+
+      rules:
+        material: BOOK
+        display-name: '&a&l服务器规则'
+        lore:
+          - '&7查看服务器规则'
+          - '&8点击查看'
+        slot: 16
+        actions:
+          - '[close]'
+          - '[player] rules'
+
+  # ==================== 分册：怎么赚钱 ====================
+  guide-economy:
+    title: '&6&l怎么赚钱'
+    bedrock-content: '&7选择想了解的赚钱方式'
+    size: 27
+    back-menu: guide
+    filler:
+      material: YELLOW_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      quests:
+        material: BOOK
+        display-name: '&b&l每日任务'
+        lore:
+          - '&7挖矿、打怪、钓鱼完成目标赚南瓜币'
+          - '&8点击打开任务界面'
+        slot: 10
+        actions:
+          - '[close]'
+          - '[player] quests'
+
+      daily-sell:
+        material: EMERALD_BLOCK
+        display-name: '&a&l每日收购'
+        lore:
+          - '&7每天随机 4 种物品高价收购'
+          - '&7把收购物品卖给系统赚南瓜币'
+          - '&8点击打开收购界面'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] ds'
+
+      sell:
+        material: GOLD_NUGGET
+        display-name: '&e&l卖物品'
+        lore:
+          - '&7把手上物品直接卖给系统'
+          - '&8点击出售手上物品'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[player] sell hand'
+
+      worth:
+        material: PAPER
+        display-name: '&f&l背包估价'
+        lore:
+          - '&7查看手上物品的系统收购价'
+          - '&8点击估价手上物品'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] worth hand'
+
+      shop:
+        material: CHEST_MINECART
+        display-name: '&e&l玩家商店'
+        lore:
+          - '&7开设商店向其他玩家卖东西'
+          - '&7价格由你自己定'
+          - '&8点击打开商店界面'
+        slot: 14
+        actions:
+          - '[close]'
+          - '[player] shop'
+
+      auction:
+        material: GOLD_BLOCK
+        display-name: '&6&l拍卖行'
+        lore:
+          - '&7上架物品竞拍 / 一口价卖出'
+          - '&7也能捡漏买别人上架的东西'
+          - '&8点击打开拍卖行'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[player] ah'
+
+      pay:
+        material: EMERALD
+        display-name: '&a&l转账给玩家'
+        lore:
+          - '&7把南瓜币转给其他玩家'
+          - '&e用法：/pay 玩家名 金额'
+        slot: 16
+        actions:
+          - '[close]'
+          - '[message] &7转账：&e/pay 玩家名 金额'
+          - '[message] &7例：&e/pay Steve 500'
+
+      balance:
+        material: GOLD_INGOT
+        display-name: '&6&l余额与财富榜'
+        lore:
+          - '&7查看余额 / 全服富豪排行'
+          - '&8点击查看'
+        slot: 18
+        actions:
+          - '[close]'
+          - '[player] balance'
+          - '[player] baltop'
+
+      eztax:
+        material: WRITABLE_BOOK
+        display-name: '&c&l周持有税'
+        lore:
+          - '&7每周按持有南瓜币征收的税'
+          - '&8点击查看税务详情'
+        slot: 19
+        actions:
+          - '[close]'
+          - '[player] eztax stats'
+
+  # ==================== 分册：领地建房 ====================
+  guide-build:
+    title: '&2&l领地建房'
+    bedrock-content: '&7领地（Residence）使用说明'
+    size: 27
+    back-menu: guide
+    filler:
+      material: LIME_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      create:
+        material: WOODEN_AXE
+        display-name: '&a&l创建领地'
+        lore:
+          - '&7木斧选两个对角点后执行'
+          - '&e用法：/res create 领地名'
+        slot: 10
+        actions:
+          - '[close]'
+          - '[message] &7圈地步骤：'
+          - '[message] &71) &f手持木斧 &e//wand &7（创世神工具）'
+          - '[message] &72) &f左键选第一个角、右键选第二个角'
+          - '[message] &73) &f执行 &e/res create 领地名'
+          - '[message] &7提示：选区越大收费越贵，按格子计费'
+
+      tp:
+        material: ENDER_PEARL
+        display-name: '&b&l传送到领地'
+        lore:
+          - '&e用法：/res tp 领地名'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[message] &7传送到领地：&e/res tp 领地名'
+          - '[message] &7查看自己的领地列表：&e/res list'
+
+      tpset:
+        material: END_CRYSTAL
+        display-name: '&d&l设置领地传送点'
+        lore:
+          - '&7站在想传送到的位置执行'
+          - '&e用法：/res tpset'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[message] &7站在落点位置执行 &e/res tpset'
+          - '[message] &7之后 /res tp 领地名 就会传送到这里'
+
+      invite:
+        material: PLAYER_HEAD
+        display-name: '&6&l邀请玩家进领地'
+        lore:
+          - '&7把好友加入领地，允许一起建造'
+          - '&e用法：/res pset 玩家名 trusted true'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[message] &7邀请好友：&e/res pset 玩家名 trusted true'
+          - '[message] &7取消信任：&e/res pset 玩家名 trusted false'
+          - '[message] &7更多成员管理可打开菜单：我的领地 → 玩家授权'
+
+      flags:
+        material: COMPARATOR
+        display-name: '&c&l领地权限开关'
+        lore:
+          - '&7开关建造、破坏、PVP、使用等'
+          - '&e用法：/res set 领地名 flag true/false'
+        slot: 14
+        actions:
+          - '[close]'
+          - '[message] &7常用 flag：&ebuild &7建造 / &edestroy &7破坏 / &epvp &7玩家对战 / &emove &7进入'
+          - '[message] &7例：禁止别人破坏 → &e/res set 领地名 destroy false'
+          - '[message] &7全部开关可在菜单：我的领地 → 设置领地开关'
+
+      subzone:
+        material: OAK_FENCE
+        display-name: '&2&l子领地'
+        lore:
+          - '&7在大领地内再划分小区域'
+          - '&e用法：/res subzone 子领地名称'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[message] &7子领地：&e/res subzone 子领地名称'
+          - '[message] &7子领地可单独设置权限（比如隔离自己的仓库区）'
+
+      resmenu:
+        material: DIAMOND_BLOCK
+        display-name: '&2&l打开领地菜单'
+        lore:
+          - '&7领地全部功能汇总'
+          - '&8点击打开'
+        slot: 16
+        actions:
+          - '[menu] residence'
+
+      unstuck:
+        material: OAK_DOOR
+        display-name: '&f&l卡住脱身'
+        lore:
+          - '&7被困在别人领地时使用'
+          - '&8点击脱身'
+        slot: 18
+        actions:
+          - '[close]'
+          - '[player] res unstuck'
+
+  # ==================== 分册：传送出行 ====================
+  guide-move:
+    title: '&b&l传送出行'
+    bedrock-content: '&7怎么在服务器里快速移动'
+    size: 27
+    back-menu: guide
+    filler:
+      material: BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      spawn:
+        material: BEACON
+        display-name: '&b&l回主城'
+        lore:
+          - '&7一键回到主城'
+          - '&8点击传送'
+        slot: 10
+        actions:
+          - '[close]'
+          - '[player] warp 主城'
+
+      warps:
+        material: END_PORTAL_FRAME
+        display-name: '&d&l公共传送点'
+        lore:
+          - '&7所有玩家可用的传送点'
+          - '&8点击选择传送点'
+        slot: 11
+        actions:
+          - '[menu] warps'
+
+      tpa:
+        material: PLAYER_HEAD
+        display-name: '&6&l申请传送到玩家'
+        lore:
+          - '&7需要对方同意'
+          - '&e用法：/tpa 玩家名'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[message] &7申请传送到玩家：&e/tpa 玩家名'
+          - '[message] &7对方同意后自动传送；也可在传送菜单选人'
+
+      tpaccept:
+        material: GREEN_WOOL
+        display-name: '&a&l接受 / 拒绝传送'
+        lore:
+          - '&7收到传送请求时使用'
+          - '&e/tpaccept 接受 &e/tpdeny 拒绝'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[message] &7接受传送：&e/tpaccept'
+          - '[message] &7拒绝传送：&e/tpdeny'
+
+      portal:
+        material: END_CRYSTAL
+        display-name: '&d&l传送阵'
+        lore:
+          - '&7走进阵法范围自动充能传送'
+          - '&7传送消耗 20 颗钻石'
+          - '&8点击打开传送阵界面'
+        slot: 16
+        actions:
+          - '[close]'
+          - '[player] csz gui'
+
+  # ==================== 分册：玩法大全 ====================
+  guide-play:
+    title: '&f&l玩法大全'
+    bedrock-content: '&7娱乐玩法使用说明'
+    size: 27
+    back-menu: guide
+    filler:
+      material: WHITE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      pets:
+        material: BONE
+        display-name: '&f&l宠物系统'
+        lore:
+          - '&7召唤、骑乘、改名、购买宠物'
+          - '&8点击打开宠物菜单'
+        slot: 10
+        actions:
+          - '[close]'
+          - '[player] pet gui'
+
+      ride:
+        material: SADDLE
+        display-name: '&6&l骑玩家（RideOnHead）'
+        lore:
+          - '&7空手右键玩家骑到他头上'
+          - '&7潜行 + 右键下车'
+          - '&8点击查看说明'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[message] &7骑玩家：&f空手右键 &7想骑的目标玩家'
+          - '[message] &7下车：&f潜行 + 右键 &7（或按使用键）'
+          - '[message] &7适用：和朋友一起赶路、整活'
+
+      skin:
+        material: PLAYER_HEAD
+        display-name: '&d&l皮肤管理'
+        lore:
+          - '&7换皮肤、清除、随机'
+          - '&8点击打开皮肤菜单'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[player] skins'
+
+      voice:
+        material: NOTE_BLOCK
+        display-name: '&b&l语音聊天'
+        lore:
+          - '&7安装语音模组后按键说话'
+          - '&8点击查看语音说明'
+        slot: 13
+        actions:
+          - '[menu] voice'
+
+      pat:
+        material: WHEAT
+        display-name: '&a&l摸头'
+        lore:
+          - '&7摸摸其他玩家的头'
+          - '&e用法：/pat 玩家名'
+        slot: 14
+        actions:
+          - '[close]'
+          - '[message] &7摸头：&e/pat 玩家名'
+          - '[message] &7对方会看到摸头提示，好友互动用'
+
+      kit:
+        material: CHEST
+        display-name: '&e&l工具包'
+        lore:
+          - '&7新手包、每日奖励'
+          - '&8点击查看'
+        slot: 15
+        actions:
+          - '[menu] kit'
+
+      info:
+        material: BOOK
+        display-name: '&a&l服务器信息'
+        lore:
+          - '&7在线人数、公告、规则、互通说明'
+          - '&8点击查看'
+        slot: 16
+        actions:
+          - '[menu] info'
 
   ##########################################################
   # ██████  管 理 菜 单  ██████

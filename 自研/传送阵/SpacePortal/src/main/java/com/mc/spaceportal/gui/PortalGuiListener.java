@@ -164,15 +164,19 @@ public class PortalGuiListener implements Listener {
         }
     }
 
-    /** 传送到该阵法：与充能传送同一套费用规则 */
+    /** 传送到该阵法：与充能传送同一套费用规则（含随行实体附加费） */
     private void handleTeleport(Player player, Portal portal) {
         Location loc = portal.getCenter();
         if (loc.getWorld() == null) {
             player.sendMessage(msg("&c该阵法所在世界未加载"));
             return;
         }
+        // 收集随行实体（坐骑 + 属于本人的已驯服宠物）
+        org.bukkit.entity.Entity vehicle = player.getVehicle();
+        java.util.List<org.bukkit.entity.Entity> followers =
+                plugin.getTeleportService().collectFollowers(player);
         // 通用扣费：钻石不足时不关闭界面、不传送，玩家可回去继续看界面
-        if (!plugin.getTeleportService().chargeFee(player)) {
+        if (!plugin.getTeleportService().chargeFee(player, followers)) {
             return;
         }
         loc.add(0.5, 1.0, 0.5);
@@ -180,6 +184,8 @@ public class PortalGuiListener implements Listener {
         loc.setPitch(player.getLocation().getPitch());
         player.closeInventory();
         player.teleport(loc);
+        // 坐骑/宠物随行
+        plugin.getTeleportService().teleportFollowers(player, vehicle, loc, followers);
         // 设置冷却：落地就在阵法中心，避免移动时被立刻重新触发充能再扣一次费
         plugin.getTeleportService().applyCooldown(player);
         player.sendMessage(msg("&a✔ 已传送到阵法 &f" + portal.getName()));
