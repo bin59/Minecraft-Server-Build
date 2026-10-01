@@ -237,7 +237,9 @@ Global:
 /res set zhucheng dragongrief false         # 末影龙破坏
 
 # 禁领地内所有伤害（怪物打你、掉落、火焰等 → 安全区无敌效果）
-/res set zhucheng damage false
+
+/res set zhucheng damage true
+# `damage false` 是**禁领地内所有实体伤害**—— 不只是怪物打玩家，**玩家打怪物也一起禁了**（一刀切）。所以玩家攻击不掉血。
 
 # 如果还想连怪物生成也禁掉（彻底安全区）
 /res set zhucheng monsters false     # 禁怪物生成
