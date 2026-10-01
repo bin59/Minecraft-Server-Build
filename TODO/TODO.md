@@ -31,7 +31,7 @@
 - [x] **LittleSkin 皮肤站配置位置确认**：`YggdrasilOfficialProxy.conf` 第 7 行 `api="https://littleskin.cn/api/yggdrasil"`；代理端口 32217；authlib-injector 1.2.7 启动正常，链路已确认无误
 - [x] **JPZS9527 皮肤档案缺失（已诊断）**：LittleSkin 无该 UUID 档案 → authlib-injector 报 `Couldn't look up profile properties`；判定无害、不影响登录
 - [x] **RCON 密码加固**：已把 `server.properties` 里 `rcon.password` 由弱口令 `test_55551` 换为强随机密码（下次启动生效，密码仅存于 server.properties，勿写入文档）
-- [ ] **网页上传皮肤 → 应用游戏**：云服务器网页端上传皮肤，经 RCON(25595) 发 `/skin set <玩家名> <皮肤URL>`（SkinsRestorer 已装）；需先确认 config.yml 中 URL 皮肤功能启用
+- [x] **网页上传皮肤 → 应用游戏**：已改由云服务器自行实现连接方案（`skin_upload_rcon_backend.py` 脚本方案作废并已删除）；SkinsRestorer `/skin` 命令与 RCON 均已可用
 - [ ] **Geyser 基岩断连**：`PacketErrorEvent` NoClassDefFoundError 为 2.11.3-SNAPSHOT 开发版自身 bug，建议换官方稳定版 release
 - [ ] **nightcore 皮肤 URL 校验**：Leaf 1.21.11 只允许 `textures.minecraft.net`，第三方皮肤站触发报错；无害刷屏，随插件升级解决
 
