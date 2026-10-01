@@ -209,9 +209,9 @@ Global:
 # 允许玩家传送到主城领地内
 /res set zhucheng tp true
 
-# 保护建筑：禁止破坏和放置
-/res set zhucheng build false
-/res set zhucheng destroy false
+# 保护建筑：禁止破坏和放置 改为 允许
+/res set zhucheng build true
+/res set zhucheng destroy true
 
 # 允许玩家正常活动：开关门/按钮/箱子、自由移动
 /res set zhucheng use true
@@ -236,8 +236,7 @@ Global:
 /res set zhucheng witherdestruction false   # 凋灵破坏
 /res set zhucheng dragongrief false         # 末影龙破坏
 
-# 禁领地内所有伤害（怪物打你、掉落、火焰等 → 安全区无敌效果）
-
+# 禁领地内所有伤害（怪物打你、掉落、火焰等 → 安全区无敌效果）  改为允许
 /res set zhucheng damage true
 # `damage false` 是**禁领地内所有实体伤害**—— 不只是怪物打玩家，**玩家打怪物也一起禁了**（一刀切）。所以玩家攻击不掉血。
 
