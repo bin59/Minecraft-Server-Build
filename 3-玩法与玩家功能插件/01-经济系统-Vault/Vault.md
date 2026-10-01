@@ -163,17 +163,17 @@ CDM 可选接入 Vault，每次展示死亡消息向玩家扣费；指定 LuckPe
 
 ```yaml
 # 每次展示死亡消息收取的费用（需 Vault + 经济插件，0 为免费）
-cost-per-death-message: 5
+cost-per-death-message: 0  # ❌ 已禁用（2026-09-30）：死亡播报不扣费
 # 免收费用的权限组（LuckPerms 组名）
 exempt-groups-from-cost:
   - "admin"
 ```
 
-前置：必须同时装 **Vault + 经济插件（EssentialsX）**，且 `cost-per-death-message > 0`。效果：普通玩家每次死亡播报扣 5 金币，admin 免单。
+前置：必须同时装 **Vault + 经济插件（EssentialsX）**，❌ 已禁用（2026-09-30）：本服 `cost-per-death-message: 0`，死亡播报不扣 5 金币，admin 免单配置随之停用。
 
 ### 4.4 快捷菜单 QuickMenu（经济中心）
 
-QuickMenu 的 `economy` 菜单直接对接 **EssentialsX + Vault**，提供：余额查询、财富榜、转账、卖物品、估价。玩家在菜单里看到的「经济中心」就是走 Vault 经济 API。无需额外配置，只要 Vault + EssentialsX 在线即可。
+QuickMenu 的 `economy` 菜单直接对接 **EssentialsX + Vault**，提供：余额查询、财富榜、转账。玩家在菜单里看到的「经济中心」就是走 Vault 经济 API。无需额外配置，只要 Vault + EssentialsX 在线即可。
 
 ### 4.5 余额展示联动（PlaceholderAPI）
 
@@ -235,7 +235,7 @@ Vault 的余额可通过 **PlaceholderAPI** 的 Vault 扩展暴露为占位符�
 | **设置领地价格** | `/res price 领地名 1000` | 提示"领地价格已设置为 1000" |
 | **购买领地** | `/res buy 领地名` | 扣除 1000 金币，领地归属变更 |
 | **租赁领地** | `/res rent 领地名` | 扣除租金，获得租期 |
-| **死亡收费** | 触发死亡消息 | 普通玩家扣 5 金币（admin 免单） |
+| **死亡收费** | 触发死亡消息 | ❌ 已禁用（2026-09-30）：死亡播报不扣费 |
 | **菜单经济** | QuickMenu `economy` 菜单 | 显示余额 / 财富榜 / 转账 |
 
 ---
@@ -252,7 +252,7 @@ Vault 的余额可通过 **PlaceholderAPI** 的 Vault 扩展暴露为占位符�
 
 3.  **自定义死亡信息不扣钱**
     - **原因**：Vault / 经济插件未装，或费用为 0，或玩家在免单组。
-    - **解决**：确保 Vault + EssentialsX 都在，且 `cost-per-death-message > 0`；`exempt-groups-from-cost` 列出的组不扣费。
+    - **解决**：确保 Vault + EssentialsX 都在，且 `cost-per-death-message > 0`；`exempt-groups-from-cost` 列出的组不扣费。（本服 2026-09-30 已关闭死亡消息扣费，cost-per-death-message=0.0，此条仅适用于需要启用扣费的场景）
 
 4.  **跨服余额不一致**
     - **原因**：EssentialsX 经济是单服数据库。

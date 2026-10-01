@@ -272,14 +272,14 @@ actions:
 | `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                                |
 | `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                 |
 | `residence` | 我的领地   | **Residence**             | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                                                           |
-| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**、卖物品（/sell）、估价背包物品（/worth）。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                                          |
+| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                                          |
 | `kit`       | 工具包     | EssentialsX               | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次） |
 | `skin`      | 皮肤管理   | **SkinsRestorer**         | 皮肤库浏览（/skins 选择菜单，含皮肤/历史/收藏三入口）、历史皮肤（/skin history）、收藏皮肤（/skin favourites）、清除、刷新、随机、撤销                                                                                              |
 | `social`    | 社交设置   | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                           |
 | `info`      | 服务器信息 | EssentialsX               | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                                          |
 | `voice`     | 语音聊天   | **Simple Voice Chat**     | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                            |
 | `guide`     | 新人指南   | —（说明书）               | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                                  |
-| `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、卖物品、背包估价、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                              |
+| `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                              |
 | `guide-build`   | 领地建房   | **Residence**             | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                             |
 | `guide-move`    | 传送出行   | EssentialsX + SpacePortal | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                             |
 | `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SkinsRestorer + SVC + PatPat + EssentialsX | 宠物、骑玩家、皮肤、语音、摸头、工具包、服务器信息                                                                                                               |
@@ -304,7 +304,7 @@ actions:
 | 菜单 | 内容 | 呈现方式 |
 |---|---|---|
 | `guide` 首页 | 新人必做 3 件事（领新手包→圈领地→熟悉菜单）、4 个分册入口、常用指令速查、服务器规则 | 说明类按钮 = 关闭界面 + 逐行 `[message]` 图文提示（两端通用） |
-| `guide-economy` 怎么赚钱 | 每日任务 / 每日收购 / 卖物品 / 估价 / 玩家商店 / 拍卖行 / 转账 / 余额财富榜 / 周税 | 能直接执行的（`/quests` `/ds` `/sell hand` `/balance`）点击即执行；需参数的（`/pay`）给用法提示 |
+| `guide-economy` 怎么赚钱 | 每日任务 / 每日收购 / 玩家商店 / 拍卖行 / 转账 / 余额财富榜 / 周税 | 能直接执行的（`/quests` `/ds` `/balance`）点击即执行；需参数的（`/pay`）给用法提示 |
 | `guide-build` 领地建房 | 建领地步骤、传送点、邀请玩家、flag 开关、子领地、卡住脱身 | 建领地给出完整 3 步圈地流程；其余给命令示例 |
 | `guide-move` 传送出行 | 回主城、传送点、tpa、传送阵 | 回主城 / 传送阵直接执行，其余给命令示例 |
 | `guide-play` 玩法大全 | 宠物、骑玩家、皮肤、语音、摸头、工具包、服务器信息 | 宠物 / 皮肤 / 工具包直接执行，骑玩家 / 摸头给说明 |
@@ -670,8 +670,7 @@ lp group default permission set essentials.near true
 lp group default permission set essentials.balance true
 lp group default permission set essentials.balancetop true
 lp group default permission set essentials.pay true
-lp group default permission set essentials.sell true
-lp group default permission set essentials.worth true
+# /sell /sellall /worth 已命令级禁用（Essentials disabled-commands）且不授予权限，卖物走 /ah /shop /ds
 
 # ---- 经济系统插件 ----
 # 拍卖行（AuctionHouse auction.* 默认 true，无需授予）
@@ -928,6 +927,65 @@ lp group owner permission set openinv.override true
 /lp tree coreprotect
 ```
 
+### 8.6 安全检测记录（2026-10-01）
+
+**检测方法**：源码逻辑审阅 + 运行服 config 全量扫描（2863 行 / 213 按钮）+ LuckPerms H2 数据库直查（三组权限实测）。
+
+#### ✅ 确认安全
+
+| 检测项 | 结果 |
+| --- | --- |
+| `[console]` 动作（玩家点击→控制台执行） | 运行服 config 中 **0 个** |
+| 管理菜单门控 | 入口 `quickmenu.admin` + 各按钮具体管理权限 |
+| 渲染过滤 + 点击二次校验 | Java 箱子 / 基岩表单均过滤无权限按钮，点击时 `hasItemPermission` 再验 |
+| default 组管理权限 | **无** quickmenu.admin / luckperms.* / essentials.ban/kick/give/eco/gamemode |
+| build/打开箱子按钮 | 全是教学 message（`/res set 领地名 build true` 仅为提示文字，不执行） |
+
+**结论**：快捷菜单**不可能**给玩家打开全局权限；`residence.flags.build/destroy` 是领地 flag 管理权限，仅领地内生效。
+
+#### 三组权限实测（H2 直查）
+
+| 组 | 权限 | 成员 |
+| --- | --- | --- |
+| **admin** | `*`（**通配全权限**）+ residence.admin.setowner + residence.group.admin + 前缀 | 1 人（UUID 8e682ed5） |
+| **default** | 65 条玩家权限（无任何管理权限） | 163 人（全部玩家） |
+| **guildmaster** | 仅 residence.create + residence.use | **0 人（残留空组）** |
+
+> ⚠️ 文档 8.3/8.4 写的 **owner 组实际不存在**（H2 里没有），服主目前靠 admin 组的 `*` 通配或 OP 身份。
+
+#### 发现并解决的问题
+
+**① default 组残留印钞口权限（essentials.sell / essentials.worth = TRUE）**
+已确认存在（ID=59/60），命令级 `disabled-commands` 已挡、权限层未清。**在运行服执行**：
+
+```bash
+lp group default permission unset essentials.sell
+lp group default permission unset essentials.worth
+```
+
+**② default 组有 essentials.setwarp = TRUE**
+玩家可创建公共传送点，与管理菜单「创建公共传送点」按钮（管理专用）设计不符。**在运行服执行**：
+
+```bash
+lp group default permission unset essentials.setwarp
+```
+
+**③ guildmaster 组残留**
+0 成员 + 仅 2 条弱权限，确认为废弃组（非"服主"组）。确认无玩家使用后**在运行服执行**：
+
+```bash
+lp deletegroup guildmaster
+```
+
+**④ 源码 config 落后运行服**
+✅ 已解决：运行服最新 config.yml（2863 行）已同步到 `plugin-src/src/main/resources/config.yml`，sell/worth 按钮残留 0。下次重新构建打包即生效。
+
+**附带清理**（无害但建议清）：default 组脏数据 `essentials.compass`（contexts 是 lp 命令打错残留）：
+
+```bash
+lp group default permission unset essentials.compass
+```
+
 ---
 
 ## 9. 与 BedrockPlayerSupport 的关系
@@ -943,5 +1001,5 @@ lp group owner permission set openinv.override true
 
 **推荐组合**：QuickMenu 负责「物品右键唤出的总菜单」，BPS 负责「事件驱动的自动表单」
 （收到传送请求、死亡重生时主动弹出，这类场景菜单插件无法覆盖）。本配置已把
-`teleport.warps`、`teleport.tpa`、`home.listhomes`、`social.msg` 四项配成两端分发，
+`teleport.warps`、`teleport.tpa`、`social.msg` 三项配成两端分发（`home.listhomes` 随家园功能一并禁用，2026-09-30），
 基岩玩家点击后直接进入 BPS 原生表单，Java 玩家走 EssentialsX 指令。

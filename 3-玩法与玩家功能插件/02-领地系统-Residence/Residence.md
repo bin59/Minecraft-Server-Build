@@ -16,29 +16,29 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 
 ### 领地创建与管理
 
-| 命令                      | 说明                |
-| ------------------------- | ------------------- |
-| `/res select <x> <y> <z>` | 选择领地顶点坐标    |
-| `/res select vert`        | 纵向扩展到天空/基岩 |
-| `/res create <名称>`      | 创建领地            |
-| `/res auto <名称> <半径>` | 自动创建领地        |
-| `/res remove <名称>`      | 移除领地            |
-| `/res expand <数量>`      | 扩展领地            |
-| `/res contract <数量>`    | 缩小领地            |
-| `/res subzone <父领地> <子领地>` | 创建子领地    |
-| `/res select size`        | 查看当前选区大小    |
-| `/res info`               | 查看当前领地信息    |
-| `/res list`               | 列出自己的领地      |
+| 命令                             | 说明                |
+| -------------------------------- | ------------------- |
+| `/res select <x> <y> <z>`        | 选择领地顶点坐标    |
+| `/res select vert`               | 纵向扩展到天空/基岩 |
+| `/res create <名称>`             | 创建领地            |
+| `/res auto <名称> <半径>`        | 自动创建领地        |
+| `/res remove <名称>`             | 移除领地            |
+| `/res expand <数量>`             | 扩展领地            |
+| `/res contract <数量>`           | 缩小领地            |
+| `/res subzone <父领地> <子领地>` | 创建子领地          |
+| `/res select size`               | 查看当前选区大小    |
+| `/res info`                      | 查看当前领地信息    |
+| `/res list`                      | 列出自己的领地      |
 
 ### 成员管理
 
-| 命令                              | 说明                     |
-| --------------------------------- | ------------------------ |
-| `/res padd <玩家>`                | 将玩家加入为领地成员     |
-| `/res padd <玩家> true`           | 加入并给予全部权限（build/destroy/use/container） |
-| `/res padd <领地> <玩家>`         | 指定领地添加成员         |
-| `/res pdel <玩家>`                | 移除领地成员             |
-| `/res plist`                      | 查看领地成员列表         |
+| 命令                      | 说明                                              |
+| ------------------------- | ------------------------------------------------- |
+| `/res padd <玩家>`        | 将玩家加入为领地成员                              |
+| `/res padd <玩家> true`   | 加入并给予全部权限（build/destroy/use/container） |
+| `/res padd <领地> <玩家>` | 指定领地添加成员                                  |
+| `/res pdel <玩家>`        | 移除领地成员                                      |
+| `/res plist`              | 查看领地成员列表                                  |
 
 > **基岩玩家注意（Floodgate）**：基岩玩家名带 `.` 前缀（如 `.shangxin2179`），`/res padd` 必须手打全名（含点），否则报"找不到玩家"。
 
@@ -62,21 +62,27 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 | `pvp`        | PVP 权限              |
 | `tp`         | 传送权限              |
 | `mobkilling` | 击杀生物              |
-| `mobdamage`  | 生物伤害              |
+| `damage`     | 伤害                  |
+
+damage 掉落 / 火焰等伤害
+monster-spawn / animal-spawn 怪物 / 动物生成
+tnt / explosion / creeper 爆炸破坏
+fire / flow 火焰蔓延 / 液体流动
+piston 活塞推动
 
 ### 传送
 
-| 命令             | 说明       |
-| ---------------- | ---------- |
-| `/res tp <领地>` | 传送到领地 |
+| 命令             | 说明                         |
+| ---------------- | ---------------------------- |
+| `/res tp <领地>` | 传送到领地                   |
 | `/res tpset`     | 设置当前站立位置为领地传送点 |
-| `/res rt`        | 随机传送   |
-| `/res unstuck`   | 卡住时脱困回出生点/安全位置 |
+| `/res rt`        | 随机传送                     |
+| `/res unstuck`   | 卡住时脱困回出生点/安全位置  |
 
 ### 领地提示
 
-| 命令                              | 说明             |
-| --------------------------------- | ---------------- |
+| 命令                               | 说明             |
+| ---------------------------------- | ---------------- |
 | `/res message <领地> enter <消息>` | 设置进入领地提示 |
 | `/res message <领地> leave <消息>` | 设置离开领地提示 |
 
@@ -92,12 +98,12 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 
 以下命令需 `residence.admin` 权限（op 或 LuckPerms 给 `residence.admin.*`）。注意本服管理命令用单词 `/resadmin`（非 `/res admin` 两词）。
 
-| 命令                                  | 说明                                 |
-| ------------------------------------- | ------------------------------------ |
-| `/resadmin setowner <领地名> <玩家名>` | 将领地归属转移给指定玩家（改主人）   |
-| `/resadmin remove <领地名>`            | 管理员删除任意领地                   |
-| `/resadmin removeall <玩家名>`         | 删除某玩家的全部领地                 |
-| `/resadmin server <领地名>`            | 将领地设为服务器所有                 |
+| 命令                                   | 说明                                                            |
+| -------------------------------------- | --------------------------------------------------------------- |
+| `/resadmin setowner <领地名> <玩家名>` | 将领地归属转移给指定玩家（改主人）                              |
+| `/resadmin remove <领地名>`            | 管理员删除任意领地                                              |
+| `/resadmin removeall <玩家名>`         | 删除某玩家的全部领地                                            |
+| `/resadmin server <领地名>`            | 将领地设为服务器所有                                            |
 | `/resadmin setall <flag> <true/false>` | 批量设置所有领地的某权限（如 `setall build false`，操作前备份） |
 
 > **基岩玩家注意（Floodgate）**：基岩玩家名带 `.` 前缀（如 `.NoviceMite1987`）。`/resadmin setowner` 的 `<玩家名>` **Tab 补全列不出基岩/离线玩家**，必须**手打全名（含点）**：`/resadmin setowner 我的家 .NoviceMite1987`。若报"找不到玩家"（基岩玩家离线时常有），改用该玩家 UUID：`/resadmin setowner 我的家 <UUID>`（UUID 用 `/res info <领地名>` 的 Owner 字段查，或问玩家 / 查 Floodgate 数据）。
@@ -106,52 +112,52 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 
 ```yaml
 Global:
-  Language: Chinese                       # 中文语言
-  SelectionToolId: WOODEN_HOE             # 选择工具: 木锄
-  InfoToolId: STRING                      # 信息查看工具: 线
-  DefaultWorld: world                     # 默认世界
-  EnableEconomy: false                    # 经济系统已禁用
-  EnablePermissions: true                 # 权限系统启用
-  ResidenceChatEnable: true               # 领地聊天启用
-  ResidenceChatColor: DARK_PURPLE         # 领地聊天颜色: 深紫
-  TeleportDelay: 3                        # 传送延迟: 3 秒
-  SaveInterval: 10                        # 保存间隔: 10 分钟
-  TimeZone: Asia/Shanghai                 # 时区: 上海
+  Language: Chinese # 中文语言
+  SelectionToolId: WOODEN_HOE # 选择工具: 木锄
+  InfoToolId: STRING # 信息查看工具: 线
+  DefaultWorld: world # 默认世界
+  EnableEconomy: false # 经济系统已禁用
+  EnablePermissions: true # 权限系统启用
+  ResidenceChatEnable: true # 领地聊天启用
+  ResidenceChatColor: DARK_PURPLE # 领地聊天颜色: 深紫
+  TeleportDelay: 3 # 传送延迟: 3 秒
+  SaveInterval: 10 # 保存间隔: 10 分钟
+  TimeZone: Asia/Shanghai # 时区: 上海
 
   AntiGreef:
     RangeGaps:
-      - all-8                             # 领地间距: 8 格
+      - all-8 # 领地间距: 8 格
     BlockFall:
-      Use: true                           # 下落方块防护启用
+      Use: true # 下落方块防护启用
 
   Visualizer:
-    Use: true                             # 启用可视化边界
-    Range: 16                             # 可视化范围
+    Use: true # 启用可视化边界
+    Range: 16 # 可视化范围
     Selected:
-      Frame: dust:125,150,150            # 选中框颜色
-      Sides: dust:150,255,200            # 选中面颜色
+      Frame: dust:125,150,150 # 选中框颜色
+      Sides: dust:150,255,200 # 选中面颜色
     Overlap:
-      Frame: dust:255,0,255              # 冲突框颜色
-      Sides: dust:255,100,100            # 冲突面颜色
+      Frame: dust:255,0,255 # 冲突框颜色
+      Sides: dust:255,100,100 # 冲突面颜色
 
   GUI:
-    Enabled: true                         # 启用 GUI 旗帜编辑器
-    setTrue: GREEN_WOOL                   # 开启状态: 绿色羊毛
-    setFalse: RED_WOOL                    # 关闭状态: 红色羊毛
-    setRemove: LIGHT_GRAY_WOOL            # 移除状态: 灰色羊毛
+    Enabled: true # 启用 GUI 旗帜编辑器
+    setTrue: GREEN_WOOL # 开启状态: 绿色羊毛
+    setFalse: RED_WOOL # 关闭状态: 红色羊毛
+    setRemove: LIGHT_GRAY_WOOL # 移除状态: 灰色羊毛
 
   DynMap:
-    Use: true                             # DynMap 地图支持启用
-    ShowFlags: true                       # 显示旗帜信息
+    Use: true # DynMap 地图支持启用
+    ShowFlags: true # 显示旗帜信息
   Pl3xMap:
-    Use: true                             # Pl3xMap 地图支持启用
-    ShowFlags: true                       # 显示旗帜信息
+    Use: true # Pl3xMap 地图支持启用
+    ShowFlags: true # 显示旗帜信息
   # 在线地图：本服采用 BlueMap（Residence 原生支持 DynMap/Pl3xMap 配置，未采用）
 
   # 以下功能均已禁用:
-  UseLeaseSystem: false                   # 租赁系统
-  EnableRentSystem: false                 # 出租系统
-  Sell.Subzone: false                     # 子区域出售
+  UseLeaseSystem: false # 租赁系统
+  EnableRentSystem: false # 出租系统
+  Sell.Subzone: false # 子区域出售
 ```
 
 > **经济开关实际值**：本服领地当前 `EnableEconomy: false`、`Type: Vault`、`UseLeaseSystem: false`、`EnableRentSystem: false`——圈地不扣钱、不可买卖/出租。
@@ -194,6 +200,83 @@ Global:
 
 - **GUI 图标**：定义了在游戏内领地管理界面（GUI）中，每个权限标志对应的显示物品（如 `build` 对应砖块 `BRICKS`，`tnt` 对应 TNT 方块）。
 - **物品列表**：定义了一个名为 `DefaultList` 的物品黑名单，包含 `LAVA`（岩浆）、`WATER`（水）等，可用于限制特定物品的使用或放置。
+
+## 推荐区域配置
+
+### 主城 = 安全区 + 活动区
+
+```bash
+# 允许玩家传送到主城领地内
+/res set zhucheng tp true
+
+# 保护建筑：禁止破坏和放置
+/res set zhucheng build false
+/res set zhucheng destroy false
+
+# 允许玩家正常活动：开关门/按钮/箱子、自由移动
+/res set zhucheng use true
+/res set zhucheng container true
+/res set zhucheng move true
+
+# 安全区：禁 PVP、禁伤害、禁怪物、禁爆炸破坏
+/res set zhucheng pvp false
+/res set zhucheng damage false
+/res set zhucheng monster-zhucheng false
+/res set zhucheng animal-zhucheng false
+/res set zhucheng fire false
+/res set zhucheng flow false
+
+# 禁所有爆炸破坏主城建筑
+/res set zhucheng explode false
+
+# 再单独关掉各类爆炸源（更保险）
+/res set zhucheng creeper false     # 苦力怕
+/res set zhucheng tnt false         # TNT
+/res set zhucheng fireball false    # 恶魂火球/火焰弹
+/res set zhucheng witherdestruction false   # 凋灵破坏
+/res set zhucheng dragongrief false         # 末影龙破坏
+
+# 禁领地内所有伤害（怪物打你、掉落、火焰等 → 安全区无敌效果）
+/res set zhucheng damage false
+
+# 如果还想连怪物生成也禁掉（彻底安全区）
+/res set zhucheng monsters false     # 禁怪物生成
+/res set zhucheng nmonsters false    # 禁自然怪物生成
+/res set zhucheng nomobs true        # 阻止怪物走进领地
+
+# 防踩坏耕地
+/res set zhucheng trample false
+```
+
+### 玩家摆摊 / 开店（自由市场）怎么开放
+
+主城禁了 build/destroy 后，摆摊玩家放不了展示框和商店。三种做法：
+
+**方案 A：划一块摆摊区开放建造（推荐）**
+在 zhucheng 里圈子区域，单独给它开 build：
+
+```bash
+# 先选好摆摊区，创建子区域
+/res subzone zhucheng market
+/res set spawn.market build true
+/res set spawn.market destroy true
+```
+
+方案 B：只给指定玩家开放
+
+```bash
+/res pset zhucheng <玩家名> build true
+/res pset zhucheng <玩家名> destroy true
+
+```
+
+方案 C：给 default 组全开放（主城变自由建造区，不保护建筑时用）
+
+```bash
+/res gset zhucheng default build true
+/res gset zhucheng default destroy true
+
+```
 
 ## 配置不生效时
 

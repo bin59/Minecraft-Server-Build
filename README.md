@@ -158,7 +158,7 @@
 | 皮肤           | SkinsRestorer                             | 外置登录下皮肤加载                                                |
 | 指令整合       | EssentialsX                               | 传送 / 经济 / 管理 150+ 命令                                      |
 | 全息           | DecentHolograms                           | 浮动文字 / 物品 / 头颅 / 动画                                     |
-| 死亡信息       | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题 / 收费）                         |
+| 死亡信息       | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题，扣费已关闭）                    |
 | 宠物           | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                   |
 | 摸头互动       | PatPat（Modrinth）                        | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用            |
 | 玩家骑乘       | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                    |
@@ -266,14 +266,13 @@
 
 ### 💰 经济
 
-| 命令                 | 作用                             |
-| -------------------- | -------------------------------- |
-| `/bal` 或 `/balance` | 查看余额                         |
-| `/pay 玩家名 金额`   | 转账给其他玩家                   |
-| `/baltop`            | 查看财富排行榜                   |
-| `/sell 物品名`       | 出售物品                         |
-| `/sell hand`         | 出售手上的物品                   |
-| `/worth`             | 给手上的物品估价（看看能卖多少） |
+| 命令                 | 作用           |
+| -------------------- | -------------- |
+| `/bal` 或 `/balance` | 查看余额       |
+| `/pay 玩家名 金额`   | 转账给其他玩家 |
+| `/baltop`            | 查看财富排行榜 |
+
+> `/sell`、`/sellall`、`/worth` 已命令级禁用（Essentials `disabled-commands`，2026-09-30），量产物品走玩家间交易（`/ah` 拍卖行、`/shop` 玩家商店）。
 
 ### 🎁 工具包（Kit）
 
@@ -333,13 +332,13 @@
 
 ### 📱 基岩版玩家专属（免打命令）
 
-| 命令       | 作用                   |
-| ---------- | ---------------------- |
-| `/tpgui`   | 传送申请表单，选人发送 |
-| `/warpgui` | 公共传送点表单         |
-| `/msggui`  | 私信表单               |
-| `/kitgui`  | 工具包表单             |
-| `/paygui`  | 转账表单               |
+| 命令       | 作用                                          |
+| ---------- | --------------------------------------------- |
+| `/tpgui`   | 传送申请表单，选人发送                        |
+| `/warpgui` | 公共传送点表单                                |
+| `/msggui`  | 私信表单                                      |
+| `/kitgui`  | 工具包表单                                    |
+| `/paygui`  | 转账表单 ❌ 已关闭（form.money.enable=false） |
 
 > 💡 基岩版收到传送请求时会**自动弹出**接受/拒绝表单；死亡重生后弹出"是否返回死亡点"的表单**已关闭**（BedrockPlayerSupport `form.back.enable=false`，2026-09-27）。
 
@@ -351,13 +350,13 @@
 | `admin`   | `[管理]` | 管理员           |
 | `owner`   | `[服主]` | 服主             |
 
-| 能力           | 玩家 |
-| -------------- | :--: |
-| 可设置的家数量 |  3   |
-| `/tpa` 传送    |  ✅  |
-| `/skin` 换皮肤 |  ✅  |
-| 语音聊天       |  ✅  |
-| `/csz` 传送阵  |  ✅  |
+| 能力             | 玩家 |
+| ---------------- | :--: |
+| 领地数量（玩家） |  3   |
+| `/tpa` 传送      |  ✅  |
+| `/skin` 换皮肤   |  ✅  |
+| 语音聊天         |  ✅  |
+| `/csz` 传送阵    |  ✅  |
 
 > 具体能力由服主在权限系统中配置，以游戏内实际为准。需要更高权限请联系管理。
 
@@ -452,14 +451,14 @@
 
 本仓库文档按**功能域**归入 6 个分类目录，详细配置与深度教程见各分册：
 
-| 分类目录                  | 说明                                                   | 代表分册                                                                                          |
-| ------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服                 |
-| **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动              | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                 |
+| 分类目录                  | 说明                                                   | 代表分册                                                                                                                                                                    |
+| ------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服                                                                                           |
+| **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动              | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                                                                                           |
 | **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件             | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · LeashablePlayers · ClickMobs |
-| **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                    | Plan · TAB · 炫彩多层称号 · DecentHolograms · PosTracker                                          |
-| **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移               | LuckPerms · CoreProtect · WorldEdit · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID      |
-| **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                  | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · AntiLitematica                           |
+| **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                    | Plan · TAB · 炫彩多层称号 · DecentHolograms · PosTracker                                                                                                                    |
+| **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移               | LuckPerms · CoreProtect · WorldEdit · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID                                                                                |
+| **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                  | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · AntiLitematica                                                                                                     |
 
 > 完整目录与逐篇链接见仓库根目录 `README.md`（南瓜生存服主索引）。
 
@@ -529,7 +528,7 @@ Minecraft-Server-Build/
 │   ├── 04-PlaceholderAPI占位符.md
 │   ├── 05-LuckPerms炫彩称号.md
 │   ├── 06-PosTracker玩家位置记录.md
-│   ├── 07-在线时间排行榜（PlayTime）.md
+│   ├── 07-在线时间排行榜（PlanTop）.md
 │   └── 08-DecentHolograms全息插件/  DecentHolograms全息插件.md
 │
 ├── 5-服务器管理/

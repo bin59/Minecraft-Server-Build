@@ -41,7 +41,7 @@ form:
     enable: true         # /tpgui
     cross-server: false  # 跨服（仅 HuskHomes）
   phome:
-    enable: true         # /phomegui（仅 HuskHomes）
+    enable: false        # /phomegui（家园功能已禁用，2026-09-30，运行服关闭）
   msg:
     enable: true         # /msggui
   kit:
@@ -82,11 +82,11 @@ auth:
 
 ```
 lp group default permission set bedrockplayersupport.tpgui true
-lp group default permission set bedrockplayersupport.homegui true
+# lp group default permission set bedrockplayersupport.homegui true   # ❌ 已禁用（/homegui 已关闭，2026-09-30；form.home.enable=false，勿授予）
 lp group default permission set bedrockplayersupport.msggui true
 lp group default permission set bedrockplayersupport.kitgui true
 lp group default permission set bedrockplayersupport.warpgui true
-lp group default permission set bedrockplayersupport.phomegui true
+# lp group default permission set bedrockplayersupport.phomegui true  # ❌ 已禁用（/phomegui 已关闭，2026-09-30；form.phome.enable=false，勿授予）
 lp group admin permission set bedrockplayersupport.* true
 ```
 

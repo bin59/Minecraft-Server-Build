@@ -1,0 +1,7 @@
+name: PlanTop
+version: 1.0.0
+main: com.plantop.PlanTopPlugin
+api-version: 1.21
+softdepend: [PlaceholderAPI]
+description: 从 Plan 数据库读取在线时间排行，提供 %ptop_<N>_name/time/displayname% 占位符
+author: hh

@@ -115,7 +115,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         daily = YamlConfiguration.loadConfiguration(dailyFile);
         data = YamlConfiguration.loadConfiguration(dataFile);
 
-        rollIfNeeded(true);
+        rollIfNeeded(false);
 
         new BukkitRunnable() {
             @Override
@@ -150,11 +150,15 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         }
     }
 
-    /** 日期变化时重新生成今日清单 */
+    /** 日期变化时重新生成今日清单；同一天重启时恢复已保存清单（不刷新物品与额度） */
     private void rollIfNeeded(boolean force) {
         String now = LocalDate.now().toString();
         String stored = daily.getString("date", "");
-        if (!force && now.equals(stored)) return;
+        boolean hasList = daily.isSet("items") && !daily.getStringList("items").isEmpty();
+        if (!force && now.equals(stored) && hasList) {
+            loadTodayFromFile();
+            return;
+        }
         List<Entry> rolled = roll();
         if (rolled == null) {
             getLogger().warning("物品池为空或不足，无法生成今日清单");
@@ -169,6 +173,21 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
                 .collect(Collectors.toList()));
         try { daily.save(dailyFile); } catch (IOException ex) { getLogger().severe("daily.yml 保存失败"); }
         if (broadcast) broadcastToday();
+    }
+
+    /** 从 daily.yml 恢复当天已生成的清单（重启不刷新物品与额度） */
+    private void loadTodayFromFile() {
+        today.clear();
+        todayDate = daily.getString("date", "");
+        for (String s : daily.getStringList("items")) {
+            String[] parts = s.split(":");
+            if (parts.length != 3) continue;
+            Material m = Material.matchMaterial(parts[0]);
+            if (m == null) continue;
+            try {
+                today.add(new Entry(m, Double.parseDouble(parts[1]), Integer.parseInt(parts[2])));
+            } catch (NumberFormatException ignored) { }
+        }
     }
 
     /** 随机生成今日清单（满足额度范围 + 总价 ≤ daily-budget） */
@@ -367,7 +386,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         }
         meta.setLore(lore);
         if (remaining > 0) {
-            meta.addEnchant(org.bukkit.enchantments.Enchantment.DURABILITY, 1, true);
+            meta.addEnchant(org.bukkit.enchantments.Enchantment.UNBREAKING, 1, true);
             meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
         }
         icon.setItemMeta(meta);

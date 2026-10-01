@@ -7,7 +7,7 @@
 ## 功能定位
 
 - **玩家商店渠道**：玩家开设个人商店或木牌商店，向其他玩家出售物品，与拍卖行（/ah）互为补充的交易渠道。
-- **防印钞核心**：通过关闭"卖物品给系统商店"和 `/sell` 命令，堵住量产物品刷钱的漏洞（农场刷不出钱，见《经济系统设计手册》§4D）。
+- **防印钞核心**：关闭"卖物品给系统商店"和 `/sell` 类命令，堵住量产物品刷钱的漏洞（农场刷不出钱，见《经济系统设计手册》§4D）。
 - **Sink 设计**：开店收费 + 玩家间成交税，两处抽水。
 
 ## 版本与来源
@@ -17,20 +17,52 @@
 
 ## 关键配置（当前值）
 
-| 键 | 值 | 说明 |
-|---|---|---|
-| `sell-to-shop` | `false` | 玩家无法卖物品给系统商店（防印钞） |
-| `seed-default-shop` | `false` | 不自动生成默认商店 |
-| `sell-commands` | `false` | 关闭 `/sell` 类命令 |
-| `creation-cost` | `100.0` | 开店费用 100 南瓜币（Sink） |
-| `transaction-tax-percent` | `5.0` | 玩家商店成交税 5% |
+| 键                        | 值      | 说明                                                                                               |
+| ------------------------- | ------- | -------------------------------------------------------------------------------------------------- |
+| `sell-to-shop`            | `false` | 玩家无法卖物品给系统商店（防印钞）                                                                 |
+| `seed-default-shop`       | `false` | 不自动生成默认商店                                                                                 |
+| `sell-commands`           | `false` | 关闭 EconomyShop 自带 `/sell` 类快捷卖命令（⚠️ 仅本插件；EssentialsX 的 `/sell` 需另行禁用，见下） |
+| `creation-cost`           | `100.0` | 开店费用 100 南瓜币（Sink）                                                                        |
+| `transaction-tax-percent` | `5.0`   | 玩家商店成交税 5%                                                                                  |
+
+## EssentialsX /sell 关闭方法（2026-10-01 更新）
+
+`EconomyShop` 的 `sell-commands` 只关它自己，**EssentialsX 的 `/sell`、`/sellall`、`/worth` 与 `[sell]` 木牌是独立的印钞口**（卖给系统、系统凭空付钱），需两层一起关：
+
+1. `plugins/Essentials/config.yml` → `disabled-commands:` 加 `sell`、`sellall`、`worth`（命令级禁用，已配置，`/ess reload` 生效）；
+2. LuckPerms 移除 default 组权限（控制台/游戏内执行，**完整 8 条，已对照 EssentialsX 2.22.1-dev+25 实际权限树**）：
+
+```
+lp group default permission unset essentials.sell
+lp group default permission unset essentials.sell.hand
+lp group default permission unset essentials.sell.bulk
+lp group default permission unset essentials.worth
+lp group default permission unset essentials.setworth
+lp group default permission unset essentials.signs.create.sell
+lp group default permission unset essentials.signs.use.sell
+lp group default permission unset essentials.signs.break.sell
+```
+
+> 注：`essentials.sell.others` 在现版本不存在（无需 unset）；`/sellall` 无对应权限节点（disabled-commands 兜底即可）。执行后 `/lp group default info` 确认。
+
+### `[sell]` 木牌 vs `[Shop]` 木牌（重要区分）
+
+| | EconomyShop `[Shop]` | Essentials `[sell]` |
+| --- | --- | --- |
+| 谁买 | 其他玩家 | 系统 |
+| 钱从哪来 | 买家余额（玩家间直接转账） | 系统凭空生成 |
+| 性质 | 玩家间交易（健康，保留） | 印钞口（禁止） |
+
+关闭 Essentials 的 `/sell`、`[sell]` 不影响 EconomyShop 玩家商店：`[Shop]` 牌照常运作，钱仍在玩家之间流动。
+
+> ⚠️ `worth.yml` 当前仍是 Essentials **默认全价表**（铁锭 22 / 钻石 200 / 金锭 105…），若命令级/权限级禁用失效，它就是兜底漏洞——必要时可清空或按《经济系统落地实施》只留半稀缺地板价。
 
 ## 命令
 
-| 命令 | 用途 |
-|---|---|
-| `/shop` | 打开/创建玩家商店（权限已授 default） |
-| `/chestshop` | 创建木牌商店（权限已授 default） |
+| 命令         | 用途                                  |
+| ------------ | ------------------------------------- |
+| `/shop`      | 打开/创建玩家商店（权限已授 default） |
+| `/chestshop` | 创建木牌商店（权限已授 default）      |
 
 ## 玩家开店步骤
 
@@ -57,12 +89,26 @@
 
 ## 权限（LuckPerms default 组，已授予）
 
-| 权限 | 说明 |
-|---|---|
-| `economyshop.use` | 使用商店功能 |
-| `economyshop.sell` | 出售物品 |
+| 权限                           | 说明         |
+| ------------------------------ | ------------ |
+| `economyshop.use`              | 使用商店功能 |
+| `economyshop.sell`             | 出售物品     |
 | `economyshop.chestshop.create` | 创建木牌商店 |
-| `economyshop.chestshop.use` | 使用木牌商店 |
+| `economyshop.chestshop.use`    | 使用木牌商店 |
+
+## 交易资金流向（玩家间直接转账）
+
+玩家商店走 **Vault 余额转账**，买卖双方直接结算，系统只抽水：
+
+| 环节      | 金额                | 去向                                 |
+| --------- | ------------------- | ------------------------------------ |
+| 买家付款  | 扣全价（如 100 币） | 买家余额 → Vault 转账                |
+| 卖家收款  | 到账 价格 × 95%     | **直接进卖家玩家余额**（玩家对玩家） |
+| 成交税 5% | 系统抽走 5%         | Sink 抽水，不进任何玩家口袋          |
+| 开店费    | 100 南瓜币          | 开店瞬间扣除，系统收走（一次性）     |
+
+- **买家付的钱给卖家玩家，不是给系统**；系统仅在每笔交易抽 5% 税、开店时收 100 开店费。
+- `sell-to-shop: false` 只关闭**玩家卖给系统商店**，不影响玩家间交易：系统不当买方后，钱始终在玩家圈子里流动（除税外不产生新钱），堵死量产物品印钞口。
 
 ## 与经济体系的关系
 

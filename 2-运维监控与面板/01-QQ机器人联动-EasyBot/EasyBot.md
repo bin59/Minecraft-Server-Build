@@ -1,6 +1,6 @@
 # 10. QQ 机器人联动 — EasyBot
 
-EasyBot 把 Minecraft 服务器与 QQ 群聊打通，通过 WebSocket 串联 **NapCat → EasyBot 主程序 → 插件**，实现群聊/游戏内聊天双向同步、群内执行命令、玩家绑定 QQ 号。本文给出插件端 config.yml、三层连接配置与跨机部署。
+EasyBot 把 Minecraft 服务器与 QQ 群聊打通，通过 WebSocket 串联 **NapCat → EasyBot 主程序 → 插件**，实现群聊/游戏内聊天双向同步、群内执行命令（玩家可绑定 QQ 号）。本文给出插件端 config.yml、三层连接配置与跨机部署。
 
 **文件**: `plugins/EasyBot-2.3.1.jar`
 
@@ -20,7 +20,7 @@ service:
   ignore_error: false # 连接失败时阻止玩家登录
 
 command:
-  allow_bind: false # 允许玩家使用绑定命令（本服已关闭）
+  allow_bind: true # 允许玩家使用绑定命令（2026-09-30 恢复启用）
 
 event:
   enable_success_event: false # 绑定成功事件已禁用
@@ -249,11 +249,10 @@ service:
 
 | 命令             | 说明              |
 | ---------------- | ----------------- |
-| `/bind <验证码>` | 绑定 QQ 账号      |
+| `/bind <验证码>` | 绑定 QQ 账号（allow_bind=true，启用中）|
 | `/ebot reload`   | 重载 EasyBot 配置 |
 
-## 关闭EasyBot QQ验证码绑定
+## QQ 验证码绑定（当前启用）
 
-- `EasyBot\dp\bind_config.json`: `bind_required_servers":["<Token>"]` 清空为 `[]`（不再强制此服务器绑定）
-- `plugins\EasyBot\config.yml`: `allow_bind` → `false`（插件端禁用绑定）
-- 重启 Minecraft 服务器 + EasyBot 主程序后生效
+- 当前 `plugins\EasyBot\config.yml` 的 `allow_bind: true`（启用中，2026-09-30 恢复）。
+- 如需关闭：`allow_bind` 改 `false` + `EasyBot\dp\bind_config.json` 的 `bind_required_servers` 清空为 `[]`（不再强制此服务器绑定）→ 重启 Minecraft 服务器 + EasyBot 主程序后生效。

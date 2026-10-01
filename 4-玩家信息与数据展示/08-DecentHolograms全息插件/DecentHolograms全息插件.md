@@ -96,13 +96,13 @@ displays-eye-level-positioning: false
 
 # 伤害飘字（每次成功命中出现的临时全息）
 damage-display:
-  enabled: false          # 是否开启
-  players: true           # 是否对玩家显示
-  mobs: true              # 是否对怪物显示
-  zero-damage: false      # 是否显示 0 或更低伤害
-  duration: 40            # 停留时长（刻）
-  appearance: '&c{damage}'                 # 普通伤害外观，{damage} 为占位符
-  critical-appearance: '&4&lCrit!&4 {damage}'  # 暴击外观
+  enabled: false # 是否开启
+  players: true # 是否对玩家显示
+  mobs: true # 是否对怪物显示
+  zero-damage: false # 是否显示 0 或更低伤害
+  duration: 40 # 停留时长（刻）
+  appearance: '&c{damage}' # 普通伤害外观，{damage} 为占位符
+  critical-appearance: '&4&lCrit!&4 {damage}' # 暴击外观
   height: 0
 
 # 治疗飘字（每次血量上升出现的临时全息）
@@ -142,34 +142,34 @@ location:
   y: 65.0
   z: 200.5
 enabled: true
-display-range: 48          # 本全息可视距离（覆盖全局默认）
+display-range: 48 # 本全息可视距离（覆盖全局默认）
 update-range: 48
 update-interval: 20
-facing: 0.0                # 头颅/实体朝向（0=南,90=西,180=北,270=东）
+facing: 0.0 # 头颅/实体朝向（0=南,90=西,180=北,270=东）
 down-origin: false
 pages:
-- lines:                   # 第 1 页的行
-  - content: '&6&l南瓜生存服'        # 文字行，颜色码务必用单引号包裹
-    height: 0.3
-  - content: '&a当前在线: %server_online%'   # PlaceholderAPI 变量
-    height: 0.3
-  - content: '&e点击下方传送到主城'
-    height: 0.3
-  - icon: DIAMOND          # 物品图标行（icon 值填材质名）
-    height: 0.6
-  - head: Notch            # 玩家头颅行（玩家名 / UUID / base64 皮肤）
-    height: 0.75
-  actions:                 # 整页点击交互：以点击类型为键，值为动作列表
-    RIGHT:
-    - TELEPORT:world:0:64:0
-    LEFT:
-    - MESSAGE:&a欢迎来到南瓜生存服！
-- lines:                   # 第 2 页
-  - content: '&7—— 第二页 ——'
-    height: 0.3
-  actions:
-    LEFT:
-    - PAGE:2
+  - lines: # 第 1 页的行
+      - content: '&6&l南瓜生存服' # 文字行，颜色码务必用单引号包裹
+        height: 0.3
+      - content: '&a当前在线: %server_online%' # PlaceholderAPI 变量
+        height: 0.3
+      - content: '&e点击下方传送到主城'
+        height: 0.3
+      - icon: DIAMOND # 物品图标行（icon 值填材质名）
+        height: 0.6
+      - head: Notch # 玩家头颅行（玩家名 / UUID / base64 皮肤）
+        height: 0.75
+    actions: # 整页点击交互：以点击类型为键，值为动作列表
+      RIGHT:
+        - TELEPORT:world:0:64:0
+      LEFT:
+        - MESSAGE:&a欢迎来到南瓜生存服！
+  - lines: # 第 2 页
+      - content: '&7—— 第二页 ——'
+        height: 0.3
+    actions:
+      LEFT:
+        - PAGE:2
 ```
 
 > 行类型在文件里由**唯一键**决定：`content`（文字）、`icon`（物品）、`head` / `smallhead`（头颅）、`entity`（实体）、`block`（方块）。颜色码含 `&`，必须加单引号，否则 YAML 会把 `&` 当成锚点而报错。
@@ -178,14 +178,14 @@ pages:
 
 在命令里直接写行内容时，用**前缀语法**区分类型（`<页>` 为页码，通常 `1`）：
 
-| 类型 | 命令写法 | 说明 |
-| --- | --- | --- |
-| 文字 | `/dh lines add <名> <页> &a你好` | 支持颜色代码、PAPI 占位符、动画标记 |
-| 物品 | `/dh lines add <名> <页> ICON:DIAMOND` | 显示该物品图标 |
-| 头颅 | `/dh lines add <名> <页> HEAD:Notch` | 显示玩家头颅（玩家名 / UUID / base64 皮肤串） |
-| 实体 | `/dh lines add <名> <页> entity:COW` | 悬浮显示实体模型 |
-| 方块 | `/dh lines add <名> <页> block:STONE` | 悬浮显示方块 |
-| 空白 | `/dh lines add <名> <页>`（留空） | 占位空行，用于间距 |
+| 类型 | 命令写法                               | 说明                                          |
+| ---- | -------------------------------------- | --------------------------------------------- |
+| 文字 | `/dh lines add <名> <页> &a你好`       | 支持颜色代码、PAPI 占位符、动画标记           |
+| 物品 | `/dh lines add <名> <页> ICON:DIAMOND` | 显示该物品图标                                |
+| 头颅 | `/dh lines add <名> <页> HEAD:Notch`   | 显示玩家头颅（玩家名 / UUID / base64 皮肤串） |
+| 实体 | `/dh lines add <名> <页> entity:COW`   | 悬浮显示实体模型                              |
+| 方块 | `/dh lines add <名> <页> block:STONE`  | 悬浮显示方块                                  |
+| 空白 | `/dh lines add <名> <页>`（留空）      | 占位空行，用于间距                            |
 
 ## 颜色、渐变与彩虹
 
@@ -198,13 +198,13 @@ pages:
 在 `plugins/DecentHolograms/animations/` 新建 `<动画名>.yml`，文件名即动画 ID。示例 `wave.yml`：
 
 ```yaml
-wave:                       # 动画 ID，引用时写 #ANIMATION: wave
-  frames:                   # 每一帧的文字
-  - '&eW&6a&av&be&6!'
-  - '&6W&av&be&6!'
-  - '&aW&6v&be&6a!'
-  - '&av&6e&6b&aa!'
-  speed: 10                # 每帧间隔（刻）
+wave: # 动画 ID，引用时写 #ANIMATION: wave
+  frames: # 每一帧的文字
+    - '&eW&6a&av&be&6!'
+    - '&6W&av&be&6!'
+    - '&aW&6v&be&6a!'
+    - '&av&6e&6b&aa!'
+  speed: 10 # 每帧间隔（刻）
 ```
 
 在全息行里引用：把该行 `content` 设为 `#ANIMATION: wave`（或 `&e#ANIMATION: wave`）。插件内置示例动画常含 `rainbow`（彩虹）、`scroll`（滚动）、`wave`（波浪）。修改动画文件后执行 `/dh reload` 生效。
@@ -217,18 +217,18 @@ DecentHolograms 的点击交互是**按页（page）绑定**的：整页的任�
 
 **动作类型（`data` 一律冒号分隔）**：
 
-| 动作类型 | 命令中写法 | 效果 |
-| --- | --- | --- |
-| `MESSAGE:<消息>` | `MESSAGE:欢迎来到南瓜服！` | 向点击者发送一条消息（支持颜色码 / PAPI） |
-| `COMMAND:<命令>` | `COMMAND:/spawn` | 以**玩家身份**执行命令（必须以 `/` 开头，否则当成聊天消息发出） |
-| `CONSOLE:<命令>` | `CONSOLE:say 有人点了全息` | 以**控制台身份**执行（**不能**执行 Bungee/Velocity 代理命令） |
-| `CONNECT:<服务器>` | `CONNECT:lobby` | 把玩家转到代理下的子服务器（仅群服/Bungee/Velocity 有效） |
-| `TELEPORT:[世界:]x:y:z[:yaw:pitch]` | `TELEPORT:world:0:64:0` | 传送到坐标；省略世界则用玩家当前世界；可加 yaw:pitch |
-| `SOUND:<音效>[:音量:音高]` | `SOUND:ENTITY_CREEPER_PRIMED` | 为点击者播放音效（音量/音高默认 1.0） |
-| `PERMISSION:<权限>` | `PERMISSION:essentials.fly` | 校验权限；无权限则**后续动作全部不执行**（可做“权限门槛”） |
-| `NEXT_PAGE[:全息]` | `NEXT_PAGE` | 翻到下一页（仅对点击者本人生效） |
-| `PREV_PAGE[:全息]` | `PREV_PAGE` | 翻到上一页 |
-| `PAGE:[:全息:]页` | `PAGE:2` | 翻到指定页 |
+| 动作类型                            | 命令中写法                    | 效果                                                            |
+| ----------------------------------- | ----------------------------- | --------------------------------------------------------------- |
+| `MESSAGE:<消息>`                    | `MESSAGE:欢迎来到南瓜服！`    | 向点击者发送一条消息（支持颜色码 / PAPI）                       |
+| `COMMAND:<命令>`                    | `COMMAND:/spawn`              | 以**玩家身份**执行命令（必须以 `/` 开头，否则当成聊天消息发出） |
+| `CONSOLE:<命令>`                    | `CONSOLE:say 有人点了全息`    | 以**控制台身份**执行（**不能**执行 Bungee/Velocity 代理命令）   |
+| `CONNECT:<服务器>`                  | `CONNECT:lobby`               | 把玩家转到代理下的子服务器（仅群服/Bungee/Velocity 有效）       |
+| `TELEPORT:[世界:]x:y:z[:yaw:pitch]` | `TELEPORT:world:0:64:0`       | 传送到坐标；省略世界则用玩家当前世界；可加 yaw:pitch            |
+| `SOUND:<音效>[:音量:音高]`          | `SOUND:ENTITY_CREEPER_PRIMED` | 为点击者播放音效（音量/音高默认 1.0）                           |
+| `PERMISSION:<权限>`                 | `PERMISSION:essentials.fly`   | 校验权限；无权限则**后续动作全部不执行**（可做“权限门槛”）      |
+| `NEXT_PAGE[:全息]`                  | `NEXT_PAGE`                   | 翻到下一页（仅对点击者本人生效）                                |
+| `PREV_PAGE[:全息]`                  | `PREV_PAGE`                   | 翻到上一页                                                      |
+| `PAGE:[:全息:]页`                   | `PAGE:2`                      | 翻到指定页                                                      |
 
 添加动作的命令格式：
 
@@ -265,37 +265,38 @@ DecentHolograms 的点击交互是**按页（page）绑定**的：整页的任�
 ## 常用命令
 
 主命令 `/dh`（别名 `/decentholograms`）。三大分支及别名：
+
 - `/dh hologram ...` — 别名 `holo` / `h`
 - `/dh lines ...` — 别名 `line` / `l`
 - `/dh pages ...` — 别名 `p`
 
-| 命令 | 作用 |
-| --- | --- |
-| `/dh hologram create <名> [-l:世界:x:y:z] [内容]` | 在当前位置（或 `-l` 指定坐标）新建全息（别名 `c`） |
-| `/dh hologram delete <名>` | 永久删除全息（别名 `del` / `remove`） |
-| `/dh hologram enable <名>` / `disable <名>` | 启用 / 停用（停用后玩家看不见） |
-| `/dh hologram rename <旧> <新>` | 重命名 |
-| `/dh hologram movehere <名>` | 把全息移到自己脚下 |
-| `/dh hologram move <名> -l:世界:x:y:z` | 把全息移到指定坐标 |
-| `/dh hologram setdisplayrange <名> <距离>` | 设置可视距离 |
-| `/dh hologram setupdaterange <名> <距离>` | 设置刷新距离 |
-| `/dh hologram setupdateinterval <名> <刻>` | 设置占位符刷新间隔 |
-| `/dh hologram setpermission <名> [权限]` | 设置“仅该权限可见”（留空撤销），写入全息文件 |
-| `/dh hologram info <名>` | 查看全息信息 |
-| `/dh lines add <名> <页> [内容]` | 在指定页追加一行（别名 `append`） |
-| `/dh lines set <名> <页> <行> [内容]` | 设置某行内容 |
-| `/dh lines remove <名> <页> <行>` | 删除某行 |
-| `/dh lines height <名> <页> <高度>` | 设置行高 |
-| `/dh lines insert <名> <页> <行> [内容]` | 在某行前插入 |
-| `/dh lines swap <名> <页> <行1> <行2>` | 交换两行 |
-| `/dh p add <名>` | 新增一页 |
-| `/dh p addaction <名> <页> <点击类型> <动作>` | 给某页添加点击动作 |
-| `/dh p removeaction <名> <页> <序号>` | 删除某页的某个动作 |
-| `/dh list` | 列出所有全息 |
-| `/dh reload` | 重新加载配置与全部全息（**安全**，替代 `/reload`） |
-| `/dh version` | 查看版本 |
-| `/dh convert <插件> <输入> [输出]` | 从 Holographic Displays 迁移（读取其 database.yml） |
-| `/dh displays ...` | 1.19.4+ 的“显示实体（Display Entity）”独立管理（高级） |
+| 命令                                              | 作用                                                   |
+| ------------------------------------------------- | ------------------------------------------------------ |
+| `/dh hologram create <名> [-l:世界:x:y:z] [内容]` | 在当前位置（或 `-l` 指定坐标）新建全息（别名 `c`）     |
+| `/dh hologram delete <名>`                        | 永久删除全息（别名 `del` / `remove`）                  |
+| `/dh hologram enable <名>` / `disable <名>`       | 启用 / 停用（停用后玩家看不见）                        |
+| `/dh hologram rename <旧> <新>`                   | 重命名                                                 |
+| `/dh hologram movehere <名>`                      | 把全息移到自己脚下                                     |
+| `/dh hologram move <名> -l:世界:x:y:z`            | 把全息移到指定坐标                                     |
+| `/dh hologram setdisplayrange <名> <距离>`        | 设置可视距离                                           |
+| `/dh hologram setupdaterange <名> <距离>`         | 设置刷新距离                                           |
+| `/dh hologram setupdateinterval <名> <刻>`        | 设置占位符刷新间隔                                     |
+| `/dh hologram setpermission <名> [权限]`          | 设置“仅该权限可见”（留空撤销），写入全息文件           |
+| `/dh hologram info <名>`                          | 查看全息信息                                           |
+| `/dh lines add <名> <页> [内容]`                  | 在指定页追加一行（别名 `append`）                      |
+| `/dh lines set <名> <页> <行> [内容]`             | 设置某行内容                                           |
+| `/dh lines remove <名> <页> <行>`                 | 删除某行                                               |
+| `/dh lines height <名> <页> <高度>`               | 设置行高                                               |
+| `/dh lines insert <名> <页> <行> [内容]`          | 在某行前插入                                           |
+| `/dh lines swap <名> <页> <行1> <行2>`            | 交换两行                                               |
+| `/dh p add <名>`                                  | 新增一页                                               |
+| `/dh p addaction <名> <页> <点击类型> <动作>`     | 给某页添加点击动作                                     |
+| `/dh p removeaction <名> <页> <序号>`             | 删除某页的某个动作                                     |
+| `/dh list`                                        | 列出所有全息                                           |
+| `/dh reload`                                      | 重新加载配置与全部全息（**安全**，替代 `/reload`）     |
+| `/dh version`                                     | 查看版本                                               |
+| `/dh convert <插件> <输入> [输出]`                | 从 Holographic Displays 迁移（读取其 database.yml）    |
+| `/dh displays ...`                                | 1.19.4+ 的“显示实体（Display Entity）”独立管理（高级） |
 
 > 基岩版玩家（通过 Geyser 接入）也能正常看到并点击全息；点击 `COMMAND` 行为会以该玩家身份执行，权限由 LuckPerms 正常判定。
 
@@ -305,12 +306,12 @@ DecentHolograms 的权限前缀是 **`dh.`**（不是 `decentholograms.`）：
 
 1. **命令权限**（谁能使用 `/dh`）：
 
-   | 权限节点 | 说明 |
-   | --- | --- |
-   | `dh.default` | 允许使用基础非管理员命令（如 `/dh version`） |
-   | `dh.command` | 允许使用全部 `/dh` 命令与子命令 |
-   | `dh.admin` | 管理员，等同全部命令 |
-   | `dh.command.<命令>` | 仅允许某个主命令（如 `dh.command.reload` 可用 `/dh reload`） |
+   | 权限节点                     | 说明                                                                           |
+   | ---------------------------- | ------------------------------------------------------------------------------ |
+   | `dh.default`                 | 允许使用基础非管理员命令（如 `/dh version`）                                   |
+   | `dh.command`                 | 允许使用全部 `/dh` 命令与子命令                                                |
+   | `dh.admin`                   | 管理员，等同全部命令                                                           |
+   | `dh.command.<命令>`          | 仅允许某个主命令（如 `dh.command.reload` 可用 `/dh reload`）                   |
    | `dh.command.<命令>.<子命令>` | 仅允许某个子命令（如 `dh.command.hologram.create` 可用 `/dh hologram create`） |
 
 2. **查看权限**（谁能看见某个全息）：由 `/dh hologram setpermission <名> <节点>` 设置，写入该全息文件。例如设为 `dh.admin-only`，则只有被 LuckPerms 授予 `dh.admin-only` 的玩家才看得见该全息；留空则所有人可见。
@@ -328,7 +329,7 @@ DecentHolograms 的权限前缀是 **`dh.`**（不是 `decentholograms.`）：
 
    ```
    /dh hologram create welcome -l:world:0:64:0
-   /dh lines add welcome 1 &6&l南瓜生存服
+   /dh lines add welcome 1 欢迎来到&6&l🎃南瓜生存服
    /dh lines add welcome 1 &a当前在线: %server_online% 人
    /dh lines add welcome 1 &e点击下方传送到主城
    /dh lines add welcome 1 ICON:DIAMOND
@@ -352,20 +353,11 @@ DecentHolograms 的权限前缀是 **`dh.`**（不是 `decentholograms.`）：
 
 ## 常见问题（FAQ）
 
-**Q：能替代 Holographic Displays 吗？**
-A：可以。DH 提供 `/dh convert <插件> <输入> [输出]` 直接读取 Holographic Displays 的 `database.yml` 自动生成等价全息文件，名称保留；静态文字、物品行、CommandHolograms 的占位符都能迁移，旧 HolographicExtension 动画需手动改写为 DH 动画语法。迁移后删掉 HD 与 ProtocolLib 的 jar 并重启即可。
-
 **Q：基岩版（手机 / Win10）玩家能看到 / 点击吗？**
 A：能。Geyser 会把全息作为显示实体同步给基岩客户端，点击 `COMMAND` / `TELEPORT` 等行为照常触发，权限由 LuckPerms 判定。
 
 **Q：全息数据存在哪？会丢吗？**
 A：每个全息是 `holograms/<name>.yml` 文件，备份该目录即备份全部全息；不依赖数据库，不会因 MySQL 故障丢失。
 
-**Q：Folia 能用吗？**
-A：能。DH 支持 Folia（区域化多线程服务端），但注意命令需在正确区域执行；如遇异常优先用最新稳定版。
-
 **Q：想做“仅管理可见”的隐藏公告？**
 A：`/dh hologram setpermission <名> dh.admin-only`，然后在 LuckPerms 给管理组 `dh.admin-only` 节点即可；普通玩家看不到该全息。
-
-**Q：为什么我的 `/dh gui` 打不开？**
-A：DecentHolograms **没有** `/dh gui` 命令。所有编辑都通过 `/dh hologram ...`、`/dh lines ...`、`/dh p addaction ...` 完成，或直接编辑 `holograms/<name>.yml` 文件后 `/dh reload`。
