@@ -10,7 +10,7 @@
 
 **Modrinth**: https://modrinth.com/plugin/bluemap ｜ **Hangar**: https://hangar.papermc.io/BlueMap/BlueMap ｜ **文档**: https://bluemap.bluecolored.de
 
-> 本服选 BlueMap：3D 展示冲击力最强、性能适中、活跃维护、支持 1.21.x 与 Folia；生存社交服想给玩家/访客"哇"一下的世界观感。
+> 状态：**备选方案**。曾在测试服用 5.16-paper 部署验证通过；**当前生产采用 Dynmap**（见同目录 `Dynmap.md`）。本文档保留 BlueMap 的完整接入说明，供日后切换或对照评估。
 
 ## 功能说明
 
@@ -87,7 +87,7 @@ BlueMap 5.x 是**一张地图 = `plugins/BlueMap/maps/` 下一个 `.conf` 文件
 
 本服重度使用 Residence 圈地，把领地图层画到 3D 地图是 BlueMap 的核心加分项。
 
-> **关键差异（对比 Dynmap）**：Residence 对 **Dynmap 是原生内置集成**（config 一段即开），但**没有原生 BlueMap 集成**（Residence 6.0.0.1 的 config 只含 DynMap / Pl3xMap 两段）。BlueMap 侧需装第三方桥接插件 **BlueMap Residence**（SpigotMC 资源 107389，作者 CZMixer），或自写 marker API 脚本。**本服目前 BlueMap 已部署但桥接插件尚未安装**（见文末「部署状态·待办」）。
+> **关键差异（对比 Dynmap）**：Residence 对 **Dynmap 是原生内置集成**（config 一段即开），但**没有原生 BlueMap 集成**（Residence 6.0.0.1 的 config 只含 DynMap / Pl3xMap 两段）。BlueMap 侧需装第三方桥接插件 **BlueMap Residence**（SpigotMC 资源 107389，作者 CZMixer），或自写 marker API 脚本。**本服测试服已部署 BlueMap 但桥接插件尚未安装**（见文末「部署状态」）。
 
 ### 方案一（推荐）：BlueMap Residence 桥接插件
 
@@ -244,7 +244,7 @@ marker-sets: {
 | 领地量大的性能          | 需调大 period                 | 无动态开销              | 原生、较轻                        |
 | 1.21.11 兼容风险        | 需实测（1.21 起支持）         | 无                      | 需实测（3.x 版本线）              |
 
-> **实务建议**：本服已定 BlueMap，直接采用**方案一**（BlueMap Residence 插件），装后实测 1.21.11 兼容；领地数量中等（百~千级）性能无忧。若日后发现该插件不兼容或想加"洞穴视图 + 原生领地"，可并行装 Dynmap（Residence 原生段零成本开）——两个地图互不冲突。
+> **实务建议**：**当前生产已改用 Dynmap**（Residence 原生集成零成本）。若日后想切回 BlueMap 的 3D 效果，直接采用**方案一**（BlueMap Residence 插件），装后实测 1.21.11 兼容；领地数量中等（百~千级）性能无忧。也可两者并行（Residence 两个集成互不冲突）。
 
 ## 与 Chunky 配合
 
@@ -319,7 +319,7 @@ server {
 
 #### B1. 插件模式（本机跑测试服随开随渲）
 
-与云端部署几乎一致，只是服务器在本机。已在本机测试服实测通过（见「部署状态」）。
+与云端部署几乎一致，只是服务器在本机。已在本机测试服实测通过（见「备选方案 · 测试服验证记录」）。
 
 **步骤**
 
@@ -397,7 +397,9 @@ server {
 | 玩家标记不显示 / 暴露隐私 | 核对 `player-markers` 配置；要隐藏给对应权限（/lp tree bluemap 核对） |
 | 更新慢 / 不动             | 确认未处于 `freeze` 状态；增量渲染需区块实际变化才更新                |
 
-## 部署状态（已验证 ✅）
+## 备选方案 · 测试服验证记录（BlueMap）
+
+> 说明：**当前生产采用 Dynmap**（见同目录 `Dynmap.md`），BlueMap 仅在本服测试服完成过部署验证，作为备选保留。
 
 - **已在测试服 `C:\mc_serve\1.21.11-test` 完成部署验证。**
 - 验证环境与结果：
@@ -405,7 +407,7 @@ server {
   2. **web 端口可达**：内置 WebServer `bound to all network interfaces on port 8100` 并 `started`；`http://127.0.0.1:8100/` 探测返回 `HTTP 200`、页面标题 `BlueMap`。
   3. **首渲产出**：资源自动下载 `minecraft-client-1.21.11.jar`（约 31 MB）并 `Resources loaded`；`world` / `world_nether` / `world_the_end` 三张地图均 `Loading map` 成功，已生成大量 `.prbm.gz` 瓦片（位于 `bluemap/web/maps/<world>/tiles/`），证明 3D 渲染正常推进。
   4. **关键配置**：`BlueMap/core.conf` 的 `accept-download` 已从 `false` 改为 **`true`**（接受 Mojang EULA，允许 BlueMap 下载 3D 渲染所需 client.jar），否则 Web 无法工作。这是离线/首次部署必改项。
-- 待生产环境后续确认项（测试服已具备基础条件）：
+- 若日后切回 BlueMap 作为生产，需后续确认项（测试服已具备基础条件）：
   - 首次全量渲染耗时与 TPS 影响（建议配合 Chunky 预生成后再全量，降低跑图成本）。
   - **Residence 领地图层（待装）**：本服已装 BlueMap 5.16，但 **BlueMap Residence 桥接插件尚未安装**——按上文「方案一」装 `BlueMap-Residence-3.1.1.jar` 后完整重启，实测对 1.21.11 的兼容与领地标记渲染。
   - 玩家标记隐私：测试服 `player-markers` 保持关闭，生产如需开启再评估是否仅内网可见。

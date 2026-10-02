@@ -152,7 +152,7 @@ Global:
   Pl3xMap:
     Use: true # Pl3xMap 地图支持启用
     ShowFlags: true # 显示旗帜信息
-  # 在线地图：本服采用 BlueMap（Residence 原生支持 DynMap/Pl3xMap 配置，未采用）
+  # 在线地图：本服采用 Dynmap（Residence 原生内置 DynMap 集成，已启用）
 
   # 以下功能均已禁用:
   UseLeaseSystem: false # 租赁系统
