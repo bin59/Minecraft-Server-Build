@@ -34,26 +34,26 @@
 
 ## 玩家如何使用
 
-| 操作 | 效果 |
-|---|---|
-| 浏览器打开 `http://服务器:8123` | 查看平面地图 |
-| 滚轮 / 拖拽 | 缩放、平移 |
-| 左上角图层开关 | 卫星 / 地表 / 洞穴 / **Residence** 领地图层 |
-| 点领地 | 看领地边界与详情（领主、旗帜等） |
+| 操作                            | 效果                                        |
+| ------------------------------- | ------------------------------------------- |
+| 浏览器打开 `http://服务器:8123` | 查看平面地图                                |
+| 滚轮 / 拖拽                     | 缩放、平移                                  |
+| 左上角图层开关                  | 卫星 / 地表 / 洞穴 / **Residence** 领地图层 |
+| 点领地                          | 看领地边界与详情（领主、旗帜等）            |
 
 > 查看地图不需要任何游戏内权限（网页匿名访问）。仅管理命令需要权限。
 
 ## 命令与权限
 
-| 命令 | 权限节点（参考） | 默认 | 说明 |
-|---|---|---|---|
-| `/dynmap` | `dynmap.*` | op | 主命令 / 帮助 |
-| `/dynmap reload` | `dynmap.reload` | op | 重载配置与地图 |
-| `/dynmap hide` / `show` | `dynmap.hide` / `dynmap.show` | 视配置 | 隐藏 / 显示玩家在地图上的位置 |
-| `/dynmap radiusrender` | `dynmap.radiusrender` | op | 按半径强制渲染区域（配合 Chunky 用） |
-| `/dynmap fullrender` | `dynmap.fullrender` | op | 全量渲染某世界 |
-| `/dynmap pause` / `pauseall` | `dynmap.pause` / `dynmap.pauseall` | op | 暂停 / 暂停全部渲染 |
-| `/dynmap webregister` | `dynmap.webregister` | op | 注册/更新 web 登录令牌 |
+| 命令                         | 权限节点（参考）                   | 默认   | 说明                                 |
+| ---------------------------- | ---------------------------------- | ------ | ------------------------------------ |
+| `/dynmap`                    | `dynmap.*`                         | op     | 主命令 / 帮助                        |
+| `/dynmap reload`             | `dynmap.reload`                    | op     | 重载配置与地图                       |
+| `/dynmap hide` / `show`      | `dynmap.hide` / `dynmap.show`      | 视配置 | 隐藏 / 显示玩家在地图上的位置        |
+| `/dynmap radiusrender`       | `dynmap.radiusrender`              | op     | 按半径强制渲染区域（配合 Chunky 用） |
+| `/dynmap fullrender`         | `dynmap.fullrender`                | op     | 全量渲染某世界                       |
+| `/dynmap pause` / `pauseall` | `dynmap.pause` / `dynmap.pauseall` | op     | 暂停 / 暂停全部渲染                  |
+| `/dynmap webregister`        | `dynmap.webregister`               | op     | 注册/更新 web 登录令牌               |
 
 > ⚠️ 权限节点以插件实际注册为准：装好后跑 `/lp tree dynmap` 核对确切节点名，再按组授权（admin/owner 给 `dynmap.*` 即可）。
 > 玩家**查看地图无任何权限要求**；若要让特定玩家/组**不在地图上显示**，用 `dynmap.hide` 权限或配置 `player-marker` 相关项。
@@ -68,11 +68,79 @@
 - **`templates/`**：WebUI 模板与主题。
 
 **隐私设置（重要）**：公开网页若显示玩家标记，等于把全员实时坐标暴露给任何人。建议：
+
 - 关掉玩家标记（`player-marker` / 相关配置）；或
 - 仅内网 / 白名单访问地图；或
 - 仅对特定世界开启玩家标记。
 
 **首渲很重**：第一次全量渲染大世界可能几十分钟~几小时，且占盘（tiles 随探索增长）。务必低峰期执行，并用 **Chunky** 预生成活动范围配合（见下）。
+
+## 体积优化（瓦片压缩）
+
+**本服现状**：`configuration.txt` 里 `image-format: jpg-q90`（已用 JPG 质量 90，比默认 PNG 省很多）。继续压按见效排序：
+
+### 1. 降低 JPG 质量（最简单）
+
+`configuration.txt`：
+
+```yaml
+image-format: jpg-q75 #   **q75 是甜点位**—— 体积砍半，画质几乎无损 jpg-q60（体积更小，远处画质略糊）
+```
+
+改完 `/dynmap reload` 生效。
+
+### 2. 关掉洞穴地图（省约 1/3 瓦片）
+
+默认每世界生成 surface（地表）/ flat（平面）/ cave（洞穴）三套地图，**cave 最占空间**。`worlds.txt` 里每世界只留 surface：
+
+```yaml
+worlds:
+  - name: world
+    maps:
+      - class: org.dynmap.hdmap.HDMap
+        name: surface
+        title: 'Surface'
+        prefix: t
+        perspective: iso_SE_30_hires
+        shader: stdtexture
+        lighting: shadows
+        mapzoomin: 1
+```
+
+（nether / world_the_end 同理，去掉 cave / flat 只留 surface）
+
+<!-- ### 3. 只渲染主世界
+
+`worlds.txt` 里禁用不需要的世界：
+
+```yaml
+- name: world_nether
+  enabled: false
+- name: world_the_end
+  enabled: false
+```
+ -->
+<!-- ### 4. 限制渲染范围（只渲染主城/玩家活动区）
+
+`worlds.txt` 加 `visibilitylimits`，例如只渲染出生点 ±3000 格：
+
+```yaml
+- name: world
+  visibilitylimits:
+    - x0: -3000
+      z0: -3000
+      x1: 3000
+      z1: 3000
+``` -->
+
+### 5. 清理旧瓦片并重渲
+
+改完配置后**旧瓦片不会自动删**：
+
+1. 删掉 `plugins/dynmap/web/tiles/`（云端运行服上）
+<!-- 2. 重启后 `/dynmap fullrender world`（范围按上面配置）或 `/dynmap radiusrender world 3000`（以玩家为中心限半径渲染） -->
+
+**推荐组合**：`jpg-q75` + 关 cave + 只渲染主世界 <!-- + visibilitylimits ±3000 → 体积可减到原来的 1/5 甚至更少。 -->
 
 ## 领地图层（Residence 原生集成）——重点
 
@@ -165,24 +233,25 @@ DynMap:
 
 ## Dynmap vs BlueMap（本服为何选 BlueMap）
 
-| 维度 | Dynmap | BlueMap（本服现行） |
-|---|---|---|
-| 视图 | 2D 平铺（卫星/地表/洞穴） | **3D** 立体（可旋转俯仰） |
-| Residence 集成 | **原生内置**（config 一段即开） | 需第三方桥接插件（BlueMap Residence） |
-| 资源占用 | 较轻 | 3D 渲染较重（首渲更久） |
-| 洞穴/红石视图 | 有 | 无 |
-| 冲击力/演示效果 | 一般 | 强 |
-| 社区生态 | 最老牌 | 活跃、增长快 |
+| 维度            | Dynmap                          | BlueMap（本服现行）                   |
+| --------------- | ------------------------------- | ------------------------------------- |
+| 视图            | 2D 平铺（卫星/地表/洞穴）       | **3D** 立体（可旋转俯仰）             |
+| Residence 集成  | **原生内置**（config 一段即开） | 需第三方桥接插件（BlueMap Residence） |
+| 资源占用        | 较轻                            | 3D 渲染较重（首渲更久）               |
+| 洞穴/红石视图   | 有                              | 无                                    |
+| 冲击力/演示效果 | 一般                            | 强                                    |
+| 社区生态        | 最老牌                          | 活跃、增长快                          |
 
 > 若后续想两者并存（Dynmap 看洞穴+领地、BlueMap 看 3D），可同时安装——Residence 两个集成互不冲突（Dynmap 用原生段、BlueMap 用桥接插件）。
 
 ## 排错
 
-| 现象 | 排查 |
-|---|---|
-| 地图打不开 | 8123 端口是否开放 / 反代是否正确；核对 `webport` 与防火墙 |
-| 大片空白 | 区块未渲染或未预生成；先 Chunky 预生成再 `fullrender` |
-| 首渲卡服 | 用 `radiusrender` 限范围、低峰期渲染 |
-| Residence 领地不显示 | ① Dynmap 已装并重启；② `plugins/Residence/config.yml` 里 `DynMap.Use: true`；③ 改完执行 `/res reload`；④ 看控制台有没有 Residence 的 Dynmap 注册日志 |
-| 个别领地地图上不显示 | 该领地设了 `hidden` 旗帜（`HideHidden: true` 时）或在 `HiddenRegions` 名单里 |
-| 玩家标记不显示 / 暴露隐私 | 核对玩家标记配置与 `dynmap.hide` 权限；要隐藏给对应权限（/lp tree dynmap 核对） |
+| 现象                      | 排查                                                                                                                                                 |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 地图打不开                | 8123 端口是否开放 / 反代是否正确；核对 `webport` 与防火墙                                                                                            |
+| 大片空白                  | 区块未渲染或未预生成；先 Chunky 预生成再 `fullrender`                                                                                                |
+| 首渲卡服                  | 用 `radiusrender` 限范围、低峰期渲染                                                                                                                 |
+| 瓦片体积太大、占盘        | 按上文「体积优化」：降 JPG 质量、关 cave、只渲染主世界、限渲染范围，删旧 tiles 后重渲                                                                |
+| Residence 领地不显示      | ① Dynmap 已装并重启；② `plugins/Residence/config.yml` 里 `DynMap.Use: true`；③ 改完执行 `/res reload`；④ 看控制台有没有 Residence 的 Dynmap 注册日志 |
+| 个别领地地图上不显示      | 该领地设了 `hidden` 旗帜（`HideHidden: true` 时）或在 `HiddenRegions` 名单里                                                                         |
+| 玩家标记不显示 / 暴露隐私 | 核对玩家标记配置与 `dynmap.hide` 权限；要隐藏给对应权限（/lp tree dynmap 核对）                                                                      |
