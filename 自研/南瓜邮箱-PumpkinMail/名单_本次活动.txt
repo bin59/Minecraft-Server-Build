@@ -2,5 +2,33 @@
 # 使用：/mailbox preset add 南瓜币500 money 500 活动奖励
 #       /mailbox give 南瓜币500 @file:名单.txt
 # （本文件放运行服 plugins/PumpkinMail/ 目录下）
-
+.baihuamen
+zuie
+TODAO_owo
+.CmZy2516
+.shangxin2179
+BambooLoveFlower
+.QingWa_Frog1692
+.beida9awa
+kunTaiDa
+.Player17184119
+.bananaYUpvp
+.Player60748935
+firflyxE
+.juwu2279
+j4rvx
+.vip99f
+.NoviceMite1987
+.FuzzyArrow1759
+.Tlipoca6144
+.kongkong9719
+.CCC3day
+.Salted_fish33
+.EggySilver28725
+wanlie_awa
+.XiShen7881
+MatchaKing
+.YUNIAN5800
+.PoshPen7850
+.Dsy2333520
 PumpkinVegetable
