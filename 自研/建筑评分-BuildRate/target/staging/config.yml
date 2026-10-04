@@ -1,0 +1,33 @@
+# 建筑评分插件配置
+scoring:
+  # 打分范围
+  min-score: 1
+  max-score: 10
+  # 统计时是否去掉最高分与最低分（票数 >= 3 时生效；<=2 时按全部算平均）
+  drop-highest-lowest: true
+  # 是否允许玩家给自己的建筑打分（false = 禁止自评，防偏袒）
+  allow-self-vote: false
+  # 每个玩家每场活动是否只允许一座参评建筑
+  one-build-per-player: true
+
+# 结算奖励：/br stop 截止活动时自动按名次发放
+# type 支持三种：
+#   money   -> 直接发南瓜币（在线玩家经 Essentials API，记入南瓜账本「活动参与」；离线走 eco give）
+#   item    -> 发到玩家南瓜邮箱 /mailbox 领取（data 格式 "材质:数量"，如 DIAMOND:1）
+#   command -> 自定义命令，{player} 替换为玩家名
+rewards:
+  enabled: true
+  # 结算时是否广播前 3 名
+  announce: true
+  ranks:
+    "1":
+      - { type: money, data: "500", desc: "第1名：500 南瓜币" }
+      - { type: item, data: "DIAMOND:1", desc: "第1名：钻石 ×1" }
+    "2":
+      - { type: money, data: "300", desc: "第2名：300 南瓜币" }
+    "3":
+      - { type: money, data: "200", desc: "第3名：200 南瓜币" }
+    "4":
+      - { type: money, data: "100", desc: "第4名：100 南瓜币" }
+    "5":
+      - { type: money, data: "50", desc: "第5名：50 南瓜币" }

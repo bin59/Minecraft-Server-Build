@@ -24,8 +24,8 @@ public class SkinCaptureListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (!fetcher.isBedrock(player.getUniqueId())) {
-            return; // Java 玩家不处理
+        if (!fetcher.isBedrock(player)) {
+            return; // 非基岩玩家不处理
         }
         plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin,
                 () -> fetcher.capture(player, 0), 60L); // 3 秒后开始抓取

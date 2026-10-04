@@ -23,8 +23,16 @@ public final class MoneyLedger extends JavaPlugin implements Listener {
     private static MoneyLedger instance;
     private LedgerStore store;
 
+    /** 线程级"备注来源"：发奖方在执行 eco give 前设置，账本在同一线程写记录时用作 source。 */
+    private static final ThreadLocal<String> REASON = new ThreadLocal<>();
+
     public static MoneyLedger get() {
         return instance;
+    }
+
+    /** 设置本线程下一笔余额变动记录的来源名（如活动名/奖励描述），随后自动清除。 */
+    public static void setReason(String reason) {
+        if (reason != null && !reason.isEmpty()) REASON.set(reason);
     }
 
     public LedgerStore getStore() {
@@ -60,7 +68,9 @@ public final class MoneyLedger extends JavaPlugin implements Listener {
 
             UserBalanceUpdateEvent.Cause cause = e.getCause();
             Category cat = SourceDetector.categorize(cause);
-            String src = SourceDetector.detectSource();
+            String reason = REASON.get();
+            REASON.remove();
+            String src = (reason != null && !reason.isEmpty()) ? reason : SourceDetector.detectSource();
 
             store.insert(new LedgerEntry(
                     e.getPlayer().getUniqueId().toString(),

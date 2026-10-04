@@ -58,8 +58,7 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
             case "give" -> {
                 if (!checkAdmin(sender)) return true;
                 if (args.length < 3) { sender.sendMessage(usage("give <奖品ID> <@online|@whitelist|@file:路径|玩家,玩家>")); return true; }
-                int n = give(args[1], args[2], sender.getName());
-                sender.sendMessage(msg("&a已向 &e" + n + " &a名玩家发放 &e" + args[1] + " &a（上线后 /mailbox 领取）"));
+                giveAsync(sender, args[1], args[2], sender.getName());
             }
             case "preset" -> {
                 if (!checkAdmin(sender)) return true;
@@ -86,8 +85,27 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
-    /** 一键批量发放核心逻辑（命令与 GUI 共用）。返回成功发放人数。 */
-    public int give(String presetId, String target, String senderName) {
+    /**
+     * 异步批量发放（命令与 GUI 共用）。名单解析 + 玩家 UUID + SQLite 写入全部放在
+     * 异步线程执行，不再阻塞服务端主线程；完成后回到主线程提示结果。
+     * 修复：原实现在主线程对每个玩家执行 getOfflinePlayer(联网查档) + SQLite 写入，
+     * 批量时主线程被网络阻塞和数据库锁卡死，导致服务器无响应。
+     */
+    public void giveAsync(CommandSender sender, String presetId, String target, String senderName) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            int n = giveBlocking(presetId, target, senderName);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (n > 0) {
+                    sender.sendMessage(msg("&a已向 &e" + n + " &a名玩家发放 &e" + presetId + " &a（上线后 /mailbox 领取）"));
+                } else {
+                    sender.sendMessage(msg("&c没有发放成功：检查奖品 ID 或名单是否有效。"));
+                }
+            });
+        });
+    }
+
+    /** 主发放逻辑（仅在异步线程调用）。返回成功发放人数。 */
+    private int giveBlocking(String presetId, String target, String senderName) {
         Storage storage = plugin.storage();
         Preset preset = storage.getPreset(presetId);
         if (preset == null) return 0;
@@ -98,9 +116,11 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
         for (String raw : names) {
             String name = raw == null ? "" : raw.trim();
             if (name.isEmpty()) continue;
-            UUID uuid = Bukkit.getOfflinePlayer(name).getUniqueId();
+            // 不再联网 getOfflinePlayer 查 Mojang/Yggdrasil 档案：改用本地确定性离线 UUID，
+            // 彻底消除主线程/异步线程的网络阻塞（玩家名匹配领取不受影响）。
+            UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
             storage.addReward(new Reward(
-                    UUID.randomUUID().toString(), uuid == null ? null : uuid.toString(), name,
+                    UUID.randomUUID().toString(), uuid.toString(), name,
                     preset.id(), preset.rewardType(), preset.data(), preset.desc(),
                     senderName, now, false));
             n++;

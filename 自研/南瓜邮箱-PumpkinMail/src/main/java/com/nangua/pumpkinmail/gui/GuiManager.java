@@ -198,13 +198,8 @@ public class GuiManager implements Listener {
     }
 
     private void give(Player admin, String presetId, String target) {
-        int n = new com.nangua.pumpkinmail.cmd.MailboxCommand(plugin).give(presetId, target, admin.getName());
-        if (n > 0) {
-            admin.sendMessage(C("&a已向 &e" + n + " &a名玩家发放 &e" + presetId));
-            admin.playSound(admin.getLocation(), org.bukkit.Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f);
-        } else {
-            admin.sendMessage(C("&c没有发放成功：检查奖品 ID 或名单是否有效。"));
-        }
+        // 异步发放（主线程不再阻塞），结果提示由 giveAsync 回到主线程后发送
+        new com.nangua.pumpkinmail.cmd.MailboxCommand(plugin).giveAsync(admin, presetId, target, admin.getName());
     }
 
     // ================= 辅助 =================

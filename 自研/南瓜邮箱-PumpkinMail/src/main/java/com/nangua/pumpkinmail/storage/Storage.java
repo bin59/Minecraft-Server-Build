@@ -45,7 +45,7 @@ public class Storage {
 
     // ---------- presets ----------
 
-    public void savePreset(Preset p) {
+    public synchronized void savePreset(Preset p) {
         try (PreparedStatement ps = conn.prepareStatement(
                 "INSERT OR REPLACE INTO presets(id,reward_type,data,desc,created_time) VALUES(?,?,?,?,?)")) {
             ps.setString(1, p.id());
@@ -59,7 +59,7 @@ public class Storage {
         }
     }
 
-    public Preset getPreset(String id) {
+    public synchronized Preset getPreset(String id) {
         try (PreparedStatement ps = conn.prepareStatement(
                 "SELECT id,reward_type,data,desc FROM presets WHERE id=?")) {
             ps.setString(1, id);
@@ -72,7 +72,7 @@ public class Storage {
         return null;
     }
 
-    public List<Preset> listPresets() {
+    public synchronized List<Preset> listPresets() {
         List<Preset> out = new ArrayList<>();
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery("SELECT id,reward_type,data,desc FROM presets ORDER BY created_time")) {
@@ -83,7 +83,7 @@ public class Storage {
         return out;
     }
 
-    public void removePreset(String id) {
+    public synchronized void removePreset(String id) {
         try (PreparedStatement ps = conn.prepareStatement("DELETE FROM presets WHERE id=?")) {
             ps.setString(1, id);
             ps.executeUpdate();
@@ -94,7 +94,7 @@ public class Storage {
 
     // ---------- rewards ----------
 
-    public void addReward(Reward r) {
+    public synchronized void addReward(Reward r) {
         try (PreparedStatement ps = conn.prepareStatement("""
                 INSERT OR IGNORE INTO rewards(id,player_uuid,player_name,preset_id,reward_type,data,desc,issued_by,issued_time,claimed,claimed_time)
                 VALUES(?,?,?,?,?,?,?,?,?,0,NULL)""")) {
@@ -114,7 +114,7 @@ public class Storage {
     }
 
     /** 查询某玩家的全部待领取奖励（按名字或 UUID 匹配）。 */
-    public List<Reward> getPending(String playerName, java.util.UUID uuid) {
+    public synchronized List<Reward> getPending(String playerName, java.util.UUID uuid) {
         List<Reward> out = new ArrayList<>();
         String sql = "SELECT id,player_uuid,player_name,preset_id,reward_type,data,desc,issued_by,issued_time,claimed " +
                 "FROM rewards WHERE claimed=0 AND (player_name=? COLLATE NOCASE";
@@ -132,7 +132,7 @@ public class Storage {
         return out;
     }
 
-    public void markClaimed(String rewardId) {
+    public synchronized void markClaimed(String rewardId) {
         try (PreparedStatement ps = conn.prepareStatement(
                 "UPDATE rewards SET claimed=1, claimed_time=? WHERE id=?")) {
             ps.setLong(1, System.currentTimeMillis());
@@ -143,11 +143,11 @@ public class Storage {
         }
     }
 
-    public int countPending(String playerName, java.util.UUID uuid) {
+    public synchronized int countPending(String playerName, java.util.UUID uuid) {
         return getPending(playerName, uuid).size();
     }
 
-    public List<Reward> listForPlayer(String playerName) {
+    public synchronized List<Reward> listForPlayer(String playerName) {
         List<Reward> out = new ArrayList<>();
         try (PreparedStatement ps = conn.prepareStatement(
                 "SELECT id,player_uuid,player_name,preset_id,reward_type,data,desc,issued_by,issued_time,claimed " +
@@ -163,7 +163,7 @@ public class Storage {
     }
 
     /** 发放统计：待领总数 / 已领总数。 */
-    public long[] stats() {
+    public synchronized long[] stats() {
         long[] s = {0, 0};
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery("SELECT COUNT(*) total, SUM(CASE WHEN claimed=1 THEN 1 ELSE 0 END) claimed FROM rewards")) {
@@ -192,7 +192,7 @@ public class Storage {
         );
     }
 
-    public void close() {
+    public synchronized void close() {
         try { if (conn != null) conn.close(); } catch (SQLException ignored) { }
     }
 }

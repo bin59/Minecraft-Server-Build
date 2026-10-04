@@ -33,35 +33,29 @@ BedrockSkinRestorer 的作用就是**绕开这条不可靠的上传队列**：�
 |---|---|---|
 | Mojang 正版皮肤 | Java 玩家的默认皮肤 | 进服自动，来自账号 |
 | Geyser `skin-provider-mode` | 基岩端看 Java 玩家的皮肤方向（见 3.2） | 配置项 |
-| SkinsRestorer | 玩家**主动选的皮肤**：`/skin` 自助换肤、进服自动套用上次选择；认带 `.` 前缀的基岩玩家（设皮肤时名字必须带点号） | `/skin` 命令 + 进服 |
-| **BedrockSkinRestorer** | **基岩玩家客户端里的真实自定义皮肤 → Java 端可见**，主动覆盖默认 Steve/Alex，绕开 Floodgate 排队上传 | 基岩玩家进服自动 |
+| SkinsRestorer | 玩家**主动选的皮肤**：`/skin` 自助换肤；认带 `.` 前缀的基岩玩家（设皮肤时名字必须带点号） | `/skin` 命令 |
+| **BedrockSkinRestorer** | **基岩玩家客户端里的真实自定义皮肤 → Java 端可见**，进服 0.75 秒主动覆盖默认 Steve/Alex，绕开 Floodgate 排队上传 | 基岩玩家进服自动 |
 
-一句话：SkinsRestorer 管"玩家自己选的皮"，BedrockSkinRestorer 管"基岩客户端那张自动抓来的皮"。两者默认会抢，必须开下面的兼容模式。
+一句话：BSR 抓基岩客户端真实皮当默认底；玩家用 `/skin` 选的皮由 SkinsRestorer 套用。
 
-## 关键配置：与 SkinsRestorer 兼容模式
-
-`plugins/BedrockSkinRestorer/config.yml` 里有两个插件的冲突开关：
+## 关键配置
 
 ```yaml
+# plugins/BedrockSkinRestorer/config.yml
 fetch-on-join: true                  # 基岩玩家进服时自动抓真实皮肤
 fetch-on-join-delay-ticks: 15        # 进服后约 0.75 秒再抓（等 Geyser 就绪）
 
 compatibility-mode:
-  skins-restorer: true               # ★ 必须开：SkinsRestorer 在处理该玩家时，BSR 跳过
+  skins-restorer: false              # 本服关闭：BSR 照常抓真实皮
   bedrock-auto-auth: false
 ```
 
-**为什么必须开 `skins-restorer: true`**：默认情况下两个插件都监听进服事件——SkinsRestorer 套玩家 `/skin` 选的皮，BSR 延迟 0.75 秒又把客户端真实皮盖回去。后果：
+`compatibility-mode.skins-restorer` 控制 BSR 是否在 SkinsRestorer 处理该玩家时跳过：
 
-1. 玩家用 `/skin` 选的皮，**重进服后被还原成客户端上传的皮肤**；
-2. 进服瞬间皮肤翻转两次，Geyser 头颅纹理缓存跟不上，**基岩端玩家头颅显示成默认/空**。
+- 设 `true`：BSR 见 SR 就跳过、不抓真实皮；但 Geyser 进服会接管 profile，把 SR 套的皮冲掉，Java 端只剩默认 Steve，反而看不到皮。
+- 设 `false`（本服采用）：BSR 在 0.75 秒抓客户端真实皮打底，Java 端至少稳定显示真实基岩皮。
 
-开启后分工变为：
-
-| 基岩玩家状态 | 谁定皮肤 |
-|---|---|
-| 没用过 `/skin`（SkinsRestorer 无记录） | BSR 抓客户端真实皮 |
-| 用过 `/skin`（SkinsRestorer 在处理） | BSR 跳过，保留 SkinsRestorer 选的皮 |
+已知局限：Geyser 进服接管 profile 的时机早于 SkinsRestorer 套皮，玩家用 `/skin` 选的皮**重进服后可能被还原成客户端真实皮**。若某玩家选皮后重进丢了，管理员在控制台手动跑一次 `skin update <带点号的玩家名>` 即可重新套上。
 
 改完需重启服务端生效。玩家换皮后**完全重进一次**，头颅才会用稳定纹理重新渲染。
 
@@ -77,5 +71,5 @@ compatibility-mode:
 - 进服后仍显示史蒂夫：看 `logs/latest.log` 中 `BedrockSkinRestorer` 是否有报错；确认基岩客户端里该皮肤确实是当前激活皮肤（不是本地预览未上传）。
 - 确认基岩玩家身份：Floodgate 玩家名带 `.` 前缀，UUID 以 `00000000-0000-0000-0009-` 开头。
 - 皮肤方向反了（基岩看 Java 全是史蒂夫）是另一个问题，见 3.3 的修复 B。
-- 基岩玩家用 `/skin` 后头颅不显示、或重进被还原成客户端皮：检查 `compatibility-mode.skins-restorer` 是否为 `true`；并让玩家完全退出基岩客户端再重进。
+- 基岩玩家用 `/skin` 后重进被还原成客户端皮：这是 Geyser 进服接管 profile 的已知行为，管理员控制台跑一次 `skin update <带点号玩家名>` 即可；并让玩家完全退出基岩客户端再重进。
 - 头颅仍不显示：确认 Geyser `enable-custom-content: true`（头颅映射开关，见 3.3，本服已为 true，不要关）。

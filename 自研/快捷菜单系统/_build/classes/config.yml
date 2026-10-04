@@ -424,6 +424,19 @@ menus:
         actions:
           - '[menu] admin'
 
+      # ---------- 建筑评分（BuildRate 自研） ----------
+      buildrate:
+        material: BRICK
+        display-name: '&3&l建筑评分'
+        lore:
+          - '&7建筑大赛报名与打分'
+          - '&7点建筑 → 选 1~10 分，可反复改'
+          - '&8点击打开评分面板'
+        slot: 25
+        actions:
+          - '[close]'
+          - '[player] br open'
+
   # ==================== 传送子菜单 ====================
   teleport:
     title: '&b&l传送功能'
@@ -1686,6 +1699,18 @@ menus:
         actions:
           - '[menu] main'
 
+      # ---------- 建筑评分管理（BuildRate 自研） ----------
+      buildrate-admin:
+        material: BRICK
+        display-name: '&3&l建筑评分管理'
+        lore:
+          - '&7创建活动、报名、开/停、结算发奖'
+          - '&8点击打开建筑评分管理菜单'
+        slot: 23
+        permission: buildrate.admin
+        actions:
+          - '[menu] buildrate-admin'
+
   # ==================== 玩家管理 ====================
   admin-player:
     title: '&a&l玩家管理'
@@ -2938,3 +2963,127 @@ menus:
         actions:
           - '[close]'
           - '[player] ds reload'
+
+  # ==================== 建筑评分管理 ====================
+  buildrate-admin:
+    title: '&3&l建筑评分管理'
+    bedrock-content: '&7选择一个建筑评分操作'
+    size: 27
+    back-menu: admin
+    filler:
+      material: BRICKS
+      name: '&8'
+
+    items:
+      br-panel:
+        material: BEACON
+        display-name: '&3&l打开管理面板'
+        lore:
+          - '&7BuildRate 自带箱子菜单'
+          - '&7点图标完成创建/开停/排名'
+        slot: 10
+        permission: buildrate.admin
+        actions:
+          - '[close]'
+          - '[player] br admin'
+
+      br-create:
+        material: WRITABLE_BOOK
+        display-name: '&a创建新活动'
+        lore:
+          - '&7默认名称「建筑大赛」'
+          - '&7旧活动会自动截止'
+          - '&8要自定义名称请输 /br create 名称'
+        slot: 11
+        permission: buildrate.admin
+        actions:
+          - '[close]'
+          - '[player] br create'
+
+      br-start:
+        material: EMERALD_BLOCK
+        display-name: '&a开启评分'
+        lore:
+          - '&7把当前活动设为可打分'
+        slot: 12
+        permission: buildrate.admin
+        actions:
+          - '[close]'
+          - '[player] br start'
+
+      br-stop:
+        material: REDSTONE_BLOCK
+        display-name: '&c截止并结算发奖'
+        lore:
+          - '&7按名次发奖到获奖玩家邮箱'
+          - '&c不可撤销'
+        slot: 13
+        permission: buildrate.admin
+        actions:
+          - '[close]'
+          - '[player] br stop'
+
+      br-result:
+        material: GOLD_INGOT
+        display-name: '&6当前排名'
+        lore:
+          - '&7按均分从高到低展示'
+        slot: 14
+        permission: buildrate.admin
+        actions:
+          - '[close]'
+          - '[player] br result'
+
+      br-list:
+        material: BOOK
+        display-name: '&e参评列表'
+        lore:
+          - '&7含建筑编号，用于 /br remove'
+        slot: 15
+        permission: buildrate.admin
+        actions:
+          - '[close]'
+          - '[player] br list'
+
+      br-stats:
+        material: PAPER
+        display-name: '&b投票参与度'
+        lore:
+          - '&7查看每位评委投了几票'
+        slot: 16
+        permission: buildrate.admin
+        actions:
+          - '[close]'
+          - '[player] br stats'
+
+      br-add:
+        material: NAME_TAG
+        display-name: '&e代玩家报名'
+        lore:
+          - '&7点击后从在线列表选择玩家'
+          - '&7建筑名默认用玩家名'
+        slot: 20
+        permission: buildrate.admin
+        actions:
+          - '[player-selector] br add {target} {target}'
+
+      br-history:
+        material: BOOKSHELF
+        display-name: '&d活动历史'
+        lore:
+          - '&7查看往期活动与参评数'
+        slot: 21
+        permission: buildrate.admin
+        actions:
+          - '[close]'
+          - '[player] br history'
+
+      br-back:
+        material: ARROW
+        display-name: '&7返回'
+        lore:
+          - '&7回到管理面板'
+        slot: 22
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin'

@@ -1,0 +1,13 @@
+-encoding
+UTF-8
+-cp
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\南瓜邮箱-PumpkinMail\\lib\\paper-api-1.21.11-R0.1-SNAPSHOT.jar;F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\南瓜邮箱-PumpkinMail\\PumpkinMail.jar
+-d
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\建筑评分-BuildRate\\target\\classes
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\建筑评分-BuildRate\\src\\main\\java\\com\\nangua\\buildrate\\BuildRate.java
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\建筑评分-BuildRate\\src\\main\\java\\com\\nangua\\buildrate\\RewardDispatcher.java
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\建筑评分-BuildRate\\src\\main\\java\\com\\nangua\\buildrate\\cmd\\BuildRateCommand.java
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\建筑评分-BuildRate\\src\\main\\java\\com\\nangua\\buildrate\\gui\\GuiManager.java
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\建筑评分-BuildRate\\src\\main\\java\\com\\nangua\\buildrate\\storage\\Db.java
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\建筑评分-BuildRate\\src\\main\\java\\com\\nangua\\buildrate\\storage\\Models.java
+F:\\game\\pc\\MC\\开服\\Minecraft-Server-Build\\自研\\建筑评分-BuildRate\\src\\main\\java\\com\\nangua\\buildrate\\storage\\Stats.java

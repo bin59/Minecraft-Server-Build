@@ -5,6 +5,7 @@ import com.nangua.buildrate.RewardDispatcher;
 import com.nangua.buildrate.storage.Db;
 import com.nangua.buildrate.storage.Models;
 import com.nangua.buildrate.storage.Stats;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -45,7 +46,7 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
                 case "remove": return remove(s, args);
                 case "start": return start(s);
                 case "stop": return stop(s);
-                case "settle": return settle(s);
+                case "admin": return admin(s);
                 case "open": return open(s);
                 case "score": return score(s, args);
                 case "result": return result(s);
@@ -69,7 +70,14 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
         Models.Event ev = db().createEvent(name);
         s.sendMessage(ChatColor.GREEN + "[建筑评分] 已创建活动「" + ev.name() + "」并设为进行中（已有进行中的活动已自动截止）。");
         s.sendMessage(ChatColor.GRAY + "玩家可 /br join <建筑名> 自主报名，或管理员 /br add <玩家> <建筑名>。");
+        broadcastCreate(ev.name());
         return true;
+    }
+
+    /** 创建活动后全服公告。 */
+    public static void broadcastCreate(String eventName) {
+        Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "「建筑评分」新活动开启：§e" + eventName
+                + ChatColor.LIGHT_PURPLE + "！输入 §f/br open §7参与打分、§f/br join <建筑名> §7报名。");
     }
 
     private boolean start(CommandSender s) {
@@ -86,27 +94,20 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
         Models.Event ev = db().getActiveEvent();
         if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有进行中的活动。"); return true; }
         db().setEventStatus(ev.id(), 0);
-        s.sendMessage(ChatColor.GREEN + "[建筑评分] 活动「" + ev.name() + "」已截止，玩家不能再打分。用 /br result 查看结果。");
-        // 自动按名次结算发奖
+        // 自动按名次结算发奖（南瓜币与物品都发到邮箱）
         if (new RewardDispatcher(plugin).enabled()) {
             new RewardDispatcher(plugin).settleEvent(ev);
-            s.sendMessage(ChatColor.GREEN + "[建筑评分] 已按名次自动发放奖励（物品在 /mailbox 领取）。");
+            s.sendMessage(ChatColor.GREEN + "[建筑评分] 活动「" + ev.name() + "」已截止，奖励已按名次发到获奖玩家邮箱（/mailbox 领取，含南瓜币）。");
         } else {
-            s.sendMessage(ChatColor.GRAY + "[建筑评分] rewards.enabled 为 false，本次未发奖。需要时用 /br settle 手动结算。");
+            s.sendMessage(ChatColor.GRAY + "[建筑评分] rewards.enabled 为 false，本次未发奖。活动「" + ev.name() + "」已截止。");
         }
         return true;
     }
 
-    private boolean settle(CommandSender s) {
+    private boolean admin(CommandSender s) {
         if (!requireAdmin(s)) return true;
-        Models.Event ev = db().getActiveEvent();
-        if (ev == null) {
-            List<Models.Event> all = db().listEvents();
-            if (all.isEmpty()) { s.sendMessage(ChatColor.RED + "[建筑评分] 还没有任何活动可结算。"); return true; }
-            ev = all.get(0);
-        }
-        new RewardDispatcher(plugin).settleEvent(ev);
-        s.sendMessage(ChatColor.GREEN + "[建筑评分] 已对活动「" + ev.name() + "」按名次发放奖励。");
+        if (!(s instanceof Player p)) { s.sendMessage(ChatColor.RED + "[建筑评分] 只有玩家能打开管理面板。"); return true; }
+        plugin.gui().openAdmin(p);
         return true;
     }
 
@@ -306,10 +307,11 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
         s.sendMessage(ChatColor.WHITE + "/br score <编号> <1~10> §7命令打分（基岩兜底）");
         s.sendMessage(ChatColor.WHITE + "/br list §7参评列表 /br result §7排名");
         s.sendMessage(ChatColor.GRAY + "管理员指令（buildrate.admin）：");
+        s.sendMessage(ChatColor.WHITE + "/br admin §7打开管理箱子菜单（开启/截止/排名/参与度/历史）");
         s.sendMessage(ChatColor.WHITE + "/br create <活动名> §7创建活动（自动截止旧活动）");
         s.sendMessage(ChatColor.WHITE + "/br add <玩家> <建筑名> §7代报名 /br remove <编号> §7移除");
-        s.sendMessage(ChatColor.WHITE + "/br start §7开启 /br stop §7截止并自动结算发奖");
-        s.sendMessage(ChatColor.WHITE + "/br settle §7手动按名次结算发奖 /br stats §7参与度");
+        s.sendMessage(ChatColor.WHITE + "/br start §7开启评分 /br stop §7截止并自动结算发奖");
+        s.sendMessage(ChatColor.WHITE + "/br result §7排名 /br stats §7参与度 /br history §7历史");
     }
 
     // ---------- Tab 补全 ----------
@@ -317,7 +319,7 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender s, Command cmd, String label, String[] args) {
         List<String> subs = Arrays.asList("create", "list", "join", "add", "remove",
-                "start", "stop", "settle", "open", "score", "result", "stats", "history", "help");
+                "start", "stop", "admin", "open", "score", "result", "stats", "history", "help");
         if (args.length == 1) {
             return subs.stream().filter(x -> x.startsWith(args[0].toLowerCase())).collect(Collectors.toList());
         }
