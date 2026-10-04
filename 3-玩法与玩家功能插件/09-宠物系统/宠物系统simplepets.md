@@ -241,6 +241,7 @@ Pet.economy.bypass
 - **性能上限**：宠物与粒子吃一点性能，几十人服建议每玩家 1 只宠物、粒子距离 ≤ 32 格。
 - **勿与 FarPets / RZXPets 同装**：功能重叠，二选一即可。
 - **重载用 `/pet reload`**，不要用 Bukkit `/reload`（会破坏宠物实体状态）。
+- **启动日志 `[SimplePets Warning] GlowingEntities class is currently unavailable in this version...`**：**非致命**，宠物召唤/骑乘/戴头/存档等主体功能全部正常，只是**彩色发光描边不可用**。详见下方 FAQ。
 
 ## 常见问题（FAQ）
 
@@ -261,6 +262,22 @@ A：本服已装 **SimplePets Vault Addon**，在 `plugins/SimplePets/AddonConfi
 
 **Q：宠物怎么飞？**
 A：逐宠开关——把 `plugins/SimplePets/Pets/<生物>.json` 里的 `"fly": false` 改成 `"true"`，重启或 `/pet reload`，再给玩家 `Pet.type.<生物>.fly` 权限即可。召唤后悬空飞行跟随，骑上会飞的宠物可空中骑乘（详见「宠物独立配置与飞行机制」一节）。
+
+**Q：启动日志 `[SimplePets Warning] GlowingEntities class is currently unavailable in this version...` 要管吗？**
+A：**不用管，宠物功能不受影响。**
+
+| 项 | 说明 |
+|---|---|
+| GlowingEntities 是什么 | SimplePets **内嵌（shade）**的第三方发光库 `fr.skytasul:glowingentities`（SkytAsul/GlowingEntities），纯反射实现、**不依赖 ProtocolLib** |
+| 它负责什么 | 让实体**按玩家**显示**彩色描边发光**（MC 原生的 glowing 只有白色描边，彩色要靠 scoreboard team + glowing flag 组合） |
+| 为什么在 1.21.11 上不可用 | 该库**按 MC 版本加载映射表**（正常时日志为 `[GlowingEntities] Loaded mappings V1_20` 这类），SimplePets 内置的这个版本没有 1.21.11 的映射 → 类初始化失败 → 插件捕获后打印这条 WARN 并**跳过发光功能** |
+| 实际影响 | 宠物的**彩色发光/描边**相关效果失效（对应 `config.yml` 的 `give-glow-effect` / `glow-effect-color`，以及宠物 JSON 里的 `glow-color` 数据项）。召唤、骑乘、戴头、改名、存档、经济购买**全部正常** |
+| 怎么处理 | 本服若 `give-glow-effect: false`（插件默认），**连可见影响都没有**，直接忽略这条 WARN 即可；若开了 `true` 却发现宠物不发光，就是它失效了——要么关掉，要么等 SimplePets 更新内置的库版本 |
+
+> 注意这条不是 SimplePets 版本老：本服 **R5-B315（2026-09-06）已是当时最新构建**，官方支持的 MC 区间是 1.21.8–26.2，1.21.11 在内；缺的是它**打包进来的那个 GlowingEntities 库**对 1.21.11 的映射，属上游库滞后，升级/降级 SimplePets 都解决不了。
+
+**Q：宠物不发光怎么办？**
+A：先确认 `plugins/SimplePets/config.yml` 里 `give-glow-effect` 是否为 `true`。是 `true` 仍不发光，就是上面这条 GlowingEntities 不可用所致，暂无配置层面解法；只要白色描边即可的话，可用 Bukkit 原生 API（`Entity#setGlowing(true)`，Paper 提供）由自研插件/命令实现，不依赖 SimplePets。
 
 **Q：SimplePets 能加 FarPets 那样的被动加成吗？**
 A：插件本身无被动/技能系统；需自行开发 addon（官方有 Addon API 与开发文档，但现成 addon 全是经济/区域/实用类，无被动类）。属于开发工作量，不是配置能做到的（详见「被动能力扩展（Addon）」一节）。

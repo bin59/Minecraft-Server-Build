@@ -84,7 +84,7 @@
 | 视距 / 模拟距离 | 12 / 4 区块                          |
 | 启动内存        | 初始 1GB / 最大 4GB                  |
 | 服务端目录      | `C:\mc_serve\1.21.11-test`           |
-| 文档更新日期    | 2026-09-18                           |
+| 文档更新日期    | 2026-10-04                           |
 
 ---
 
@@ -163,8 +163,16 @@
 | 摸头互动       | PatPat（Modrinth）                        | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用            |
 | 玩家骑乘       | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                    |
 | 语音           | Simple Voice Chat                         | 近距离语音聊天                                                    |
-| 菜单（自研）   | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 16 套 + 管理线 12 套，含新人指南） |
+| 菜单（自研）   | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 15 套 + 管理线 12 套，含新人指南、南瓜邮箱入口） |
+| 邮箱（自研）   | PumpkinMail                               | 南瓜邮箱：活动奖励一键批量发放（管理）与玩家领取（`/mailbox`）                  |
+| 皮肤记录（自研）| BedrockSkinRecorder                       | 基岩玩家上线自动固化 Xbox 皮肤纹理为 PNG 到服务器磁盘（离线可拉取）              |
 | 传送阵（自研） | SpacePortal                               | 地面法阵长途传送（本服特色）                                      |
+| 账本（自研）   | MoneyLedger                               | 南瓜账本：南瓜币每笔变动按类别自动记账（转账/买卖/拍卖/收购/税/任务/活动），可查可导出 CSV |
+| 区域冒险（自研）| AdvZone                                   | 指定区域强制冒险模式，保护建筑与地形                              |
+| 实体计数（自研）| EntityCount                               | PlaceholderAPI 占位符扩展（统计/显示实体数量，1.1.0）            |
+| 末影龙（自研） | DragonManager                             | 末影龙定时重生与破坏保护                                          |
+| 每日收购（自研）| DailySell                                 | 每日随机收购指定物品，玩家可出售换币                              |
+| 在线排行（自研）| PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                    |
 | 基岩 GUI       | BedrockPlayerSupport                      | 基岩玩家免敲指令的表单界面                                        |
 | 数据展示       | Plan / TAB / PosTracker                   | 玩家行为分析、炫彩称号、坐标轨迹                                  |
 | 运维           | OPanel / spark / MCSM / EasyBot           | Web 面板、性能分析、进程管理、QQ 联动                             |
@@ -192,7 +200,7 @@
 - 弄丢了也没关系，输入 `/qm` 直接打开菜单
 - Java 版：弹出箱子界面，点图标即可
 - 基岩版：自动弹出点按钮的表单
-- 菜单包含：**传送 · 领地 · 空间传送阵 · 经济 · 工具包 · 皮肤 · 社交 · 服务器信息 · 语音**
+- 菜单包含：**传送 · 领地 · 空间传送阵 · 经济 · 工具包 · 皮肤 · 社交 · 服务器信息 · 语音 · 南瓜邮箱**
 
 > 💡 菜单里需要填名字的操作（如"传送到谁"），点击后会把命令格式发到聊天框，自己补全参数即可。
 
@@ -273,6 +281,16 @@
 | `/baltop`            | 查看财富排行榜 |
 
 > `/sell`、`/sellall`、`/worth` 已命令级禁用（Essentials `disabled-commands`，2026-09-30），量产物品走玩家间交易（`/ah` 拍卖行、`/shop` 玩家商店）。
+
+### 🎃 南瓜邮箱（活动奖励）
+
+服务器发活动奖励 / 补偿时会放进**南瓜邮箱**，上线有 ActionBar 提示"有待领取奖励"：
+
+| 命令                | 作用                           |
+| ------------------- | ------------------------------ |
+| `/mailbox`（或 `/pmail`） | 打开自己的邮箱，一键领取全部奖励 |
+
+> 管理发放入口：快捷菜单 → 管理面板 → **南瓜邮箱管理**（`/mailbox admin` 发放面板；`/mailbox give <奖品ID> <名单>` 一键批量发放，名单支持 `@online` / `@whitelist` / `@file:路径` / 玩家名逗号分隔）。
 
 ### 🎁 工具包（Kit）
 
@@ -390,6 +408,7 @@
 | 🎁 领工具包        | `/kit`（新手包 `starter`）             |
 | 🎨 换皮肤          | `/skin set 皮肤名`（或 `/skins` 点选） |
 | 💬 私聊 / 回复     | `/msg 玩家名 内容` / `/r 内容`         |
+| 🎃 领活动奖励      | `/mailbox`（南瓜邮箱）                 |
 
 **🏠 圈地**：拿**木锄** → 左键点角① → 右键点对角② → `/res create 领地名`
 　然后：`/res list` 看领地 · `/res tp 领地名` 传送 · `/res pset 玩家名 build false` 禁别人建造
@@ -453,7 +472,7 @@
 
 | 分类目录                  | 说明                                                   | 代表分册                                                                                                                                                                    |
 | ------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服                                                                                           |
+| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充、协议库 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服 · ProtocolLib                                                                              |
 | **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动              | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                                                                                           |
 | **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件             | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · LeashablePlayers · ClickMobs |
 | **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                    | Plan · TAB · 炫彩多层称号 · DecentHolograms · PosTracker                                                                                                                    |
@@ -464,7 +483,7 @@
 
 ---
 
-> ⚠️ 本文档依据服务器当前插件配置编写（2026-09-18 核对）。若服务器调整配置，以游戏内实际可用为准。
+> ⚠️ 本文档依据服务器当前插件配置编写（2026-10-04 核对）。若服务器调整配置，以游戏内实际可用为准。
 > 管理命令（封禁、回滚、修改世界等）不属于玩家权限范围，详细见各管理分册。
 
 ---
@@ -488,7 +507,8 @@ Minecraft-Server-Build/
 │   ├── 05-端口与网络架构总览/        README.md
 │   ├── 06-Velocity 多服/            Velocity 多服.md
 │   ├── 07-服务器配置文件补充/        README.md
-│   └── 08-服务器资源包-BGM/          部署与配置说明.md（BGM资源包源文件 / 循环BGM数据包）
+│   ├── 08-服务器资源包-BGM/          部署与配置说明.md（BGM资源包源文件 / 循环BGM数据包）
+│   └── 09-协议库-ProtocolLib/       ProtocolLib.md
 │
 ├── 2-运维监控与面板/
 │   ├── 01-QQ机器人联动-EasyBot/     EasyBot.md
@@ -496,8 +516,7 @@ Minecraft-Server-Build/
 │   ├── 03-性能分析-spark/           spark.md
 │   ├── 04-核心依赖库-CMILib/        CMILib.md
 │   ├── 05-统计系统-bStats/          bStats.md
-│   ├── 06-MCSM控制面板/             MCSM控制面板.md
-│   └── 07-协议库-ProtocolLib/       ProtocolLib.md
+│   └── 06-MCSM控制面板/             MCSM控制面板.md
 │
 ├── 3-玩法与玩家功能插件/
 │   ├── 01-经济系统-Vault/
@@ -552,6 +571,10 @@ Minecraft-Server-Build/
 └── 自研/                            # 自研插件：文档 + 源码 + 构建产物
     ├── AdvZone/                     AdvZone.md（区域强制冒险模式）
     ├── 传送阵/                      SpacePortal 空间传送阵（文档 + 源码 + jar）
+    ├── 南瓜账本-MoneyLedger/        MoneyLedger（文档 + 源码，南瓜币流水分类记账，已部署）
+    ├── 南瓜邮箱-PumpkinMail/        PumpkinMail（文档 + 源码 + jar，活动奖励发放/领取，已部署）
+    ├── 在线时间排行-PlanTop/        PlanTop（文档 + 源码 + jar，基于 Plan 的在线时间排行）
+    ├── 基岩皮肤记录-BedrockSkinRecorder/  BedrockSkinRecorder（文档 + 源码 + jar，基岩皮肤上线固化）
     ├── 实体计数占位符/              EntityCount（PAPI 占位符扩展 1.1.0）
     ├── 快捷菜单系统/                QuickMenu（主文档 + 与通用菜单对比）
     ├── 末影龙重生与破坏保护/        DragonManager（文档 + 源码 + jar）
@@ -559,3 +582,10 @@ Minecraft-Server-Build/
     ├── 综合RPG框架/                 rpg_framework 开发过程总结
     └── 自定义模型物品/              模型物品资源包 + 方案与部署
 ```
+
+---
+
+## 更新记录
+
+- **2026-10-04 更新**：插件与玩法总览"自研"类目补齐 MoneyLedger、AdvZone、EntityCount、DragonManager、DailySell、PlanTop；目录树"自研/"段目录名与实际对齐（`南瓜邮箱/`→`南瓜邮箱-PumpkinMail/`、`基岩皮肤记录器/`→`基岩皮肤记录-BedrockSkinRecorder/`），并补入 `南瓜账本-MoneyLedger/`、`在线时间排行-PlanTop/`；文档更新日期改为 2026-10-04。
+- **关于"服务端目录 `C:\mc_serve\1.21.11-test`"**：该处保留为历史记录未改动；实际运行目录以部署机器为准，本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-1.21.11`（Leaf 1.21.11 生产运行目录备份）为运行服参照。

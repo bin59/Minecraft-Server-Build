@@ -9,7 +9,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,15 +28,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * DailySell - 每日随机收购（v1.1.0）
+ * DailySell - 每日随机收购（v1.2.1，27 格美化 GUI + 多页）
  * 每天零点从物品池随机抽 N 种物品：
  *   - 每种当天额度随机 [min-per-item, max-per-item] 个（每人当天最多卖这么多个）
  *   - 每种单价 = 基础价 × 当日随机浮动系数（取整）
  *   - 生成时保证 4 种合计（单价×额度）≤ daily-budget（默认 800），超了自动缩减额度
- * 玩家 /ds sell（卖1个）/ /ds sellall（卖满额度）获得南瓜币（Vault）。
+ * 玩家：
+ *   - /ds（或 /ds gui）打开 GUI：左键卖 1 个、Shift+左键卖满额度、支持多页
+ *   - /ds sell（卖1个）/ /ds sellall（卖满额度）命令方式
+ *   - /ds today 查看清单
  * 防刷：每人每天每种额度上限 + 每人每日总收益上限（daily-budget）。
  */
-public class DailySell extends JavaPlugin implements CommandExecutor {
+public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
 
     private Economy econ;
     private FileConfiguration cfg;
@@ -58,6 +66,11 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
     }
     private final List<Entry> today = new ArrayList<>();
     private String todayDate = "";
+
+    // 打开的 GUI（玩家 UUID -> 打开的收购界面）与页码
+    private final Map<UUID, Inventory> guis = new HashMap<>();
+    private final Map<UUID, Integer> guiPages = new HashMap<>();
+    private static final int PER_PAGE = 14;
 
     // 常用物品中文名（展示用，兜底英文名）
     private static final Map<String, String> ZH = new HashMap<>();
@@ -102,7 +115,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
         daily = YamlConfiguration.loadConfiguration(dailyFile);
         data = YamlConfiguration.loadConfiguration(dataFile);
 
-        rollIfNeeded(true);
+        rollIfNeeded(false);
 
         new BukkitRunnable() {
             @Override
@@ -111,8 +124,9 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
             }
         }.runTaskTimer(this, 1200L, 1200L);
 
+        getServer().getPluginManager().registerEvents(this, this);
         getCommand("ds").setExecutor(this);
-        getLogger().info("DailySell v" + getDescription().getVersion() + " 已启用");
+        getLogger().info("DailySell v" + getDescription().getVersion() + " 已启用（GUI + 命令）");
     }
 
     @Override
@@ -136,11 +150,15 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
         }
     }
 
-    /** 日期变化时重新生成今日清单 */
+    /** 日期变化时重新生成今日清单；同一天重启时恢复已保存清单（不刷新物品与额度） */
     private void rollIfNeeded(boolean force) {
         String now = LocalDate.now().toString();
         String stored = daily.getString("date", "");
-        if (!force && now.equals(stored)) return;
+        boolean hasList = daily.isSet("items") && !daily.getStringList("items").isEmpty();
+        if (!force && now.equals(stored) && hasList) {
+            loadTodayFromFile();
+            return;
+        }
         List<Entry> rolled = roll();
         if (rolled == null) {
             getLogger().warning("物品池为空或不足，无法生成今日清单");
@@ -157,6 +175,21 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
         if (broadcast) broadcastToday();
     }
 
+    /** 从 daily.yml 恢复当天已生成的清单（重启不刷新物品与额度） */
+    private void loadTodayFromFile() {
+        today.clear();
+        todayDate = daily.getString("date", "");
+        for (String s : daily.getStringList("items")) {
+            String[] parts = s.split(":");
+            if (parts.length != 3) continue;
+            Material m = Material.matchMaterial(parts[0]);
+            if (m == null) continue;
+            try {
+                today.add(new Entry(m, Double.parseDouble(parts[1]), Integer.parseInt(parts[2])));
+            } catch (NumberFormatException ignored) { }
+        }
+    }
+
     /** 随机生成今日清单（满足额度范围 + 总价 ≤ daily-budget） */
     private List<Entry> roll() {
         List<String> keys = new ArrayList<>(pool.keySet());
@@ -165,7 +198,6 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
         Collections.shuffle(keys, rnd);
         int n = Math.min(itemsPerDay, keys.size());
 
-        // 尝试若干次：随机 4 种 + 额度/单价，看合计是否 ≤ budget
         for (int attempt = 0; attempt < 10; attempt++) {
             Collections.shuffle(keys, rnd);
             List<Entry> list = new ArrayList<>();
@@ -176,11 +208,10 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
                 double base = pool.get(keys.get(i));
                 double price = Math.max(1, Math.round(base * (priceFloatMin + rnd.nextDouble() * (priceFloatMax - priceFloatMin))));
                 int quota = minPerItem + rnd.nextInt(Math.max(1, maxPerItem - minPerItem + 1));
-                // 单种盘子若已超预算，缩减额度
                 double cap = dailyBudget - total;
                 if (price * quota > cap) {
                     int maxQ = (int) Math.floor(cap / price);
-                    if (maxQ < 1) continue; // 这种放不下，跳过
+                    if (maxQ < 1) continue;
                     quota = Math.min(quota, maxQ);
                 }
                 list.add(new Entry(m, price, quota));
@@ -188,7 +219,6 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
             }
             if (list.size() == n) return list;
         }
-        // 兜底：取最便宜的组合，全部额度 1
         List<Entry> fallback = new ArrayList<>();
         double total = 0;
         for (int i = 0; i < n; i++) {
@@ -212,7 +242,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
             sb.append("§e").append(zh(e.mat)).append("§7(").append(fmt(e.price)).append("币/个, 限")
               .append(e.quota).append("个)");
         }
-        sb.append("  §a/ds sell §7卖手持物品");
+        sb.append("  §a/ds §7打开收购界面");
         Bukkit.broadcastMessage(sb.toString());
     }
 
@@ -249,11 +279,224 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
         try { data.save(dataFile); } catch (IOException ex) { getLogger().severe("data.yml 保存失败"); }
     }
 
+    // ---------- GUI（27 格美化 + 多页） ----------
+
+    private ItemStack glass(Material m, String name) {
+        ItemStack it = new ItemStack(m);
+        ItemMeta meta = it.getItemMeta();
+        meta.setDisplayName(name == null ? " " : name);
+        it.setItemMeta(meta);
+        return it;
+    }
+
+    private void openGui(Player p) {
+        if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
+        guiPages.put(p.getUniqueId(), 1);
+        Inventory inv = Bukkit.createInventory(null, 27, "§6✦ 每日收购 · 今日");
+        refreshGui(p, inv);
+        guis.put(p.getUniqueId(), inv);
+        p.openInventory(inv);
+    }
+
+    private void refreshGui(Player p, Inventory inv) {
+        inv.clear();
+        int page = Math.max(1, guiPages.getOrDefault(p.getUniqueId(), 1));
+        int totalPages = Math.max(1, (int) Math.ceil(today.size() / (double) PER_PAGE));
+        if (page > totalPages) page = totalPages;
+        guiPages.put(p.getUniqueId(), page);
+
+        // 背景装饰：物品区深色玻璃 + 底部控制条墨色玻璃
+        ItemStack bg = glass(Material.BLACK_STAINED_GLASS_PANE, null);
+        ItemStack bar = glass(Material.GRAY_STAINED_GLASS_PANE, null);
+        for (int i = 0; i < 27; i++) inv.setItem(i, bg);
+        for (int i = 18; i < 27; i++) inv.setItem(i, bar);
+
+        // 物品槽 0-13（每页 14 个）
+        int start = (page - 1) * PER_PAGE;
+        for (int i = 0; i < PER_PAGE; i++) {
+            int idx = start + i;
+            if (idx < today.size()) {
+                inv.setItem(i, buildIcon(p, today.get(idx)));
+            } else {
+                inv.setItem(i, bg.clone());
+            }
+        }
+
+        // 今日收益（槽 22）
+        ItemStack info = new ItemStack(Material.GOLD_NUGGET);
+        ItemMeta im = info.getItemMeta();
+        im.setDisplayName("§6✦ 今日收益");
+        im.setLore(Arrays.asList(
+                "§7已获: §a" + fmt(earnedToday(p)) + "§7 / §e" + fmt(dailyBudget) + "§7 南瓜币",
+                "§7额度用完或达上限即收摊"));
+        info.setItemMeta(im);
+        inv.setItem(22, info);
+
+        // 操作说明（槽 24）
+        ItemStack foot = new ItemStack(Material.PAPER);
+        ItemMeta fom = foot.getItemMeta();
+        fom.setDisplayName("§7❓ 操作说明");
+        fom.setLore(Arrays.asList(
+                "§7左键点击物品 = 卖 1 个",
+                "§7Shift+左键 = 卖满今日额度",
+                "§7ESC / 关闭界面即退出"));
+        foot.setItemMeta(fom);
+        inv.setItem(24, foot);
+
+        // 翻页（槽 18 上一页 / 26 下一页）
+        if (page > 1) {
+            ItemStack prev = new ItemStack(Material.ARROW);
+            ItemMeta pm = prev.getItemMeta();
+            pm.setDisplayName("§b◀ 上一页 §7(第 " + page + "/" + totalPages + " 页)");
+            prev.setItemMeta(pm);
+            inv.setItem(18, prev);
+        }
+        if (page < totalPages) {
+            ItemStack next = new ItemStack(Material.ARROW);
+            ItemMeta nm = next.getItemMeta();
+            nm.setDisplayName("§b下一页 ▶ §7(第 " + page + "/" + totalPages + " 页)");
+            next.setItemMeta(nm);
+            inv.setItem(26, next);
+        }
+        // 页码（槽 20）
+        ItemStack pageIcon = new ItemStack(Material.BOOK);
+        ItemMeta pgm = pageIcon.getItemMeta();
+        pgm.setDisplayName("§7页码 §e" + page + "§7 / §e" + totalPages);
+        pageIcon.setItemMeta(pgm);
+        inv.setItem(20, pageIcon);
+    }
+
+    /** 单个物品图标：剩余额度用数量显示，未卖完发光 */
+    private ItemStack buildIcon(Player p, Entry e) {
+        int sold = soldCount(p, e.mat);
+        int remaining = Math.max(0, e.quota - sold);
+        ItemStack icon = new ItemStack(e.mat, Math.min(Math.max(1, remaining), 64));
+        ItemMeta meta = icon.getItemMeta();
+        meta.setDisplayName("§e" + zh(e.mat));
+        List<String> lore = new ArrayList<>();
+        lore.add("§7单价: §a" + fmt(e.price) + "§7 南瓜币/个");
+        lore.add("§7今日额度: §e" + sold + "§7/§e" + e.quota);
+        if (remaining <= 0) {
+            lore.add("");
+            lore.add("§c今日额度已用完");
+        } else {
+            lore.add("");
+            lore.add("§a左键 §7卖 1 个");
+            lore.add("§aShift+左键 §7卖满额度");
+        }
+        meta.setLore(lore);
+        if (remaining > 0) {
+            meta.addEnchant(org.bukkit.enchantments.Enchantment.UNBREAKING, 1, true);
+            meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+        }
+        icon.setItemMeta(meta);
+        return icon;
+    }
+
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent e) {
+        if (!(e.getWhoClicked() instanceof Player)) return;
+        Player p = (Player) e.getWhoClicked();
+        Inventory inv = guis.get(p.getUniqueId());
+        if (inv == null || e.getInventory() != inv) return;
+        e.setCancelled(true);
+        ItemStack cur = e.getCurrentItem();
+        if (cur == null || cur.getType() == Material.AIR) return;
+
+        int slot = e.getSlot();
+        if (slot == 18 && cur.getType() == Material.ARROW) {
+            guiPages.put(p.getUniqueId(), Math.max(1, guiPages.getOrDefault(p.getUniqueId(), 1) - 1));
+            refreshGui(p, inv);
+            p.playSound(p.getLocation(), "ui.button.click", 0.6f, 1.2f);
+            return;
+        }
+        if (slot == 26 && cur.getType() == Material.ARROW) {
+            guiPages.put(p.getUniqueId(), guiPages.getOrDefault(p.getUniqueId(), 1) + 1);
+            refreshGui(p, inv);
+            p.playSound(p.getLocation(), "ui.button.click", 0.6f, 1.2f);
+            return;
+        }
+
+        Entry entry = findEntry(cur.getType());
+        if (entry == null) return;
+        if (e.isShiftClick()) {
+            sellFromGui(p, entry, inv, 0);
+        } else {
+            sellFromGui(p, entry, inv, 1);
+        }
+    }
+
+    /** amount=0 表示卖满额度/预算 */
+    private void sellFromGui(Player p, Entry entry, Inventory inv, int amount) {
+        int sold = soldCount(p, entry.mat);
+        int remainQuota = entry.quota - sold;
+        if (remainQuota <= 0) {
+            p.sendMessage("§c今日「" + zh(entry.mat) + "」额度已用完");
+            p.playSound(p.getLocation(), "entity.villager.no", 0.6f, 1.0f);
+            refreshGui(p, inv);
+            return;
+        }
+        double budgetLeft = dailyBudget - earnedToday(p);
+        int budgetAllow = budgetLeft >= entry.price ? (int) Math.floor(budgetLeft / entry.price) : 0;
+        if (budgetAllow <= 0) {
+            p.sendMessage("§c今日收购总收益已达上限（" + fmt(dailyBudget) + " 币）");
+            p.playSound(p.getLocation(), "entity.villager.no", 0.6f, 1.0f);
+            refreshGui(p, inv);
+            return;
+        }
+        int amt = amount > 0 ? 1 : Math.min(remainQuota, budgetAllow);
+        if (amt > 1) {
+            int held = countHeld(p, entry.mat);
+            amt = Math.min(amt, held);
+            if (amt <= 0) {
+                p.sendMessage("§c背包里没有「" + zh(entry.mat) + "」可出售");
+                return;
+            }
+        } else {
+            if (!hasOne(p, entry.mat)) {
+                p.sendMessage("§c背包里没有「" + zh(entry.mat) + "」可出售");
+                return;
+            }
+        }
+        removeItems(p, entry.mat, amt);
+        econ.depositPlayer(p, entry.price * amt);
+        data.set(soldKey(p, entry.mat), sold + amt);
+        saveData();
+        p.sendMessage("§a已出售 §e" + zh(entry.mat) + "§a ×" + amt + "，获得 §e"
+                + fmt(entry.price * amt) + "§a 南瓜币（额度剩 §e" + (entry.quota - sold - amt) + "§a 个）");
+        p.playSound(p.getLocation(), "entity.experience_orb.pickup", 0.6f, 1.4f);
+        refreshGui(p, inv);
+    }
+
+    private int countHeld(Player p, Material m) {
+        int n = 0;
+        for (ItemStack it : p.getInventory().getContents()) {
+            if (it != null && it.getType() == m) n += it.getAmount();
+        }
+        return n;
+    }
+
+    private boolean hasOne(Player p, Material m) {
+        return countHeld(p, m) > 0;
+    }
+
+    private void removeItems(Player p, Material m, int amount) {
+        int left = amount;
+        for (ItemStack it : p.getInventory().getContents()) {
+            if (left <= 0) break;
+            if (it != null && it.getType() == m) {
+                int take = Math.min(it.getAmount(), left);
+                it.setAmount(it.getAmount() - take);
+                left -= take;
+            }
+        }
+    }
+
     // ---------- 命令 ----------
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        String sub = args.length > 0 ? args[0].toLowerCase() : "today";
+        String sub = args.length > 0 ? args[0].toLowerCase() : "gui";
         if (!(sender instanceof Player) && !sub.equals("reload") && !sub.equals("reroll")) {
             sender.sendMessage("此命令需在游戏内执行");
             return true;
@@ -264,6 +507,10 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
                 break;
             case "sellall":
                 sellAll((Player) sender);
+                break;
+            case "gui":
+            case "menu":
+                openGui((Player) sender);
                 break;
             case "today":
                 showToday(sender);
@@ -283,7 +530,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
                 } else sender.sendMessage(ChatColor.RED + "没有权限");
                 break;
             default:
-                sender.sendMessage("§6用法: §e/ds sell §7|§e sellall §7|§e today §7|§e reload §7|§e reroll");
+                sender.sendMessage("§6用法: §e/ds §7打开收购界面 §7|§e /ds sell §7|§e sellall §7|§e today §7|§e reload §7|§e reroll");
                 break;
         }
         return true;
@@ -293,12 +540,12 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
         if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
         ItemStack hand = p.getInventory().getItemInMainHand();
         if (hand == null || hand.getType() == Material.AIR) {
-            p.sendMessage("§c请手持要出售的物品（今日收购清单见 /ds today）");
+            p.sendMessage("§c请手持要出售的物品（输入 §a/ds §7打开收购界面）");
             return;
         }
         Entry entry = findEntry(hand.getType());
         if (entry == null) {
-            p.sendMessage("§c「" + zh(hand.getType()) + "」不是今日收购物品，清单见 /ds today");
+            p.sendMessage("§c「" + zh(hand.getType()) + "」不是今日收购物品，清单见 §a/ds §7或 §a/ds today");
             return;
         }
         int sold = soldCount(p, entry.mat);
@@ -310,7 +557,11 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
             p.sendMessage("§c今日收购总收益已达上限（" + fmt(dailyBudget) + " 币）");
             return;
         }
-        p.getInventory().removeItem(new ItemStack(entry.mat, 1));
+        if (!hasOne(p, entry.mat)) {
+            p.sendMessage("§c背包里没有「" + zh(entry.mat) + "」可出售");
+            return;
+        }
+        removeItems(p, entry.mat, 1);
         econ.depositPlayer(p, entry.price);
         data.set(soldKey(p, entry.mat), sold + 1);
         saveData();
@@ -336,7 +587,6 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
             p.sendMessage("§c今日「" + zh(entry.mat) + "」额度已用完");
             return;
         }
-        // 预算内还能卖多少个
         double budgetLeft = dailyBudget - earnedToday(p);
         int budgetAllow = budgetLeft >= entry.price ? (int) Math.floor(budgetLeft / entry.price) : 0;
         if (budgetAllow <= 0) {
@@ -344,7 +594,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
             return;
         }
         int amount = Math.min(hand.getAmount(), Math.min(remainQuota, budgetAllow));
-        p.getInventory().removeItem(new ItemStack(entry.mat, amount));
+        removeItems(p, entry.mat, amount);
         econ.depositPlayer(p, entry.price * amount);
         data.set(soldKey(p, entry.mat), sold + amount);
         saveData();
@@ -367,7 +617,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor {
             total += e.price * e.quota;
         }
         sender.sendMessage("§7清单总价上限: §a" + fmt(dailyBudget) + "§7 币（本次清单合计 " + fmt(total) + " 币）");
-        sender.sendMessage("§7出售: 手持物品输 §a/ds sell §7(卖1个) 或 §a/ds sellall §7(卖满额度)");
+        sender.sendMessage("§7出售: §a/ds §7打开收购界面，或手持物品 §a/ds sell §7(卖1个) / §a/ds sellall §7(卖满额度)");
     }
 
     private boolean setupEconomy() {

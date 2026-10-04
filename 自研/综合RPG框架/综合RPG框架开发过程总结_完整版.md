@@ -1,7 +1,7 @@
 # 综合RPG框架（数据包部署说明）
 
 > 目标服务器：Leaf 1.21.11（Paper 分支）Java/基岩互通服
-> 部署位置：`world\datapacks\rpg_framework`（143 个文件）
+> 部署位置：`world\datapacks\rpg_framework`（238 个文件）
 > 适配版本：Minecraft Java 1.21.11，数据包格式 94
 
 ## 一、部署与加载
@@ -61,14 +61,15 @@
 - 接取时记录统计基准值，进度 = 当前统计 − 基准，避免历史数据污染。
 
 ### 5. 经济系统
-- **金币商店**：10 种商品，余额检查 → 扣款 → 发货 → 提示。药水用 1.21 物品组件语法。
+- **金币商店**：12 种商品，余额检查 → 扣款 → 发货 → 提示。药水用 1.21 物品组件语法。
 - **玩家转账**：转给 16 格内最近的玩家（规避基岩版无法解析玩家名）。
 - **每日签到**：按游戏内天数限制每天一次。
 
-### 6. 传送系统
+### 6. 传送系统（基础传送点 w1/w2/w3）
 - 坐标存 `storage rpg:warps`（w1/w2/w3，每点含 x/y/z/dim）。
 - 管理员站在目标位置执行设置函数，自动写入坐标与维度。
 - 传送用函数宏 `$execute in $(dim) run tp @s $(x) $(y) $(z)`，一行解决跨维度。
+- 此为基础传送点系统，被第 12 节「传送阵系统」作为 `dt=3` 目标类型复用（传送阵可直接指向 w1/w2/w3）。
 
 ### 7. BOSS 战
 - 门槛：等级 ≥ 5 且金币 ≥ 300。
@@ -107,6 +108,30 @@
 ### 11. 成就系统
 11 个成就，全部用 `impossible` 准则（由函数手动授予），分主线链（选职业 → 5/10/20/30/50 级）与支线（首次技能 / 累计 5 任务 / 击败 BOSS / 平息入侵 / 攒 10000 金）。
 
+### 12. 传送阵系统（portal，30 个函数）
+玩家站上 **5×5 阵台**原地停留约 2 秒即自动传送，带等级门槛、金币费用与冷却；Java/基岩统一走聊天按钮入口。
+
+- **数据**：`storage rpg:portals` 的 `p1~p8` 槽位，每座含 `on/name/dim/x/y/z/dt/di/lv/cost/s`。
+- **目标类型 `dt`**：`1`=另一座传送阵（`di` 填目标阵槽位）；`2`=怪物领域中心（`di` 填区域槽位，只读坐标，与 zone 系统唯一交集）；`3`=传送点 `w1/w2/w3`（`di` 填 1~3，复用第 6 节基础传送点）。
+- **创建**：`/function rpg:portal/create {slot:1,dt:2,di:1,lv:5,cost:20,name:"主城传送阵"}`（站在落点执行）；或走图形界面 `/function rpg:ui/open_admin`。建造会清空阵台中心 3×3×2 方块，请选空地。
+- **结构**：`build` 自动铺设 5×5 黑石砖底盘（中心磁石 + 四正向海晶灯 + 四斜角哭泣黑曜石 + 四角末地烛）。
+- **使用流程**：主循环 `tick` 每 5 刻逐槽位 `scan`，记录站在阵上的玩家（`rpg.pnow`）→ `charge` 累积充能（约 2 秒，`#portal_charge`，冷却中不累计、离开即清零）→ 充满触发 `fire` 传送；或站阵上 `/trigger rpg.portal set 2` 立即激活（`instant`，跳过充能，需非冷却）。
+- **门槛与计费**：`use` 先查等级（`deny_lv`）与金币（`deny_gold`），通过后扣费并进入冷却 `rpg.pcd`（时长 `#portal_cd`），再 `route` 解析目标。
+- **路由**：`route` 按 `dt` 分发到 `route_portal` / `route_zone` / `route_warp` → 统一 `tp_xyz` 宏跨维度传送 → `arrive` 落地反馈。
+- **入口**：`/trigger rpg.portal`（`set 1` 默认打开面板 `menu`；面板含 `list` 全阵列表与"立即激活"）。
+- **管理**：`on`/`off` 系统总开关；`enable`/`disable` 单座启停；`list` 列表、`info` 单座信息；`remove` 注销槽位（只删登记，阵台方块需手动拆）；`rebuild` 重建结构。
+
+### 13. 怪物领域系统（zone，32 个函数）
+管理员圈一块**长方体区域**，把怪物限制在区域内集中刷新（猎场/刷怪塔区域管理），带"严格/宽松"两种管制模式和"清除/拉回"两种越界处理。
+
+- **数据**：`storage rpg:zones` 的 `z1~z8` 槽位，每区含 `on/name/dim/cx/cy/cz/r/h/x1/y1/z1/dx/dy/dz/rp/pool/cap/s`。区域用"最小角 `x1/y1/z1` + 边长 `dx/dy/dz`"表达，每刻只需一次体积框选择器判定。
+- **创建**：`/function rpg:zone/create {slot:1,r:48,h:32,pool:1,cap:16,name:"哥布林营地"}`（站在区域中心执行，`r` 水平半径、`h` 垂直半高、`pool` 怪物池 1~4、`cap` 数量上限）；或走 `/function rpg:ui/open_admin`。
+- **主循环** `tick`（每秒一次，由 `rpg:tick` 调度）：`mark` 体积框标记区域内怪物（`rpg.zin`）与玩家（`rpg.zin_p`）→ `leash_all`（拉回模式把缓冲带越界怪拽回中心）→ `purge` 清除越界怪 → `enter_msg`/`leave_msg` 进出提示 → `spawn_all` 按 `#zone_rate` 秒刷怪节拍。
+- **越界管制**：`purge` 严格模式（`#zone_strict=1`）清除全服区域外所有受管怪物（含原版自然生成，即"怪只能在区域内"）；宽松模式（`=0`）只清本框架刷出的 `rpg.zmob`。BOSS `rpg.boss`、精英 `rpg.elite`、手动保护 `rpg.zkeep` 三类永久豁免。
+- **刷怪**：`spawn` → `summon` 按池随机 → `pool_1~4` 怪物池（可直接编辑；规则：带 `rpg.zmob`+`rpg.znew` 标签、类型在 `rpg:zone_mobs` 实体标签内、亡灵带防火以白天可战）。
+- **管理**：`on`/`off` 系统总开关；`enable`/`disable` 单区启停；`info`/`list` 查看；`goto` 巡查传送至区域中心；`clear_all`/`clear_one` 清怪；`place`/`ground` 地面定位；`remove` 删除区域。
+- **联动**：传送阵可把某座阵直接指向某个怪物领域中心（`dt=2`），用于"传送到猎场"。
+
 ## 四、管理员指令速查
 
 | 函数 / 指令 | 作用 |
@@ -117,9 +142,22 @@
 | `/trigger rpg.gui` | 打开主菜单（玩家兜底入口） |
 | `/trigger rpg.stats` | 查看角色信息（聊天面板） |
 | `/trigger rpg.quest` | 查看任务进度（聊天面板） |
+| `/trigger rpg.portal` | 传送阵面板（`set 2` 立即激活脚下阵） |
+| `/trigger rpg.zone` | 怪物领域列表 |
+| `rpg:portal/on` / `rpg:portal/off` | 传送阵系统总开关 |
+| `rpg:portal/create` | 站在落点创建传送阵（slot/dt/di/lv/cost/name） |
+| `rpg:portal/remove` | 注销传送阵槽位（阵台需手动拆） |
+| `rpg:portal/list` / `rpg:portal/rebuild` | 传送阵列表 / 重建阵台结构 |
+| `rpg:zone/on` / `rpg:zone/off` | 怪物领域系统总开关 |
+| `rpg:zone/create` | 站在中心创建怪物领域（slot/r/h/pool/cap/name） |
+| `rpg:zone/goto` | 传送至某区域中心巡查 |
+| `rpg:zone/clear_all` / `rpg:zone/list` | 清空区域怪 / 查看全部区域 |
 
 ## 五、已知限制
 
 1. **图形弹窗不显示动态数据**：角色金币、任务进度等实时数值只能在聊天面板（`/trigger rpg.stats`、`/trigger rpg.quest`）查看，这是 Dialog 系统的固有限制（不支持 score/selector/NBT 组件）。
 2. **基岩版无图形弹窗**：Geyser 不转发 Dialog，基岩玩家走聊天按钮通道，功能一致、仅交互形式不同。
 3. **界面文字为纯中文无 emoji**：游戏默认字体渲染不了 emoji，会显示方块。
+
+---
+更新记录：2026-10-04 更新——按 `rpg_framework\` 实查修正计数：部署文件总数 143→238（递归统计全部文件）；金币商店商品 10→12（`function\shop\buy_1`~`buy_12`）。portal/zone 模块尚无独立文档，属内容缺口，未补写新章节。

@@ -8,7 +8,7 @@ Minecraft Spigot/Paper 服务器插件，为 Java/基岩互通服（Geyser+Flood
 
 ### 架构与模块划分
 
-项目采用分层结构，共 8 个 Java 文件，分为 5 个包：
+项目采用分层结构，共 11 个 Java 文件，分为 6 个包：
 
 | 包 | 类 | 职责 |
 | --- | --- | --- |
@@ -18,6 +18,7 @@ Minecraft Spigot/Paper 服务器插件，为 Java/基岩互通服（Geyser+Flood
 | `listener` | `PortalListener` | 移动事件监听、进入/离开阵法检测、边界触发去重 |
 | `command` | `PortalCommand` | `/spaceportal`（别名 `/csz`）指令解析、Tab 补全、权限校验 |
 | `effect` | `EffectController` / `PortalEffectTask` | 纯数学粒子渲染（地面法阵、充能螺旋、传送爆发、时光隧道） |
+| `gui` | `PortalGui` / `PortalGuiListener` | 传送阵选择/管理箱子 GUI 界面与点击监听（Java/基岩双端走 Geyser 原生渲染） |
 
 ### 核心流程
 
@@ -48,3 +49,6 @@ tools\apache-maven-3.9.9\bin\mvn.cmd -f SpacePortal\pom.xml package
 ```
 
 产物为 `SpacePortal/target/SpacePortal-1.0.0.jar`。特效图案在 `EffectController.java`，颜色、图案均可二次开发。
+
+---
+更新记录：2026-10-04 更新——按 `src\main\java` 实查修正规模计数：Java 文件 8→11、包 5→6，并在包结构表补入 `gui` 包（`PortalGui` / `PortalGuiListener`）；其余内容未改动。

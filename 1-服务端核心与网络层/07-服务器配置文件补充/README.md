@@ -230,6 +230,7 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `AntiLitematica-7.0.1.jar.bak` | 反 Litematica 打印机检测（已停用） | `AntiLitematica/`（config/data.db/violations.db） |
 | `AuctionHouse-1.1.4.jar` | 拍卖行 | `AuctionHouse/`（auctions.db/categories.yml） |
 | `BedrockPlayerSupport-2.1.1-all.jar` | 基岩版玩家支持（原生表单 GUI） | `BedrockPlayerSupport/` |
+| `BedrockSkinRecorder-1.0.0.jar` | 自研·基岩皮肤记录（上线自动固化 Xbox 皮肤纹理） | `BedrockSkinRecorder/`（皮肤 PNG 输出） |
 | `bluemap-5.16-paper.jar.bak` | BlueMap 3D 网页地图（已停用，改 Dynmap） | `BlueMap/`（core.conf/webserver.conf/maps/） |
 | `BlueMap-Residence.jarr.bak` | BlueMap 领地桥接（停用） | `BlueMap_Residence/`（config.yml） |
 | `Chunky-Bukkit-1.4.40.jar` | 区块预生成 | `Chunky/`（config.yml/tasks/） |
@@ -254,6 +255,7 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `leashmod-bukkit-1.3.0.jar` | 拴绳牵玩家 | `LeashablePlayers/`（config.yml） |
 | `LootrPlugin-1.2.jar` | 战利品箱（Lootr） | `LootrPlugin/`（playerdata/） |
 | `LuckPerms-Bukkit-5.5.81.jar` | 权限管理 | `LuckPerms/`（config.yml + H2 数据库） |
+| `MoneyLedger.jar` | 自研·南瓜账本（南瓜币变动按类别记账，2026-10-04 部署） | `MoneyLedger/`（config.yml/ledger.db/export/） |
 | `nightcore-2.16.6.jar` | 前置依赖库（NightExpress，ExcellentEnchants 等） | `nightcore/`（config.yml/userdata.yml/data.db） |
 | `opanel-bukkit-1.21.9-build-2.0.1.jar` | OPanel Web 管理面板 | `OPanel/`（config.yml） |
 | `OpenInv.jar` | 离线背包查看 | `OpenInv/`（profiles.db） |
@@ -262,7 +264,8 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `Plan-5.8-build-3638.jar` | 玩家/服务器数据分析 | `Plan/`（database.db/public_html/） |
 | `PlanTop-1.0.0.jar` | 自研·在线时间排行 | `PlanTop/`（config.yml） |
 | `PosTracker-1.0.0.jar` | 玩家位置记录 | `PosTracker/`（config.yml/localization/） |
-| `ProtocolLib.jar` | 协议库（网络数据包） | `ProtocolLib/`（config.yml） |
+| `ProtocolLib.jar` | 协议库（网络数据包）详见 [09-协议库-ProtocolLib](../09-%E5%8D%8F%E8%AE%AE%E5%BA%93-ProtocolLib/ProtocolLib.md) | `ProtocolLib/`（config.yml） |
+| `PumpkinMail.jar` | 自研·南瓜邮箱（活动奖励批量发放/玩家领取，2026-10-04 重部署） | `PumpkinMail/`（config.yml/mailbox.db/名单文件） |
 | `Quests-3.16.1-430c34a.jar` | 任务系统 | `Quests/`（quests/playerdata/） |
 | `QuickMenu-1.0.0.jar` | 自研·快捷菜单系统 | `QuickMenu/`（config.yml 84KB） |
 | `Residence6.0.0.1.jar` | 领地系统 | `Residence/`（config.yml/Save/Backup/） |
@@ -347,3 +350,6 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 - **磁盘占用大头**：`world/region`（810MB）→ `.git`（840MB）→ `plugins/`（693MB）→ `libraries/`（120MB）→ `bluemap/`（118MB，可清）。
 - **已停用残留**：`bluemap/`、`BlueMap/`、`BlueMap_Residence/`、`AntiLitematica/` 及其 `.bak` jar 属停用残留，确认不再需要可一并删除释放空间。
 - **白名单**：`whitelist.json` 与其 `.backup` 同时维护，改白名单用 `/whitelist add/remove`。
+
+---
+更新记录：2026-10-04 更新——按运行服 `plugins\` 实况补全 4.1 插件清单，新增 `BedrockSkinRecorder-1.0.0.jar`、`MoneyLedger.jar`、`PumpkinMail.jar` 三个自研条目（连同原有 AdvZone/DailySell/DragonManager/EntityCount/PlanTop/QuickMenu/SpacePortal/UuidMigrate，自研 jar 全部在册）；其余未点名内容保留。

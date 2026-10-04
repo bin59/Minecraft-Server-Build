@@ -211,12 +211,24 @@ menus:
   main:
     title: '&6&l南瓜国际服 &8» &f快捷菜单'
     bedrock-content: '&7请选择你要使用的功能'
-    size: 27
+    size: 36
     filler:
       material: BLACK_STAINED_GLASS_PANE
       name: '&8'
 
     items:
+      # ---------- 南瓜邮箱 ----------
+      mailbox:
+        material: PUMPKIN
+        display-name: '&6&l南瓜邮箱'
+        lore:
+          - '&7查看并领取活动奖励'
+          - '&8点击打开邮箱'
+        slot: 30
+        actions:
+          - '[close]'
+          - '[player] mailbox'
+
       # ---------- 传送功能 ----------
       teleport:
         material: ENDER_PEARL
@@ -1639,6 +1651,18 @@ menus:
           - '[menu] admin-economy'
 
       # ---------- 玩家位置记录 ----------
+      admin-mailbox:
+        material: PUMPKIN
+        display-name: '&6&l南瓜邮箱管理'
+        lore:
+          - '&7批量发放奖励、查看玩家奖励与统计'
+          - '&8点击打开发放面板'
+        slot: 18
+        permission: pumpkinmail.admin
+        actions:
+          - '[close]'
+          - '[player] mailbox admin'
+
       postracker:
         material: FILLED_MAP
         display-name: '&6&l玩家位置记录'

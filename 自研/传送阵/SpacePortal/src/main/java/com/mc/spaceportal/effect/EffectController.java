@@ -203,7 +203,7 @@ public class EffectController {
         p.setX(x);
         p.setY(y);
         p.setZ(z);
-        p.getWorld().spawnParticle(Particle.REDSTONE, p, count, spread, spread, spread, 0,
+        p.getWorld().spawnParticle(Particle.DUST, p, count, spread, spread, spread, 0,
                 new Particle.DustOptions(hueToColor(hue), size));
     }
 

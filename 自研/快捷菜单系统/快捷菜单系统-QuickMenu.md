@@ -3,7 +3,7 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：27 套菜单 / 217 个菜单项，分**玩家线**（15 套）
+> **菜单已整合本服全部插件**：27 套菜单 / 215 个菜单项，分**玩家线**（15 套）
 > 与**管理线**（12 套），管理入口靠权限门控，普通玩家看不到。
 
 插件 jar：`dist/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
@@ -27,6 +27,7 @@
 | Geyser / ViaVersion  | —                                         | 服务器监控                 |
 | LuckPerms            | —                                         | 权限管理                   |
 | BedrockPlayerSupport | 传送 / 皮肤（表单）                | —                          |
+| **PumpkinMail（自研）** | 南瓜邮箱（/mailbox，领活动奖励）    | 南瓜邮箱管理（/mailbox admin 发放面板，权限 `pumpkinmail.admin`） |
 
 ---
 
@@ -268,7 +269,7 @@ actions:
 
 | 菜单 id     | 名称       | 对接插件                  | 主要内容                                                                                                                                                                                                                          |
 | ----------- | ---------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `main`      | 主菜单     | —                         | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达                                                                                                |
+| `main`      | 主菜单     | —                         | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达；含**南瓜邮箱**（`/mailbox`，slot 30，第 4 行）领活动奖励                                                                                                |
 | `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                                |
 | `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                 |
 | `residence` | 我的领地   | **Residence**             | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                                                           |
@@ -327,7 +328,7 @@ actions:
 
 | 菜单 id           | 名称         | 对接插件                                              | 主要内容                                                                                     |
 | ----------------- | ------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `admin`           | 管理面板     | —                                                     | 一级入口，10 个分类 + 返回玩家菜单                                                           |
+| `admin`           | 管理面板     | —                                                     | 一级入口，10 个分类 + 返回玩家菜单；含**南瓜邮箱管理**（slot 18，`/mailbox admin` 发放面板，权限 `pumpkinmail.admin`）                                                           |
 | `admin-player`    | 玩家管理     | **OpenInv** + EssentialsX                             | 看背包、传送/拉人、切模式、治疗、飞行、无敌、喂食、隐身、清背包、查信息、修复、发物品        |
 | `gamemode`        | 切换游戏模式 | EssentialsX                                           | `admin-player` 的子菜单：生存/创造/冒险/旁观四种模式，选模式后再从在线列表选玩家执行        |
 | `admin-punish`    | 处罚管理     | EssentialsX                                           | 踢出、封禁、临时封禁、解封、封 IP、禁言、解禁、关押、释放、广播、私信监视                    |
@@ -748,6 +749,9 @@ lp group default permission set pet.commands.remove true
 lp group default permission set voicechat.speak true
 lp group default permission set voicechat.listen true
 lp group default permission set voicechat.groups true
+
+# ---- PumpkinMail：南瓜邮箱（玩家侧 /mailbox 领奖励，无需额外权限）----
+# 管理子命令（admin/give/preset/list/stats）需要 pumpkinmail.admin，见 8.3
 ```
 
 ### 8.3 管理组（admin / owner）
@@ -874,6 +878,9 @@ lp group admin permission set auction.admin true
 lp group admin permission set economyshop.admin true
 lp group admin permission set dailysell.admin true
 # eztax.stats 已在 default 授予（玩家经济中心 + 管理菜单共用）；调整税率/征收改 config.yml
+
+# ---- PumpkinMail：南瓜邮箱管理（管理面板「南瓜邮箱管理」入口）----
+lp group admin permission set pumpkinmail.admin true
 
 # ---- LuckPerms：日常查询（危险项不给，见 8.4）----
 lp group admin permission set luckperms.info true

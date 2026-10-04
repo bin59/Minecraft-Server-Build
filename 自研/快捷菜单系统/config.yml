@@ -148,7 +148,7 @@ player-selector:
   no-players: '&c当前没有其他在线玩家'
 
 # ==================== 物品选择器（选物界面） ====================
-# 用于 [item-selector] 动作（如估价背包物品）。
+# 用于 [item-selector] 动作（如按所选物品批量执行命令）。
 # 点击菜单项后动态列出玩家背包中的物品（自动排除触发物品），
 # 玩家再点选目标物品即可执行命令，无需把物品拿在手里。
 # Java 端显示为箱子界面，基岩端显示为原生表单按钮列表。
@@ -211,12 +211,24 @@ menus:
   main:
     title: '&6&l南瓜国际服 &8» &f快捷菜单'
     bedrock-content: '&7请选择你要使用的功能'
-    size: 27
+    size: 36
     filler:
       material: BLACK_STAINED_GLASS_PANE
       name: '&8'
 
     items:
+      # ---------- 南瓜邮箱 ----------
+      mailbox:
+        material: PUMPKIN
+        display-name: '&6&l南瓜邮箱'
+        lore:
+          - '&7查看并领取活动奖励'
+          - '&8点击打开邮箱'
+        slot: 30
+        actions:
+          - '[close]'
+          - '[player] mailbox'
+
       # ---------- 传送功能 ----------
       teleport:
         material: ENDER_PEARL
@@ -247,7 +259,7 @@ menus:
         material: GOLD_INGOT
         display-name: '&6&l经济中心'
         lore:
-          - '&7查余额、财富榜、转账、卖物品'
+          - '&7查余额、财富榜、转账'
           - '&8点击查看子菜单'
         slot: 13
         actions:
@@ -721,29 +733,6 @@ menus:
           - '[close]'
           - '[player] ds'
 
-      sell:
-        material: HOPPER
-        display-name: '&b出售手中物品'
-        lore:
-          - '&7把背包里的物品卖给服务器'
-          - '&e用法：/sell 物品名 或 /sell hand'
-        slot: 21
-        permission: essentials.sell
-        actions:
-          - '[close]'
-          - '[message] &7出售物品：&e/sell 物品名'
-          - '[message] &7卖手中物品：&e/sell hand'
-
-      worth:
-        material: SPYGLASS
-        display-name: '&7估价背包物品'
-        lore:
-          - '&7选择背包里的物品查看它能卖多少钱'
-        slot: 23
-        permission: essentials.worth
-        actions:
-          - '[item-selector] worth {item}'
-
   # ==================== 工具包子菜单 ====================
   kit:
     title: '&e&l工具包'
@@ -1116,7 +1105,7 @@ menus:
         material: GOLD_INGOT
         display-name: '&6&l怎么赚钱'
         lore:
-          - '&7每日任务、每日收购、卖物品、商店、拍卖'
+          - '&7每日任务、每日收购、商店、拍卖'
           - '&8点击查看分册'
         slot: 11
         actions:
@@ -1164,7 +1153,7 @@ menus:
           - '[message] &e======== 常用指令速查 ========'
           - '[message] &6/warp 主城 &7回主城 &6/tpa <玩家> &7申请传送 &6/tpaccept &7接受'
           - '[message] &6/res create <名> &7圈领地 &6/balance &7余额 &6/pay <玩家> <金额> &7转账'
-          - '[message] &6/quests &7每日任务 &6/ds &7每日收购 &6/sell hand &7卖手上物品'
+          - '[message] &6/quests &7每日任务 &6/ds &7每日收购'
           - '[message] &6/skins &7皮肤 &6/pet gui &7宠物 &6/pat <玩家> &7摸头'
 
       rules:
@@ -1211,28 +1200,6 @@ menus:
         actions:
           - '[close]'
           - '[player] ds'
-
-      sell:
-        material: GOLD_NUGGET
-        display-name: '&e&l卖物品'
-        lore:
-          - '&7把手上物品直接卖给系统'
-          - '&8点击出售手上物品'
-        slot: 12
-        actions:
-          - '[close]'
-          - '[player] sell hand'
-
-      worth:
-        material: PAPER
-        display-name: '&f&l背包估价'
-        lore:
-          - '&7查看手上物品的系统收购价'
-          - '&8点击估价手上物品'
-        slot: 13
-        actions:
-          - '[close]'
-          - '[player] worth hand'
 
       shop:
         material: CHEST_MINECART
@@ -1684,6 +1651,18 @@ menus:
           - '[menu] admin-economy'
 
       # ---------- 玩家位置记录 ----------
+      admin-mailbox:
+        material: PUMPKIN
+        display-name: '&6&l南瓜邮箱管理'
+        lore:
+          - '&7批量发放奖励、查看玩家奖励与统计'
+          - '&8点击打开发放面板'
+        slot: 18
+        permission: pumpkinmail.admin
+        actions:
+          - '[close]'
+          - '[player] mailbox admin'
+
       postracker:
         material: FILLED_MAP
         display-name: '&6&l玩家位置记录'

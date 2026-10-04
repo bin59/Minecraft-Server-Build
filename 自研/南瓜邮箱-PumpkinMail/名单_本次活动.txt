@@ -1,0 +1,6 @@
+# PvP 对战活动获奖名单（30 人，各发 500 南瓜币）
+# 使用：/mailbox preset add 南瓜币500 money 500 活动奖励
+#       /mailbox give 南瓜币500 @file:名单.txt
+# （本文件放运行服 plugins/PumpkinMail/ 目录下）
+
+PumpkinVegetable

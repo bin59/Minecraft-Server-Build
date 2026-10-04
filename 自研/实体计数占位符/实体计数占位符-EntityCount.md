@@ -41,6 +41,24 @@ ERROR]: Thread TAB Placeholder Refreshing Thread failed main thread check: Chunk
 - 统计范围为**全服所有已加载世界**（主世界/下界/末地等，`Bukkit.getWorlds()` 遍历求和）。
 - 数值为**缓存值**，最长滞后 5 秒刷新一次，非实时。
 
+### 口径关系（重要：生物 ⊂ 实体）
+
+三个占位符**不是并列**的，`living`（生物）和 `items`（掉落物）都是 `count`（实体）的**子集**：
+
+- **实体 `count`** = 所有已加载实体 = 生物 `living` + 掉落物 `items` + 其他（箭 / 经验球 / 船 / 矿车 / 盔甲架 / 展示框 / 画等）。
+- **生物 `living` ⊂ 实体 `count`**，**掉落物 `items` ⊂ 实体 `count`**；且 `living` 与 `items` 之间**互斥**（一只实体要么是生物、要么不是，不会被同时计入两个数）。
+
+因此使用时要注意：
+
+| 想得到 | 正确算法 | 反例 |
+|---|---|---|
+| 实体总数 | 直接用 `%entitycount_count%` | — |
+| 非生物实体 | `count − living`（含掉落物等） | — |
+| 精确拆分 | `count = living + items + 其他非生物非掉落物` | — |
+| 别这么做 | — | ❌ 把 `living` 和 `count` 相加——`count` 已包含 `living`，相加必然重复计 |
+
+**举例**：`count=800、living=350、items=420` → 生物 350 + 掉落物 420 = 770，其余 30 是箭/经验球/盔甲架等；生物和掉落物都在这 800 之内，三者加起来并不等于 1700。
+
 ---
 
 ## 三、工作原理
@@ -104,7 +122,7 @@ customtabname: "%entitycount_living% 只生物在线"
 |---|---|
 | 数值不变/更新慢 | 正常。缓存 5 秒刷新一次，极端大服遍历实体可能略耗时，属预期行为 |
 | 占位符显示原样字符串 | 检查 PlaceholderAPI 是否加载、`/papi list` 中是否存在 `entitycount` 扩展（注册时插件名 `EntityCount`） |
-| 生物数比实体数少很多 | 正常。`count` 含掉落物/投射物等非生物实体，`living` 仅统计生物 |
+| 生物数比实体数少很多 | 正常。`count` 含掉落物/投射物等非生物实体，`living` 仅统计生物（口径关系见「二、占位符一览 → 口径关系」） |
 | 掉落物数是 0 | 检查统计逻辑是否生效；掉落物为地面 `minecraft:item` 实体，箱子内物品/物品展示框不计入 |
 | 为什么不用 `%server_total_entities%` | 该占位符在异步刷新下触发 `Chunk getEntities` 主线程检查报错，即本插件存在的意义 |
 
