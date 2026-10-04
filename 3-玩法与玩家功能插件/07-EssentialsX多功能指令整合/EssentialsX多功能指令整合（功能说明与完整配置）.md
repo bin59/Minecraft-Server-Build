@@ -278,6 +278,25 @@ command-cooldowns:
 
 ---
 
+### 🎩 `/hat` — 把手中物品戴在头上
+
+EssentialsX 自带命令，不需要额外插件。
+
+```bash
+/hat               # 把手持物品戴到头盔槽（原头盔换到手上）
+/hat remove        # 摘下，物品放回背包
+```
+
+别名：`/ehat`、`/head`、`/ehead`。
+
+> `/head wear` 里的 `wear` 是无效参数，会被忽略——它就是戴头。摘下来用 `/head remove`。
+
+**限制**：物品不能有耐久，盔甲 / 工具 / 武器戴不了，只能戴方块、头颅这类。
+
+**权限**：`essentials.hat`
+
+---
+
 ### 📐 权限系统
 
 EssentialsX 为每条命令都提供独立的权限节点，可配合 LuckPerms 精细控制：
