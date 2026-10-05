@@ -26,6 +26,7 @@
     - [🌀 空间传送阵（本服特色）](#-空间传送阵本服特色)
     - [🏠 领地系统（保护你的家）](#-领地系统保护你的家)
     - [💰 经济](#-经济)
+    - [🎃 南瓜邮箱（活动奖励）](#-南瓜邮箱活动奖励)
     - [🎁 工具包（Kit）](#-工具包kit)
     - [🎨 皮肤](#-皮肤)
     - [💬 聊天与社交](#-聊天与社交)
@@ -39,6 +40,7 @@
   - [十、安全基线](#十安全基线)
   - [十一、文档导航（详细分册）](#十一文档导航详细分册)
   - [十二、仓库文件目录树](#十二仓库文件目录树)
+  - [更新记录](#更新记录)
 
 ---
 
@@ -145,38 +147,38 @@
 
 ## 五、插件与玩法总览
 
-| 分类           | 插件 / 组件                               | 作用                                                              |
-| -------------- | ----------------------------------------- | ----------------------------------------------------------------- |
-| 服务端核心     | Leaf 1.21.11-174                          | 高性能服务端内核                                                  |
-| 外置登录       | YggdrasilOfficialProxy + authlib-injector | 外置登录、皮肤认证                                                |
-| 跨端互通       | Geyser-Spigot + Floodgate                 | Java/基岩同服；基岩免正版                                         |
-| 跨版本         | ViaVersion                                | 1.8 ~ 最新客户端直连                                              |
-| 权限           | LuckPerms                                 | 分组、继承、上下文权限管理                                        |
-| 经济           | Vault + EconomyShop/AuctionHouse          | 统一经济 API、商店、拍卖行                                        |
-| 领地           | Residence                                 | 圈地、Flags 权限、子区域                                          |
-| 方块审计       | CoreProtect                               | 记录 / 查询 / 回滚（SQLite 可转 MySQL）                           |
-| 皮肤           | SkinsRestorer                             | 外置登录下皮肤加载                                                |
-| 指令整合       | EssentialsX                               | 传送 / 经济 / 管理 150+ 命令                                      |
-| 全息           | DecentHolograms                           | 浮动文字 / 物品 / 头颅 / 动画                                     |
-| 死亡信息       | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题，扣费已关闭）                    |
-| 宠物           | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                   |
-| 摸头互动       | PatPat（Modrinth）                        | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用            |
-| 玩家骑乘       | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                    |
-| 语音           | Simple Voice Chat                         | 近距离语音聊天                                                    |
-| 菜单（自研）   | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 15 套 + 管理线 12 套，含新人指南、南瓜邮箱入口） |
-| 邮箱（自研）   | PumpkinMail                               | 南瓜邮箱：活动奖励一键批量发放（管理）与玩家领取（`/mailbox`）                  |
-| 皮肤记录（自研）| BedrockSkinRecorder                       | 基岩玩家上线自动固化 Xbox 皮肤纹理为 PNG 到服务器磁盘（离线可拉取）              |
-| 传送阵（自研） | SpacePortal                               | 地面法阵长途传送（本服特色）                                      |
-| 账本（自研）   | MoneyLedger                               | 南瓜账本：南瓜币每笔变动按类别自动记账（转账/买卖/拍卖/收购/税/任务/活动），可查可导出 CSV |
-| 区域冒险（自研）| AdvZone                                   | 指定区域强制冒险模式，保护建筑与地形                              |
-| 实体计数（自研）| EntityCount                               | PlaceholderAPI 占位符扩展（统计/显示实体数量，1.1.0）            |
-| 末影龙（自研） | DragonManager                             | 末影龙定时重生与破坏保护                                          |
-| 每日收购（自研）| DailySell                                 | 每日随机收购指定物品，玩家可出售换币                              |
-| 在线排行（自研）| PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                    |
-| 基岩 GUI       | BedrockPlayerSupport                      | 基岩玩家免敲指令的表单界面                                        |
-| 数据展示       | Plan / TAB / PosTracker                   | 玩家行为分析、炫彩称号、坐标轨迹                                  |
-| 运维           | OPanel / spark / MCSM / EasyBot           | Web 面板、性能分析、进程管理、QQ 联动                             |
-| 依赖库         | CMILib / ProtocolLib / bStats             | 多插件共享底层库、协议库、匿名统计                                |
+| 分类             | 插件 / 组件                               | 作用                                                                                       |
+| ---------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------ |
+| 服务端核心       | Leaf 1.21.11-174                          | 高性能服务端内核                                                                           |
+| 外置登录         | YggdrasilOfficialProxy + authlib-injector | 外置登录、皮肤认证                                                                         |
+| 跨端互通         | Geyser-Spigot + Floodgate                 | Java/基岩同服；基岩免正版                                                                  |
+| 跨版本           | ViaVersion                                | 1.8 ~ 最新客户端直连                                                                       |
+| 权限             | LuckPerms                                 | 分组、继承、上下文权限管理                                                                 |
+| 经济             | Vault + EconomyShop/AuctionHouse          | 统一经济 API、商店、拍卖行                                                                 |
+| 领地             | Residence                                 | 圈地、Flags 权限、子区域                                                                   |
+| 方块审计         | CoreProtect                               | 记录 / 查询 / 回滚（SQLite 可转 MySQL）                                                    |
+| 皮肤             | SkinsRestorer                             | 外置登录下皮肤加载                                                                         |
+| 指令整合         | EssentialsX                               | 传送 / 经济 / 管理 150+ 命令                                                               |
+| 全息             | DecentHolograms                           | 浮动文字 / 物品 / 头颅 / 动画                                                              |
+| 死亡信息         | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题，扣费已关闭）                                             |
+| 宠物             | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                                            |
+| 摸头互动         | PatPat（Modrinth）                        | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用                                     |
+| 玩家骑乘         | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                                             |
+| 语音             | Simple Voice Chat                         | 近距离语音聊天                                                                             |
+| 菜单（自研）     | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 15 套 + 管理线 12 套，含新人指南、南瓜邮箱入口）            |
+| 邮箱（自研）     | PumpkinMail                               | 南瓜邮箱：活动奖励一键批量发放（管理）与玩家领取（`/mailbox`）                             |
+| 皮肤记录（自研） | BedrockSkinRecorder                       | 基岩玩家上线自动固化 Xbox 皮肤纹理为 PNG 到服务器磁盘（离线可拉取）                        |
+| 传送阵（自研）   | SpacePortal                               | 地面法阵长途传送（本服特色）                                                               |
+| 账本（自研）     | MoneyLedger                               | 南瓜账本：南瓜币每笔变动按类别自动记账（转账/买卖/拍卖/收购/税/任务/活动），可查可导出 CSV |
+| 区域冒险（自研） | AdvZone                                   | 指定区域强制冒险模式，保护建筑与地形                                                       |
+| 实体计数（自研） | EntityCount                               | PlaceholderAPI 占位符扩展（统计/显示实体数量，1.1.0）                                      |
+| 末影龙（自研）   | DragonManager                             | 末影龙定时重生与破坏保护                                                                   |
+| 每日收购（自研） | DailySell                                 | 每日随机收购指定物品，玩家可出售换币                                                       |
+| 在线排行（自研） | PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                                             |
+| 基岩 GUI         | BedrockPlayerSupport                      | 基岩玩家免敲指令的表单界面                                                                 |
+| 数据展示         | Plan / TAB / PosTracker                   | 玩家行为分析、炫彩称号、坐标轨迹                                                           |
+| 运维             | OPanel / spark / MCSM / EasyBot           | Web 面板、性能分析、进程管理、QQ 联动                                                      |
+| 依赖库           | CMILib / ProtocolLib / bStats             | 多插件共享底层库、协议库、匿名统计                                                         |
 
 ---
 
@@ -286,8 +288,8 @@
 
 服务器发活动奖励 / 补偿时会放进**南瓜邮箱**，上线有 ActionBar 提示"有待领取奖励"：
 
-| 命令                | 作用                           |
-| ------------------- | ------------------------------ |
+| 命令                      | 作用                             |
+| ------------------------- | -------------------------------- |
 | `/mailbox`（或 `/pmail`） | 打开自己的邮箱，一键领取全部奖励 |
 
 > 管理发放入口：快捷菜单 → 管理面板 → **南瓜邮箱管理**（`/mailbox admin` 发放面板；`/mailbox give <奖品ID> <名单>` 一键批量发放，名单支持 `@online` / `@whitelist` / `@file:路径` / 玩家名逗号分隔）。
@@ -470,14 +472,14 @@
 
 本仓库文档按**功能域**归入 6 个分类目录，详细配置与深度教程见各分册：
 
-| 分类目录                  | 说明                                                   | 代表分册                                                                                                                                                                    |
-| ------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充、协议库 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服 · ProtocolLib                                                                              |
-| **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动              | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                                                                                           |
-| **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件             | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · LeashablePlayers · ClickMobs |
-| **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                    | Plan · TAB · 炫彩多层称号 · DecentHolograms · PosTracker                                                                                                                    |
-| **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移               | LuckPerms · CoreProtect · WorldEdit · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID                                                                                |
-| **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                  | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · AntiLitematica                                                                                                     |
+| 分类目录                  | 说明                                                           | 代表分册                                                                                                                                                                    |
+| ------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充、协议库 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服 · ProtocolLib                                                                             |
+| **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动                      | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                                                                                           |
+| **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件                     | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · LeashablePlayers · ClickMobs |
+| **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                            | Plan · TAB · 炫彩多层称号 · DecentHolograms · PosTracker                                                                                                                    |
+| **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移                       | LuckPerms · CoreProtect · WorldEdit · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID                                                                                |
+| **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                          | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · AntiLitematica                                                                                                     |
 
 > 完整目录与逐篇链接见仓库根目录 `README.md`（南瓜生存服主索引）。
 
@@ -524,9 +526,9 @@ Minecraft-Server-Build/
 │   │   ├── 经济插件/                AuctionHouse拍卖行 / EconomyShop玩家商店 / EzTax周持有税 / Quests每日任务
 │   │   └── 南瓜生存服经济体系探索/   经济系统设计手册 / 落地实施 / 扣费点清单
 │   ├── 02-领地系统-Residence/       Residence.md + 领地插件使用指南（配置文件/）
-│   ├── 03-皮肤管理-SkinsRestorer/   SkinsRestorer.md
+│   ├── 03-皮肤管理-SkinsRestorer（禁用）/   SkinsRestorer.md
 │   ├── 04-网页世界地图/             BlueMap / Dynmap / 地图选择
-│   ├── 05-Simple Voice Chat/        Simple Voice Chat.md
+│   ├── 05-Simple Voice Chat（禁用）/        Simple Voice Chat.md
 │   ├── 06-PatPat摸头/               PatPat摸头.md
 │   ├── 07-EssentialsX多功能指令整合/ EssentialsX（功能说明与完整配置）.md
 │   ├── 08-自定义死亡信息/           自定义死亡信息customdeathmessages.md

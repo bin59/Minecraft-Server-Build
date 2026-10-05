@@ -1,0 +1,22 @@
+name: BedrockSkinRecorder
+version: 1.0.0
+main: com.nangua.bedrockskinrecorder.BedrockSkinRecorder
+api-version: 1.21
+author: 南瓜服
+description: 基岩皮肤记录器——基岩玩家上线时自动抓取其 Xbox 皮肤纹理，保存为 PNG 到服务器磁盘
+softdepend: [floodgate, Geyser-Spigot]
+
+commands:
+  bsr:
+    description: 基岩皮肤记录器
+    usage: |
+      /bsr           查看统计
+      /bsr list      列出已记录玩家（前 30）
+      /bsr reload    重载
+    permission: bsr.admin
+    permission-message: 你没有权限使用 /bsr
+
+permissions:
+  bsr.admin:
+    description: 管理基岩皮肤记录器
+    default: op

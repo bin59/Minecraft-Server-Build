@@ -1,5 +1,7 @@
 package com.nangua.bedrockskinrecorder;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.cache.Cache;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -102,6 +104,37 @@ public class SkinFetcher {
         store.save(player, skin.textureUrl(), png, null);
         plugin.getLogger().info("已记录基岩皮肤: " + player.getName()
                 + " (" + png.length + "B) -> " + store.getSkinsDir().getPath());
+        // 关键：抓到本地缓存后，直接把纹理套到 Java 端玩家身上（不依赖外部 API）
+        applySkinOnMainThread(player.getUniqueId(), skin.textureUrl());
+    }
+
+    /**
+     * 在主线程把 Geyser 本地缓存里的纹理链接套到玩家 GameProfile 上，
+     * 让 Java 客户端能看到基岩玩家皮肤。手法与 BedrockSkinRestorer 一致：
+     * getPlayerProfile -> removeProperty("textures") -> setProperty -> setPlayerProfile。
+     * value 由 textureUrl 本地构造（textures.minecraft.net 域名，Paper 校验通过）。
+     */
+    private void applySkinOnMainThread(UUID uuid, String textureUrl) {
+        if (textureUrl == null || textureUrl.isEmpty()) return;
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            Player p = plugin.getServer().getPlayer(uuid);
+            if (p == null || !p.isOnline()) return;
+            try {
+                PlayerProfile profile = p.getPlayerProfile();
+                String uuidNoDash = p.getUniqueId().toString().replace("-", "");
+                String json = "{\"timestamp\":" + System.currentTimeMillis()
+                        + ",\"profileId\":\"" + uuidNoDash
+                        + "\",\"profileName\":\"" + p.getName()
+                        + "\",\"textures\":{\"SKIN\":{\"url\":\"" + textureUrl + "\"}}}";
+                String value = Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
+                profile.removeProperty("textures");
+                profile.setProperty(new ProfileProperty("textures", value, null));
+                p.setPlayerProfile(profile);
+                plugin.getLogger().info("已将基岩皮肤套到Java端: " + p.getName());
+            } catch (Throwable t) {
+                plugin.getLogger().warning("本地套皮失败: " + p.getName() + " | " + t.getMessage());
+            }
+        });
     }
 
     /** 从 Geyser SkinProvider 缓存读取基岩玩家皮肤（反射访问 private 静态字段） */

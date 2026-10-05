@@ -57,6 +57,39 @@ UnknownDependencyException: Unknown/missing dependency plugins: [nightcore]. Ple
 | 铁砧合并 | 两本同附魔同等级书合并升下一级                    |
 | 砂轮     | 可拆书，与原版一致                                |
 
+## 基岩玩家附魔方案（自研 EnchantShop 附魔商店）
+
+### 问题：Geyser 铁砧界面限制
+
+铁砧在 Java 端是 3 格（左物品、右书/物品、结果）+ 改名框。Geyser 把它翻译成基岩端铁砧，但有两个老大难：
+
+- **结果槽取物不可靠**：合成出成品后，基岩玩家点结果槽经常取不到 / 没反应；
+- **改名框对不齐**：基岩端文字输入和 Java 铁砧改名框映射错乱，反而搞乱整个交互。
+
+Java 玩家用物理铁砧完全正常，只有基岩玩家蹲物理铁砧附魔不顺。
+
+### 解决：自研附魔商店 GUI
+
+自研插件 `EnchantShop`（`plugins/EnchantShop.jar`，源码 `自研\附魔商店-EnchantShop\`），用箱子 GUI 绕过物理铁砧，基岩玩家也能稳附魔。
+
+| 项       | 说明                                                                                                                    |
+| -------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 命令     | `/eshop`                                                                                                                |
+| 入口     | 快捷菜单主菜单 slot 15「附魔商店」（附魔书图标，发微光）                                                                |
+| 用法     | 主手拿装备 → 点快捷菜单「附魔商店」→ 箱子菜单列出全部已启用自定义附魔，每个标注价格（经验等级）                          |
+| 扣费     | 读各附魔配置里的 `AnvilCost`，点击时 `giveExpLevels(-cost)` 扣等级，和铁砧手感一致                                     |
+| 施加     | 从运行时注册表取 `excellentenchants` 命名空间附魔，`meta.addEnchant()` 打在主手装备上                                    |
+| 防重     | 装备已有该附魔会提示，不重复扣经验                                                                                      |
+| 价格兜底 | 某附魔没配 `AnvilCost` 时用 `plugins/EnchantShop/config.yml` 的 `default-cost`（默认 3 级）                              |
+
+### 工作原理
+
+- 插件从运行时 Bukkit 附魔注册表遍历 `excellentenchants` 命名空间，**线上启用几个就列几个**，不看磁盘目录；
+- 显示名和价格读 `plugins/ExcellentEnchants/enchants/<id>.yml`（根目录找不到会再找 `_disabled_/`）；
+- **新增附魔**：在 EE 里启用（把 `_disabled_/` 下对应 yml 移回 `enchants/`），重启后自动出现在商店，价格自动读该附魔的 `AnvilCost`，无需改插件。
+
+> 依赖：`depend: [ExcellentEnchants]`，EE 未加载时商店不开。
+
 ## 充能机制（新版 5.x）
 
 - 附魔带**充能值**：每次触发消耗充能（`%enchantment_charges_consume_amount%`）

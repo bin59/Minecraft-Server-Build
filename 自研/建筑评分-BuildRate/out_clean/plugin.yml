@@ -1,0 +1,20 @@
+name: BuildRate
+version: 1.0.0
+main: com.nangua.buildrate.BuildRate
+api-version: 1.21
+authors:
+  - 南瓜
+description: 建筑评分 - 活动制多玩家打分评审（1~10 分，去最高最低分，公开可见，玩家可自主报名；结算自动按名次发南瓜币/邮箱奖励）
+softdepend:
+  - Essentials
+  - PumpkinMail
+commands:
+  br:
+    description: 建筑评分系统
+    usage: /br [create|list|join|add|remove|start|stop|open|score|result|stats|history]
+    aliases:
+      - buildrate
+permissions:
+  buildrate.admin:
+    description: 建筑评分管理（建活动/报名管理/统计）
+    default: op
