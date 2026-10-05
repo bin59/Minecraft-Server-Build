@@ -39,9 +39,24 @@ public final class RewardDispatcher {
         if (results.isEmpty()) return;
 
         String en = ev.name();
+        boolean partOn = plugin.getConfig().getBoolean("rewards.participation.enabled", false);
+        double partAmount = plugin.getConfig().getDouble("rewards.participation.amount", 0);
+        int excludeTop = plugin.getConfig().getInt("rewards.participation.exclude-top", 0);
+
         int rank = 1;
         for (Models.BuildResult r : results) {
-            giveRank(r.build().player(), rank, en);
+            String player = r.build().player();
+            giveRank(player, rank, en);
+            // 参与奖：排除前 N 名（他们拿名次奖），其余提交者每人发一份
+            if (partOn && partAmount > 0 && rank > excludeTop) {
+                String desc = "「" + en + "」参与奖：" + ((int) partAmount) + " 南瓜币";
+                mailReward(player, "money", String.valueOf(partAmount), desc);
+                Player p = Bukkit.getPlayerExact(player);
+                if (p != null && p.isOnline()) {
+                    p.sendMessage(ChatColor.LIGHT_PURPLE + "[建筑评分] 参与奖 " + (int) partAmount
+                            + " 南瓜币已到 §e/mailbox §f领取。");
+                }
+            }
             rank++;
         }
 

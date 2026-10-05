@@ -186,17 +186,18 @@ public final class GuiManager implements Listener {
     // ---------- 管理动作 ----------
 
     private void doStart(Player p) {
-        Models.Event ev = db().getActiveEvent();
+        Models.Event ev = db().getOpenEvent();
         if (ev == null) { p.sendMessage(ChatColor.RED + "[建筑评分] 先创建活动（管理面板「创建活动」）。"); return; }
         db().setEventStatus(ev.id(), 1);
-        p.sendMessage(ChatColor.GREEN + "[建筑评分] 活动「" + ev.name() + "」已开启评分。");
+        p.sendMessage(ChatColor.GREEN + "[建筑评分] 活动「" + ev.name() + "」已开启评分，玩家可打分。");
+        com.nangua.buildrate.cmd.BuildRateCommand.broadcastStart(ev.name());
         openAdmin(p);
     }
 
     private void doStop(Player p) {
         Models.Event ev = db().getActiveEvent();
         if (ev == null) { p.sendMessage(ChatColor.RED + "[建筑评分] 当前没有进行中的活动。"); return; }
-        db().setEventStatus(ev.id(), 0);
+        db().setEventStatus(ev.id(), 2);
         if (new RewardDispatcher(plugin).enabled()) {
             new RewardDispatcher(plugin).settleEvent(ev);
             p.sendMessage(ChatColor.GREEN + "[建筑评分] 「" + ev.name() + "」已截止，奖励已按名次发到邮箱。");
@@ -435,7 +436,7 @@ public final class GuiManager implements Listener {
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (name.isEmpty()) { p.sendMessage(ChatColor.RED + "[建筑评分] 活动名不能为空。"); return; }
             Models.Event ev = db().createEvent(name);
-            p.sendMessage(ChatColor.GREEN + "[建筑评分] 已创建活动「" + ev.name() + "」并设为进行中。");
+            p.sendMessage(ChatColor.GREEN + "[建筑评分] 已创建活动「" + ev.name() + "」（待开始，玩家可先报名）。");
             com.nangua.buildrate.cmd.BuildRateCommand.broadcastCreate(ev.name());
             openAdmin(p);
         });

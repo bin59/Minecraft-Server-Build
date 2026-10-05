@@ -68,24 +68,31 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
         String name = args.length > 1 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)).trim() : "";
         if (name.isEmpty()) name = "建筑大赛";
         Models.Event ev = db().createEvent(name);
-        s.sendMessage(ChatColor.GREEN + "[建筑评分] 已创建活动「" + ev.name() + "」并设为进行中（已有进行中的活动已自动截止）。");
-        s.sendMessage(ChatColor.GRAY + "玩家可 /br join <建筑名> 自主报名，或管理员 /br add <玩家> <建筑名>。");
+        s.sendMessage(ChatColor.GREEN + "[建筑评分] 已创建活动「" + ev.name() + "」（待开始）。");
+        s.sendMessage(ChatColor.GRAY + "玩家可先 /br join <建筑名> 报名；管理员 /br start 开启评分后才能打分。");
         broadcastCreate(ev.name());
         return true;
     }
 
     /** 创建活动后全服公告。 */
     public static void broadcastCreate(String eventName) {
-        Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "「建筑评分」新活动开启：§e" + eventName
-                + ChatColor.LIGHT_PURPLE + "！输入 §f/br open §7参与打分、§f/br join <建筑名> §7报名。");
+        Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "「建筑评分」新活动开始报名：§e" + eventName
+                + ChatColor.LIGHT_PURPLE + "！输入 §f/br join <建筑名> §7报名参评（评分开始后会另行公告）。");
+    }
+
+    /** 开启评分时全服公告。 */
+    public static void broadcastStart(String eventName) {
+        Bukkit.broadcastMessage(ChatColor.LIGHT_PURPLE + "「建筑评分」评分已开始：§e" + eventName
+                + ChatColor.LIGHT_PURPLE + "！输入 §f/br open §7打开面板给建筑打分。");
     }
 
     private boolean start(CommandSender s) {
         if (!requireAdmin(s)) return true;
-        Models.Event ev = db().getActiveEvent();
+        Models.Event ev = db().getOpenEvent();
         if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有活动，先用 /br create <名称> 创建。"); return true; }
         db().setEventStatus(ev.id(), 1);
-        s.sendMessage(ChatColor.GREEN + "[建筑评分] 活动「" + ev.name() + "」已开启评分。");
+        s.sendMessage(ChatColor.GREEN + "[建筑评分] 活动「" + ev.name() + "」已开启评分，玩家可打分。");
+        broadcastStart(ev.name());
         return true;
     }
 
@@ -93,7 +100,7 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
         if (!requireAdmin(s)) return true;
         Models.Event ev = db().getActiveEvent();
         if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有进行中的活动。"); return true; }
-        db().setEventStatus(ev.id(), 0);
+        db().setEventStatus(ev.id(), 2);
         // 自动按名次结算发奖（南瓜币与物品都发到邮箱）
         if (new RewardDispatcher(plugin).enabled()) {
             new RewardDispatcher(plugin).settleEvent(ev);
@@ -114,8 +121,8 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
     private boolean add(CommandSender s, String[] args) {
         if (!requireAdmin(s)) return true;
         if (args.length < 3) { s.sendMessage(ChatColor.YELLOW + "用法：/br add <玩家> <建筑名>"); return true; }
-        Models.Event ev = db().getActiveEvent();
-        if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有进行中的活动。"); return true; }
+        Models.Event ev = db().getOpenEvent();
+        if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有可报名的活动。"); return true; }
         String player = args[1];
         String name = String.join(" ", Arrays.copyOfRange(args, 2, args.length)).trim();
         if (plugin.onePerPlayer() && db().getPlayerBuild(ev.id(), player) != null) {
@@ -162,8 +169,8 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
     private boolean join(CommandSender s, String[] args) {
         if (!(s instanceof Player p)) { s.sendMessage(ChatColor.RED + "只有玩家能报名。"); return true; }
         if (args.length < 2) { s.sendMessage(ChatColor.YELLOW + "用法：/br join <建筑名>"); return true; }
-        Models.Event ev = db().getActiveEvent();
-        if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有进行中的活动。"); return true; }
+        Models.Event ev = db().getOpenEvent();
+        if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有可报名的活动。"); return true; }
         String name = String.join(" ", Arrays.copyOfRange(args, 1, args.length)).trim();
         Models.Build mine = db().getPlayerBuild(ev.id(), p.getName());
         if (mine != null) {
@@ -218,8 +225,8 @@ public final class BuildRateCommand implements CommandExecutor, TabCompleter {
     // ---------- 查询 ----------
 
     private boolean list(CommandSender s) {
-        Models.Event ev = db().getActiveEvent();
-        if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有进行中的活动。"); return true; }
+        Models.Event ev = db().getOpenEvent();
+        if (ev == null) { s.sendMessage(ChatColor.RED + "[建筑评分] 当前没有活动。"); return true; }
         List<Models.Build> builds = db().getBuilds(ev.id());
         Map<Integer, List<Models.Score>> scores = db().getScoresByBuild(ev.id());
         List<Models.BuildResult> results = Stats.compute(builds, scores, plugin.dropHiLo());

@@ -62,18 +62,18 @@ public final class Db {
     public Models.Event createEvent(String name) {
         try (Connection c = open()) {
             try (PreparedStatement ps = c.prepareStatement(
-                    "UPDATE events SET status=0 WHERE status=1")) {
+                    "UPDATE events SET status=2 WHERE status=1")) {
                 ps.executeUpdate();
             }
             try (PreparedStatement ps = c.prepareStatement(
-                    "INSERT INTO events(name,status,created_at) VALUES(?,1,?)",
+                    "INSERT INTO events(name,status,created_at) VALUES(?,0,?)",
                     Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, name);
                 ps.setLong(2, System.currentTimeMillis());
                 ps.executeUpdate();
                 try (ResultSet rs = ps.getGeneratedKeys()) {
                     if (rs.next()) {
-                        return new Models.Event(rs.getInt(1), name, 1, System.currentTimeMillis());
+                        return new Models.Event(rs.getInt(1), name, 0, System.currentTimeMillis());
                     }
                 }
             }
@@ -85,6 +85,11 @@ public final class Db {
 
     public Models.Event getActiveEvent() {
         return queryEvent("SELECT * FROM events WHERE status=1 ORDER BY id DESC LIMIT 1");
+    }
+
+    /** 报名/查看用：取最近一场尚未结束的活动（待开始0 或 进行中1） */
+    public Models.Event getOpenEvent() {
+        return queryEvent("SELECT * FROM events WHERE status IN (0,1) ORDER BY id DESC LIMIT 1");
     }
 
     public Models.Event getEvent(int id) {
