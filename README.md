@@ -528,7 +528,7 @@ Minecraft-Server-Build/
 │   ├── 02-领地系统-Residence/       Residence.md + 领地插件使用指南（配置文件/）
 │   ├── 03-皮肤管理-SkinsRestorer（禁用）/   SkinsRestorer.md
 │   ├── 04-网页世界地图/             BlueMap / Dynmap / 地图选择
-│   ├── 05-Simple Voice Chat（禁用）/        Simple Voice Chat.md
+│   ├── 05-Simple Voice Chat/        Simple Voice Chat.md
 │   ├── 06-PatPat摸头/               PatPat摸头.md
 │   ├── 07-EssentialsX多功能指令整合/ EssentialsX（功能说明与完整配置）.md
 │   ├── 08-自定义死亡信息/           自定义死亡信息customdeathmessages.md

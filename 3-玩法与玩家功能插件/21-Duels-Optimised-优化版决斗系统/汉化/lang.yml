@@ -1,0 +1,1415 @@
+# DO NOT EDIT THIS VALUE!
+config-version: 19
+
+# 以下可在任意消息中使用的占位符。
+# 例如：在下方添加 'PREFIX: "[决斗]"'，然后在消息里写 '{PREFIX}'，游戏内就会显示 [决斗]。
+STRINGS:
+  PREFIX: '&9[决斗]'
+  LINE: '&9&m------------------------------------&r'
+  HALF_LINE: '&9&m----------------&r'
+  FAIL_PREFIX: '&c开启对战失败：'
+
+
+GENERAL:
+  true: '&a开启'
+  false: '&c关闭'
+  enabled: '&a已启用'
+  disabled: '&c已禁用'
+  not-selected: '未选择'
+  random: '随机'
+  none: '无'
+  unlimited: '无限'
+  unknown: '未知'
+  kit-selector: '装备选择'
+  arena-selector: '竞技场选择'
+  item-betting: '物品押注'
+  betting: '押注'
+  cancelled: '{PREFIX} &e操作已取消。'
+
+
+ERROR:
+  no-permission: '{PREFIX} &c不行！你缺少权限：''%permission%'''
+  data:
+    load-failure: '{PREFIX} &c无法加载你的决斗数据，请重新登录。'
+    not-loaded: '{PREFIX} &c玩家数据仍在加载中，请稍后再试。'
+    not-found: '{PREFIX} &c%name% 暂无决斗数据。'
+  top:
+    no-data-available: '{PREFIX} &c暂无可用数据。'
+  player:
+    not-found: '{PREFIX} &c%name% 不在线。'
+    no-longer-online: '{PREFIX} &c该玩家已下线。'
+  arena:
+    not-found: '{PREFIX} &c不存在名为 ''%name%'' 的竞技场。'
+    already-exists: '{PREFIX} &c已存在名为 ''%name%'' 的竞技场。'
+    delete-failure: '{PREFIX} &c无法删除正在使用的竞技场。请先用 ''/duels toggle %name%'' 停用它。'
+    invalid-position: '{PREFIX} &c位置必须是 1 或 2。'
+    no-position-set: '{PREFIX} &c竞技场 ''%name%'' 尚未设置出生点。'
+    empty-hand: '{PREFIX} &c你必须手持物品才能使用此命令。'
+  kit:
+    not-found: '{PREFIX} &c不存在名为 ''%name%'' 的装备。'
+    already-exists: '{PREFIX} &c已存在名为 ''%name%'' 的装备。'
+    empty-hand: '{PREFIX} &c你必须手持物品才能使用此命令。'
+  customkits:
+    limit-reached: '{PREFIX} &c你已达到自定义装备上限 &e%limit%&c。'
+    name-empty: '{PREFIX} &c装备名不能为空。'
+    name-too-short: '{PREFIX} &c装备名至少要 &e%min% &c个字符。'
+    name-too-long: '{PREFIX} &c装备名不能超过 &e%max% &c个字符。'
+    name-no-spaces: '{PREFIX} &c装备名不能含空格。'
+    name-invalid-chars: '{PREFIX} &c装备名含非法字符。'
+    name-duplicate: '{PREFIX} &c你已经有一个名为 ''&e%name%&c'' 的自定义装备。'
+    not-found: '{PREFIX} &c未找到自定义装备 ''&e%name%&c''。'
+    material-blocked: '{PREFIX} &c物品 ''&e%material%&c'' 不允许用于自定义装备。'
+    material-not-allowed: '{PREFIX} &c物品 ''&e%material%&c'' 不允许用于自定义装备。'
+    invalid-amount: '{PREFIX} &c物品数量无效。'
+    enchantment-blocked: '{PREFIX} &c附魔 ''&e%enchantment%&c'' 不允许使用。'
+    enchantment-incompatible: '{PREFIX} &c附魔 ''&e%enchantment%&c'' 无法用于 ''&e%item%&c''。'
+    enchantment-level-too-high: '{PREFIX} &c附魔 ''&e%enchantment%&c'' 等级超过上限（&e%max%&c）。'
+    too-many-attributes: '{PREFIX} &c物品属性修饰过多（上限：&e%max%&c）。'
+    attribute-amount-invalid: '{PREFIX} &c属性 &e%attribute% &c的数值必须在 &e%min% &c到 &e%max%&c 之间。'
+    kit-null: '{PREFIX} &c自定义装备无效。'
+    invalid-armor-slot: '{PREFIX} &c物品 ''&e%material%&c'' 不能装备到 &e%slot% &c栏位。'
+    potion-not-extendable: '{PREFIX} &c这种药水不能延长时间。'
+    potion-not-upgradeable: '{PREFIX} &c这种药水不能升级为 II 级。'
+    item-betting-disabled: '{PREFIX} &c玩家自创装备的决斗只支持金钱押注，物品押注已禁用。'
+  player-only: '{PREFIX} &c此命令只能由玩家使用。'
+  duel:
+    is-self: '{PREFIX} &c你不能和自己决斗。'
+    inventory-not-empty: '{PREFIX} &c使用此命令前必须清空背包。'
+    in-creative-mode: '{PREFIX} &c创造模式不能决斗。'
+    in-blacklisted-world: '{PREFIX} &c此世界不能决斗。'
+    is-tagged: '{PREFIX} &c战斗保护期间不能决斗。'
+    in-cooldown: '{PREFIX} &c%name% 还在决斗冷却中，剩余 %time%。'
+    not-in-duelzone: '{PREFIX} &c你只能在以下区域决斗：%regions%'
+    requests-disabled: '{PREFIX} &c%name% 当前不接受决斗请求。'
+    already-has-request: '{PREFIX} &c你已经向 %name% 发送过请求了。'
+    no-request: '{PREFIX} &c你没有来自 %name% 的请求。'
+    already-in-match:
+      sender: '{PREFIX} &c你正在决斗中，不能这么做。'
+      target: '{PREFIX} &c%name% 正在决斗中。'
+    mode-unselected: '{PREFIX} &c你必须选择一个装备，或开启自带背包模式。'
+    mode-fixed: '{PREFIX} &c你无权关闭自带背包模式。'
+    already-spectating:
+      sender: '{PREFIX} &c你正在观战中，不能这么做。'
+      target: '{PREFIX} &c%name% 正在观战。'
+    not-in-match: '{PREFIX} &c%name% 没有在决斗。'
+    prevent-teleportation: '{PREFIX} &c你不能传送到这名玩家，他正在决斗。'
+  party-duel:
+    inventory-not-empty: '{PREFIX} &c你和你的队伍成员必须清空背包才能使用此命令。'
+    in-creative-mode: '{PREFIX} &c你或你的队伍成员在创造模式。'
+    in-blacklisted-world: '{PREFIX} &c你或你的队伍成员在黑名单世界。'
+    is-tagged: '{PREFIX} &c你或你的队伍成员正在战斗保护中。'
+    not-in-duelzone: '{PREFIX} &c你或你的队伍成员不在以下任一区域：%regions%'
+    already-has-request: '{PREFIX} &c你已经向 %name% 的队伍发送过请求了。'
+    no-request: '{PREFIX} &c你没有来自 %name% 队伍的请求。'
+    already-in-match:
+      sender: '{PREFIX} &c你的队伍正在决斗中，不能这么做。'
+      target: '{PREFIX} &c%name% 的队伍正在决斗中。'
+    already-spectating:
+      sender: '{PREFIX} &c你或你的队伍成员正在观战中。'
+      target: '{PREFIX} &c%name% 队伍里有人正在观战。'
+    option-unavailable: '{PREFIX} &c队伍决斗暂不支持物品/金钱押注。'
+  party:
+    is-self: '{PREFIX} &c你不能和自己组队。'
+    is-not-owner: '{PREFIX} &c你必须是队长才能这么做。'
+    is-owner: '{PREFIX} &c你是队长，不能直接离队。请用 ''/party transfer'' 转让队长，或用 ''/party disband'' 解散队伍。'
+    requests-disabled: '{PREFIX} &c%name% 当前不接受队伍邀请。'
+    already-has-invite: '{PREFIX} &c你已经向 %name% 发送过邀请了。'
+    no-invite: '{PREFIX} &c你没有来自 %name% 的邀请。'
+    not-found: '{PREFIX} &c该队伍已不存在。'
+    already-in-party:
+      sender: '{PREFIX} &c你已经在队伍里了。'
+      target: '{PREFIX} &c%name% 已经在队伍里了。'
+    not-in-party:
+      sender: '{PREFIX} &c你必须先加入队伍。'
+      target: '{PREFIX} &c%name% 不在任何队伍。'
+    not-a-member: '{PREFIX} &c%name% 不是你队伍的成员。'
+    in-same-party: '{PREFIX} &c%name% 就在你的队伍里。'
+    kick-self: '{PREFIX} &c你不能把自己踢出队伍。'
+    is-not-same-size: '{PREFIX} &c双方队伍人数必须一致。'
+    is-not-online:
+      sender: '{PREFIX} &c你队伍的所有成员都必须在线！'
+      target: '{PREFIX} &c%name% 队伍的所有成员都必须在线！'
+    max-size-reached:
+      sender: '{PREFIX} &c你的队伍已达人数上限！'
+      target: '{PREFIX} &c%name% 的队伍已达人数上限！'
+    cannot-friendly-fire: '{PREFIX} &c不允许队友误伤。'
+  setting:
+    disabled-option: '{PREFIX} &c%option% 当前已禁用。'
+    arena-not-applicable: '{PREFIX} &c装备 %kit% 不能用于竞技场 %arena%。'
+  inventory-view:
+    not-a-uuid: '{PREFIX} &c%input% 不是有效的 UUID。'
+    not-found: '{PREFIX} &c不存在 UUID 为 ''%uuid%'' 的存档。'
+  queue:
+    not-found: '{PREFIX} &c不存在装备 %kit%、押注 $%bet_amount% 的队列。'
+    already-exists: '{PREFIX} &c已存在装备 ''%kit%''、押注 $%bet_amount% 的队列。'
+    already-in: '{PREFIX} &c你已经在排队了！'
+    not-in-queue: '{PREFIX} &c你不在任何队列里。'
+    not-enough-money: '{PREFIX} &c加入该队列需要 $%bet_amount%。'
+    party-too-large: '{PREFIX} &c你的队伍有 %party_size% 人，但该队列只支持 %team_size% 人一队。'
+    no-queues-available: '{PREFIX} &c当前没有可用队列。'
+  sign:
+    not-a-sign: '{PREFIX} &c你看的方块不是告示牌！'
+    not-found: '{PREFIX} &c那个告示牌不是排队牌！'
+    already-exists: '{PREFIX} &c那个告示牌已经是排队牌了！要移除请用 ''/duels delsign'''
+    cancel-break: '{PREFIX} &c你不能手动破坏排队牌！请用 ''/duels delsign'''
+  sound:
+    not-found: '{PREFIX} &c不存在名为 ''%name%'' 的音效。'
+  command:
+    invalid-sub-command: '{PREFIX} &c''%argument%'' 不是有效子命令。输入 ''/%command%'' 查看帮助。'
+    invalid-option: '{PREFIX} &c''%option%'' 不是有效选项。可用选项：%available_options%'
+    invalid-action: '{PREFIX} &c''%action%'' 不是有效操作。可用操作：%available_actions%'
+    not-enough-money: '{PREFIX} &c你没有足够的钱押注！'
+    lobby-save-failure: '{PREFIX} &c无法保存大厅位置，请查看控制台。'
+    name-not-alphanumeric: '{PREFIX} &c''%name%'' 不是字母数字组合。'
+    invalid-argument: "{PREFIX} &c参数无效：{arg}。命令中不允许占位符。"
+
+
+COMMAND:
+  kit:
+    usage: '{PREFIX} &c用法：/kit [edit|save|reset] [玩家] [装备名]'
+    edit:
+      usage: '{PREFIX} &c用法：/kit edit <装备名>'
+    reset:
+      usage: '{PREFIX} &c用法：/kit reset <装备名> 或 /kit reset <玩家> <装备名>'
+    unknown-subcommand: '{PREFIX} &c未知子命令：%subcommand%'
+  duel:
+    usage:
+      - '{LINE}'
+      - '&f/%command% [玩家] &e- &7向玩家发送决斗请求。'
+      - '&f/%command% [玩家] <金额> &e- &7带押注的决斗请求。'
+      - '&f/%command% [accept | deny] [玩家] &e- &7接受或拒绝决斗请求。'
+      - '&f/%command% stats <名字> &e- &7查看决斗数据。'
+      - '&f/%command% toggle &e- &7开关是否接受决斗请求。'
+      - '&f/%command% top [-|wins|losses|kit] &e- &7查看胜场、败场或装备评分排行。'
+      - '{LINE}'
+    request:
+      send:
+        sender:
+          - '{LINE}'
+          - '&7已向 &f%name%&7 发送决斗请求。'
+          - '&6- &7装备：&3%kit%'
+          - '&6- &7自带背包：&r%own_inventory%'
+          - '&6- &7竞技场：&e%arena%'
+          - '&6- &7押注：&6$%bet_amount%'
+          - '&6- &7物品押注：&r%item_betting%'
+          - '{LINE}'
+        receiver:
+          - '{LINE}'
+          - '&7收到来自 &f%name%&7 的决斗请求。'
+          - '&6- &7装备：&3%kit%'
+          - '&6- &7自带背包：&r%own_inventory%'
+          - '&6- &7竞技场：&e%arena%'
+          - '&6- &7押注：&6$%bet_amount%'
+          - '&6- &7物品押注：&r%item_betting%'
+          - '{LINE}'
+        clickable-text:
+          info:
+            text: '&7点击 '
+            hover-text: ''
+          accept:
+            text: '&a&l[接受] '
+            hover-text: '&7点击 &a接受 &7此请求。'
+          deny:
+            text: '&c&l[拒绝]'
+            hover-text: '&7点击 &c拒绝 &7此请求。'
+      accept:
+        sender: '{PREFIX} &f%name% &7已接受你的决斗请求。'
+        receiver: '{PREFIX} &7你已接受来自 &f%name%&7 的决斗请求。'
+      deny:
+        sender: '{PREFIX} &7你发给 &f%name% &7的决斗请求被拒绝了。'
+        receiver: '{PREFIX} &7你拒绝了来自 &f%name%&7 的决斗请求。'
+    party-request:
+      send:
+        sender-party:
+          - '{LINE}'
+          - '&f%owner% &7已向 &f%name% 的队伍&7 发送决斗请求。'
+          - '&6- &7装备：&3%kit%'
+          - '&6- &7自带背包：&r%own_inventory%'
+          - '&6- &7竞技场：&e%arena%'
+          - '{LINE}'
+        receiver-party:
+          - '{LINE}'
+          - '&7收到来自 &f%name% 队伍&7 的决斗请求。'
+          - '&6- &7装备：&3%kit%'
+          - '&6- &7自带背包：&r%own_inventory%'
+          - '&6- &7竞技场：&e%arena%'
+        clickable-text:
+          info:
+            text: '&7点击 '
+            hover-text: ''
+          accept:
+            text: '&a&l[接受] '
+            hover-text: '&7点击 &a接受 &7此请求。'
+          deny:
+            text: '&c&l[拒绝]'
+            hover-text: '&7点击 &c拒绝 &7此请求。'
+          extra:
+            text: '{LINE}'
+            hover-text: ''
+      accept:
+        sender-party:
+          - '{LINE}'
+          - '{PREFIX} &f%name% 的队伍 &7已接受 &f%owner%&7 的决斗请求。'
+          - '{LINE}'
+        receiver-party:
+          - '{LINE}'
+          - '{PREFIX} &f%owner% &7已接受来自 &f%name% 队伍&7 的决斗请求。'
+          - '{LINE}'
+      deny:
+        sender-party:
+          - '{LINE}'
+          - '{PREFIX} &f%name% 的队伍 &7已拒绝 &f%owner%&7 的决斗请求。'
+          - '{LINE}'
+        receiver-party:
+          - '{LINE}'
+          - '{PREFIX} &f%owner% &7拒绝了来自 &f%name% 队伍&7 的决斗请求。'
+          - '{LINE}'
+      preview:
+        server-kit: '{PREFIX} &a本次决斗使用服务器装备：&e%kit%'
+        own-inventory: '{PREFIX} &a本次决斗使用自带背包。'
+    stats:
+      displayed:
+        - '{LINE}'
+        - '&7&f%name% &e的决斗数据：'
+        - '&7胜场：&a%wins%'
+        - '&7败场：&c%losses%'
+        - '&7胜率：&b%wl_ratio%'
+        - '&7接受请求：&r%requests_enabled%'
+      # 注意：只有在配置里开启 display-kit-ratings 或 display-nokit-rating 才会显示评分。
+      rating:
+        header: '&7评分 &e-'
+        format: '&f%type%&7：&b%rating%'
+        footer: ''
+      # 注意：只有在配置里开启 display-past-matches 才会显示历史对局。
+      match:
+        header: '&7最近对局 &e-'
+        format: '&a%winner% &f胜 &c%loser% &6[悬停查看]'
+        hover-text:
+          - '&7装备：&3%kit%'
+          - '&7时长：&a%duration%'
+          - '&7时间：&f%time% 前'
+          - '&7残血：&d%health%❤'
+        footer: '{LINE}'
+    toggle:
+      enabled: '{PREFIX} &a你现在会接受决斗请求。'
+      disabled: '{PREFIX} &c你现在不再接受决斗请求。'
+    top:
+      next-update: '{PREFIX} &7下次更新：&f%remaining%'
+      header: '{HALF_LINE} &7胜榜 &f前十 &7%type% {HALF_LINE}'
+      display-format: '&e%rank%. &f%name% &e- &f%score% &7%identifier%'
+      footer: '{HALF_LINE} &7胜榜 &f前十 &7%type% {HALF_LINE}'
+
+  duels:
+    usage:
+      - '{LINE}'
+      - '&f/%command% help &e- &7显示本页。'
+      - '&f/%command% help arena &e- &7显示竞技场命令列表。'
+      - '&f/%command% help kit &e- &7显示装备命令列表。'
+      - '&f/%command% help queue &e- &7显示队列命令列表。'
+      - '&f/%command% help sign &e- &7显示告示牌命令列表。'
+      - '&f/%command% help user &e- &7显示玩家数据编辑命令。'
+      - '&f/%command% help extra &e- &7显示其他命令。'
+      - '{LINE}'
+    help:
+      arena:
+        - '{HALF_LINE} &f竞技场命令 {HALF_LINE}'
+        - '&f/%command% create [名字] &e- &7创建一个竞技场。'
+        - '&f/%command% set [名字] [1|2] &e- &7设置竞技场的传送点。'
+        - '&f/%command% delete [名字] &e- &7删除竞技场。'
+        - '&f/%command% setarenaitem [名字] &e- &7设置该竞技场在菜单里的展示物品。'
+        - '&f/%command% info [名字] &e- &7查看该竞技场信息。'
+        - '&f/%command% toggle [名字] &e- &7启用/停用竞技场。'
+        - '&f/%command% tp [名字] <1|2> &e- &7传送到该竞技场。'
+        - '&f/%command% list &e- &7列出所有竞技场。'
+        - '{HALF_LINE} &f竞技场命令 {HALF_LINE}'
+      kit:
+        - '{HALF_LINE} &f装备命令 {HALF_LINE}'
+        - '&f/%command% savekit <-o> [名字] &e- &7保存一个装备。'
+        - '&f/%command% loadkit [名字] &e- &7把选中的装备载入背包。'
+        - '&f/%command% kitgive [装备] [玩家] &e- &7把装备发给玩家。'
+        - '&f/%command% deletekit [名字] &e- &7删除装备。'
+        - '&f/%command% setitem [名字] &e- &7设置该装备在菜单里的展示物品。'
+        - '&f/%command% options [装备] &e- &7打开该装备的规则选项 GUI。'
+        - '&f/%command% bind [装备] &e- &7打开该装备的竞技场绑定 GUI。'
+        - '&f/%command% list &e- &7列出所有装备。'
+        - '{HALF_LINE} &f装备命令 {HALF_LINE}'
+      queue:
+        - '{HALF_LINE} &f队列告示牌命令 {HALF_LINE}'
+        - '&f/%command% createqueue [押注] [-|装备] &e- &7创建一个指定押注和装备的队列。'
+        - '&f/%command% deletequeue &e- &7删除指定押注和装备的队列。'
+        - '&f/%command% list &e- &7列出可用队列。'
+        - '{HALF_LINE} &f队列告示牌命令 {HALF_LINE}'
+      sign:
+        - '{HALF_LINE} &f队列告示牌命令 {HALF_LINE}'
+        - '&f/%command% addsign [押注] [-|装备] &e- &7创建一个指定押注和装备的队列告示牌。'
+        - '&f/%command% delsign &e- &7删除你看的那块队列告示牌。'
+        - '&f/%command% list &e- &7列出队列告示牌。'
+        - '{HALF_LINE} &f队列告示牌命令 {HALF_LINE}'
+      user:
+        - '{HALF_LINE} &f玩家数据编辑命令 {HALF_LINE}'
+        - '&f/%command% setrating [名字] [-|装备] [数值] &e- &7设置玩家在某装备下的评分。'
+        - '&f/%command% edit [名字] [add|remove|set] [wins|losses] [数值] &e- &7修改玩家胜/败场。'
+        - '&f/%command% resetrating [名字] [-|kit|all] &e- &7重置玩家某装备或全部评分。'
+        - '&f/%command% reset [名字] &e- &7重置玩家决斗数据。'
+        - '{HALF_LINE} &f玩家数据编辑命令 {HALF_LINE}'
+      extra:
+        - '{HALF_LINE} &f其他命令 {HALF_LINE}'
+        - '&f/%command% setlobby &e- &7设置决斗大厅位置。'
+        - '&f/%command% lobby &e- &7传送到决斗大厅。'
+        - '&f/%command% playsound [名字] &e- &7播放配置中定义的音效。'
+        - '&f/%command% reload <模块> &e- &7重载插件或指定模块。'
+        - '&f/%command% start <玩家1> <玩家2> [装备] [竞技场] &e- &7强制开启两人决斗。'
+        - '{HALF_LINE} &f其他命令 {HALF_LINE}'
+    start:
+      usage: '{PREFIX} &c用法：/%command% [admin] start <玩家1> <玩家2> [装备] [竞技场]'
+      same-player: '{PREFIX} &c不能让同一个人决斗！'
+      player-dead: '{PREFIX} &c%name% 现在是死亡状态！'
+      already-in-match: '{PREFIX} &c%name% 已经在对局中了！'
+      no-arena-available: '{PREFIX} &c当前没有可用的竞技场。'
+      arena-in-use: '{PREFIX} &c竞技场 ''%name%'' 正在使用中。'
+      arena-disabled: '{PREFIX} &c竞技场 ''%name%'' 已被停用。'
+      target: '{PREFIX} &e管理员强制开启了你和 &f%opponent%&e 的决斗。'
+      success: '{PREFIX} &a已强制开启 &e%player1% &a与 &e%player2% &a的决斗，竞技场 &e%arena%&a，装备 &e%kit%&a。'
+    create: '{PREFIX} &7竞技场 &e%name% &7创建成功。用 &f/duels set %name% 1 &7设置出生点。'
+    delete: '{PREFIX} &7竞技场 &e%name% &7已删除。'
+    set: '{PREFIX} &7已把竞技场 &e%name% &7的第 &f%position% &7个传送点设在 &f%location%&7。'
+    toggle: '{PREFIX} &7竞技场 &e%name% &7现已 &r%state%&7。'
+    disable: '{PREFIX} &7竞技场 &e%name% &7已停用。'
+    enable: '{PREFIX} &7竞技场 &e%name% &7已启用。'
+    already-disabled: '{PREFIX} &c%name% 本来就停用了。'
+    already-enabled: '{PREFIX} &c%name% 本来就启用了。'
+    teleport: '{PREFIX} &7你已传送到竞技场 &e%name%&7 的 &f%position%&7 号点。'
+    save-kit: '{PREFIX} &7装备 &3%name% &7保存成功。'
+    delete-kit: '{PREFIX} &7装备 &3%name% &7已删除。'
+    load-kit: '{PREFIX} &7装备 &3%name% &7已载入你的背包。'
+    kit-give: '{PREFIX} &7已把装备 &3%kit% &7发给 &f%name%&7。'
+    kit-give-target: '{PREFIX} &7你收到了装备 &3%kit%&7。'
+    set-item: '{PREFIX} &7装备 &3%name%&7 的展示物品已改为你手持的物品。'
+    set-arena-item: '{PREFIX} &7竞技场 &e%name%&7 的展示物品已改为你手持的物品。'
+    create-queue: '{PREFIX} &7已创建队列：装备 &3%kit%&7，押注 &6$%bet_amount%&7。'
+    delete-queue: '{PREFIX} &7已删除队列：装备 &3%kit%&7，押注 &6$%bet_amount%&7。'
+    add-sign: '{PREFIX} &7已在 &f%location% &7创建队列告示牌：装备 &3%kit%&7，押注 &6$%bet_amount%&7。'
+    del-sign: '{PREFIX} &7已删除 &f%location% &7的队列告示牌：装备 &3%kit%&7，押注 &6$%bet_amount%&7。'
+    set-lobby: '{PREFIX} &7决斗大厅已设在你的当前位置。'
+    lobby: '{PREFIX} &7你已传送到决斗大厅！'
+    edit: '{PREFIX} &7已对 &f%name%&7 执行：&f%action% %amount% %type%'
+    set-rating: '{PREFIX} &7&f%name%&7 在装备 &3%kit% &7下的评分已设为 &a%rating%&7。'
+    reset-rating: '{PREFIX} &7已重置 &f%name%&7 在装备 &3%kit% &7下的评分。'
+    reset: '{PREFIX} &7已重置 &f%name%&7 的决斗数据。'
+    info:
+      - '{HALF_LINE} &7竞技场 &e%name% {HALF_LINE}'
+      - '&7使用中：&r%in_use%'
+      - '&7已停用：&r%disabled%'
+      - '&7绑定装备：&3%kits%'
+      - '&7传送点：&f%positions%'
+      - '&7玩家：&f%players%'
+      - '{HALF_LINE} &7竞技场 &e%name% {HALF_LINE}'
+    list:
+      - '{LINE}'
+      - '&4深红&7：已停用的竞技场'
+      - '&9蓝色&7：未设出生点的竞技场'
+      - '&a绿色&7：可用的竞技场'
+      - '&c红色&7：正在使用的竞技场'
+      - '&7竞技场：&r%arenas%'
+      - '&7装备：&f%kits%'
+      - '&7队列：&b%queues%'
+      - '&7队列告示牌：&f%queue_signs%'
+      - '&7决斗大厅位于 &f%lobby%&7。'
+      - '{LINE}'
+
+  spectate:
+    usage:
+      - '{LINE}'
+      - '&f/spectate [玩家] &e- &7观战某名正在决斗的玩家。'
+      - '{LINE}'
+    start-spectate: '{PREFIX} &7正在观战 &f%name%&7 对阵 &f%opponent%&7，竞技场 &e%arena%&7。输入 &f/spectate &7退出观战。'
+    stop-spectate: '{PREFIX} &7你已停止观战 &f%name%&7。'
+  party:
+    usage:
+      - '{LINE}'
+      - '&f/%command% toggle &e- &7开关是否接受队伍邀请。'
+      - '&f/%command% [玩家] &e- &7向玩家发送队伍邀请。'
+      - '&f/%command% list &e- &7列出当前队伍成员。'
+      - '&f/%command% accept [玩家] &e- &7接受队伍邀请。'
+      - '&f/%command% leave &e- &7离开当前队伍。'
+      - '&f/%command% kick [玩家] &e- &7把玩家踢出队伍。'
+      - '&f/%command% friendlyfire &e- &7开关队友误伤。'
+      - '&f/%command% transfer [玩家] &e- &7把队长转让给玩家。'
+      - '&f/%command% disband &e- &7解散当前队伍。'
+      - '{LINE}'
+    toggle:
+      enabled: '{PREFIX} &a你现在会接受队伍邀请。'
+      disabled: '{PREFIX} &c你现在不再接受队伍邀请。'
+    list:
+      - '{LINE}'
+      - '&7队长：&f%owner%'
+      - '&7成员（&r%members_count%&7）：&r%members%'
+      - '&7在线（&r%online_count%&7）：&r%online_members%'
+      - '{LINE}'
+    invite:
+      send:
+        receiver:
+          - '{LINE}'
+          - '{PREFIX} &7收到来自 &f%name%&7 的队伍邀请。输入 &f/party accept %name% &7加入。'
+          - '{LINE}'
+        members:
+          - '{LINE}'
+          - '{PREFIX} &f%owner% &7已邀请 &f%name% &7加入队伍！'
+          - '{LINE}'
+      accept:
+        receiver:
+          - '{LINE}'
+          - '{PREFIX} &7你已接受来自 &f%name%&7 的队伍邀请。'
+          - '{LINE}'
+        members:
+          - '{LINE}'
+          - '{PREFIX} &f%name% &7已加入队伍！'
+          - '{LINE}'
+    leave:
+      sender:
+        - '{LINE}'
+        - '{PREFIX} &7你已离开 &f%name% 的队伍&7。'
+        - '{LINE}'
+      members:
+        - '{LINE}'
+        - '{PREFIX} &f%name% &7已离开队伍！'
+        - '{LINE}'
+    kick:
+      receiver:
+        - '{LINE}'
+        - '{PREFIX} &f%owner% &7把你踢出了队伍！'
+        - '{LINE}'
+      members:
+        - '{LINE}'
+        - '{PREFIX} &f%owner% &7把 &f%name% &7踢出了队伍！'
+        - '{LINE}'
+    friendly-fire:
+      enabled:
+        - '{LINE}'
+        - '{PREFIX} &c队友误伤 &7现已 &a开启&7！'
+        - '{LINE}'
+      disabled:
+        - '{LINE}'
+        - '{PREFIX} &c队友误伤 &7现已 &c关闭&7！'
+        - '{LINE}'
+    transfer:
+      - '{LINE}'
+      - '{PREFIX} &f%owner% &7已把队长转让给 &f%name%&7。'
+      - '{LINE}'
+    disband:
+      - '{LINE}'
+      - '{PREFIX} &f%owner% &7解散了队伍。'
+      - '{LINE}'
+
+  customkits:
+    created: '{PREFIX} &a自定义装备 ''&e%kit%&a'' 创建成功！'
+    saved: '{PREFIX} &a自定义装备 ''&e%kit%&a'' 保存成功！'
+    renamed: '{PREFIX} &a自定义装备已改名为 ''&e%kit%&a''。'
+    duplicated: '{PREFIX} &a自定义装备已复制为 ''&e%kit%&a''！'
+    deleted: '{PREFIX} &a自定义装备 ''&e%kit%&a'' 已删除。'
+    enter-name: '{PREFIX} &a请在聊天框输入新装备名（输入 &ccancel&a 取消）：'
+    enter-new-name: '{PREFIX} &a请在聊天框输入装备的新名字（输入 &ccancel&a 取消）：'
+    enter-description: '{PREFIX} &a请在聊天框输入装备描述（输入 &cclear&a 清除，或 &ccancel&a 取消）：'
+    description-updated: '{PREFIX} &a装备描述已更新。'
+    icon-changed: '{PREFIX} &a装备图标已改为 &e%material%&a。'
+    no-item-in-hand: '{PREFIX} &c你必须主手拿着物品才能设为装备图标。'
+    usage-create: '{PREFIX} &c用法：/customkits create <名字>'
+    usage-edit: '{PREFIX} &c用法：/customkits edit <名字>'
+    usage-delete: '{PREFIX} &c用法：/customkits delete <名字>'
+    usage-duplicate: '{PREFIX} &c用法：/customkits duplicate <旧名> <新名>'
+    usage-preview: '{PREFIX} &c用法：/customkits preview <名字>'
+    list:
+      header: '{PREFIX} &a你的自定义装备（&e%count%&a）：'
+      entry: '{PREFIX} &7%kits%'
+      empty: '{PREFIX} &c你还没有任何自定义装备。'
+    replay:
+      usage: '{PREFIX} &c用法：/%command% [play <录像ID>|list [玩家]|stop|delete <录像ID>]'
+      unknown: '{PREFIX} &c未知的录像或玩家 ''&e%name%&c''。用法：/%command% [play <录像ID>|list [玩家]|stop|delete <录像ID>]'
+      only-players: '{PREFIX} &c只有游戏内玩家才能使用此命令。'
+
+  sub-command-usage: '{PREFIX} &f/%command% %usage% &e- &7%description%'
+
+
+DUEL:
+  start-failure:
+    mode-unselected: '{FAIL_PREFIX} &c必须选择装备或开启自带背包才能开始决斗。'
+    player-is-dead: '{FAIL_PREFIX} 你或对手现在是死亡状态！'
+    in-blacklisted-world: '{FAIL_PREFIX} 你或对手在黑名单世界！'
+    is-tagged: '{FAIL_PREFIX} 你或对手正在战斗保护中！'
+    player-moved: '{FAIL_PREFIX} 发送/接受请求后你或对手移动了！'
+    not-in-duelzone: '{FAIL_PREFIX} 发送/接受请求后你或对手离开了决斗区域！'
+    in-creative-mode: '{FAIL_PREFIX} 你或对手在创造模式！'
+    no-arena-available: '{FAIL_PREFIX} 当前没有可用竞技场，请稍后再试。'
+    arena-in-use: '{FAIL_PREFIX} 所选竞技场正在使用，请换一个。'
+    arena-not-applicable: '{FAIL_PREFIX} 装备 %kit% 不能用于所选竞技场。'
+    not-enough-money: '{FAIL_PREFIX} 你或对手没有 $%bet_amount% 的押注。'
+  rounds:
+    round-end: '{PREFIX} &7第 &e%round% &7回合结束！&f%winner% &7拿下本回合！'
+    round-status: '{PREFIX} &7当前比分：&f%player1% &7（&a%wins1%&7） 对 &f%player2% &7（&a%wins2%&7）'
+    round-start: '{PREFIX} &7第 &e%round% &7回合开始……'
+    match-point: '{PREFIX} &c&l赛点 &7，&f%player%&7！'
+  party-start-failure:
+    option-unavailable: '{FAIL_PREFIX} &c队伍决斗暂不支持物品/金钱押注。'
+    party-changed: '{FAIL_PREFIX} 发请求方或接请求方的队伍发生了变动。'
+    player-is-dead: '{FAIL_PREFIX} 有玩家现在是死亡状态！'
+    in-blacklisted-world: '{FAIL_PREFIX} 有玩家在黑名单世界！'
+    is-tagged: '{FAIL_PREFIX} 有玩家正在战斗保护中！'
+    player-moved: '{FAIL_PREFIX} 发送/接受请求后有玩家移动了！'
+    not-in-duelzone: '{FAIL_PREFIX} 发送/接受请求后有玩家离开了决斗区域！'
+    in-creative-mode: '{FAIL_PREFIX} 有玩家在创造模式！'
+    is-not-same-size: '{PREFIX} &c双方队伍人数必须一致。'
+    is-not-all-online: '{FAIL_PREFIX} 所有队伍的成员都必须在线！'
+  prevent:
+    item-drop: '&c决斗中不能丢弃物品。'
+    command: '&c决斗中不能使用 ''%command%'' 命令。'
+    teleportation: '&c决斗中不能传送。'
+    inventory-open: '&c决斗中不能打开其他背包。'
+  projectile-hit-message: '{PREFIX} &f%name% &7现在血量 &d%health%❤&7！'
+  on-death:
+    with-killer: '{PREFIX} &a%killer% &7击杀了 &c%name% &7，剩余 &d%health%❤&7。'
+    no-killer: '{PREFIX} &c%name% &7阵亡。'
+  on-end:
+    tie: '{PREFIX} &7平局！'
+    plugin-disable: '{PREFIX} &c插件正在关闭！自动结束对局。'
+    opponent-defeat: '{PREFIX} &f%winner% &a(%winner_rating%)(+%change%) &7击败 &f%loser% &c(%loser_rating%)(-%change%)&7，装备 &3%kit%&7，竞技场 &e%arena%&7。'
+    team-opponent-defeat: '{PREFIX} &f%winners% &7击败 &f%losers%&7，装备 &3%kit%&7，竞技场 &e%arena%&7。'
+    party-opponent-defeat: '{PREFIX} &f%winners% &7击败 &f%losers%&7，装备 &3%kit%&7，竞技场 &e%arena%&7。'
+  inventories:
+    message: '&7背包（点击名字查看）：'
+    name-color: '&b'
+  reward:
+    money:
+      message: '{PREFIX} &7你击败 &f%name%&7，获得 &6$%money%&7！'
+      title: '&e你赢了 &6$%money%&e！'
+    items:
+      message: '{PREFIX} &7你赢了对手 &f%name%&7 的全部物品！'
+  leave:
+    countdown-active: '{PREFIX} &c倒计时期间不能认输。'
+
+PARTY:
+  auto-disband:
+    - '{LINE}'
+    - '{PREFIX} &7队伍因长时间无人活动已自动解散。'
+    - '{LINE}'
+
+
+QUEUE:
+  prevent:
+    command: '&c排队中不能使用 ''%command%'' 命令。'
+  add: '{PREFIX} &7你已加入装备 &3%kit%&7、押注 &6$%bet_amount%&7 的队列。再次点击告示牌或输入 &f/queue leave &7离开队列。'
+  remove: '{PREFIX} &7你已离开队列。'
+  found-opponent: '{PREFIX} &7找到对手：&f%name%&7！正在开启对局，装备 &3%kit%&7，押注 &6$%bet_amount%&7……'
+
+
+SIGN:
+  format:
+    - '&a[点击排队]'
+    - '&3%name%&f：&e$%bet_amount%'
+    - '&f&l%in_queue% 排队中'
+    - '&f&l%in_match% 对战中'
+
+
+SPECTATE:
+  arena-broadcast: '{PREFIX} &f%name% &7开始观战本场比赛！'
+  match-end: '{PREFIX} &7你观战的比赛已结束。'
+  prevent:
+    command: '&c观战中不能使用 ''%command%'' 命令。'
+    teleportation: '&c观战中不能传送。'
+
+
+REPLAY:
+  protocollib-missing: '{PREFIX} &c服务器缺少 ProtocolLib，回放系统已禁用。'
+  already-watching: '{PREFIX} &c你已经在观看一场回放了。'
+  not-watching: '{PREFIX} &c你当前没有在观看回放。'
+  not-found: '{PREFIX} &c未找到回放 ''&e%id%&c'' 或加载失败。'
+  deleted: '{PREFIX} &a回放 ''&e%id%&a'' 已删除。'
+  delete-no-permission: '{PREFIX} &c你没有删除回放的权限。'
+  finished-watching: '{PREFIX} &7回放观看结束。'
+  restored-after-restart: '{PREFIX} &a你的背包和位置已从上次回放会话恢复。'
+  recording-started: '{PREFIX} &7决斗录制开始。'
+  recording-saved: '{PREFIX} &7决斗录像已保存，ID：&e%id%&7。'
+  world-not-found: '{PREFIX} &c该回放找不到世界 ''&e%world%&c''。'
+  prevent:
+    command: '&c观看回放中不能使用 ''%command%'' 命令。输入 /replay stop 退出。'
+    teleportation: '&c观看回放中不能传送。'
+    inventory-open: '&c观看回放中不能打开背包。'
+    item-drop: '&c观看回放中不能丢弃物品。'
+    damage: '&c观看回放中不能造成或受到伤害。'
+    block-break: '&c观看回放中不能破坏方块。'
+    block-place: '&c观看回放中不能放置方块。'
+    interact: '&c观看回放中不能与方块交互。'
+  items:
+    inspect: '&b&l检视视角'
+    teleport: '&b&l检视视角'
+    speed: '&e&l速度：&6%speed%x'
+    pause: '&c&l暂停'
+    play: '&a&l播放'
+    forward: '&b&l快进 (10秒)'
+    backward: '&b&l快退 (10秒)'
+    leave: '&4&l退出回放'
+
+
+GUI:
+  customkits-menu:
+    title: '我的自定义装备'
+    buttons:
+      kit:
+        name: '&e&l%name%'
+        lore:
+          - '%description%'
+          - '&7物品数：&f%items%'
+          - ' '
+          - '&a[左键] &7编辑装备'
+          - '&b[右键] &7预览装备'
+          - '&e[Shift+左键] &7复制装备'
+          - '&c[Shift+右键] &7删除装备'
+      limit:
+        name: '&e&l装备上限'
+        lore:
+          - '&7已用：&a%count% &7/ &e%limit%'
+          - '&7剩余：&b%remaining%'
+      create:
+        name: '&a&l+ 新建装备'
+        name-reached: '&c&l已达装备上限'
+        lore:
+          - '&7点击命名并创建新装备。'
+        lore-reached:
+          - '&c你不能再创建更多自定义装备。'
+      close:
+        name: '&c&l关闭菜单'
+        lore:
+          - '&7点击退出。'
+    confirm-delete:
+      title: '删除装备？'
+      message: '确定要删除装备 ''%kit%'' 吗？'
+  customkit-confirm:
+    buttons:
+      confirm:
+        name: '&a&l确认'
+        lore:
+          - '&7点击执行此操作。'
+      cancel:
+        name: '&c&l取消'
+        lore:
+          - '&7点击取消并返回。'
+      info:
+        name: '&e&l提示'
+        lore:
+          - '&7%text%'
+  customkit-selector:
+    title: '选择自定义装备'
+    buttons:
+      empty:
+        name: '&c&l没有自定义装备'
+        lore:
+          - '&7你还没创建任何自定义装备。'
+          - '&7用 &e/customkits &7创建你的第一个装备！'
+      custom-kit:
+        name: '&d&l%name%'
+        lore:
+          - '%description%'
+          - '&7物品数：&e%items%'
+          - ' '
+          - '&a点击选择此装备发起决斗'
+          - '&7注意：自定义装备决斗只支持金钱押注'
+      back:
+        name: '&c&l返回'
+        lore:
+          - '&7点击返回装备类型选择。'
+  kit-type-selector:
+    title: '选择装备类型'
+  customkit-editor:
+    title: '正在编辑：%kit%'
+    placeholders:
+      helmet: '&7(点击设置头盔)'
+      chestplate: '&7(点击设置胸甲)'
+      leggings: '&7(点击设置护腿)'
+      boots: '&7(点击设置靴子)'
+      offhand: '&7(点击设置副手)'
+      empty-slot: '&8(空格 %slot%)'
+      empty-hotbar: '&8(快捷栏 %slot%)'
+      choose-item-lore:
+        - '&a点击选择物品'
+    buttons:
+      cancel:
+        name: '&c&l取消 / 放弃'
+        lore:
+          - '&7点击放弃未保存的更改。'
+      clear:
+        name: '&c&l清空所有物品'
+        lore:
+          - '&7点击清空装备的所有物品格。'
+      settings:
+        name: '&e&l装备设置'
+        lore:
+          - '&7名字：&f%name%'
+          - '&7描述：&f%description%'
+          - ' '
+          - '&a[左键] &7重命名装备'
+          - '&e[右键] &7编辑描述'
+          - '&b[Shift+左键] &7更换图标'
+      preview:
+        name: '&b&l预览装备'
+        lore:
+          - '&7点击查看只读预览。'
+      save:
+        name: '&a&l保存装备'
+        lore:
+          - '&7点击校验并保存此自定义装备。'
+    confirm-discard:
+      title: '放弃更改？'
+      message: '确定要放弃未保存的更改吗？'
+    confirm-clear:
+      title: '清空所有物品？'
+      message: '确定要清空此装备的所有物品吗？'
+  customkit-preview:
+    title: '预览：%kit%'
+    placeholders:
+      helmet: '&7(空头盔)'
+      chestplate: '&7(空胸甲)'
+      leggings: '&7(空护腿)'
+      boots: '&7(空靴子)'
+      offhand: '&7(空副手)'
+      empty-slot: '&8(空格)'
+      empty-hotbar: '&8(空快捷栏)'
+    buttons:
+      info:
+        name: '&e&l装备：%kit%'
+        owner: '&7拥有者：&f%owner%'
+        description-header: '&7描述：'
+        readonly-footer: '&8只读预览'
+      close:
+        name: '&c&l关闭预览'
+        lore:
+          - '&7点击关闭预览。'
+  material-browser:
+    title: '物品浏览'
+    categories:
+      weapons: '武器'
+      armor: '盔甲'
+      tools: '工具'
+      food: '食物'
+      blocks: '方块'
+      combat: '战斗'
+      potions: '药水'
+      utility: '实用'
+      misc: '杂项'
+    buttons:
+      armor-slot:
+        name: '&e&l护甲栏：&b%slot%'
+        lore:
+          - '&7在下方选择适合此栏位的护甲。'
+      category-tab:
+        name: '&7%category%'
+        name-selected: '&a&l%category%'
+        lore:
+          - '&e点击查看分类'
+        lore-selected:
+          - '&a▶ 当前查看'
+      item:
+        lore:
+          - '&a点击选择此物品'
+        lore-icon:
+          - '&a点击选作装备图标'
+      previous-page:
+        name: '&e上一页 (%page%/%total%)'
+      next-page:
+        name: '&e下一页 (%page%/%total%)'
+      back:
+        name: '&c&l返回布局编辑'
+        lore:
+          - '&7点击返回背包编辑器。'
+  item-editor:
+    title: '物品编辑'
+    enter-damage: '{PREFIX} &a请在聊天框输入耐久损耗值（0 表示满耐久）：'
+    enter-model-data: '{PREFIX} &a请在聊天框输入自定义模型数据整数（0 表示移除）：'
+    enter-rgb-color: '{PREFIX} &a请在聊天框输入 RGB 颜色（例如 &e255 0 0&a）：'
+    buttons:
+      change-material:
+        name: '&e&l更换材质'
+        lore:
+          - '&7当前：&f%material%'
+          - ' '
+          - '&a点击浏览材质'
+      change-amount:
+        name: '&e&l数量：&a%amount%'
+        lore:
+          - '&a[左键] &7+1'
+          - '&e[右键] &7-1'
+          - '&b[Shift+左键] &7+16'
+          - '&c[Shift+右键] &7-16'
+      display-name-lore:
+        name: '&e&l名称与描述'
+        lore:
+          - '&7点击编辑物品名称和描述行。'
+      enchantments:
+        name: '&b&l附魔（&e%count%&b）'
+        lore:
+          - '&7点击配置物品附魔。'
+      attributes:
+        name: '&b&l属性（&e%count%&b）'
+        lore:
+          - '&7点击配置属性修饰。'
+      armor-trim:
+        name: '&b&l护甲纹饰'
+        lore:
+          - '&7点击配置纹饰图案和材质。'
+      potion-settings:
+        name: '&d&l药水设置'
+        lore:
+          - '&7点击配置药水类型和自定义效果。'
+      durability-damage:
+        name: '&e&l耐久损耗：&f%damage%'
+        lore:
+          - '&a[左键] &7恢复满耐久（0 损耗）'
+          - '&e[右键] &7输入自定义损耗值'
+      unbreakable:
+        name: '&e不可破坏：%status%'
+        lore:
+          - '&a点击切换'
+      item-flags:
+        name: '&e&l物品标志'
+        lore:
+          - '&7隐藏附魔：%hide_enchants%'
+          - '&7隐藏属性：%hide_attributes%'
+          - '&7隐藏不可破坏：%hide_unbreakable%'
+          - ' '
+          - '&a[左键] &7切换隐藏附魔'
+          - '&e[右键] &7切换隐藏属性'
+          - '&b[Shift+左键] &7切换隐藏不可破坏'
+      custom-model-data:
+        name: '&e自定义模型数据：&f%data%'
+        lore:
+          - '&a点击输入自定义模型数据编号'
+      leather-color:
+        name: '&e&l皮革护甲颜色'
+        lore:
+          - '&7RGB：&f%r%, %g%, %b%'
+          - ' '
+          - '&a点击选择颜色'
+      remove-item:
+        name: '&c&l移除此物品'
+        lore:
+          - '&7点击从装备中删除此物品。'
+      back:
+        name: '&c&l返回布局编辑'
+        lore:
+          - '&7点击返回装备布局编辑器。'
+  enchantment-editor:
+    title: '附魔编辑'
+    buttons:
+      add:
+        name: '&a&l+ 添加附魔'
+        lore:
+          - '&7点击浏览并添加附魔。'
+      clear:
+        name: '&c&l清空所有附魔'
+        lore:
+          - '&7点击移除所有附魔。'
+      enchant-entry:
+        name: '&b%enchantment% %level%'
+        lore:
+          - '&7当前等级：&e%level% &7/ &a%max%'
+          - ' '
+          - '&a[左键] &7+1 级'
+          - '&e[右键] &7-1 级'
+          - '&c[Shift+左键/中键] &7移除此附魔'
+      browse-entry:
+        name: '&b%enchantment%'
+        lore:
+          - '&7允许最高等级：&a%max%'
+          - ' '
+          - '&a点击添加 1 级'
+      previous-page:
+        name: '&e上一页 (%page%/%total%)'
+      next-page:
+        name: '&e下一页 (%page%/%total%)'
+      back-enchantments:
+        name: '&c&l返回附魔列表'
+        lore:
+          - '&7点击返回。'
+      back-item-editor:
+        name: '&c&l返回物品编辑'
+        lore:
+          - '&7点击返回。'
+  attribute-editor:
+    title: '属性修饰编辑'
+    enter-amount: '{PREFIX} &a请在聊天框输入属性修饰数值：'
+    range-info: '（范围：%min% 到 %max%）'
+    buttons:
+      add:
+        name: '&a&l+ 添加属性修饰'
+        lore:
+          - '&7点击配置并添加修饰。'
+      clear:
+        name: '&c&l清空所有修饰'
+        lore:
+          - '&7点击移除所有属性修饰。'
+      modifier-entry:
+        name: '&e%attribute%'
+        lore:
+          - '&7数值：&f%amount%'
+          - '&7运算：&f%operation%'
+          - '&7栏位：&f%slot%'
+          - ' '
+          - '&c[点击移除]'
+      select-attribute:
+        name: '&b%attribute%'
+        lore:
+          - '&a点击选择属性'
+      select-slot:
+        name: '&e栏位：%slot%'
+        lore:
+          - '&a点击选择装备栏位'
+      select-operation:
+        name: '&a运算：%operation%'
+        lore:
+          - '&7点击进入输入修饰数值。'
+      back:
+        name-back: '&c&l返回'
+        name-editor: '&c&l返回物品编辑'
+        lore:
+          - '&7点击返回。'
+  armor-trim-editor:
+    title: '护甲纹饰编辑'
+    buttons:
+      remove:
+        name: '&c&l移除护甲纹饰'
+        lore:
+          - '&7点击清除护甲纹饰。'
+      pattern-entry:
+        name: '&b%pattern% 图案'
+        lore:
+          - '&a点击选择图案'
+      material-entry:
+        name: '&e%material% 纹饰'
+        lore:
+          - '&a点击应用纹饰'
+      back:
+        name-patterns: '&c&l返回图案列表'
+        name-editor: '&c&l返回物品编辑'
+        lore:
+          - '&7点击返回。'
+  potion-editor:
+    title: '药水设置编辑'
+    enter-duration-amplifier: '{PREFIX} &a请在聊天框输入持续时间（秒）和等级（例如 &e60 2&a）：'
+    buttons:
+      extended:
+        name: '&e延长时长：%status%'
+        lore:
+          - '&a点击切换'
+      upgraded:
+        name: '&e升级（II 级）：%status%'
+        lore:
+          - '&a点击切换'
+      potion-type:
+        name: '&b%type%'
+        name-selected: '&a&l%type%'
+        lore:
+          - '&e点击选择'
+        lore-selected:
+          - '&a▶ 当前选中'
+      add-effect:
+        name: '&a&l+ 添加自定义药水效果'
+        lore:
+          - '&7点击添加自定义药水效果。'
+      clear-effects:
+        name: '&c&l清空自定义效果'
+        lore:
+          - '&7点击移除所有自定义药水效果。'
+      effect-entry:
+        name: '&e%effect%'
+        lore:
+          - '&7时长：&f%duration% 秒'
+          - '&7等级：&f%amplifier%'
+          - ' '
+          - '&c[点击移除]'
+      browse-effect:
+        name: '&b%effect%'
+        lore:
+          - '&a点击设置时长和等级'
+      previous-page:
+        name: '&e上一页 (%page%/%total%)'
+      next-page:
+        name: '&e下一页 (%page%/%total%)'
+      back:
+        name-settings: '&c&l返回药水设置'
+        name-editor: '&c&l返回物品编辑'
+        lore:
+          - '&7点击返回。'
+  lore-editor:
+    title: '名称与描述编辑'
+    enter-display-name: '{PREFIX} &a请在聊天框输入显示名称：'
+    enter-lore-line: '{PREFIX} &a请在聊天框输入要添加的描述行：'
+    enter-new-lore-line: '{PREFIX} &a请在聊天框输入替换的描述行：'
+    buttons:
+      set-name:
+        name: '&e&l设置显示名称'
+        default-name: '&7(默认)'
+        lore:
+          - '&7当前：%name%'
+          - ' '
+          - '&a点击更改显示名称。'
+      reset-name:
+        name: '&c&l重置显示名称'
+        lore:
+          - '&7点击恢复默认物品名。'
+      add-lore:
+        name: '&a&l+ 添加描述行'
+        lore:
+          - '&7点击追加一行新描述。'
+      clear-lore:
+        name: '&c&l清空所有描述'
+        lore:
+          - '&7点击移除所有描述行。'
+      lore-entry:
+        name: '&e第 %index% 行：%line%'
+        lore:
+          - '&a[左键] &7编辑此行'
+          - '&e[Shift+左键] &7上移'
+          - '&b[Shift+右键] &7下移'
+          - '&c[右键] &7删除此行'
+      back:
+        name: '&c&l返回物品编辑'
+        lore:
+          - '&7点击返回。'
+  bedrock-customkits:
+    main-menu:
+      title: '我的自定义装备'
+      content: '&7管理你的自定义决斗装备。\n&e装备数：&a%count% &7/ &e%limit%\n'
+      create: '&a+ 新建装备'
+      item-format: '&b%name%\n&7（%items% 个物品）'
+    create-prompt:
+      title: '新建自定义装备'
+      name-label: '装备名'
+      name-placeholder: '输入名称（例如 剑术PvP）'
+    duplicate-prompt:
+      title: '复制装备'
+      name-label: '新装备名'
+      copy-suffix: ' 副本'
+    actions:
+      title: '装备：%kit%'
+      content: '&e选择对此装备的操作：'
+      edit-layout: '&e✏ 编辑背包布局'
+      edit-settings: '&b⚙ 编辑装备名 / 描述'
+      preview: '&a👁 预览装备'
+      duplicate: '&6❐ 复制装备'
+      delete: '&c✘ 删除装备'
+      back: '&7« 返回装备列表'
+    layout:
+      title: '布局：%kit%'
+      content: '&7点击任意格子配置物品：\n'
+      save: '&a✔ 保存装备'
+      discard: '&c✘ 放弃 / 取消'
+      helmet: '&e[头盔] &f%item%'
+      chestplate: '&e[胸甲] &f%item%'
+      leggings: '&e[护腿] &f%item%'
+      boots: '&e[靴子] &f%item%'
+      offhand: '&6[副手] &f%item%'
+      hotbar: '&b[快捷栏 %slot%] &f%item%'
+      inventory: '&7[背包 %slot%] &f%item%'
+    slot-options:
+      title-item: '物品：%material%'
+      title-empty: '空格子'
+      edit-properties: '&e✏ 编辑物品属性'
+      change-material: '&b🔄 更换材质'
+      clear-slot: '&c✘ 清空此格'
+      choose-material: '&a+ 选择材质'
+      back: '&7« 返回'
+    properties:
+      title: '编辑：%material%'
+      display-name-label: '显示名称'
+      amount-label: '数量'
+      unbreakable-label: '不可破坏'
+    settings:
+      title: '设置：%kit%'
+      name-label: '装备名'
+      desc-line-1: '描述第 1 行'
+      desc-line-2: '描述第 2 行'
+    categories:
+      title: '选择分类'
+    material-picker:
+      title-armor: '选择护甲（%slot%）'
+      title-category: '选择材质：%category%'
+    preview:
+      title: '预览：%kit%'
+      header: '&e=== 装备预览：&f%kit% &e===\n\n'
+      armor-header: '&6护甲：\n'
+      armor-slot: '&7- %slot%：&f%item%\n'
+      offhand-slot: '&7- 副手：&f%item%\n\n'
+      hotbar-header: '&6快捷栏：\n'
+      hotbar-item: '&7%slot%. &f%item%\n'
+      inventory-header: '\n&6背包：\n'
+      inventory-item: '&7%slot%. &f%item%\n'
+      back: '&a« 返回'
+      empty: '空'
+  bedrock-duel:
+    title: '决斗 %target%'
+    select-kit: '选择装备'
+    select-arena: '选择竞技场'
+    enable-bet: '开启押注'
+    bet-amount: '押注金额'
+    own-inventory: '自带背包'
+    custom-kit-prefix: '[自定义] '
+    server-kit-prefix: '[服务器] '
+  bedrock-accept:
+    title: '决斗请求'
+    challenge: '&e%sender%&r 向你发起了决斗！\n\n'
+    kit: '&7装备：&f%kit%\n'
+    own-inventory: '&7自带背包：&a开启\n'
+    arena: '&7竞技场：&f%arena%\n'
+    bet: '&7押注：&6$%bet%\n'
+    item-betting: '&7物品押注：&a开启\n'
+    question: '\n&f接受吗？'
+    accept: '&a✔ 接受'
+    deny: '&c✘ 拒绝'
+    preview-custom-kit: '&b👁 预览自定义装备'
+  settings:
+    title: '请求设置'
+    buttons:
+      details:
+        name: '&9请求详情'
+        lore:
+          - '&7对手：&f%opponent%'
+          - '&7装备：&3%kit%'
+          - '&7自带背包：&r%own_inventory%'
+          - '&7竞技场：&e%arena%'
+          - '&7物品押注：&r%item_betting%'
+          - '&7押注：&6$%bet_amount%'
+          - ' '
+          - '&7要修改押注金额，'
+          - '&7请输入'
+          - '&b/duel %opponent% [金额]'
+      kit-selector:
+        name: '&9选择装备'
+        lore:
+          - '&7已选装备：&3%kit%'
+          - ' '
+          - '&a点击更换装备！'
+        lore-no-permission:
+          - '&c你没有权限'
+          - '&c使用此选项。'
+      use-own-inventory:
+        name: '&9使用自带背包'
+        material: CHEST
+        lore:
+          - '&7自带背包：&r%own_inventory%'
+          - ' '
+          - '&a点击切换自带背包！'
+        lore-no-permission:
+          - '&c你没有权限'
+          - '&c使用此选项。'
+      arena-selector:
+        name: '&9选择竞技场'
+        lore:
+          - '&7已选竞技场：&e%arena%'
+          - ' '
+          - '&a点击更换竞技场！'
+        lore-no-permission:
+          - '&c你没有权限'
+          - '&c使用此选项。'
+      item-betting:
+        name: '&9允许物品押注'
+        lore:
+          - '&7物品押注：&r%item_betting%'
+          - ' '
+          - '&a点击切换物品押注！'
+        lore-no-permission:
+          - '&c你没有权限'
+          - '&c使用此选项。'
+      send:
+        name: '&a&l发送请求'
+      cancel:
+        name: '&c&l取消'
+  kit-selector:
+    title: '选择装备'
+    buttons:
+      previous-page:
+        name: '&a上一页'
+      next-page:
+        name: '&a下一页'
+      empty:
+        name: '&c本页是空的。'
+  kit-edit-selector:
+    title: '选择要编辑的装备'
+    buttons:
+      previous-page:
+        name: '&a上一页'
+      next-page:
+        name: '&a下一页'
+      empty:
+        name: '&c没有可编辑的装备。'
+  arena-selector:
+    title: '选择竞技场'
+    buttons:
+      arena:
+        name: '&e%name%'
+        lore-default:
+          - '&e状态：&r{status}'
+        lore-available:
+          - '&a可用'
+        lore-unavailable:
+          - '&c不可用'
+      previous-page:
+        name: '&a上一页'
+      next-page:
+        name: '&a下一页'
+      empty:
+        name: '&c本页是空的。'
+  queues:
+    title: '可用队列'
+    buttons:
+      queue:
+        name: '&3%name%'
+        lore:
+          - '&7押注：&6$%bet_amount%'
+          - '&7排队中：&f%in_queue%'
+          - '&7对战中：&f%in_match%'
+          - ' '
+          - '&a&l点击排队！'
+      previous-page:
+        name: '&a上一页'
+      next-page:
+        name: '&a下一页'
+      empty:
+        name: '&c本页是空的。'
+  item-betting:
+    title: '赢家通吃！'
+    buttons:
+      head:
+        name: '&e%name%'
+      state:
+        name-ready: '&a&l准备就绪'
+        name-not-ready: '&7&l未准备'
+      details:
+        name: '&9对局详情'
+        lore:
+          - '&7装备：&3%kit%'
+          - '&7竞技场：&e%arena%'
+          - '&7押注：&6$%bet_amount%'
+      cancel:
+        name: '&c&l点击取消'
+        lore:
+          - '&7点击或关闭背包'
+          - '&7即可取消对局。'
+  inventory-view:
+    title: '&e%name%'
+    buttons:
+      head:
+        name: '&e%name%'
+      potion-counter:
+        name: '&d%potions% 瓶治疗药水'
+      effects:
+        name: '&b药水效果'
+        lore-format: '&7%type% %amplifier%（%duration% 秒）'
+      hunger:
+        name: '&6%hunger% 格饥饿值'
+      health:
+        name: '&c%health% ❤'
+  options:
+    title: '装备：%kit%'
+    buttons:
+      option:
+        name: '&b%name%'
+        lore:
+          - ' '
+          - '&7状态：&r%state%'
+          - ' '
+          - '&r&l点击切换'
+  bind:
+    title: '装备：%kit%'
+    buttons:
+      arena:
+        name: '&e%arena%'
+        lore-bound:
+          - '&7绑定装备：&3%kits%'
+          - ' '
+          - '&a&l已绑定'
+          - ' '
+          - '&r&l点击切换'
+        lore-not-bound:
+          - '&7绑定装备：&3%kits%'
+          - ' '
+          - '&c&l未绑定'
+          - ' '
+          - '&r&l点击切换'
+  replay-browser:
+    title: '决斗回放'
+    player-title: '回放：%player%'
+    buttons:
+      entry:
+        name: '&e回放：&b%player1% &7对 &b%player2%'
+        lore:
+          - '&7ID：&8%id%'
+          - '&7胜者：&a%winner%'
+          - '&7败者：&c%loser%'
+          - '&7装备：&f%kit%'
+          - '&7竞技场：&e%arena%'
+          - '&7时长：&e%duration%'
+          - '&7结束原因：&7%reason%'
+          - '&7日期：&8%date%'
+          - ' '
+          - '&e► 左键查看选项 / 观看'
+        lore-admin:
+          - '&c► Shift+右键删除'
+      previous-page:
+        name: '&a« 上一页'
+      next-page:
+        name: '&a下一页 »'
+      empty:
+        name: '&c未找到回放。'
+  replay-details:
+    title: '回放：%id%'
+    buttons:
+      summary:
+        name: '&e&l对局详情'
+        lore:
+          - '&7回放 ID：&f%id%'
+          - '&7玩家 1：&b%player1%'
+          - '&7玩家 2：&b%player2%'
+          - '&7胜者：&a%winner%'
+          - '&7败者：&c%loser%'
+          - '&7装备：&f%kit%'
+          - '&7竞技场：&e%arena%'
+          - '&7时长：&e%duration%'
+          - '&7押注：&6$%bet%'
+          - '&7结束原因：&7%reason%'
+          - '&7日期：&8%date%'
+      play:
+        name: '&a&l▶ 观看回放'
+        lore:
+          - '&7点击进入回放观看模式。'
+          - '&e会切到观战相机！'
+      delete:
+        name: '&c&l✖ 删除回放'
+        lore:
+          - '&7点击永久删除此回放。'
+      back:
+        name: '&7« 返回回放列表'
+
+
+KIT:
+    EDIT:
+      started: '{PREFIX} &a你正在编辑装备 &e%kit%&a，完成后用 &e/%command% save &a保存。'
+      saved: '{PREFIX} &a你的装备 &e%kit% &a已保存，背包已恢复。'
+      already-editing: '{PREFIX} &c你已经在编辑一个装备了，请先 &e/%command% save &c保存。'
+      not-editing: '{PREFIX} &c你当前没有在编辑装备。'
+      start-failed: '{PREFIX} &c开启装备编辑失败。'
+      save-failed: '{PREFIX} &c保存装备失败，请重试。'
+      in-queue: '{PREFIX} &c排队中不能编辑装备，请先离开队列。'
+      in-match: '{PREFIX} &c对局中不能编辑装备，请等对局结束。'
+      session-aborted: '{PREFIX} &c你加入了队列或对局，装备编辑已中止。'
+      invalid-items: '{PREFIX} &c装备编辑已中止！只能修改默认装备里的物品，不能带外部物品进来。'
+      command-blocked: '{PREFIX} &c编辑装备期间不能用其他命令，用 &e/%command% save &c保存。'
+      drop-blocked: '{PREFIX} &c编辑装备期间不能丢弃物品。'
+      inventory-blocked: '{PREFIX} &c编辑装备期间不能打开外部背包。'
+      block-break-blocked: '{PREFIX} &c编辑装备期间不能破坏方块。'
+      block-place-blocked: '{PREFIX} &c编辑装备期间不能放置方块。'
+      interact-blocked: '{PREFIX} &c编辑装备期间不能与方块交互。'
+      cancelled: '{PREFIX} &a装备编辑已取消，背包已恢复。'
+    RESET:
+      success: '{PREFIX} &a你改过的 &e%kit% &a装备已恢复默认。'
+      success-other: '{PREFIX} &a已把 &e%name%&a 改过的 &e%kit% &a装备恢复默认。'
+      reset-by-admin: '{PREFIX} &e%kit% &a已被管理员恢复默认。'
+      not-edited: '{PREFIX} &c%name% 没有改过 &e%kit% &c装备。'
+      failed: '{PREFIX} &c重置 %name% 的 &e%kit% &c装备失败。'

@@ -68,18 +68,20 @@ tablist-name-formatting:
 
 ## 常用命令速查
 
-| 命令 | 作用 |
-| --- | --- |
-| `/lp group <组> meta setprefix <前缀>` | 设置权限组前缀 |
+| 命令                                    | 作用                 |
+| --------------------------------------- | -------------------- |
+| `/lp group <组> meta setprefix <前缀>`  | 设置权限组前缀       |
 | `/lp user <玩家> meta setprefix <前缀>` | 单独给某玩家设置前缀 |
-| `/lp user <玩家> parent add <组>` | 将玩家加入权限组 |
-| `/tab reload` | 重载 TAB 配置 |
+| `/lp user <玩家> parent add <组>`       | 将玩家加入权限组     |
+| `/tab reload`                           | 重载 TAB 配置        |
 
 ## 前缀设置示例
 
 - 默认组：`/lp group default meta setprefix "[&d玩家&f] &6"`
 - 基岩版（Floodgate 按 UUID）：`/lp user 00000000-0000-0000-0009-01f42087bd04 meta setprefix &a[青蛙🐸]`
 - 指定 Java 玩家：`/lp user PumpkinVegetable meta setprefix "[&4南瓜🎃&f] &6"`
+
+`/lp user TODAO_owo meta setprefix "[&4至道大王👑&f][玩家] &6"`
 
 ## 注意事项
 
