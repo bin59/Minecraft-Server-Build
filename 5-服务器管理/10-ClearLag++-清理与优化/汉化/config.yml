@@ -33,14 +33,14 @@ profiler:
 # 自动清理世界中的掉落物和特定实体
 auto-clear:
   enabled: true
-  interval-seconds: 300 # 每次清理间隔（秒）
+  interval-seconds: 600 # 每次清理间隔（秒）
   clear-items: true
   clear-entities: false # 设为 true 清理所有实体（玩家、物品展示框等除外）
   use-exclude-lists: true # true = 列表是黑名单，false = 列表是白名单
   # --- 排除世界 ---
   # 这些世界不执行自动清理
   excluded-worlds:
-    - 'world_from_fernsehheft' # 示例
+    - world_from_fernsehheft
     - ''
   # 自动清理使用的实体列表。use-exclude-lists 为 true 时排除，false 时仅清理列表内
   excluded-entities:
@@ -68,7 +68,7 @@ auto-clear:
   skip-if-empty:
     enabled: true
     # 至少有多少可清理实体才认为值得执行
-    min-entities: 300
+    min-entities: 1000
     # 无可清理内容时不广播倒计时
     skip-countdown: true
     # 无可清理内容时跳过清理本身和结果广播
@@ -102,29 +102,27 @@ auto-clear:
   # 单世界开关：/clearlag worldprofiles world <世界名> <on|off>
   per-world-profiles:
     enabled: false
-    worlds:
-      # world:
-      #   enabled: true
-      #   interval-seconds: 300
-      #   clear-items: true
-      #   clear-entities: false
-      #   use-exclude-lists: true
-      #   excluded-items:
-      #     - DIAMOND_SWORD
-      #   excluded-entities:
-      #     - PIG
-      #   # -1 = 无限制
-      #   max-removals-per-cycle: -1
+  # world:
+  #   enabled: true
+  #   interval-seconds: 300
+  #   clear-items: true
+  #   clear-entities: false
+  #   use-exclude-lists: true
+  #   excluded-items:
+  #     - DIAMOND_SWORD
+  #   excluded-entities:
+  #     - PIG
+  #   # -1 = 无限制
+  #   max-removals-per-cycle: -1
 
   # 自动清理的生物排除设置
   exclusions:
     named: true # 排除有自定义名称的生物
     bred: true # 排除可繁殖生物（成年和幼年）
     tagged: true # 排除计分板标签为 "clearlag_exclude" 的生物
-    bypass-bred: # 即使 bred 为 true 也要清理的可繁殖生物列表
-      # - RABBIT
-      # - CAMEL
-      # - PIG
+# - RABBIT
+# - CAMEL
+# - PIG
 
 # --- 死亡掉落物保护 ---
 # 保护玩家死亡掉落的物品不被自动清理
@@ -141,19 +139,18 @@ kill-mobs:
     named: true # 手动清理排除有名称的生物
     bred: true # 排除可繁殖生物
     tagged: true # 排除带标签的生物
-    bypass-bred: # 即使 bred 为 true 也要清理的可繁殖生物
-      # - RABBIT
-      # - CAMEL
+# - RABBIT
+# - CAMEL
 
 # --- 优化项 ---
 # 各种性能优化设置
 optimizations:
   redstone:
-    enabled: true
+    enabled: false
     # 每区块每刻红石更新硬上限。补充快速时钟检测器（按秒检测并封禁区块）：
     # 此上限直接取消单刻内超限的红石更新
     # 设为 0 或 -1 关闭此上限
-    max-updates-per-tick-per-chunk: 100
+    max-updates-per-tick-per-chunk: -1 #100
 
   # --- TNT 爆炸优化 ---
   # TNT 爆炸时阻止方块掉落（圆石、泥土等）
@@ -184,16 +181,12 @@ optimizations:
     # 删除此键回退默认（仅 CURED）；设为空列表 [] 不豁免任何
     exempt-spawn-reasons:
       - CURED
-    # --- 各世界覆盖 ---
-    # 为指定世界覆盖全局限制
-    # 用 -1 继承全局默认。世界名区分大小写
-    per-world:
-      # world_nether:
-      #   hostile-limit-per-4-chunks: 50
-      #   passive-limit-per-4-chunks: 5
-      # world_the_end:
-      #   hostile-limit-per-4-chunks: 20
-      #   passive-limit-per-4-chunks: 0
+    # world_nether:
+    #   hostile-limit-per-4-chunks: 50
+    #   passive-limit-per-4-chunks: 5
+    # world_the_end:
+    #   hostile-limit-per-4-chunks: 20
+    #   passive-limit-per-4-chunks: 0
     # --- 周期执行（捕捉被水/船等带进来的生物）---
     # 上面的限制通常仅在生成时检测。之后被带入超限区域的生物
     # （水流、牵引绳、船等）不触发新生成检测，可能推高超限
@@ -214,13 +207,11 @@ optimizations:
     # 设为 -1 或删除该项禁用特定类型
     per-type-mob-caps:
       enabled: false
-      # 格式：实体类型: <全局上限>
-      limits:
-        # ZOMBIE: 100
-        # SKELETON: 80
-        # CREEPER: 60
-        # SPIDER: 80
-        # ENDERMAN: 40
+  # ZOMBIE: 100
+  # SKELETON: 80
+  # CREEPER: 60
+  # SPIDER: 80
+  # ENDERMAN: 40
 
   # 通过节流漏斗传输速度减少性能影响
   hopper-optimization:
@@ -261,9 +252,9 @@ optimizations:
 
   # 检测并节流快速红石时钟以防止卡服机器
   fast-clock-detector:
-    enabled: true
+    enabled: false
     # 每区块每秒红石激活次数超过此值则封禁该区块
-    threshold-per-second: 200
+    threshold-per-second: 1000
     # 封禁时长（秒）
     block-duration-seconds: 30
     # 通知附近有 clearlag.warnings.receive 权限的玩家
@@ -281,11 +272,8 @@ optimizations:
     stack-radius-vertical: 4
     # 形成堆叠所需的最小生物数
     min-stack-size: 2
-    # 各实体类型的最小堆叠数覆盖
-    # 格式：实体类型: <数量>
-    filters:
-      # ZOMBIE: 5
-      # SKELETON: 3
+    # ZOMBIE: 5
+    # SKELETON: 3
 
     # 单个堆叠允许的最大生物数
     max-stack-size: 500
@@ -326,7 +314,7 @@ optimizations:
     # 超限时执行的动作：
     # "LIMIT" - 暂时阻止这些类型的新下落方块生成
     # "CONVERT_TO_ITEMS" - 立即将新下落方块转为掉落物
-    action: 'CONVERT_TO_ITEMS'
+    action: CONVERT_TO_ITEMS
     # "LIMIT" 或 "CONVERT_TO_ITEMS" 动作持续时长（刻）
     limit-duration-ticks: 60 # 默认：3 秒
 
@@ -336,10 +324,10 @@ optimizations:
     enabled: true
     # 掉落物生成后多久开始检测合并（刻）
     # 0 = 生成时立即合并
-    check-delay-ticks: 1
+    check-delay-ticks: 300 # 默认：15 秒
     # 合并检测半径（格）
     # 半径越大性能越好但可能看起来不自然
-    merge-radius: 3.0
+    merge-radius: 30.0
     # --- 智能堆叠 ---
     # 启用后物品可超过正常堆叠上限（如 64），
     # 不可堆叠物品（如药水）相同也可合并
@@ -387,7 +375,7 @@ optimizations:
     # 永不移除的弹射物类型（即使过时）
     excluded-types:
       - FISHING_HOOK
-      # - TRIDENT
+  # - TRIDENT
 
   # 性能低于阈值时向管理员发消息
   performance-warnings:
@@ -397,8 +385,8 @@ optimizations:
     # TPS 检测间隔（秒）
     check-interval-seconds: 60
     startup-delay-seconds: 120
-    # 消息现在在 messages.yml (warnings.tps) 中
-    # message: "&c[ClearLag] Server TPS has dropped to &e{tps}&c! Performance is critical!" #
+# 消息现在在 messages.yml (warnings.tps) 中
+# message: "&c[ClearLag] Server TPS has dropped to &e{tps}&c! Performance is critical!" #
 
 # --- 性能指标 ---
 # 性能监控设置
@@ -419,7 +407,7 @@ messages:
   # false = {time} 保持纯秒数
   countdown-use-formatted-time: false
   # 倒计时消息默认位置：CHAT（聊天）、TITLE（标题）、ACTIONBAR（快捷栏上方）
-  default-location: 'CHAT'
+  default-location: CHAT
   # TITLE 显示时长（刻）。20 刻 = 1 秒
   # 应用于倒计时和结果标题
   title-fade-in-ticks: 10
@@ -430,11 +418,11 @@ sounds:
   countdown-enabled: true
   # 播放的音效。使用 Spigot Sound 枚举名（如 "BLOCK_NOTE_BLOCK_PLING"）
   # 1.18+ 常用：BLOCK_NOTE_BLOCK_PLING、ENTITY_EXPERIENCE_ORB_PICKUP、UI_BUTTON_CLICK
-  countdown-sound: 'BLOCK_NOTE_BLOCK_PLING'
+  countdown-sound: BLOCK_NOTE_BLOCK_PLING
   countdown-volume: 1.0
   countdown-pitch: 1.0
   # 清理实体时的音效设置
-  success-sound: 'ENTITY_PLAYER_LEVELUP'
+  success-sound: ENTITY_PLAYER_LEVELUP
   success-volume: 1.0
   success-pitch: 1.0
 
@@ -446,10 +434,10 @@ effects:
     # 粒子效果。使用 Particle 枚举名（如 "SMOKE"、"CLOUD"）
     # https://helpch.at/docs/1.21.1/org/bukkit/Particle.html
     # 输入错误粒子将使用默认粒子
-    particle: 'SMOKE'
+    particle: SMOKE
     particle-count: 5
     # 清理实体时播放的音效
-    sound: 'ENTITY_ITEM_PICKUP'
+    sound: ENTITY_ITEM_PICKUP
     sound-volume: 0.5
     sound-pitch: 1.2
 
@@ -458,10 +446,10 @@ countdown-messages-at:
   - 600
   - 300
   - 180
-  - 120
+  # - 120
   - 60
-  - 30
-  - 15
+  # - 30
+  # - 15
   - 10
   - 5
   - 4
@@ -484,8 +472,8 @@ command-blocking:
   block-plugins-command: false
   # 自定义屏蔽命令列表，对无 bypass 权限的玩家隐藏 tab 补全
   blacklisted-commands:
-    - 'examplecommand'
-    - 'anotherblockedcommand'
+    - examplecommand
+    - anotherblockedcommand
 
 # --- 快速树叶衰减 ---
 # 破坏原木或树叶自然衰减时立即移除树叶
@@ -526,15 +514,15 @@ portal-cooldown:
 bossbar-performance-meter:
   enabled: true
   refresh-interval-ticks: 40 # 2 秒
-  color: 'GREEN' # dynamic-color 关闭时的备用颜色。PINK、BLUE、RED、GREEN、YELLOW、PURPLE、WHITE
-  style: 'SOLID' # SOLID、SEGMENTED_6、SEGMENTED_10、SEGMENTED_12、SEGMENTED_20
+  color: GREEN # dynamic-color 关闭时的备用颜色。PINK、BLUE、RED、GREEN、YELLOW、PURPLE、WHITE
+  style: SOLID # SOLID、SEGMENTED_6、SEGMENTED_10、SEGMENTED_12、SEGMENTED_20
   # 查看 Boss 血条所需权限
-  permission: 'clearlag.bossbar'
+  permission: clearlag.bossbar
   # 根据 TPS 自动改变血条颜色（绿 → 黄 → 红）
   dynamic-color: true
-  color-good: 'GREEN' # TPS >= 18
-  color-warning: 'YELLOW' # TPS >= 15
-  color-bad: 'RED' # TPS < 15
+  color-good: GREEN # TPS >= 18
+  color-warning: YELLOW # TPS >= 15
+  color-bad: RED # TPS < 15
 
 # --- 卡顿快照 ---
 # 检测到卡顿时自动保存详细性能报告
@@ -553,9 +541,9 @@ dynamic-view-distance:
   enabled: true
   # 阈值列表。格式："TPS 视距"
   thresholds:
-    - '15 3'
-    - '10 2'
-    - '5 1'
+    - 15 3
+    - 10 2
+    - 5 1
 
 # --- 自动卸载热点区块 ---
 # 自动卸载离玩家远且实体数量多的区块
@@ -570,7 +558,7 @@ auto-unload:
   min-player-distance: 128
   # 排除扫描的世界
   excluded-worlds:
-    - 'spawn_world'
+    - spawn_world
   # 是否也排除包含重要生物的区块（使用与自动清理相同的排除规则）？
   exclude-important-mobs: true
 
@@ -599,11 +587,11 @@ player-activity-simulation:
   sounds:
     enabled: true
     # 倒计时交互/tick 时播放（如 UI_BUTTON_CLICK）
-    warning: 'UI_BUTTON_CLICK'
+    warning: UI_BUTTON_CLICK
     # 进入 AFK 时播放（如 ENTITY_EXPERIENCE_ORB_PICKUP）
-    afk: 'ENTITY_EXPERIENCE_ORB_PICKUP'
+    afk: ENTITY_EXPERIENCE_ORB_PICKUP
     # 回来时播放（如 ENTITY_PLAYER_LEVELUP）
-    active: 'ENTITY_PLAYER_LEVELUP'
+    active: ENTITY_PLAYER_LEVELUP
 
 # --- 载具限制 ---
 # 限制每区块（和每世界全局）的矿车和船数量
@@ -612,7 +600,7 @@ vehicle-limiter:
   enabled: false
   # 排除载具限制的世界
   excluded-worlds:
-    - 'spawn_world'
+    - spawn_world
   minecart:
     # 每区块最大矿车数。设为 -1 关闭区块检测
     chunk-limit: 20
@@ -745,7 +733,7 @@ hooks:
     # true = LevelledMobs 升级的生物排除在 /clearlag killmobs 之外
     exclude-from-kill: false
     # true = LevelledMobs 升级的生物排除在 AI 优化距离清理之外
-    #（推荐：true，让 LevelledMobs 自己管理）
+    # （推荐：true，让 LevelledMobs 自己管理）
     exclude-from-ai-optimization: true
 
 # --- WorldGuard 集成 ---
@@ -753,16 +741,15 @@ hooks:
 # 区域 ID 不区分大小写
 worldguard-integration:
   enabled: false
-  regions:
-    # 示例：一个市场区域，实体永不清理且不生成敌对生物
-    # marketplace:
-    #   clear-immune: true       # 此区域内实体在自动清理中存活
-    #   hostile-mob-limit: 0     # 不允许敌对生物。-1 = 使用全局默认
-    #   passive-mob-limit: -1    # 使用全局默认
-    # pvp_arena:
-    #   clear-immune: false
-    #   hostile-mob-limit: 50
-    #   passive-mob-limit: 20
+# 示例：一个市场区域，实体永不清理且不生成敌对生物
+# marketplace:
+#   clear-immune: true       # 此区域内实体在自动清理中存活
+#   hostile-mob-limit: 0     # 不允许敌对生物。-1 = 使用全局默认
+#   passive-mob-limit: -1    # 使用全局默认
+# pvp_arena:
+#   clear-immune: false
+#   hostile-mob-limit: 50
+#   passive-mob-limit: 20
 
 # --- 投掷器/发射器刷屏限制 ---
 # 限制单个投掷器或发射器每秒触发次数
@@ -816,9 +803,9 @@ villager-optimization:
   # 要节流的实体类型。VILLAGER 是主要目标；其他可选
   entities:
     - VILLAGER
-    # - WANDERING_TRADER
-    # - PIGLIN
-    # - PILLAGER
+  # - WANDERING_TRADER
+  # - PIGLIN
+  # - PILLAGER
   # 放过命名生物
   skip-named: false
   # 放过被牵引的生物
@@ -871,7 +858,7 @@ metrics-history:
   # 采样间隔（秒）。14 天每 30 秒约 4 万行 - 几 MB
   sample-interval-seconds: 30
   retention-days: 14
-  database-file: 'metrics.db'
+  database-file: metrics.db
   # 趋势线将请求时间段分为多少桶
   trend-buckets: 24
 
@@ -884,11 +871,11 @@ web-dashboard:
   enabled: true
   # 127.0.0.1 = 仅本机可访问（安全默认，如反向代理后）
   # 0.0.0.0   = 随处可访问 - 确保防火墙/主机面板开放端口
-  bind-address: '0.0.0.0'
+  bind-address: 0.0.0.0
   port: 8765
   # 访问令牌。留空则启动时自动生成并写入此处
   # 知道令牌的人可读取服务器数据 - /clearlag web newtoken 替换
-  token: ''
+  token: dede5fc5402167b29ebc6abca68dba22f1b9688b77898fa7
   # /clearlag web 显示的可选公开地址，如反向代理时的 "https://stats.example.net"
   # 留空 = http://<ip>:<port>
   public-url: ''
