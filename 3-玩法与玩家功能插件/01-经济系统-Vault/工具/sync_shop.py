@@ -4,12 +4,12 @@
 用法：停服后运行  python sync_shop.py
 读同目录的「系统商店商品管理.xlsx」，写入 EconomyShop SQLite。
 """
-import os, sys, sqlite3, datetime
+import os, sys, sqlite3, time
 import openpyxl
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 XLSX = os.path.join(HERE, "系统商店商品管理.xlsx")
-DB = r"C:\mc_serve\1.21.11-test\plugins\EconomyShop\data.db"
+DB = os.path.join(HERE, "data.db")
 CATEGORY_NAME = "新手补给"
 
 def main():
@@ -46,29 +46,31 @@ def main():
     if row:
         cat_id = row["id"]
     else:
-        cur.execute("INSERT INTO es_categories (name, display_name, slot, sort_order, enabled, created_at) VALUES (?,?,?,?,?,?)",
-                    (CATEGORY_NAME, CATEGORY_NAME, 1, 1, 1, datetime.datetime.now().isoformat()))
+        cur.execute("INSERT INTO es_categories (name, display_name, slot, sort_order, enabled) VALUES (?,?,?,?,?)",
+                    (CATEGORY_NAME, CATEGORY_NAME, 1, 1, 1))
         cat_id = cur.lastrowid
         print(f"新建分类: {CATEGORY_NAME} (id={cat_id})")
 
+    now_ts = int(time.time())
+
     # 软删旧商品（同分类）
     cur.execute("UPDATE es_items SET deleted_at=? WHERE category_id=? AND deleted_at IS NULL",
-                (datetime.datetime.now().isoformat(), cat_id))
+                (now_ts, cat_id))
     print(f"软删除旧商品 {cur.rowcount} 条")
 
     # 插入新商品
     n = 0
     for it in rows:
         if not it["enabled"]: continue
-        smode = "infinite" if it["stock_mode"] != "finite" else "finite"
+        smode = "INFINITE" if it["stock_mode"] != "finite" else "FINITE"
         cur.execute("""INSERT INTO es_items
             (category_id, material, item_data, buy_price, sell_price, stock_mode,
              current_stock, max_stock, restock_amount, restock_interval,
-             dynamic_pricing, permission, slot, sort_order, enabled, created_at)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+             dynamic_pricing, permission, slot, sort_order, enabled)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (cat_id, it["material"], None, it["buy"], it["sell"], smode,
              it["stock"], it["stock"], 0, 0,
-             0, None, 1, n+1, 1, datetime.datetime.now().isoformat()))
+             0, None, 1, n+1, 1))
         n += 1
     conn.commit()
 
