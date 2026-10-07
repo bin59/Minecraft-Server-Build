@@ -224,9 +224,8 @@ scoreboard:
         - '&7▸ 余额 &e%vault_eco_balance% 币'
         - '&7▸ 在线时长 &b%plan_player_current_session_length%'
         - '&7▸ 总时长 &b%plan_player_time_total%'
-        - '&7▸ 生物: &a%entitycount_living%'
-        - '&7▸ 实体: &a%entitycount_count%'
-        - '&7▸ 掉落物: &a%entitycount_items%'
+        - '&7▸ 实体: &a%clearlag_entity_total%'
+        - '&7▸ RAM: &a%clearlag_ram%'
         - '&7▸ TPS: &a%tps%'
         - '&7▸ 延迟 &a%ping%ms'
         - '&7▸ 时间 &a%date%'
@@ -242,13 +241,12 @@ scoreboard:
 | --------------------------- | ------------------------- | ------------------------------ |
 | `%online%` / `%maxplayers%` | TAB 内置                  | 在线人数 / 最大人数            |
 | `%tps%`                     | TAB 内置                  | 服务器 TPS（满 20.0）          |
-| `%entitycount_count%`       | 自研 **EntityCount** 扩展 | 已加载实体总数（含物品掉落物） |
-| `%entitycount_living%`      | 自研 **EntityCount** 扩展 | 生物总数（不含物品）           |
-| `%entitycount_items%`       | 自研 **EntityCount** 扩展 | 掉落物总数（地面物品实体）     |
+| `%clearlag_entity_total%`   | ClearLag++ 扩展           | 全服已加载实体总数             |
+| `%clearlag_ram%`            | ClearLag++ 扩展           | 内存使用情况                   |
 
-**为什么实体数不用 PAPI 官方 Server 扩展（`%server_total_entities%`）？** 该扩展在请求时**同步遍历 chunk 取实体**，而 TAB 在**异步线程**（`TAB Placeholder Refreshing Thread`）刷新占位符，Leaf/Paper 的 AsyncCatcher 会拦截并**周期性刷屏报错**（`failed main thread check: Chunk getEntities call`），生物数因此取不到。**这是 TAB + Server 扩展的组合问题，改配置无效**。
+**为什么不用 PAPI 官方 Server 扩展（`%server_total_entities%`）？** 该扩展在请求时**同步遍历 chunk 取实体**，而 TAB 在**异步线程**刷新占位符，Leaf/Paper 的 AsyncCatcher 会拦截并**周期性刷屏报错**。
 
-**自研 EntityCount 扩展**（`plugins/EntityCount-1.1.0.jar`）：主线程每 5 秒统计一次全服实体/生物/掉落物数并缓存到内存，占位符请求只读缓存（纯 int，异步安全、零开销、零报错）。部署：jar 放进 `plugins/` → 重启服务器 → `/papi reload` → `/tab reload`。
+**ClearLag++ 扩展**（`plugins/PlaceholderAPI/expansions/ClearLag*.jar`）：ClearLag 自带的 PAPI 扩展，异步安全、零报错。部署：`/papi ecloud download ClearLag` → `/papi reload` → `/tab reload`。
 
 **玩家个人取消**：输入 `/sb` 或 `/tab scoreboard off` 隐藏，再输一次恢复。权限 `tab.scoreboard.toggle`（默认开放，见权限速查）。
 

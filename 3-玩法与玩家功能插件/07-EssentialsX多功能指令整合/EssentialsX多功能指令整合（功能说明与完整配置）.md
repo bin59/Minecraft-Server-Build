@@ -808,6 +808,193 @@ aliases:
 
 ---
 
+### ⚙️ 原版命令优先配置（服务器根目录 commands.yml）
+
+Essentials 默认会注册很多和原版同名的命令（`/give`、`/enchant`、`/gamemode`、`/tp` 等），虽然配置里说"默认让其他插件优先"，但实际执行的还是 Essentials 的版本，会导致原版 1.21+ 物品组件语法（如 `[minecraft:enchantments={...}]`）无法使用。
+
+**解决方案**：在服务器根目录的 `commands.yml`（不是 `plugins/Essentials/commands.yml`）里，把所有常用原版命令的别名指向 `minecraft:` 命名空间，强制走原版逻辑。
+
+文件路径：`<服务器根目录>/commands.yml`
+
+```yaml
+command-block-overrides: []
+ignore-vanilla-permissions: false
+aliases:
+  icanhasbukkit:
+  - version $1-
+  # ===== 原版命令全量优先，不被 Essentials 覆盖 =====
+  advancement:
+  - minecraft:advancement $1-
+  attribute:
+  - minecraft:attribute $1-
+  ban:
+  - minecraft:ban $1-
+  ban-ip:
+  - minecraft:ban-ip $1-
+  bossbar:
+  - minecraft:bossbar $1-
+  clear:
+  - minecraft:clear $1-
+  clone:
+  - minecraft:clone $1-
+  damage:
+  - minecraft:damage $1-
+  data:
+  - minecraft:data $1-
+  datapack:
+  - minecraft:datapack $1-
+  debug:
+  - minecraft:debug $1-
+  defaultgamemode:
+  - minecraft:defaultgamemode $1-
+  deop:
+  - minecraft:deop $1-
+  difficulty:
+  - minecraft:difficulty $1-
+  effect:
+  - minecraft:effect $1-
+  enchant:
+  - minecraft:enchant $1-
+  execute:
+  - minecraft:execute $1-
+  experience:
+  - minecraft:xp $1-
+  xp:
+  - minecraft:xp $1-
+  fill:
+  - minecraft:fill $1-
+  fillbiome:
+  - minecraft:fillbiome $1-
+  forcebench:
+  - minecraft:forcebench $1-
+  function:
+  - minecraft:function $1-
+  gamemode:
+  - minecraft:gamemode $1-
+  gm:
+  - minecraft:gamemode $1-
+  gamerule:
+  - minecraft:gamerule $1-
+  give:
+  - minecraft:give $1-
+  help:
+  - minecraft:help $1-
+  item:
+  - minecraft:item $1-
+  jfr:
+  - minecraft:jfr $1-
+  kick:
+  - minecraft:kick $1-
+  kill:
+  - minecraft:kill $1-
+  list:
+  - minecraft:list $1-
+  locate:
+  - minecraft:locate $1-
+  loot:
+  - minecraft:loot $1-
+  me:
+  - minecraft:me $1-
+  msg:
+  - minecraft:tell $1-
+  tell:
+  - minecraft:tell $1-
+  w:
+  - minecraft:tell $1-
+  r:
+  - minecraft:tell $1-
+  op:
+  - minecraft:op $1-
+  pardon:
+  - minecraft:pardon $1-
+  pardon-ip:
+  - minecraft:pardon-ip $1-
+  particle:
+  - minecraft:particle $1-
+  playsound:
+  - minecraft:playsound $1-
+  publish:
+  - minecraft:publish $1-
+  recipe:
+  - minecraft:recipe $1-
+  reload:
+  - minecraft:reload $1-
+  return:
+  - minecraft:return $1-
+  ride:
+  - minecraft:ride $1-
+  save-all:
+  - minecraft:save-all $1-
+  save-off:
+  - minecraft:save-off $1-
+  save-on:
+  - minecraft:save-on $1-
+  say:
+  - minecraft:say $1-
+  schedule:
+  - minecraft:schedule $1-
+  scoreboard:
+  - minecraft:scoreboard $1-
+  seed:
+  - minecraft:seed $1-
+  setblock:
+  - minecraft:setblock $1-
+  setworldspawn:
+  - minecraft:setworldspawn $1-
+  spawnpoint:
+  - minecraft:spawnpoint $1-
+  spectate:
+  - minecraft:spectate $1-
+  spreadplayers:
+  - minecraft:spreadplayers $1-
+  stop:
+  - minecraft:stop $1-
+  summon:
+  - minecraft:summon $1-
+  tag:
+  - minecraft:tag $1-
+  team:
+  - minecraft:team $1-
+  teammsg:
+  - minecraft:teammsg $1-
+  tm:
+  - minecraft:teammsg $1-
+  teleport:
+  - minecraft:tp $1-
+  tp:
+  - minecraft:tp $1-
+  tellraw:
+  - minecraft:tellraw $1-
+  time:
+  - minecraft:time $1-
+  title:
+  - minecraft:title $1-
+  trigger:
+  - minecraft:trigger $1-
+  villager:
+  - minecraft:villager $1-
+  weather:
+  - minecraft:weather $1-
+  whitelist:
+  - minecraft:whitelist $1-
+  worldborder:
+  - minecraft:worldborder $1-
+```
+
+**效果**：
+- **70+ 个原版命令全部走原版逻辑**，不被 Essentials 覆盖
+- 玩家输入 `/give` → 走原版 `/minecraft:give`，支持 1.21+ 物品组件语法
+- `/enchant` → 走原版 `/minecraft:enchant`
+- `/gamemode` → 走原版 `/minecraft:gamemode`
+- `/tp` → 走原版 `/minecraft:tp`
+- 包括 `advancement`、`attribute`、`clear`、`clone`、`damage`、`data`、`execute`、`fillbiome`、`setworldspawn`、`spectate`、`tag`、`tellraw`、`title` 等所有原版命令
+
+**不受影响**：Essentials 自己独有的命令（`/home`、`/spawn`、`/tpa`、`/heal`、`/feed`、`/god`、`/walkspeed`、`/hat`、`/itemdb` 等）照常使用，因为这些不是原版命令。
+
+**生效方式**：重启服务端（根目录 `commands.yml` 只能启动时加载，不能热重载）。
+
+---
+
 ### 🔧 LuckPerms 权限配置示例
 
 以下是配合 LuckPerms 的权限分配示例：

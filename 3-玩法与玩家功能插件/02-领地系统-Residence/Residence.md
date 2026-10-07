@@ -14,99 +14,200 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 
 刷新配置文件：`/res reload [config(配置)/lang(语言)/groups(组)/flags(权限)]`
 
-### 领地创建与管理
+### 选区与创建
 
-| 命令                             | 说明                |
-| -------------------------------- | ------------------- |
-| `/res select <x> <y> <z>`        | 选择领地顶点坐标    |
-| `/res select vert`               | 纵向扩展到天空/基岩 |
-| `/res create <名称>`             | 创建领地            |
-| `/res auto <名称> <半径>`        | 自动创建领地        |
-| `/res remove <名称>`             | 移除领地            |
-| `/res expand <数量>`             | 扩展领地            |
-| `/res contract <数量>`           | 缩小领地            |
-| `/res subzone <父领地> <子领地>` | 创建子领地          |
-| `/res select size`               | 查看当前选区大小    |
-| `/res info`                      | 查看当前领地信息    |
-| `/res list`                      | 列出自己的领地      |
+| 命令 | 说明 |
+|---|---|
+| `/res select <x> <y> <z>` | 选择领地顶点坐标 |
+| `/res select vert` | 纵向扩展到天空/基岩 |
+| `/res select size` | 查看当前选区大小 |
+| `/res auto <名称> <半径>` | 自动创建领地（以自己为中心） |
+| `/res create <名称>` | 创建领地（基于当前选区） |
+| `/res subzone <父领地> <子领地>` | 创建子领地 |
+| `/res expand <数量>` | 向玩家面对方向扩展领地 |
+| `/res expand north/south/east/west/up/down <数量>` | 向指定方向扩展 |
+| `/res contract <数量>` | 向玩家面对方向缩小领地 |
+| `/res contract north/south/east/west/up/down <数量>` | 向指定方向缩小 |
+| `/res move north/south/east/west/up/down <数量>` | 平移领地 |
+| `/res mirror` | 镜像对称扩展领地 |
+| `/res rename <旧名> <新名>` | 重命名领地 |
+| `/res renamearea <领地名> <旧区域> <新区域>` | 重命名子区域 |
+| `/res remove <名称>` | 删除自己的领地 |
+| `/res info` | 查看当前所在领地信息 |
+| `/res info <领地名>` | 查看指定领地信息 |
+| `/res list` | 列出自己的所有领地 |
+| `/res list <玩家名>` | 列出指定玩家的领地（需权限） |
+| `/res listall` | 列出所有领地（需权限） |
+| `/res listhidden` | 列出隐藏领地（需权限） |
+| `/res listallhidden` | 列出所有隐藏领地（需权限） |
+| `/res current` | 查看当前所在领地名称 |
+| `/res limits` | 查看自己的领地数量/大小上限 |
+| `/res area` | 查看当前选区区域信息 |
 
-### 成员管理
+### 成员与权限设置
 
-| 命令                      | 说明                                              |
-| ------------------------- | ------------------------------------------------- |
-| `/res padd <玩家>`        | 将玩家加入为领地成员                              |
-| `/res padd <玩家> true`   | 加入并给予全部权限（build/destroy/use/container） |
-| `/res padd <领地> <玩家>` | 指定领地添加成员                                  |
-| `/res pdel <玩家>`        | 移除领地成员                                      |
-| `/res plist`              | 查看领地成员列表                                  |
-
-> **基岩玩家注意（Floodgate）**：基岩玩家名带 `.` 前缀（如 `.shangxin2179`），`/res padd` 必须手打全名（含点），否则报"找不到玩家"。
-
-### 领地权限 (Flags)
-
-| 命令                                        | 说明             |
-| ------------------------------------------- | ---------------- |
-| `/res set <领地> <flag> true/false`         | 设置领地旗帜     |
+| 命令 | 说明 |
+|---|---|
+| `/res padd <玩家>` | 将玩家加入为领地成员 |
+| `/res padd <玩家> true` | 加入并给予全部权限（build/destroy/use/container） |
+| `/res padd <领地> <玩家>` | 指定领地添加成员 |
+| `/res pdel <玩家>` | 移除领地成员 |
+| `/res pdel <领地> <玩家>` | 指定领地移除成员 |
+| `/res plist` | 查看领地成员列表 |
+| `/res setadmin <玩家>` | 将玩家设为领地管理员（拥有 admin 权限） |
+| `/res removeadmin <玩家>` | 移除领地管理员 |
+| `/res admin` | 切换领地管理员模式（临时获得全部权限） |
+| `/res set <领地> <flag> true/false` | 设置领地全局旗帜 |
 | `/res pset <领地> <玩家> <flag> true/false` | 设置玩家特定旗帜 |
-| `/res flags`                                | 查看可用旗帜列表 |
+| `/res gset <领地> <组名> <flag> true/false` | 设置权限组旗帜 |
+| `/res lset <领地> <世界> <flag> true/false` | 设置世界级旗帜 |
+| `/res flags` | 查看可用旗帜列表 |
+| `/res clearflags <领地名>` | 清除领地所有自定义旗帜 |
+| `/res setdefaultflags` | 恢复领地默认旗帜 |
+| `/res command add <命令>` | 添加领地允许执行的命令 |
+| `/res command remove <命令>` | 移除领地允许执行的命令 |
+| `/res command block add <命令>` | 添加领地禁用的命令 |
+| `/res command block remove <命令>` | 移除领地禁用的命令 |
 
 ### 常用 Flags
 
-| 旗帜名       | 说明                  |
-| ------------ | --------------------- |
-| `build`      | 建造权限              |
-| `destroy`    | 破坏权限              |
-| `use`        | 使用（门/按钮等）权限 |
-| `container`  | 容器访问权限          |
-| `move`       | 移动权限              |
-| `pvp`        | PVP 权限              |
-| `tp`         | 传送权限              |
-| `mobkilling` | 击杀生物              |
-| `damage`     | 伤害                  |
+| 旗帜名 | 说明 |
+|---|---|
+| `build` | 建造权限 |
+| `destroy` | 破坏权限 |
+| `use` | 使用（门/按钮/拉杆等）权限 |
+| `container` | 容器访问权限（箱子/熔炉/酿造台等） |
+| `move` | 移动权限（能否进入领地） |
+| `tp` | 传送权限（能否传送到领地） |
+| `pvp` | PVP 权限 |
+| `damage` | 伤害（掉落/火焰/怪物伤害） |
+| `mobkilling` | 击杀生物权限 |
+| `animalkilling` | 击杀动物权限 |
+| `shear` | 剪羊毛权限 |
+| `tnt` | TNT 爆炸破坏 |
+| `explode` | 爆炸破坏（通用） |
+| `creeper` | 苦力怕爆炸破坏 |
+| `fireball` | 火焰弹爆炸 |
+| `firespread` | 火焰蔓延 |
+| `ignite` | 点火权限 |
+| `flow` | 液体流动（水/岩浆） |
+| `piston` | 活塞推动 |
+| `pistonprotection` | 活塞保护（防活塞机器） |
+| `trample` | 踩坏耕地 |
+| `monsters` | 怪物生成 |
+| `animals` | 动物生成 |
+| `nomobs` | 阻止生物进入领地 |
+| `witherdestruction` | 凋灵破坏 |
+| `dragongrief` | 末影龙破坏 |
+| `bed` | 使用床 |
+| `brew` | 使用酿造台 |
+| `enchant` | 使用附魔台 |
+| `anvil` | 使用铁砧 |
+| `grindstone` | 使用砂轮 |
+| `loom` | 使用织布机 |
+| `smithing` | 使用锻造台 |
+| `stonecutter` | 使用切石机 |
+| `fly` | 飞行权限 |
+| `keepinv` | 死亡保留物品 |
+| `admin` | 领地管理权限（改旗帜/加成员） |
+| `bank` | 使用领地银行 |
 
-damage 掉落 / 火焰等伤害
-monster-spawn / animal-spawn 怪物 / 动物生成
-tnt / explosion / creeper 爆炸破坏
-fire / flow 火焰蔓延 / 液体流动
-piston 活塞推动
+### 传送与定位
 
-### 传送
+| 命令 | 说明 |
+|---|---|
+| `/res tp <领地>` | 传送到领地 |
+| `/res tpset` | 设置当前站立位置为领地传送点 |
+| `/res rt` | 随机传送（到野外） |
+| `/res unstuck` | 卡住时脱困回安全位置 |
+| `/res compass` | 指南针指向最近的领地 |
+| `/res tpconfirm` | 确认领地传送（避免误触） |
+| `/res setmain <领地名>` | 设置默认主领地 |
 
-| 命令             | 说明                         |
-| ---------------- | ---------------------------- |
-| `/res tp <领地>` | 传送到领地                   |
-| `/res tpset`     | 设置当前站立位置为领地传送点 |
-| `/res rt`        | 随机传送                     |
-| `/res unstuck`   | 卡住时脱困回出生点/安全位置  |
+### 领地提示与聊天
 
-### 领地提示
-
-| 命令                               | 说明             |
-| ---------------------------------- | ---------------- |
+| 命令 | 说明 |
+|---|---|
 | `/res message <领地> enter <消息>` | 设置进入领地提示 |
 | `/res message <领地> leave <消息>` | 设置离开领地提示 |
-
-### 领地聊天
-
-| 命令             | 说明               |
-| ---------------- | ------------------ |
+| `/res message remove <领地> enter` | 移除进入提示 |
+| `/res message remove <领地> leave` | 移除离开提示 |
 | `/res rc <消息>` | 在领地频道发送消息 |
-| `/res rc join`   | 加入领地频道       |
-| `/res rc leave`  | 离开领地频道       |
+| `/res rc join` | 加入领地频道 |
+| `/res rc leave` | 离开领地频道 |
+| `/res chatcolor <颜色>` | 设置领地聊天颜色 |
+| `/res chatprefix <前缀>` | 设置领地聊天前缀 |
+
+### 领地经济与买卖
+
+| 命令 | 说明 |
+|---|---|
+| `/res bank <领地名>` | 打开领地银行 |
+| `/res resbank <领地名>` | 领地银行操作 |
+| `/res market` | 打开领地市场（买卖/租赁） |
+| `/res shop` | 领地商店 |
+| `/res contract` | 领地合约 |
+| `/res lease` | 领地租赁 |
+
+### 工具与可视化
+
+| 命令 | 说明 |
+|---|---|
+| `/res tool` | 切换选区工具 |
+| `/res show <领地名>` | 显示领地边界 |
+| `/res area` | 查看当前选区区域信息 |
+| `/res signconvert` | 转换领地木牌 |
+| `/res signupdate` | 更新领地木牌 |
+| `/res siege` | 领地围攻（PVP 玩法） |
+| `/res material` | 设置领地图标材质 |
+| `/res gui` | 打开领地 GUI 编辑器 |
 
 ### 管理员命令（Admin）
 
 以下命令需 `residence.admin` 权限（op 或 LuckPerms 给 `residence.admin.*`）。注意本服管理命令用单词 `/resadmin`（非 `/res admin` 两词）。
 
-| 命令                                   | 说明                                                            |
-| -------------------------------------- | --------------------------------------------------------------- |
-| `/resadmin setowner <领地名> <玩家名>` | 将领地归属转移给指定玩家（改主人）                              |
-| `/resadmin remove <领地名>`            | 管理员删除任意领地                                              |
-| `/resadmin removeall <玩家名>`         | 删除某玩家的全部领地                                            |
-| `/resadmin server <领地名>`            | 将领地设为服务器所有                                            |
+| 命令 | 说明 |
+|---|---|
+| `/resadmin setowner <领地名> <玩家名>` | 将领地归属转移给指定玩家（改主人） |
+| `/resadmin remove <领地名>` | 管理员删除任意领地 |
+| `/resadmin removeall <玩家名>` | 删除某玩家的全部领地 |
+| `/resadmin removeworld <世界名>` | 删除某世界所有领地 |
+| `/resadmin server <领地名>` | 将领地设为服务器所有 |
 | `/resadmin setall <flag> <true/false>` | 批量设置所有领地的某权限（如 `setall build false`，操作前备份） |
-
-> **基岩玩家注意（Floodgate）**：基岩玩家名带 `.` 前缀（如 `.NoviceMite1987`）。`/resadmin setowner` 的 `<玩家名>` **Tab 补全列不出基岩/离线玩家**，必须**手打全名（含点）**：`/resadmin setowner 我的家 .NoviceMite1987`。若报"找不到玩家"（基岩玩家离线时常有），改用该玩家 UUID：`/resadmin setowner 我的家 <UUID>`（UUID 用 `/res info <领地名>` 的 Owner 字段查，或问玩家 / 查 Floodgate 数据）。
+| `/resadmin set` | 管理员版设置旗帜 |
+| `/resadmin pset` | 管理员版设置玩家旗帜 |
+| `/resadmin gset` | 管理员版设置组旗帜 |
+| `/resadmin lset` | 管理员版设置世界旗帜 |
+| `/resadmin give <领地名> <玩家名>` | 把领地送给玩家 |
+| `/resadmin move <领地名> <玩家名>` | 移动领地位置 |
+| `/resadmin tp <领地名>` | 传送到任意领地 |
+| `/resadmin rename` | 管理员版重命名 |
+| `/resadmin renamearea` | 管理员版重命名区域 |
+| `/resadmin reset <领地名>` | 重置领地旗帜 |
+| `/resadmin check <领地名>` | 检查领地状态 |
+| `/resadmin confirm` | 确认管理员操作 |
+| `/resadmin version` | 查看 Residence 版本 |
+| `/resadmin info <领地名>` | 查看任意领地详细信息 |
+| `/resadmin list` | 列出所有领地 |
+| `/resadmin listhidden` | 列出隐藏领地 |
+| `/resadmin listall` | 列出所有玩家的所有领地 |
+| `/resadmin listallhidden` | 列出所有隐藏领地 |
+| `/resadmin limits <玩家名>` | 查看玩家的领地数量上限 |
+| `/resadmin group <玩家名> <组名>` | 设置玩家的领地权限组 |
+| `/resadmin bank <领地名>` | 管理员操作领地银行 |
+| `/resadmin resbank <领地名>` | 管理员操作领地租赁银行 |
+| `/resadmin market` | 管理员查看领地市场 |
+| `/resadmin shop` | 管理员查看领地商店 |
+| `/resadmin contract` | 管理员查看领地合约 |
+| `/resadmin lease` | 管理员查看领地租赁 |
+| `/resadmin siege` | 管理员管理领地围攻 |
+| `/resadmin signconvert` | 管理员转换领地木牌 |
+| `/resadmin signupdate` | 管理员更新领地木牌 |
+| `/resadmin material` | 管理员设置领地图标材质 |
+| `/resadmin gui` | 管理员打开领地 GUI 编辑器 |
+| `/resadmin tool` | 管理员切换选区工具 |
+| `/resadmin show <领地名>` | 管理员显示任意领地边界 |
+| `/resadmin area` | 管理员查看选区区域信息 |
 
 ## 关键配置 (`plugins/Residence/config.yml`)
 
@@ -320,14 +421,42 @@ Global:
   ```
 - **解决**：确保 `groups.yml` 里没有显式地把这些权限设为 `true`，或者直接删除这几行让它们继承全局设置。
 
-### 3. 排查“子区域”或“父区域”继承
+### 3. 排查”子区域”或”父区域”继承
 
 **现象**：大领地（父区域）设置了允许，小领地（子区域）即使设置了禁止，有时也会因为继承关系出问题（反之亦然）。
 **排查**：
 
 - 站在领地中，输入 `/res info`。
 - 查看输出信息，确认当前所在的具体领地名称。
-- 有时候玩家是在“子区域”里，而父区域的权限设置不同。
+- 有时候玩家是在”子区域”里，而父区域的权限设置不同。
+
+#### 子领地隔离：大领地授权的人，子领地怎么单独 deny
+
+**现象**：大领地 `/res padd` 或 `/res pset` 给了某人建造/使用/容器权限，这个权限**默认延伸到所有子领地**。你在子领地里只想让自己能动、别人不能动，但子领地怎么设置都不生效——别人还是能在子领地里建造/开门/开箱。
+
+**原理**：Residence 权限是**叠加继承**，不是自动隔离。大领地 `build: allow` → 子领地没显式设置 = 继承 allow。子领地必须**显式反向声明** `false` 才能压过大领地的 allow，只在子领地设自己的权限没用。
+
+**解决**：在子领地里把那个人的权限显式 deny 掉：
+
+```bash
+# 假设大领地叫 home，子领地叫 home.cave，朋友叫 bob
+/res pset home.cave bob build false
+/res pset home.cave bob destroy false
+/res pset home.cave bob use false
+/res pset home.cave bob container false
+/res pset home.cave bob move false      # 连进都进不来（私密房间）
+```
+
+**批量 deny 所有被大领地授权的人**（子领地默认谁都不能动，只再单独给自己 allow）：
+
+```bash
+/res pset home.cave default build false
+/res pset home.cave default container false
+/res pset home.cave default move false
+```
+
+> **关键点**：子领地权限**不会**自动从大领地”隔离”出来，必须反向写 `false`。只在子领地 `/res pset home.cave 自己 build true` 是不够的，大领地给别人的 allow 仍然会穿透到子领地。
+
 
 ### 💡 终极排查手段：开启调试模式
 
@@ -340,3 +469,26 @@ Global:
     - 如果显示 `ALLOWED`，它会告诉你具体是哪个 Flag 或者是哪个 Group 给了权限。
 
 **建议操作顺序**：先试第 1 步（新圈地测试），如果新地是好的，那就是旧数据问题，用 `resadmin setall` 解决最快。
+
+---
+
+## Owner 把自己权限删了怎么办？
+
+**现象**：玩家执行了 `/res pset 领地名 自己 admin false` 或 `/res pdel 领地名 自己`，结果领地还是他的（`/res list` 显示），但他自己不能建造、不能开门、不能管理权限。
+
+**原因**：Residence 把"领地所有权"和"操作权限"分成两层：
+
+| 层级 | 说明 | 怎么改 |
+|---|---|---|
+| **Owner（所有权）** | 领地的"主人"字段 | 只有 `/res remove`（删除领地）或 `/resadmin setowner`（转移所有权）才会改变 |
+| **权限（Flags/Perms）** | 谁能建造、谁能开门、谁能管理领地 | `/res pset`、`/res set`、`/res padd`、`/res pdel` 都能改 |
+
+`/res pset`、`/res padd`、`/res pdel` 这些命令对**任何人**都生效，包括 owner 自己。Residence 没有"owner 不能修改自己权限"的保护机制。
+
+**解决方法：**
+
+1. **管理员恢复**：`/resadmin pset 领地名 玩家名 admin true`
+2. **自己恢复**（如果还能进领地）：`/res setdefaultflags`
+3. **删了重建**：`/res remove 领地名`，然后重新圈地创建
+
+**预防**：提醒玩家不要对自己用 `/res pset 领地名 你自己 权限 false`。

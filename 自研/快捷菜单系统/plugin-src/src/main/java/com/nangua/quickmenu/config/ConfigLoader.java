@@ -60,6 +60,7 @@ public final class ConfigLoader {
 
         settings.setDebug(config.getBoolean("debug", false));
         settings.setDefaultMenu(config.getString("default-menu", "main"));
+        settings.setResidenceMenu(config.getString("residence-menu", "residence"));
         settings.setBedrockUseNativeForm(config.getBoolean("platform.bedrock-native-form", true));
         settings.setJavaUseChestGui(config.getBoolean("platform.java-chest-gui", true));
 

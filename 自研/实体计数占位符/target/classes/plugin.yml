@@ -1,6 +1,0 @@
-name: EntityCount
-version: 1.0.0
-main: com.mc.entitycount.EntityCountPlugin
-api-version: "1.20"
-depend: [PlaceholderAPI]
-description: 实体/生物计数占位符（%entitycount_count% / %entitycount_living%），主线程低频统计+缓存，异步读取零开销

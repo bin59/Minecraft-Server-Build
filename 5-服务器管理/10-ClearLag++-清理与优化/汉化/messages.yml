@@ -1,0 +1,368 @@
+# ================================================================= #
+#                   ClearLag Language File                          #
+# ================================================================= #
+# 汉化版本，保留所有占位符 {count} {time} 等，颜色代码 &a &c 等不变
+
+# 消息前缀
+prefix: "&e[清理插件] &r"
+
+# 时间单位（用于 {formatted_time}）
+time-units:
+  year: "年"
+  years: "年"
+  month: "月"
+  months: "月"
+  day: "天"
+  days: "天"
+  hour: "小时"
+  hours: "小时"
+  minute: "分钟"
+  minutes: "分钟"
+  second: "秒"
+  seconds: "秒"
+
+common:
+  reload: "&a配置已重载！"
+  player-only: "&c该命令只能由玩家使用。"
+
+errors:
+  no-permission: "&c你没有权限使用此命令。"
+  feature-disabled: "&c该功能已禁用：&e{feature}&c。"
+  unknown-command: "&c该命令不存在。输入 &e/clearlag &c查看命令列表。"
+  usage: "&c用法：&e{usage}"
+  must-be-positive: "&c'{value}' 必须是正数。"
+  must-be-number: "&c'{value}' 必须是有效数字。"
+  world-not-found: "&c世界 '{world}' 不存在。"
+
+commands:
+  help-header: "&6--- 清理插件命令 ---"
+  help-lines:
+    - "&e/clearlag clear <掉落物/实体/全部> [--预览] &7- 清理实体/掉落物；--预览仅显示会清理什么"
+    - "&e/clearlag info &7- 显示插件信息"
+    - "&e/clearlag killmobs <敌对/友好/全部> &7- 清理生物"
+    - "&e/clearlag reload &7- 重载配置"
+    - "&e/clearlag nextclear &7- 显示距下次自动清理的时间"
+    - "&e/clearlag topworld &7- 按实体数量排名世界"
+    - "&e/clearlag cpu &7- 显示近期 CPU 占用"
+    - "&e/clearlag ram &7- 显示近期内存占用"
+    - "&e/clearlag specs &7- 显示服务器性能概况"
+    - "&e/clearlag togglemessages &7- 开关自己的倒计时消息"
+    - "&e/clearlag togglesound &7- 开关自己的倒计时音效"
+    - "&e/clearlag togglemessage &7- 切换倒计时消息显示位置（聊天/标题/快捷栏）"
+    - "&e/clearlag chunkfinder <数量> &7- 找出最卡的 <数量> 个区块"
+    - "&e/clearlag unloadchunk <世界> <x> <z> &7- 卸载指定区块"
+    - "&e/clearlag nuke [半径] &7-  radical 清理周围实体"
+    - "&e/clearlag bossbar &7- 开关性能 Boss 血条"
+    - "&e/clearlag snapshot &7- 手动触发性能快照"
+    - "&e/clearlag profile &7- 运行 Spark 性能分析并生成报告链接"
+    - "&e/clearlag validate &7- 验证配置结构和数值"
+    - "&e/clearlag timerules <status/on/off/eventon/eventoff> &7- 查看/开关昼夜规则，eventon/eventoff 切换活动模式"
+    - "&e/clearlag worldprofiles <status/on/off> &7- 全局开关世界单独自动清理设置"
+    - "&e/clearlag worldprofiles world <世界> <status/on/off> &7- 查看/开关指定世界的清理设置"
+    - "&e/clearlag history <30分钟/24小时/7天> &7- 查看指定时间段的 TPS/内存/实体历史"
+    - "&e/clearlag gui &7- 打开仪表盘菜单（实时数据、清理操作、模块开关）"
+    - "&e/clearlag web [新令牌] &7- 显示网页仪表盘链接；newtoken 使旧链接全部失效"
+  
+  clear:
+    success: "&a已清理 {count} 个 {type}。"
+    preview:
+      header: "&6--- 清理预览 ({type}) --- &7（未实际清理）"
+      summary: "&e将清理：&c{count} &7（掉落物：&f{items}&7，实体：&f{entities}&7，堆叠：&f{matched}&7，耗时：&f{ms}ms&7）"
+      line: "&e{rank}. &f{type} &7x &c{count}"
+      more: "&7... 还有 {count} 种类型"
+      worlds: "&e按世界：&f{worlds}"
+      nothing: "&a当前没有需要清理的内容。"
+      footer: "&7去掉 &f--预览&7 再执行一次即可实际清理。"
+
+  web:
+    disabled: "&c网页仪表盘未启动。在 config.yml 中设置 &fweb-dashboard.enabled: true&c 并重载。"
+    running: "&a网页仪表盘地址：&b{url}"
+    login-link: "&7登录链接（请勿泄露）：&b{link}"
+    token-hint: "&7知道此链接的人都能查看服务器数据。如泄露请用 &f/clearlag web newtoken&7 重新生成。"
+    token-regenerated: "&e已生成新的网页仪表盘令牌，所有旧链接已失效。"
+
+  history:
+    querying: "&7正在读取 {window} 的性能数据..."
+    header: "&6--- 性能历史 ({window}) ---"
+    no-data: "&7该时间段暂无数据。"
+    samples: "&e{samples} 个采样 &7({from} - {to})"
+    tps: "&eTPS：&f平均 {avg}&7，&f最低 {min}"
+    trend: "&e趋势：{sparkline}"
+    mspt: "&eMSPT：&f平均 {avg}&7，&f最高 {max}"
+    cpu: "&eCPU：&f平均 {avg}%&7，&f最高 {max}%"
+    ram: "&e内存：&f平均 {avg} MB&7，&f最高 {max} MB"
+    entities: "&e实体：&f平均 {avg}&7，&f最高 {max} &7（掉落物：平均 {items_avg}，最高 {items_max}）"
+    chunks: "&e区块：&f平均 {avg}&7，&f最高 {max}"
+    players: "&e玩家：&f平均 {avg}&7，&f最高 {max}"
+    worst: "&c最差时段：&f{time} &7TPS 仅 &c{tps}"
+
+  info:
+    header: "&6--- 清理插件信息 ---"
+    version: "&e版本：&a{version}"
+    author: "&e作者：&a{author}"
+    website: "&e官网：&a{website}"
+    auto-clear: "&e自动清理：{status}"
+    interval: "&e间隔：&a{time} 秒"
+    status-yes: "&a开启"
+    status-no: "&c关闭"
+
+  killmobs:
+    success: "&a已击杀 {count} 只 {type}。"
+
+  nextclear:
+    disabled: "&c自动清理已关闭。"
+    in-progress: "&e自动清理正在进行或刚完成。"
+    time-until: "&e距下次自动清理：&a{time}"
+
+  topworld:
+    header: "&6--- 实体数量世界排行 ---"
+    line: "&e{rank}. {world}：&a{count} 个实体"
+
+  cpu:
+    header: "&6--- CPU 占用（系统级）---"
+    no-data: "&cCPU 历史数据暂不可用，请稍候。"
+    line: "&e最近 {time}：&a{value}%"
+  
+  ram:
+    header: "&6--- 内存占用（JVM）---"
+    no-data: "&c内存历史数据暂不可用，请稍候。"
+    total: "&e总内存：&a{total} MB"
+    line: "&e最近 {time}：&a{value} MB"
+
+  specs:
+    header: "&6--- 服务器性能概况 ---"
+    tps: "&aTPS：&e{tps}"
+    cpu: "&eCPU（1分钟平均）：&a{value}"
+    ram: "&e内存（1分钟平均）：&a{value}"
+    uptime: "&e运行时间：&a{value}"
+    no-data: "无数据"
+
+  togglemessages:
+    enabled: "&a倒计时消息已 &l开启&a。"
+    disabled: "&a倒计时消息已 &l关闭&a。"
+
+  togglesound:
+    enabled: "&a倒计时音效已 &l开启&a。"
+    disabled: "&a倒计时音效已 &l关闭&a。"
+
+  togglemessage:
+    changed: "&a倒计时消息显示位置已切换为：&e{location}"
+    no-permission: "&c你没有权限更改消息显示位置。"
+
+  chunkfinder:
+    header: "&6--- 最卡的 {count} 个区块（按实体数）---"
+    no-chunks: "&7没有已加载的区块。"
+    scanning: "&7正在扫描区块...（分散在多 tick 执行，结果稍后显示）"
+    busy: "&c已有多个区块扫描在运行，请稍后再试。"
+    line: "&e{rank}. 世界：&a{world}&e，区块：[&a{x}, {z}&e] - 实体：&c{count} &7（掉落物：{items}，生物：{mobs}）"
+  
+  unloadchunk:
+    already-unloaded: "&e{world} 的 [&a{x}, {z}&e] 区块已卸载。"
+    success: "&a已卸载 {world} 的 [&a{x}, {z}&e] 区块。"
+    fail: "&c区块卸载失败，可能正在使用或是出生点区块。"
+
+  nuke:
+    success: "&c&l核爆！&a已清理半径 {radius} 格内的 {count} 个实体。"
+  
+  bossbar:
+    enabled: "&a性能 Boss 血条已 &l开启&a。"
+    disabled: "&a性能 Boss 血条已 &l关闭&a。"
+  
+  snapshot:
+    success: "&a性能快照已创建并记录！"
+
+  validate:
+    ok: "&a配置验证通过，未发现问题。"
+    found: "&e配置验证发现 &c{count} &e个问题。"
+    console: "&7详细信息已写入服务器控制台/日志。"
+  
+
+autoclear:
+  countdown: "&6掉落物和实体将在 &c{time} &6后被清理！"
+  success: "&a已清理 {count} 个实体！"
+
+warnings:
+  tps: "&c[清理插件] 服务器 TPS 已降至 &e{tps}&c！性能危急！"
+  fast-clock: "&c检测到你所在区块 ({x}, {z}) 有快速红石时钟，已暂时禁用以防卡顿。"
+
+update:
+  header: "&6========================================"
+  outdated: "&e清理插件版本过旧！"
+  current-version: "&e当前版本：&c{current}"
+  new-version: "&e最新版本：&a{new}"
+  download: "&e下载新版本：&b{url}"
+
+papi:
+  disabled: "已关闭"
+  active: "运行中"
+
+# --- Spark 性能分析 (/clearlag profile) ---
+profiler:
+  disabled: "&c配置中已禁用性能分析。"
+  spark-missing: "&c缺少 Spark 插件！请安装 Spark 以使用此功能。"
+  already-running: "&e性能分析正在运行，请等待完成。"
+  started: "&a性能分析已启动！约 60 秒后在此显示报告链接..."
+  finished: "&a性能分析完成！查看报告：&b{url}"
+
+# 限制器消息
+tile-entity-limit-reached: "&c该区块的方块实体数量已达上限！"
+tile-entity-global-limit-reached: "&c全服方块实体数量已达上限！"
+breeding-limit-reached: "&c该区块的生物繁殖数量已达上限！"
+breeding-global-limit-reached: "&c全服生物繁殖数量已达上限！"
+piston-limit-reached: "&c[清理插件] 该区块活塞活动过于频繁，已暂停 {time} 秒！"
+item-frame-limit-reached: "&c该区块的物品展示框数量已达上限！"
+
+# 发射器/投掷器刷屏限制
+dispenser-limiter:
+  blocked: "&c[清理插件] {x}, {y}, {z} 的发射器/投掷器已暂停 {time} 秒（刷屏超限）。"
+
+# 数据包速率限制
+packet-limiter:
+  admin-warn: "&c[清理插件] &e{player} &7发送数据包过多！（&e{packets}&7/&e{max}&7 pps，违规：&e{violations}&7）"
+  player-warn: "&c[清理插件] 你发送数据包过多！请放慢速度。"
+  player-block: "&c[清理插件] 你的数据包已被暂停 {time} 秒（发送速率超限）！"
+  player-kick: "&c你发送数据包过多！\n&7请关闭作弊客户端或卡服机器。"
+  admin-kick: "&c[清理插件] &e{player} &c因数据包刷屏被踢出！"
+
+# --- /clearlag gui ---
+# 物品文本为列表：第一行是名称，其余是说明
+gui:
+  title-main: "&8清理插件仪表盘"
+  title-worlds: "&8清理插件 - 世界"
+  title-chunks: "&8清理插件 - 最卡区块"
+  title-modules: "&8清理插件 - 模块"
+  close:
+    - "&c关闭"
+  back:
+    - "&e返回"
+  refresh:
+    - "&e刷新"
+    - "&7重新扫描区块。"
+  merge-xp-done: "&a已合并 &e{count} &a个经验球。"
+  main:
+    tps:
+      - "{color}TPS：{value}"
+      - "&7每秒刻数（目标：20）。"
+    mspt:
+      - "{color}MSPT：{value} 毫秒"
+      - "&7每刻耗时估算（预算：50 毫秒）。"
+    cpu:
+      - "{color}CPU：{value}"
+      - "&7进程 CPU 占用。"
+    ram:
+      - "{color}内存：{used} / {max} MB"
+      - "&7最大堆内存使用率 {percent}%。"
+    players:
+      - "&b玩家：{value}/{max}"
+    chunks:
+      - "&b已加载区块：{value}"
+    next-clear:
+      - "&e下次自动清理：&f{value}"
+      - "&7点击在聊天栏显示。"
+    next-clear-off: "&c已关闭"
+    entities:
+      - "&b实体：{value}"
+      - "&7除玩家外的所有实体。"
+    items:
+      - "&b掉落物：{value}"
+    mobs:
+      - "&b生物：{value}"
+    xp-orbs:
+      - "&b经验球：{value}"
+    worlds:
+      - "&d世界（{value}）"
+      - "&7各世界的实体、掉落物和区块数。"
+    top-chunks:
+      - "&d最卡区块"
+      - "&7实体最多的区块。"
+      - "&7点击区块可传送过去。"
+    clear-items:
+      - "&6清理掉落物"
+      - "&7左键：清理掉落物。"
+      - "&7右键：仅预览。"
+    clear-entities:
+      - "&6清理实体"
+      - "&7左键：清理实体。"
+      - "&7右键：仅预览。"
+    clear-all:
+      - "&c全部清理"
+      - "&7左键：清理掉落物和实体。"
+      - "&7右键：仅预览。"
+    kill-hostile:
+      - "&c击杀敌对生物"
+      - "&7等同于 /clearlag killmobs evil。"
+    merge-xp:
+      - "&a立即合并经验球"
+      - "&7合并附近的经验球。"
+      - "&7需要 optimizations.xp-orb-merge 开启。"
+    snapshot:
+      - "&e卡顿快照"
+      - "&7记录当前状态到文件。"
+    bossbar:
+      - "&e性能 Boss 血条"
+      - "&7为自己开关显示。"
+    modules:
+      - "&a模块"
+      - "&7开关各功能模块。"
+      - "&7更改会保存到 config.yml。"
+    history:
+      - "&e性能历史"
+      - "&7在聊天栏显示最近 24 小时数据。"
+    web:
+      - "&b网页仪表盘"
+      - "&7获取浏览器仪表盘链接。"
+    reload:
+      - "&e重载配置"
+  worlds:
+    entry:
+      - "&a{world} &7({environment})"
+      - "&7实体：&f{entities}"
+      - "&7掉落物：&f{items}"
+      - "&7生物：&f{mobs}"
+      - "&7经验球：&f{orbs}"
+      - "&7已加载区块：&f{chunks}"
+      - "&7玩家：&f{players}"
+  chunks:
+    entry:
+      - "&e第{rank}名 &f{world} &7[{x}, {z}]"
+      - "&7实体：&f{entities}"
+      - "&7掉落物：&f{items}"
+      - "&7生物：&f{mobs}"
+      - ""
+      - "&e点击传送。"
+    empty:
+      - "&a所有区块均无实体。"
+    world-gone: "&c世界 {world} 已不再加载。"
+    teleported: "&a已传送到 &e{world}&a 的区块 &e{x}, {z}&a。"
+    no-safe-spot: "&c在 &e{world}&c 的区块 &e{x}, {z} &c中未找到安全站位（只有岩浆或空旷）。"
+  modules:
+    entry-on:
+      - "&a{module}：开启"
+      - "&8{path}"
+      - ""
+      - "&7点击关闭。"
+    entry-off:
+      - "&c{module}：关闭"
+      - "&8{path}"
+      - ""
+      - "&7点击开启。"
+    enabled: "&a{module} 已开启。"
+    disabled: "&c{module} 已关闭。"
+  module-names:
+    auto-clear: "自动清理"
+    skip-if-empty: "空世界跳过"
+    item-merge: "掉落物合并"
+    xp-orb-merge: "经验球合并"
+    mob-stacking: "生物堆叠"
+    ai-optimization: "AI 优化"
+    villager-optimization: "村民 AI 节流"
+    mob-spawn-limiter: "生物生成限制"
+    projectile-limiter: "弹射物限制"
+    fast-clock-detector: "快速时钟检测"
+    hopper-optimization: "漏斗优化"
+    farm-limiter: "农场限制"
+    auto-unload: "自动卸载区块"
+    anti-crash-items: "防崩溃掉落物"
+    lag-snapshots: "卡顿快照"
+    metrics-history: "性能历史记录"
+    web-dashboard: "网页仪表盘"

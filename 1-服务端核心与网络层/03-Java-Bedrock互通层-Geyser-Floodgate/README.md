@@ -8,7 +8,9 @@
 |---|---|---|
 | [Geyser-Spigot](01-Geyser-Spigot.md) | `plugins/Geyser-Spigot.jar` | 协议转换引擎，将基岩版协议翻译为 Java 版协议；**装在 Leaf 后端 `plugins/` 下**（本服无 Velocity 代理层） |
 | [Floodgate](02-Floodgate.md) | 后端 `plugins/floodgate-spigot.jar` (11.03 MB) | 基岩版认证插件，允许基岩版玩家绕过 Java 正版验证 |
-| [基岩皮肤修复 BedrockSkinRestorer](04-基岩皮肤修复-BedrockSkinRestorer.md) | `plugins/BedrockSkinRestorer.jar` | 主动抓取基岩玩家真实皮肤覆盖默认皮，绕开 Floodgate 排队上传导致的史蒂夫问题 |
+| [基岩皮肤记录 BedrockSkinRecorder](../../自研/基岩皮肤记录-BedrockSkinRecorder/使用说明.md) | `plugins/BedrockSkinRecorder.jar` | 自研：基岩玩家上线自动采集皮肤 PNG 到本地 |
+
+> **已禁用**：BedrockSkinRestorer（`plugins/BedrockSkinRestorer.jar`）已停用，由 BedrockSkinRecorder 替代。
 
 皮肤方向异常的排查见 [3.3 基岩皮肤与皮肤头显示异常排查](03-基岩皮肤与皮肤头显示异常排查.md)。
 

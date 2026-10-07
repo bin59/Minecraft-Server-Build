@@ -6,6 +6,8 @@ import com.nangua.moneyledger.ledger.LedgerEntry;
 import com.nangua.moneyledger.ledger.LedgerStore;
 import com.nangua.moneyledger.ledger.SourceDetector;
 import net.ess3.api.events.UserBalanceUpdateEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -70,11 +72,21 @@ public final class MoneyLedger extends JavaPlugin implements Listener {
             Category cat = SourceDetector.categorize(cause);
             String reason = REASON.get();
             REASON.remove();
-            String src = (reason != null && !reason.isEmpty()) ? reason : SourceDetector.detectSource();
+            // 精准来源：友好插件名 / 类.方法(行号) | 活动备注
+            String src = SourceDetector.describe(reason);
+
+            java.util.UUID uuid = e.getPlayer().getUniqueId();
+            String name = e.getPlayer().getName();
+            // 兜底：离线玩家/控制台发奖时 EssentialsX 的 User 可能拿不到名字，从 OfflinePlayer 反查
+            if (name == null || name.isEmpty()) {
+                OfflinePlayer op = Bukkit.getOfflinePlayer(uuid);
+                name = op.getName();
+            }
+            if (name == null || name.isEmpty()) name = uuid.toString().substring(0, 8);
 
             store.insert(new LedgerEntry(
-                    e.getPlayer().getUniqueId().toString(),
-                    e.getPlayer().getName(),
+                    uuid.toString(),
+                    name,
                     System.currentTimeMillis(),
                     oldB.doubleValue(),
                     newB.doubleValue(),

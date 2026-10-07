@@ -3,7 +3,6 @@ package com.nangua.bedrockskinrecorder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
@@ -36,8 +35,8 @@ public final class BedrockSkinRecorder extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
-                             @NotNull String label, @NotNull String[] args) {
+    public boolean onCommand(CommandSender sender, Command command,
+                             String label, String[] args) {
         if (args.length == 0) {
             sender.sendMessage("§e[基岩皮肤记录] §f已记录 §b" + store.countRecorded()
                     + " §f名基岩玩家皮肤，目录: §7" + store.getSkinsDir().getPath());

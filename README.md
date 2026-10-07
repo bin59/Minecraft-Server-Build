@@ -171,7 +171,6 @@
 | 传送阵（自研）   | SpacePortal                               | 地面法阵长途传送（本服特色）                                                               |
 | 账本（自研）     | MoneyLedger                               | 南瓜账本：南瓜币每笔变动按类别自动记账（转账/买卖/拍卖/收购/税/任务/活动），可查可导出 CSV |
 | 区域冒险（自研） | AdvZone                                   | 指定区域强制冒险模式，保护建筑与地形                                                       |
-| 实体计数（自研） | EntityCount                               | PlaceholderAPI 占位符扩展（统计/显示实体数量，1.1.0）                                      |
 | 末影龙（自研）   | DragonManager                             | 末影龙定时重生与破坏保护                                                                   |
 | 每日收购（自研） | DailySell                                 | 每日随机收购指定物品，玩家可出售换币                                                       |
 | 在线排行（自研） | PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                                             |
@@ -577,7 +576,6 @@ Minecraft-Server-Build/
     ├── 南瓜邮箱-PumpkinMail/        PumpkinMail（文档 + 源码 + jar，活动奖励发放/领取，已部署）
     ├── 在线时间排行-PlanTop/        PlanTop（文档 + 源码 + jar，基于 Plan 的在线时间排行）
     ├── 基岩皮肤记录-BedrockSkinRecorder/  BedrockSkinRecorder（文档 + 源码 + jar，基岩皮肤上线固化）
-    ├── 实体计数占位符/              EntityCount（PAPI 占位符扩展 1.1.0）
     ├── 快捷菜单系统/                QuickMenu（主文档 + 与通用菜单对比）
     ├── 末影龙重生与破坏保护/        DragonManager（文档 + 源码 + jar）
     ├── 每日随机收购/                DailySell（文档 + 源码 + jar）

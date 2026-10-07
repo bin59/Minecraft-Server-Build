@@ -44,6 +44,9 @@ public final class PluginSettings {
     /** 默认菜单 id，玩家直接输入 /qm 时打开 */
     private String defaultMenu = "main";
 
+    /** 玩家站在自己的 Residence 领地里时，呼出的菜单 id（留空则不启用领地感知） */
+    private String residenceMenu = "residence";
+
     /** 基岩端是否优先使用原生 Form（false 则与 Java 一致走箱子界面） */
     private boolean bedrockUseNativeForm = true;
 
@@ -184,6 +187,14 @@ public final class PluginSettings {
 
     public void setDefaultMenu(String defaultMenu) {
         this.defaultMenu = defaultMenu;
+    }
+
+    public String getResidenceMenu() {
+        return residenceMenu;
+    }
+
+    public void setResidenceMenu(String residenceMenu) {
+        this.residenceMenu = residenceMenu == null ? "" : residenceMenu;
     }
 
     public boolean isBedrockUseNativeForm() {

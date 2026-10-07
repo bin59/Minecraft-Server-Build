@@ -6,14 +6,16 @@
 
 | 项目     | 内容                                                         |
 | -------- | ------------------------------------------------------------ |
-| Jar      | `vexbot-paper-3.0.3paper-mc26.2.jar`                         |
-| 版本     | 3.0.3（Paper，MC 1.21 系）                                   |
+| Jar      | `vexbot-paper-3.0.14paper-mc1.21.11.jar`                     |
+| 版本     | 3.0.14（Paper，MC 1.21.11）                                   |
 | 主类     | `vexbot.paper.VexBotPaper`                                   |
 | 软依赖   | LuckPerms（可选，用于权限/分组）                             |
 | 数据目录 | `plugins/VexBot/`（首次启动自动生成，含 settings、kit 存档） |
 | 配置方式 | 游戏内 GUI 为主，`/vexbot settings <键> <值>` 为辅           |
 
 https://modrinth.com/plugin/vexbot?loader=paper&version=1.21.11
+
+> 当前服务器部署版本：`vexbot-paper-3.0.14paper-mc1.21.11.jar`（2026-10 由 3.0.3 升级，适配 Leaf 1.21.11）。
 
 ## 它会什么
 

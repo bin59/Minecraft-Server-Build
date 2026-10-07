@@ -27,6 +27,7 @@
 | Geyser / ViaVersion  | —                                         | 服务器监控                 |
 | LuckPerms            | —                                         | 权限管理                   |
 | BedrockPlayerSupport | 传送 / 皮肤（表单）                | —                          |
+| EvenMoreFish         | 更多鱼（钓鱼中心/卖鱼/鱼饵/日记）         | 更多鱼管理（比赛控制）     |
 | **PumpkinMail（自研）** | 南瓜邮箱（/mailbox，领活动奖励）    | 南瓜邮箱管理（/mailbox admin 发放面板，权限 `pumpkinmail.admin`） |
 
 ---

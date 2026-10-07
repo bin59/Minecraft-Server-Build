@@ -1,0 +1,898 @@
+# ================================================================= #
+#                        ClearLag                                   #
+#                 Created by: fernsehheft                           #
+#                                                                   #
+#                     VERSION: 1.14.1                               #
+# ================================================================= #
+
+# --- Discord Webhook 集成 ---
+# 发送日志消息到 Discord 频道
+discord:
+  webhook-enabled: false
+  webhook-url: ''
+  # --- 定期性能报告 ---
+  performance-report:
+    enabled: false
+    # 间隔（秒）向 Discord 发送性能摘要
+    interval-seconds: 3600 # 默认：1 小时
+
+# --- 自动更新 ---
+# 定期检查插件更新
+auto-updater:
+  enabled: true
+  # 检查间隔（小时）
+  interval-hours: 2
+
+# --- 性能分析器 ---
+# 通过 /clearlag profile 运行 Spark 分析器并发送报告链接给管理员
+# 需要安装 Spark 插件 (https://spark.lucko.me/)
+profiler:
+  enabled: true
+
+# --- 自动清理设置 ---
+# 自动清理世界中的掉落物和特定实体
+auto-clear:
+  enabled: true
+  interval-seconds: 300 # 每次清理间隔（秒）
+  clear-items: true
+  clear-entities: false # 设为 true 清理所有实体（玩家、物品展示框等除外）
+  use-exclude-lists: true # true = 列表是黑名单，false = 列表是白名单
+  # --- 排除世界 ---
+  # 这些世界不执行自动清理
+  excluded-worlds:
+    - 'world_from_fernsehheft' # 示例
+    - ''
+  # 自动清理使用的实体列表。use-exclude-lists 为 true 时排除，false 时仅清理列表内
+  excluded-entities:
+    - PIG
+    - SHEEP
+    - COW
+    - CHICKEN
+    - COPPER_GOLEM
+  # 自动清理使用的掉落物列表。use-exclude-lists 为 true 时排除，false 时仅清理列表内
+  excluded-items:
+    - DIAMOND_SWORD
+    - IRON_PICKAXE
+    - EMERALD
+  # 保护活跃玩家附近刚掉落的物品，减少农场/活动的突兀感
+  recent-activity-protection:
+    enabled: true
+    # 仅保护存活时间短于此值（秒）的掉落物
+    window-seconds: 30
+    # 保护检测的玩家半径（格）
+    player-radius-blocks: 8.0
+
+  # 当没有值得清理的内容时跳过整个自动清理周期
+  # 安静服务器上玩家不会看到"60秒后清理"然后"已清理 0 个实体"
+  # 检测复用预演路径，首次匹配即停止，有掉落物的服务器几乎无开销
+  skip-if-empty:
+    enabled: true
+    # 至少有多少可清理实体才认为值得执行
+    min-entities: 300
+    # 无可清理内容时不广播倒计时
+    skip-countdown: true
+    # 无可清理内容时跳过清理本身和结果广播
+    skip-clear: true
+
+  # 基于时间的规则（白天/夜晚/活动）控制自动清理行为
+  # 运行时切换：/clearlag timerules <on|off|eventon|eventoff>
+  time-rules:
+    enabled: false
+    # MC 刻数：0 = 日出白天开始，13000 = 夜晚开始
+    day-start-tick: 0
+    night-start-tick: 13000
+    day:
+      clear-items: true
+      clear-entities: false
+      # 启用时应用到每周期最大清理数的倍数
+      removal-multiplier: 1.0
+    night:
+      clear-items: true
+      clear-entities: true
+      removal-multiplier: 1.2
+    # 手动活动模式，启用时覆盖白天/夜晚规则
+    event:
+      enabled: false
+      clear-items: true
+      clear-entities: true
+      removal-multiplier: 1.5
+
+  # 各世界单独的自动清理配置
+  # 全局开关：/clearlag worldprofiles <on|off>
+  # 单世界开关：/clearlag worldprofiles world <世界名> <on|off>
+  per-world-profiles:
+    enabled: false
+    worlds:
+      # world:
+      #   enabled: true
+      #   interval-seconds: 300
+      #   clear-items: true
+      #   clear-entities: false
+      #   use-exclude-lists: true
+      #   excluded-items:
+      #     - DIAMOND_SWORD
+      #   excluded-entities:
+      #     - PIG
+      #   # -1 = 无限制
+      #   max-removals-per-cycle: -1
+
+  # 自动清理的生物排除设置
+  exclusions:
+    named: true # 排除有自定义名称的生物
+    bred: true # 排除可繁殖生物（成年和幼年）
+    tagged: true # 排除计分板标签为 "clearlag_exclude" 的生物
+    bypass-bred: # 即使 bred 为 true 也要清理的可繁殖生物列表
+      # - RABBIT
+      # - CAMEL
+      # - PIG
+
+# --- 死亡掉落物保护 ---
+# 保护玩家死亡掉落的物品不被自动清理
+death-item-protection:
+  enabled: true
+  # 死亡后物品保护时长（秒）
+  # 设为 -1 永久保护（直到自然消失或被拾取）
+  protection-duration-seconds: 600
+
+# --- 手动清理生物设置 ---
+# /clearlag killmobs 命令的设置
+kill-mobs:
+  exclusions:
+    named: true # 手动清理排除有名称的生物
+    bred: true # 排除可繁殖生物
+    tagged: true # 排除带标签的生物
+    bypass-bred: # 即使 bred 为 true 也要清理的可繁殖生物
+      # - RABBIT
+      # - CAMEL
+
+# --- 优化项 ---
+# 各种性能优化设置
+optimizations:
+  redstone:
+    enabled: true
+    # 每区块每刻红石更新硬上限。补充快速时钟检测器（按秒检测并封禁区块）：
+    # 此上限直接取消单刻内超限的红石更新
+    # 设为 0 或 -1 关闭此上限
+    max-updates-per-tick-per-chunk: 100
+
+  # --- TNT 爆炸优化 ---
+  # TNT 爆炸时阻止方块掉落（圆石、泥土等）
+  # 大幅减少大规模爆炸时的卡顿
+  tnt-no-drops: false
+
+  # 限制每区块和全局的盔甲架、物品展示框数量
+  item-frame-armor-stand-limiter:
+    armor-stand:
+      enabled: false
+      chunk-limit: 10
+      global-limit: 100
+    item-frame:
+      enabled: false
+      chunk-limit: 10
+      global-limit: 100
+
+  # 限制每 4 个区块的敌对/友好生物数量
+  mob-spawn-limiter:
+    enabled: false
+    hostile-limit-per-4-chunks: 30
+    passive-limit-per-4-chunks: 20
+    # --- 豁免生成原因 ---
+    # 这些原因触发的生成永远不受限制，无论区域多拥挤
+    # 防止玩家主动操作被静默阻止
+    # CURED = 僵尸村民治愈为村民；不禁豁免新村民会被被动上限取消消失
+    # 有效值为 Bukkit CreatureSpawnEvent.SpawnReason 名称（如 CURED、BREEDING、SPAWNER_EGG、BUILD_IRONGOLEM、BUILD_SNOWMAN）
+    # 删除此键回退默认（仅 CURED）；设为空列表 [] 不豁免任何
+    exempt-spawn-reasons:
+      - CURED
+    # --- 各世界覆盖 ---
+    # 为指定世界覆盖全局限制
+    # 用 -1 继承全局默认。世界名区分大小写
+    per-world:
+      # world_nether:
+      #   hostile-limit-per-4-chunks: 50
+      #   passive-limit-per-4-chunks: 5
+      # world_the_end:
+      #   hostile-limit-per-4-chunks: 20
+      #   passive-limit-per-4-chunks: 0
+    # --- 周期执行（捕捉被水/船等带进来的生物）---
+    # 上面的限制通常仅在生成时检测。之后被带入超限区域的生物
+    # （水流、牵引绳、船等）不触发新生成检测，可能推高超限
+    # 启用此选项定期重扫已加载区块并移除多余生物
+    # 仅使用全局/各世界上限，不使用 WorldGuard 区域覆盖
+    periodic-enforcement:
+      enabled: false
+      # 重扫和清理多余生物的间隔（秒）
+      check-interval-seconds: 60
+      # 匹配这些规则的生物永不被移除，即使区域超限
+      exclusions:
+        named: true # 排除有自定义名称的生物
+        bred: true # 排除可繁殖生物
+        tagged: true # 排除计分板标签 "clearlag_exclude" 的生物
+
+    # --- 按类型全局生物上限 ---
+    # 全服每类生物数量上限，生成时检测
+    # 设为 -1 或删除该项禁用特定类型
+    per-type-mob-caps:
+      enabled: false
+      # 格式：实体类型: <全局上限>
+      limits:
+        # ZOMBIE: 100
+        # SKELETON: 80
+        # CREEPER: 60
+        # SPIDER: 80
+        # ENDERMAN: 40
+
+  # 通过节流漏斗传输速度减少性能影响
+  hopper-optimization:
+    enabled: false
+    # 每个源漏斗物品传输的最小间隔（刻）。20 刻 = 1 秒
+    # 值越大减少漏斗卡顿但减慢物品分类/运输
+    # 设为 0 关闭节流（漏斗正常工作）
+    transfer-cooldown-ticks: 8
+
+  # 限制特定农场作物（甘蔗、竹子、仙人掌、海带）的生长高度
+  farm-limiter:
+    enabled: false
+    # 植物最大柱高。超过此高度的生长被取消
+    max-height: 3
+    # 要限制的方块类型（垂直生长植物）
+    blocks:
+      - SUGAR_CANE
+      - BAMBOO
+      - CACTUS
+      - KELP
+
+  # 清理离玩家太远的生物以减少 AI 处理负载
+  ai-optimization:
+    enabled: false
+    despawn-distance-blocks: 64.0
+    check-interval-seconds: 30
+    # AI 优化的生物排除设置
+    exclusions:
+      named: true # 排除有自定义名称的生物
+      bred: true # 排除可繁殖生物（成年和幼年）
+      tagged: true # 排除计分板标签 "clearlag_exclude" 的生物
+    # 排除在 AI 优化之外的特定实体类型
+    excluded-entities:
+      - VILLAGER
+      - WOLF
+      - IRON_GOLEM
+      - WANDERING_TRADER
+
+  # 检测并节流快速红石时钟以防止卡服机器
+  fast-clock-detector:
+    enabled: true
+    # 每区块每秒红石激活次数超过此值则封禁该区块
+    threshold-per-second: 200
+    # 封禁时长（秒）
+    block-duration-seconds: 30
+    # 通知附近有 clearlag.warnings.receive 权限的玩家
+    notify-players: true
+
+  # --- 生物堆叠 ---
+  # 自动堆叠相似生物以减少实体数量
+  mob-stacking:
+    enabled: false
+    # 扫描和堆叠生物的间隔（刻）。20 刻 = 1 秒
+    stack-interval-ticks: 100 # 默认：5 秒
+    # 水平堆叠检测半径（格）
+    stack-radius-horizontal: 8
+    # 垂直堆叠检测半径（格）
+    stack-radius-vertical: 4
+    # 形成堆叠所需的最小生物数
+    min-stack-size: 2
+    # 各实体类型的最小堆叠数覆盖
+    # 格式：实体类型: <数量>
+    filters:
+      # ZOMBIE: 5
+      # SKELETON: 3
+
+    # 单个堆叠允许的最大生物数
+    max-stack-size: 500
+    # 堆叠名称格式。{type} = 生物类型，{count} = 堆叠数量
+    name-format: '&e{type} &fx{count}'
+    # true = 堆叠名称始终可见；false = 堆叠生物不穿墙显示名称
+    name-visible: false
+    # 永不堆叠的生物类型列表
+    excluded-mobs:
+      - VILLAGER
+      - WOLF
+      - IRON_GOLEM
+      - WANDERING_TRADER
+    # 堆叠排除规则
+    exclusions:
+      named: true # 排除已有自定义名称的生物
+      bred: true # 排除可繁殖生物
+      tagged: true # 排除计分板标签 "clearlag_exclude" 的生物
+      leashed: true # 排除被牵引的生物
+      tamed: true # 排除已驯服生物（狼、猫等）
+
+  # --- 防方块物理滥用 ---
+  # 大规模下落事件中限制或转换下落方块以防止卡顿
+  anti-physics-abuse:
+    enabled: false
+    # 监控的方块类型列表
+    block-list:
+      - SAND
+      - GRAVEL
+      - DRAGON_EGG
+      - ANVIL
+      - CHIPPED_ANVIL
+      - DAMAGED_ANVIL
+    # 检测下落方块数量的间隔（刻）
+    check-interval-ticks: 10 # 默认：0.5 秒
+    # 触发动作所需的下落方块数
+    threshold: 100
+    # 超限时执行的动作：
+    # "LIMIT" - 暂时阻止这些类型的新下落方块生成
+    # "CONVERT_TO_ITEMS" - 立即将新下落方块转为掉落物
+    action: 'CONVERT_TO_ITEMS'
+    # "LIMIT" 或 "CONVERT_TO_ITEMS" 动作持续时长（刻）
+    limit-duration-ticks: 60 # 默认：3 秒
+
+  # --- 掉落物合并优化 ---
+  # 主动合并掉落物以减少实体数量
+  item-merge-optimization:
+    enabled: true
+    # 掉落物生成后多久开始检测合并（刻）
+    # 0 = 生成时立即合并
+    check-delay-ticks: 1
+    # 合并检测半径（格）
+    # 半径越大性能越好但可能看起来不自然
+    merge-radius: 3.0
+    # --- 智能堆叠 ---
+    # 启用后物品可超过正常堆叠上限（如 64），
+    # 不可堆叠物品（如药水）相同也可合并
+    smart-stacking: true
+    # --- 最大堆叠上限 ---
+    # 限制合并时物品的最大堆叠数量
+    # 启用后物品合并到此上限而非原版上限
+    # 允许物品堆叠数百个（如 512、1024）
+    # 与智能堆叠配合或独立使用
+    max-stack-limit:
+      enabled: true
+      # 每堆最大物品数（默认：512）
+      max-size: 1024
+    # 堆叠名称格式。{type} = 物品类型，{count} = 堆叠数量
+    name-format: '&e{type} &fx{count}'
+    # true = 堆叠名称始终可见
+    name-visible: true
+
+  # --- 经验球合并 ---
+  # 将靠近的经验球合并为一个总值的球
+  # 刷怪塔掉落数百个经验球，每个都是需要 tick 和发送给客户端的实体
+  # 无经验损失：合并后的球精确支付单个球的总和
+  # 需要 Paper 1.20.5+（经验球"count"必须可读）。其他服务器此功能自动关闭并记录原因
+  xp-orb-merge:
+    enabled: true
+    # 新经验球吸收周围其他球的半径（格）
+    merge-radius: 4.0
+    # 经验球生成后等待多久再合并（刻），以便一次死亡的所有球合并为一轮
+    # 0 = 立即
+    check-delay-ticks: 2
+    # 单个合并经验球的上限。0 = 无上限
+    max-value-per-orb: 0
+    # 额外每 X 秒合并所有已加载经验球（捕捉被水/活塞推到一起的球）。0 = 关闭
+    sweep-interval-seconds: 15
+    excluded-worlds: []
+
+  # --- 弹射物限制 ---
+  # 自动清理存在时间超过 max-age-seconds 的 stray 弹射物（箭、雪球、三叉戟等）
+  projectile-limiter:
+    enabled: false
+    # 弹射物存在多久（秒）后被移除
+    max-age-seconds: 30
+    # 扫描旧弹射物的间隔（秒）
+    check-interval-seconds: 10
+    # 永不移除的弹射物类型（即使过时）
+    excluded-types:
+      - FISHING_HOOK
+      # - TRIDENT
+
+  # 性能低于阈值时向管理员发消息
+  performance-warnings:
+    enabled: true
+    # TPS 低于多少时发警告
+    tps-threshold: 18.0
+    # TPS 检测间隔（秒）
+    check-interval-seconds: 60
+    startup-delay-seconds: 120
+    # 消息现在在 messages.yml (warnings.tps) 中
+    # message: "&c[ClearLag] Server TPS has dropped to &e{tps}&c! Performance is critical!" #
+
+# --- 性能指标 ---
+# 性能监控设置
+performance:
+  enabled: true # 启用后台性能监控任务
+
+# --- 消息和音效 ---
+# 自动清理倒计时的消息和音效设置
+messages:
+  broadcast-enabled: true
+  # 接收自动清理倒计时和结果消息（及音效）的世界
+  # 留空 = 所有世界（默认）
+  broadcast-worlds: []
+  # broadcast-worlds:
+  #   - "world"
+  #   - "world_nether"
+  # true = 倒计时消息中 {time} 使用长格式（年/月/天/时/分/秒）
+  # false = {time} 保持纯秒数
+  countdown-use-formatted-time: false
+  # 倒计时消息默认位置：CHAT（聊天）、TITLE（标题）、ACTIONBAR（快捷栏上方）
+  default-location: 'CHAT'
+  # TITLE 显示时长（刻）。20 刻 = 1 秒
+  # 应用于倒计时和结果标题
+  title-fade-in-ticks: 10
+  title-stay-ticks: 40
+  title-fade-out-ticks: 10
+
+sounds:
+  countdown-enabled: true
+  # 播放的音效。使用 Spigot Sound 枚举名（如 "BLOCK_NOTE_BLOCK_PLING"）
+  # 1.18+ 常用：BLOCK_NOTE_BLOCK_PLING、ENTITY_EXPERIENCE_ORB_PICKUP、UI_BUTTON_CLICK
+  countdown-sound: 'BLOCK_NOTE_BLOCK_PLING'
+  countdown-volume: 1.0
+  countdown-pitch: 1.0
+  # 清理实体时的音效设置
+  success-sound: 'ENTITY_PLAYER_LEVELUP'
+  success-volume: 1.0
+  success-pitch: 1.0
+
+# --- 清理特效 ---
+# 自动清理或手动清理实体时播放
+effects:
+  removal-effects:
+    enabled: true
+    # 粒子效果。使用 Particle 枚举名（如 "SMOKE"、"CLOUD"）
+    # https://helpch.at/docs/1.21.1/org/bukkit/Particle.html
+    # 输入错误粒子将使用默认粒子
+    particle: 'SMOKE'
+    particle-count: 5
+    # 清理实体时播放的音效
+    sound: 'ENTITY_ITEM_PICKUP'
+    sound-volume: 0.5
+    sound-pitch: 1.2
+
+# 倒计时广播值（秒）列表，到达这些时间点时广播消息和播放音效
+countdown-messages-at:
+  - 600
+  - 300
+  - 180
+  - 120
+  - 60
+  - 30
+  - 15
+  - 10
+  - 5
+  - 4
+  - 3
+  - 2
+  - 1
+
+# 启用调试模式在控制台显示详细日志
+debug-mode: false
+
+# --- 命令设置 ---
+# true = 所有命令（包括 /clearlag togglemessages）需要 OP 或特定权限
+# false = /clearlag togglemessages 任何人可用
+hide-all-commands: false
+
+# --- 命令屏蔽 ---
+# 对非 OP 或无 'clearlag.bypass.commandblock' 权限的玩家隐藏并阻止 /version 和 /plugins 命令
+command-blocking:
+  block-version-command: false
+  block-plugins-command: false
+  # 自定义屏蔽命令列表，对无 bypass 权限的玩家隐藏 tab 补全
+  blacklisted-commands:
+    - 'examplecommand'
+    - 'anotherblockedcommand'
+
+# --- 快速树叶衰减 ---
+# 破坏原木或树叶自然衰减时立即移除树叶
+# 代码来自 Mobilestars 的 InstaLeafDecay 插件
+insta-leaf-decay:
+  enabled: true
+
+# --- 液体流动限制 ---
+# 限制每秒液体（水/岩浆）流动更新以防卡顿
+liquid-flow-limiter:
+  enabled: false
+  # 每世界每秒最大流动更新数
+  threshold-per-second: 500
+  # 超限后封禁流动时长（秒）
+  block-duration-seconds: 10
+
+# --- 火焰/岩浆蔓延限制 ---
+# 限制火焰蔓延或岩浆产生新火焰/流动的频率
+fire-lava-spread-limiter:
+  enabled: false
+  # 全服每刻最大火焰/岩浆蔓延事件数
+  # 大森林中火蔓延非常卡
+  max-spread-per-tick: 20
+
+# --- 传送门冷却 ---
+# 为实体（可选玩家）添加传送冷却以防传送门卡顿
+portal-cooldown:
+  enabled: false
+  # 传送间隔（秒）
+  cooldown-seconds: 10
+  # 应用于生物？
+  mobs-enabled: true
+  # 应用于玩家？
+  players-enabled: false
+
+# --- Boss 血条性能表 ---
+# 为管理员在 Boss 血条显示实时服务器性能
+bossbar-performance-meter:
+  enabled: true
+  refresh-interval-ticks: 40 # 2 秒
+  color: 'GREEN' # dynamic-color 关闭时的备用颜色。PINK、BLUE、RED、GREEN、YELLOW、PURPLE、WHITE
+  style: 'SOLID' # SOLID、SEGMENTED_6、SEGMENTED_10、SEGMENTED_12、SEGMENTED_20
+  # 查看 Boss 血条所需权限
+  permission: 'clearlag.bossbar'
+  # 根据 TPS 自动改变血条颜色（绿 → 黄 → 红）
+  dynamic-color: true
+  color-good: 'GREEN' # TPS >= 18
+  color-warning: 'YELLOW' # TPS >= 15
+  color-bad: 'RED' # TPS < 15
+
+# --- 卡顿快照 ---
+# 检测到卡顿时自动保存详细性能报告
+lag-snapshots:
+  enabled: true
+  # TPS 低于此值时自动触发快照
+  auto-trigger-tps: 15.0
+  # 自动快照冷却时间（秒）
+  auto-trigger-cooldown-seconds: 300 # 5 分钟
+  # 快照保存为文件到 'snapshots' 文件夹？
+  save-to-file: true
+
+# --- 动态视距 ---
+# TPS 下降时自动降低视距以维持性能
+dynamic-view-distance:
+  enabled: true
+  # 阈值列表。格式："TPS 视距"
+  thresholds:
+    - '15 3'
+    - '10 2'
+    - '5 1'
+
+# --- 自动卸载热点区块 ---
+# 自动卸载离玩家远且实体数量多的区块
+auto-unload:
+  enabled: false
+  # 扫描卡顿区块的间隔（秒）
+  check-interval-seconds: 300
+  # 实体数超过此值的区块考虑卸载
+  entity-threshold: 250
+  # 玩家离区块多远才卸载（格）
+  # 设为 0 即使玩家附近也卸载（危险）
+  min-player-distance: 128
+  # 排除扫描的世界
+  excluded-worlds:
+    - 'spawn_world'
+  # 是否也排除包含重要生物的区块（使用与自动清理相同的排除规则）？
+  exclude-important-mobs: true
+
+# --- 基于玩家活动的模拟 ---
+# 根据玩家活动优先级调整模拟距离
+player-activity-simulation:
+  enabled: false
+  # 玩家多久不活动被视为 AFK（秒）
+  afk-timeout-seconds: 60
+  # AFK 玩家的模拟距离
+  afk-simulation-distance: 2
+  # 检测 AFK 玩家的间隔（秒）
+  check-interval-seconds: 1
+  # AFK 警告倒计时提前多少秒开始
+  # 自动至少提升到 check-interval-seconds 以确保不跳过
+  warning-seconds: 3
+  # AFK 状态变化的标题和音效设置
+  titles:
+    enabled: true
+    # 倒计时时显示（3、2、1...）
+    warning: '&e你将在 &c{time} &e后进入 AFK...'
+    # 玩家进入 AFK 时显示
+    afk: '&c你现在已进入 AFK'
+    # 玩家回来时显示
+    active: '&a欢迎回来！'
+  sounds:
+    enabled: true
+    # 倒计时交互/tick 时播放（如 UI_BUTTON_CLICK）
+    warning: 'UI_BUTTON_CLICK'
+    # 进入 AFK 时播放（如 ENTITY_EXPERIENCE_ORB_PICKUP）
+    afk: 'ENTITY_EXPERIENCE_ORB_PICKUP'
+    # 回来时播放（如 ENTITY_PLAYER_LEVELUP）
+    active: 'ENTITY_PLAYER_LEVELUP'
+
+# --- 载具限制 ---
+# 限制每区块（和每世界全局）的矿车和船数量
+# 防止生成数百载具的卡服机器
+vehicle-limiter:
+  enabled: false
+  # 排除载具限制的世界
+  excluded-worlds:
+    - 'spawn_world'
+  minecart:
+    # 每区块最大矿车数。设为 -1 关闭区块检测
+    chunk-limit: 20
+    # 每世界最大矿车数。设为 -1 关闭全局检测
+    global-limit: 200
+  boat:
+    # 每区块最大船数。设为 -1 关闭区块检测
+    chunk-limit: 10
+    # 每世界最大船数。设为 -1 关闭全局检测
+    global-limit: 100
+
+# --- 方块实体限制 ---
+# 限制每区块和全局的方块实体（箱子、熔炉、漏斗等）数量
+# 防止大规模存储系统和自动合成台卡顿
+tile-entity-limiter:
+  enabled: false
+  chunk-limit: 50
+  global-limit: 500
+  # 要限制的方块实体类型列表（材料名）
+  types:
+    - CHEST
+    - TRAPPED_CHEST
+    - FURNACE
+    - BLAST_FURNACE
+    - SMOKER
+    - HOPPER
+    - DROPPER
+    - DISPENSER
+    - BREWING_STAND
+    - BARREL
+    - SHULKER_BOX
+
+# --- 刷怪笼限制 ---
+# 限制刷怪笼生成的生物数量以防大型农场卡顿
+spawner-limiter:
+  enabled: false
+  chunk-limit: 8
+  global-limit: 100
+
+# --- 活塞/黏液块限制 ---
+# 限制快速活塞机器（如飞行器）导致的服务器卡顿
+piston-limiter:
+  enabled: false
+  # 每区块每分钟最大活塞事件数，超过则封禁
+  max-per-minute: 300
+  # 区块连续事件数达到多少则封禁
+  chunk-limit: 5
+  # 达到上限后封禁区块活塞活动时长（秒）
+  block-duration-seconds: 10
+
+# --- 繁殖限制 ---
+# 限制每区块和全局的可繁殖动物数量
+breeding-limiter:
+  enabled: false
+  chunk-limit: 20
+  global-limit: 200
+
+# --- 数据包速率限制 ---
+# 需要安装 ProtocolLib！
+# 限制玩家每秒发送的数据包数量以防卡顿和崩溃
+# 有 'clearlag.packetlimit.bypass' 权限的玩家豁免
+packet-rate-limiter:
+  enabled: false
+  # 每玩家每秒最大数据包数
+  max-packets-per-second: 300
+  # 多少次违规后踢出玩家（每秒超限 = 1 次违规）
+  kick-threshold: 10
+  # 通知有 clearlag.admin 权限的管理员数据包违规
+  notify-admins: true
+  # 通知玩家发送数据包过多
+  notify-player: true
+  # 3 次违规后封禁玩家数据包时长（秒）（踢出前）
+  block-duration-seconds: 10
+
+# --- 插件钩子 ---
+# 与支持的堆叠器和生物等级插件的软集成
+# 无需额外安装插件 - ClearLag 启动时自动检测
+# 支持：WildStacker、RoseStacker、UltimateStacker、LevelledMobs、Nexo、Oraxen、ItemsAdder
+hooks:
+  # true = 记录每个被钩子保护跳过的实体（清理/击杀/AI）及原因和位置
+  # 用于排查边缘情况
+  debug-log-skips: false
+  # true = 外部堆叠器插件管理的实体（WildStacker、RoseStacker、UltimateStacker）
+  # 免疫自动清理和 /clearlag clear
+  # false（默认）= 正常清理。完整堆叠大小仍计入统计
+  stacker-immune-from-clear: false
+  # true = 清理统计中加入外部堆叠器实体的完整堆叠大小，
+  # 使计数反映实际移除的生物数而非仅实体对象
+  count-stack-on-clear: true
+  # true = Nexo/Oraxen 的自定义内容（物品和插件管理实体）
+  # 排除在自动清理和 /clearlag clear 之外
+  nexo-oraxen:
+    exclude-custom-content-from-clear: true
+    # true = Nexo/Oraxen 插件管理的生物排除在 AI 优化距离清理之外
+    exclude-custom-content-from-ai-optimization: true
+  # true = ItemsAdder 的自定义内容（物品和插件管理实体）
+  # 排除在自动清理和 /clearlag clear 之外
+  itemsadder:
+    exclude-custom-content-from-clear: true
+    # true = ItemsAdder 插件管理的生物排除在 AI 优化距离清理之外
+    exclude-custom-content-from-ai-optimization: true
+  mythicmobs:
+    exclude-from-clear: true
+    exclude-from-kill: true
+  elitemobs:
+    exclude-from-clear: true
+    exclude-from-kill: true
+    exclude-from-ai-optimization: true
+  citizens:
+    npc-immune: true
+  shopkeepers:
+    shopkeeper-immune: true
+  holograms:
+    decentholograms-immune: true
+    holographicdisplays-immune: true
+    fancyholograms-immune: true
+    # 保护其他插件放置为视觉元素的实体，即使无专用钩子：
+    # 箱子商店展示物品和全息图（如 mc-PlayerShop、QuickShop、ChestShop）、
+    # Display/Interaction/Marker 实体，以及永远不可拾取、永不消失、无重力或骑乘其他实体的掉落物
+    # 普通掉落物不受影响
+    plugin-displays-immune: true
+  fancynpcs:
+    npc-immune: true
+  levelledmobs:
+    # true = LevelledMobs 升级的生物排除在自动清理和 /clearlag clear 之外
+    exclude-from-clear: false
+    # 仅清理等级低于此值的 LevelledMobs 生物；达到或超过的保留
+    # 示例：10 清理等级 0-9 但保留等级 10+。设为 -1 禁用（不按等级过滤）
+    only-clear-below-level: -1
+    # true = LevelledMobs 升级的生物排除在 /clearlag killmobs 之外
+    exclude-from-kill: false
+    # true = LevelledMobs 升级的生物排除在 AI 优化距离清理之外
+    #（推荐：true，让 LevelledMobs 自己管理）
+    exclude-from-ai-optimization: true
+
+# --- WorldGuard 集成 ---
+# 需要安装 WorldGuard。允许按区域规则控制清理和生物生成
+# 区域 ID 不区分大小写
+worldguard-integration:
+  enabled: false
+  regions:
+    # 示例：一个市场区域，实体永不清理且不生成敌对生物
+    # marketplace:
+    #   clear-immune: true       # 此区域内实体在自动清理中存活
+    #   hostile-mob-limit: 0     # 不允许敌对生物。-1 = 使用全局默认
+    #   passive-mob-limit: -1    # 使用全局默认
+    # pvp_arena:
+    #   clear-immune: false
+    #   hostile-mob-limit: 50
+    #   passive-mob-limit: 20
+
+# --- 投掷器/发射器刷屏限制 ---
+# 限制单个投掷器或发射器每秒触发次数
+# 防止物品刷屏机器向服务器淹没实体
+dispenser-limiter:
+  enabled: false
+  # 单个发射器/投掷器每秒最大触发次数，超过则封禁
+  max-per-second: 5
+  # 超限后封禁时长（刻）
+  # 20 刻 = 1 秒。默认：40 刻 = 2 秒
+  block-duration-ticks: 40
+
+# --- 预演/预览 ---
+# /clearlag clear <items|entity|all> --preview 报告清理会移除什么，
+# 按类型和世界分组，不移除任何内容。它运行与实际清理完全相同的选择代码 -
+# 排除、钩子、WorldGuard、堆叠 - 因此预览与实际清理结果一致
+# 有 'clearlag.preview' 权限的玩家无需 'clearlag.clear' 即可运行
+dry-run:
+  # 折叠为"... 还有 X 个"之前列出的实体/物品类型数
+  preview-top-entries: 10
+
+# --- 区块扫描 ---
+# 区块和实体数据只能在服务器线程访问，因此区块扫描不能真正后台运行
+# 它能做的是拆分执行：扫描按区块数和时间预算分片，下一刻继续
+# 结果排序（纯数据）在后台线程执行
+# 影响 /clearlag chunkfinder 和自动卸载任务
+chunk-scan:
+  # false = 旧行为（整个扫描在单刻内完成）
+  time-sliced: true
+  # 每刻访问的区块数上限
+  chunks-per-tick: 250
+  # 每刻额外墙钟预算（毫秒）。先到先得
+  max-millis-per-tick: 2
+  # 已有多少扫描在运行时拒绝新扫描（防止 /chunkfinder 刷屏）
+  max-concurrent-scans: 3
+
+# --- 村民/AI 节流 ---
+# 附近无玩家时暂停寻路密集生物的 AI
+# 村民是原版最耗资源的生物 - 每刻重新评估大脑并寻路到工作站和床 -
+# 原版消失和 ClearLag 都不能移除它，因此暂停 AI 是唯一手段
+# 生物保持存在、交易和库存不变，交互时立即唤醒
+#
+# 注意：冻结期间村民不补货交易、不务农、不走回床
+# 保持 activation-radius 足够大以覆盖你的交易大厅
+villager-optimization:
+  enabled: false
+  # AI 保持开启的最近玩家距离（格）
+  activation-radius: 48.0
+  # 距离检测间隔
+  check-interval-seconds: 5
+  # 要节流的实体类型。VILLAGER 是主要目标；其他可选
+  entities:
+    - VILLAGER
+    # - WANDERING_TRADER
+    # - PIGLIN
+    # - PILLAGER
+  # 放过命名生物
+  skip-named: false
+  # 放过被牵引的生物
+  skip-leashed: true
+  # 玩家右键点击时立即唤醒生物，确保交易不失败
+  wake-on-interact: true
+  excluded-worlds: []
+
+# --- 防崩溃物品限制 ---
+# 拒绝元数据大到像武器而非装饰的物品：
+# KB 级长显示名、数千行 lore、百万字符的书、互相嵌套的潜影盒
+# 这些物品会卡住或崩溃渲染/保存它们的任何东西，掉落一个会影响每个走过的玩家
+# 检测在物品掉落、铁砧重命名或书签名时运行
+# 普通方块和生物掉落无元数据，立即通过检测
+#
+# 将任何限制设为 -1 禁用单项检测
+anti-crash-items:
+  enabled: false
+  # strip    = 裁剪违规部分并保留物品（不够则回退到阻止）
+  # cancel   = 直接阻止掉落/重命名
+  # log-only = 不更改，仅报告 - 先用这个看你的服务器会拦截什么
+  action: strip
+  max-display-name-length: 128
+  max-lore-lines: 64
+  max-lore-line-length: 256
+  max-enchantments: 32
+  max-enchantment-level: 255
+  max-book-pages: 100
+  max-book-page-length: 1024
+  # 容器嵌套容器。2 = 潜影盒里再放潜影盒仍允许
+  max-container-nesting: 2
+  # 整个物品的序列化大小。仅在无更廉价检测捕获时测量
+  max-nbt-bytes: 32768
+  check-anvil: true
+  check-books: true
+  # 通知有 'clearlag.anticrash.alert' 权限的玩家（限流）
+  alert-staff: true
+  alert-cooldown-seconds: 30
+
+# --- 性能历史记录 (SQLite) ---
+# 将 TPS、MSPT、CPU、堆内存、实体、物品、区块和玩家数写入本地 SQLite 文件
+# 使服务器能回答"昨晚卡吗？"。用 /clearlag history <时间段> 读取，
+# 如 /clearlag history 24h、/clearlag history 30m、/clearlag history 7d
+#
+# SQLite 驱动由服务器通过 plugin.yml 的 'libraries' 块下载
+# 不可用时功能自动关闭并记录警告；其他功能不受影响
+# 采样在服务器线程读取计数器，异步写入磁盘
+metrics-history:
+  enabled: true
+  # 采样间隔（秒）。14 天每 30 秒约 4 万行 - 几 MB
+  sample-interval-seconds: 30
+  retention-days: 14
+  database-file: 'metrics.db'
+  # 趋势线将请求时间段分为多少桶
+  trend-buckets: 24
+
+# --- 网页仪表盘 ---
+# 只读浏览器仪表盘：实时 TPS/MSPT/CPU/内存、各世界实体、最卡区块，
+# 启用 metrics-history 后还有小时/天级图表
+# 只能读取；无法通过它清理、击杀或更改设置
+# 游戏内用 /clearlag web 获取登录链接（权限 clearlag.web）
+web-dashboard:
+  enabled: true
+  # 127.0.0.1 = 仅本机可访问（安全默认，如反向代理后）
+  # 0.0.0.0   = 随处可访问 - 确保防火墙/主机面板开放端口
+  bind-address: '0.0.0.0'
+  port: 8765
+  # 访问令牌。留空则启动时自动生成并写入此处
+  # 知道令牌的人可读取服务器数据 - /clearlag web newtoken 替换
+  token: ''
+  # /clearlag web 显示的可选公开地址，如反向代理时的 "https://stats.example.net"
+  # 留空 = http://<ip>:<port>
+  public-url: ''
+  # 页面轮询新数据间隔。也是服务器重扫世界的最小间隔，无论打开多少浏览器
+  refresh-seconds: 5
+  # "最卡区块"表显示数量（最多 45）
+  top-chunks: 10

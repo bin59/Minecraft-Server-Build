@@ -1,12 +1,9 @@
 package com.nangua.bedrockskinrecorder;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
-import com.destroystokyo.paper.profile.ProfileProperty;
 import com.google.common.cache.Cache;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.bukkit.entity.Player;
-import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.geyser.api.skin.Skin;
 import org.geysermc.geyser.skin.SkinProvider;
 
@@ -50,16 +47,37 @@ public class SkinFetcher {
      * 3) 客户端品牌是 Geyser（品牌双保险：Geyser 基岩客户端品牌为 "Geyser"，
      *    Java 客户端为 vanilla/fabric/forge/lunar 等——品牌明显是 Java 就直接排除，
      *    防止 Floodgate 在本服误把 Java 连接注册成基岩会话）。
+     *
+     * 注意：用反射调用 FloodgateApi，避免类找不到时崩溃（即使 softdepend 了，
+     * 类加载顺序不对还是会 NoClassDefFoundError）。
      */
     public boolean isBedrock(Player player) {
         UUID uuid = player.getUniqueId();
-        FloodgateApi api = FloodgateApi.getInstance();
-        if (!api.isFloodgatePlayer(uuid)) {
+
+        // 反射取 FloodgateApi.getInstance()
+        Object api = callFloodgateApi();
+        if (api == null) {
+            // Floodgate 不可用，按非基岩处理
             return false;
         }
-        if (api.getPlayer(uuid) == null) {
+
+        try {
+            Method isFloodgate = api.getClass().getMethod("isFloodgatePlayer", UUID.class);
+            Boolean isFg = (Boolean) isFloodgate.invoke(api, uuid);
+            if (isFg == null || !isFg) {
+                return false;
+            }
+
+            Method getPlayer = api.getClass().getMethod("getPlayer", UUID.class);
+            Object fgPlayer = getPlayer.invoke(api, uuid);
+            if (fgPlayer == null) {
+                return false;
+            }
+        } catch (Throwable t) {
+            plugin.getLogger().warning("Floodgate 判定失败: " + t.getMessage());
             return false;
         }
+
         String brand = clientBrand(player);
         if (brand != null && !brand.isEmpty()) {
             String b = brand.toLowerCase();
@@ -69,6 +87,17 @@ public class SkinFetcher {
             }
         }
         return true;
+    }
+
+    /** 反射获取 FloodgateApi 实例，失败返回 null */
+    private Object callFloodgateApi() {
+        try {
+            Class<?> clazz = Class.forName("org.geysermc.floodgate.api.FloodgateApi");
+            Method getInstance = clazz.getMethod("getInstance");
+            return getInstance.invoke(null);
+        } catch (Throwable t) {
+            return null;
+        }
     }
 
     /** 反射取客户端品牌（Paper 的 getClientBrandName()，spigot-api 编译期没有） */
@@ -113,6 +142,8 @@ public class SkinFetcher {
      * 让 Java 客户端能看到基岩玩家皮肤。手法与 BedrockSkinRestorer 一致：
      * getPlayerProfile -> removeProperty("textures") -> setProperty -> setPlayerProfile。
      * value 由 textureUrl 本地构造（textures.minecraft.net 域名，Paper 校验通过）。
+     *
+     * 全部用反射调用，不直接依赖 Paper API（PlayerProfile/ProfileProperty）。
      */
     private void applySkinOnMainThread(UUID uuid, String textureUrl) {
         if (textureUrl == null || textureUrl.isEmpty()) return;
@@ -120,16 +151,32 @@ public class SkinFetcher {
             Player p = plugin.getServer().getPlayer(uuid);
             if (p == null || !p.isOnline()) return;
             try {
-                PlayerProfile profile = p.getPlayerProfile();
+                // 反射: PlayerProfile profile = p.getPlayerProfile();
+                Object profile = call(p, "getPlayerProfile");
+                if (profile == null) return;
+
                 String uuidNoDash = p.getUniqueId().toString().replace("-", "");
                 String json = "{\"timestamp\":" + System.currentTimeMillis()
                         + ",\"profileId\":\"" + uuidNoDash
                         + "\",\"profileName\":\"" + p.getName()
                         + "\",\"textures\":{\"SKIN\":{\"url\":\"" + textureUrl + "\"}}}";
                 String value = Base64.getEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
-                profile.removeProperty("textures");
-                profile.setProperty(new ProfileProperty("textures", value, null));
-                p.setPlayerProfile(profile);
+
+                // 反射: profile.removeProperty("textures");
+                callWithArg(profile, "removeProperty", String.class, "textures");
+
+                // 反射: ProfileProperty prop = new ProfileProperty("textures", value, null);
+                // ProfileProperty 构造函数: (String name, String value, String signature)
+                Class<?> propClass = Class.forName("com.destroystokyo.paper.profile.ProfileProperty");
+                Object prop = propClass.getConstructor(String.class, String.class, String.class)
+                        .newInstance("textures", value, null);
+
+                // 反射: profile.setProperty(prop);
+                callWithArg(profile, "setProperty", propClass, prop);
+
+                // 反射: p.setPlayerProfile(profile);
+                callWithArg(p, "setPlayerProfile", profile.getClass(), profile);
+
                 plugin.getLogger().info("已将基岩皮肤套到Java端: " + p.getName());
             } catch (Throwable t) {
                 plugin.getLogger().warning("本地套皮失败: " + p.getName() + " | " + t.getMessage());
@@ -220,6 +267,13 @@ public class SkinFetcher {
         Method m = target.getClass().getMethod(method);
         m.setAccessible(true);
         return m.invoke(target);
+    }
+
+    /** 带单个参数的反射调用 */
+    private static Object callWithArg(Object target, String method, Class<?> argType, Object arg) throws Exception {
+        Method m = target.getClass().getMethod(method, argType);
+        m.setAccessible(true);
+        return m.invoke(target, arg);
     }
 
     private static String str(Object o) {

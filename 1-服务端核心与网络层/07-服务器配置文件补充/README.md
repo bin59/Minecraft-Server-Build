@@ -244,7 +244,6 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `Dynmap-3.8-spigot.jar` | **Dynmap 2D 网页地图（现行）** | `dynmap/`（configuration.txt/worlds.txt/markers/） |
 | `EasyBot-2.3.1.jar` | QQ 机器人联动 | `EasyBot/`（config.yml） |
 | `EconomyShop-1.1.6.jar` | 经济商店 | `EconomyShop/`（data.db） |
-| `EntityCount-1.1.0.jar` | 自研·实体计数占位符 | （无独立目录） |
 | `EssentialsX-2.22.1-dev+25-cfb6f12.jar` | EssentialsX 基础指令整合 | `Essentials/`（config.yml/userdata/warps/） |
 | `ExcellentEnchants-5.4.3.jar` | 自定义附魔 | `ExcellentEnchants/`（enchants/engine.yml） |
 | `EzTax-1.2.0.jar` | 税收 | `EzTax/`（config.yml/stats.yml） |

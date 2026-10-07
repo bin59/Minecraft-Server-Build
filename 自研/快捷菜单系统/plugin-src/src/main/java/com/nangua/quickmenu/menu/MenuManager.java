@@ -99,9 +99,16 @@ public final class MenuManager {
 
     /**
      * 打开玩家配置的默认菜单。
+     * 若玩家站在自己的 Residence 领地里，且配置了 residence-menu，则打开领地菜单。
      */
     public void openDefaultMenu(Player player) {
-        openMenu(player, plugin.getSettings().getDefaultMenu());
+        String menuId = plugin.getSettings().getDefaultMenu();
+        String resMenu = plugin.getSettings().getResidenceMenu();
+        if (resMenu != null && !resMenu.isEmpty()
+                && com.nangua.quickmenu.hook.ResidenceHook.isInsideOwnResidence(player)) {
+            menuId = resMenu;
+        }
+        openMenu(player, menuId);
     }
 
     /**

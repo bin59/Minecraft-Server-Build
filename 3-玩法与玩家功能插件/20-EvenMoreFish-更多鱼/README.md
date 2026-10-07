@@ -25,16 +25,35 @@
 
 ## 玩家命令
 
-| 命令              | 作用                    |
-| ----------------- | ----------------------- |
-| `/emf`            | 显示帮助                |
-| `/emf gui`        | 打开图鉴/钓鱼菜单       |
-| `/emf next`       | 查看下一场比赛时间      |
-| `/emf top`        | 查看当前/最近比赛排行榜 |
-| `/emf shop`       | 打开卖鱼商店            |
-| `/emf sellall`    | 把背包里所有鱼一键卖掉  |
-| `/emf applybaits` | 打开鱼饵涂抹菜单        |
-| `/emf toggle`     | 开关自己的钓鱼奖励      |
+| 命令              | 作用                    | 需要权限           |
+| ----------------- | ----------------------- | ------------------ |
+| `/emf`            | 显示帮助                | `emf.use`          |
+| `/emf gui`        | 打开图鉴/钓鱼菜单       | `emf.gui`          |
+| `/emf next`       | 查看下一场比赛时间      | `emf.next`         |
+| `/emf top`        | 查看当前/最近比赛排行榜 | `emf.top`         |
+| `/emf shop`       | 打开卖鱼商店            | `emf.shop`         |
+| `/emf sellall`    | 把背包里所有鱼一键卖掉  | `emf.sellall`      |
+| `/emf applybaits` | 打开鱼饵涂抹菜单       | `emf.applybaits`   |
+| `/emf toggle`     | 开关自己的钓鱼奖励      | `emf.toggle`       |
+| `/emf journal`    | 打开鱼类日记            | `emf.journal`      |
+
+> **注意**：新版 EvenMoreFish（2.5+）使用 MiniMessage 消息格式，如果 `messages.yml` 里有旧的 `[noPrefix]` 标签会导致命令报错。已删除全部 31 处 `[noPrefix]` 修复此问题。
+
+## 玩家权限配置
+
+默认玩家组需要添加以下权限才能正常使用钓鱼功能：
+
+```
+/lp group default permission set emf.use true
+/lp group default permission set emf.gui true
+/lp group default permission set emf.shop true
+/lp group default permission set emf.journal true
+/lp group default permission set emf.applybaits true
+/lp group default permission set emf.competition true
+/lp group default permission set emf.toggle true
+/lp group default permission set emf.next true
+/lp group default permission set emf.top true
+```
 
 ## 管理员常用配置
 

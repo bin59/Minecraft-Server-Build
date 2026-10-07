@@ -256,3 +256,9 @@ A：这是 `cdm.bypass` 权限陷阱，详见上文「权限」章节的专项�
 
 **Q：想接 Discord 转发死亡消息？**
 A：本体不含 Discord 转发；可配合 DiscordSRV 的聊天转发，或选用带 EssentialsDiscord/DiscordSRV 转发的同名 fork（见上条 FAQ）。
+
+**Q：cause-messages 配了但从来不触发，玩家死亡只刷一条固定文案？**
+A：这是 `config.yml` 里 **`per-world-messages` 覆盖了所有分类消息**。该段优先级最高——只要给某个世界（如 `world`）配了 `default: 消息`，该世界里所有死亡都只发这一条，`messages.yml` 里 `cause-messages` 配的 `FALL` / `FIRE` / `ENTITY_ATTACK` 等分类消息全部被跳过。
+- **排查**：打开 `config.yml`，看 `per-world-messages:` 下是否有 `world: default: ...`。
+- **解决**：把 `per-world-messages` 整段删除（或注释掉该世界的 default 行），让 `groups.default.cause-messages` 正常生效。
+- **生效**：传云端覆盖后 `/cdm reload`。之后摔死会刷"摔死了"，烧死会刷"变成人形火炬"，被怪打会刷"被屠杀"等分类文案。
