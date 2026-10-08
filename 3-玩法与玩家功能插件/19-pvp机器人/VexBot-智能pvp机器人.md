@@ -36,6 +36,17 @@ https://modrinth.com/plugin/vexbot?loader=paper&version=1.21.11
 - FFA 开局时可为每台机器人随机发一档难度（`EASY..PERFECT`）；
 - 也可通过设置/GUI 固定难度，模拟不同水平的对手。
 
+### 设置难度（操作）
+
+| 做法 | 命令 / 操作 |
+| --- | --- |
+| 固定某档难度 | `/vexbot` GUI 里给机器人固定难度（EASY..PERFECT） |
+| FFA 随机发难度 | `/vexbot ffa`（按当前难度预设给每台机器人随机发一档） |
+| 随机战斗风格 | `/vexbot randomplaystyle`（剑/斧/弓/搭高/水晶等打法随机） |
+| 全局开关 | `/vexbot settings <键> <值>`，例：`/vexbot settings enderchestregear false`（关末影箱换装，让机器人站桩硬刚） |
+
+> 精确菜单项与子参数以游戏内 `/vexbot` GUI 和命令补全提示为准。
+
 ## 常用命令
 
 主命令前缀为 `/vexbot`（需 OP 或对应权限）。
@@ -51,11 +62,31 @@ https://modrinth.com/plugin/vexbot?loader=paper&version=1.21.11
 
 > 具体子参数以游戏内 `/vexbot` GUI 和命令提示为准；大部分日常操作（召唤、选 kit、调装备、切难度）都在 GUI 里点，不必记指令。
 
+### 召唤机器人（官方命令）
+
+> 来源：VexBot 官方（Modrinth 描述 + 更新日志，Paper 版 3.0.14）。
+
+| 方式 | 命令 | 说明 |
+| --- | --- | --- |
+| GUI 召唤（主推） | `/vexbot` | 打开主 GUI，点选机器人类型 / kit，在脚下生成 |
+| 命令召唤 | `/vexbot spawn` | 官方 spawn 命令，支持坐标：`/vexbot spawn x y z` |
+| 批量召唤 | `/vexbot mass_spawn` | 一次拉多个机器人 |
+| FFA 混战 | `/vexbot ffa` | 自动生成一批陪练机器人开混战 |
+
+> Paper 版 3.0.14 的精确子参数以游戏内 `/vexbot` 命令补全提示为准。
+
 ## Kit 系统
 
 - 机器人可以套用预设 Kit（武器、盔甲、物品配置）；
 - 支持 Kit 列表 GUI、Kit 图标菜单、保存/加载自定义 kit；
 - 报错 `Failed to load/save kit` 说明某个 kit 存档损坏，去 `plugins/VexBot/` 下检查对应文件。
+
+### 穿装备（套 Kit，操作）
+
+1. `/vexbot` 打开主 GUI；
+2. 进 **Kit 列表 / Kit 图标菜单**；
+3. **套用现有 Kit**：召唤机器人时给它选一个 Kit，机器人带着那套武器+盔甲+物品生成；
+4. **自定义 Kit**：GUI 里**保存 / 加载自定义 kit**——把想要的装备配置存成一个 kit，之后直接套用。
 
 ## 注意事项
 
@@ -65,3 +96,18 @@ https://modrinth.com/plugin/vexbot?loader=paper&version=1.21.11
 4. **末影箱换装**：默认开启，机器人残血会钻末影箱补给；想让它站着硬刚可 `enderchestregear false` 关掉。
 5. **基岩玩家**：机器人是 Java 端实体，Geyser 透传正常，基岩玩家可直接与之对战；无需额外配置。
 6. **权限**：`softdepend: LuckPerms`，装了 LuckPerms 后可按组分配谁能召唤机器人。
+
+## 命令报错排查：`/vexbot` 提示 Unknown / 未知命令
+
+**现象**：`/vexbot` 报 `Unknown command` / `Unknown or incomplete command. See below for error`。
+
+**含义**：命令未注册 → 插件未实际加载（不是权限、也不是参数问题）。
+
+按序排查：
+
+1. **jar 是否装进运行服 plugins**：注意项目文档仓库（`3-玩法与玩家功能插件/19-pvp机器人/`）只是整理文档，**不是运行服本体**。jar 必须放进**运行服服务端**的 `plugins\` 目录（云服需先上传文件）。
+2. **是否完整重启**：放入 jar 后必须 `stop` → `start` **完整重启服务端进程**；`/reload` 经常不会加载新插件。
+3. **`/plugins` 看颜色**：VexBot 为**黄色** = 加载失败，去控制台启动日志看它报的错；为**绿色**但命令仍 Unknown = Leaf 命令未注册。
+4. **Leaf 命令未注册兜底**：同 Quests 先例（`DeluxeMenus open_command 在 Leaf 未注册，已用 commands.yml 别名兜底`），用 `commands.yml` 给 `/vexbot` 加命令别名映射。
+
+> 常见根因排序：jar 没进运行服 plugins（占比最高）→ 只 reload 没完整重启 → 插件加载失败（依赖/版本）→ Leaf 命令注册问题。
