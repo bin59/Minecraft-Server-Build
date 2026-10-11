@@ -270,13 +270,3 @@ excluded-mobs:
 | `%clearlag_loaded_chunks%`       | 已加载区块数       |
 
 ---
-
-## 十一、关联插件对比
-
-| 插件                   | 定位                    | 核心功能                                                              | 链接                                                                                 |
-| ---------------------- | ----------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| **ClearLag++**         | 综合性能优化            | 自动清理 + TPS 监控 + 红石优化 + 历史记录 + 网页仪表盘                | [Modrinth](https://modrinth.com/plugin/clearlag++)                                   |
-| **Zinfo**              | GUI 实时监控 + 手动清理 | 点击 GUI 显示每个世界实体分布、热点区块排行、一键传送到卡点、半径清理 | [SpigotMC](https://www.spigotmc.org/resources/zinfo.137616/)                         |
-| **ChunkEntityLimiter** | 每区块硬限制            | 单区块实体上限 + 玩家周围区块群上限，自动删除超额实体                 | [CurseForge](https://www.curseforge.com/minecraft/bukkit-plugins/chunkentitylimiter) |
-| **LagShield**          | 区块阈值触发清理        | 每区块实体/物品超过阈值后倒计时清理                                   | [Hangar](https://hangar.papermc.io/us3rn1me/LagShield)                               |
-| **Paper 自带**         | 基础统计                | `/minecraft:entitycount` 查看全服实体总数                             | 无需安装                                                                             |
