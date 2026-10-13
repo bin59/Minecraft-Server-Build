@@ -48,7 +48,7 @@
 | 命令                         | 权限节点（参考）                   | 默认   | 说明                                 |
 | ---------------------------- | ---------------------------------- | ------ | ------------------------------------ |
 | `/dynmap`                    | `dynmap.*`                         | op     | 主命令 / 帮助                        |
-| `/dynmap reload`             | `dynmap.reload`                    | op     | 重载配置与地图                       |
+| `/dynmap reload`（⚠️ 本版无） | `dynmap.reload`                    | op     | **本服 Dynmap 3.8 实测没有 reload 子命令**，改配置必须完整重启 |
 | `/dynmap hide` / `show`      | `dynmap.hide` / `dynmap.show`      | 视配置 | 隐藏 / 显示玩家在地图上的位置        |
 | `/dynmap radiusrender`       | `dynmap.radiusrender`              | op     | 按半径强制渲染区域（配合 Chunky 用） |
 | `/dynmap fullrender`         | `dynmap.fullrender`                | op     | 全量渲染某世界                       |
@@ -63,7 +63,7 @@
 首次启动生成 `plugins/dynmap/` 配置，关键文件与节点：
 
 - **`configuration.txt`**：`webport`（默认 **8123**）、`webpages`（WebUI 开关）、`webserver-bindaddress`（生产建议绑内网/回环，由反代对外）、`max-tiles`、`render-radius` 等。
-- **`worlds.txt`**：每世界一节（`world:` / `world_nether:` / `world_the_end:`），含 `enabled`、`center`、`zoom`、`map`（`flat` / `surface` / `cave` 三视图开关）。
+- **`worlds.txt`**：控制**显示哪些世界、每个世界渲染哪些视图**。**必须保留顶层 `worlds:` 键**，每个世界用 `- name:` 列表项（⚠️ 删掉顶层 `worlds:` 会让整个文件解析失败、回退默认模板，surface/cave/nt 全冒出来）。世界块内含 `enabled`、`center`、`maps`（视图 `flat` / `surface` / `cave` 等）。
 - **`markers.txt`**：marker 集定义；**Residence 图层由 Residence 插件自动注册，不在这里手写**。
 - **`templates/`**：WebUI 模板与主题。
 
@@ -87,7 +87,7 @@
 image-format: jpg-q75 #   **q75 是甜点位**—— 体积砍半，画质几乎无损 jpg-q60（体积更小，远处画质略糊）
 ```
 
-改完 `/dynmap reload` 生效。
+改完需**完整重启**生效（本版无 `/dynmap reload`）。
 
 ### 2. 关掉洞穴地图（省约 1/3 瓦片）
 
@@ -141,6 +141,123 @@ worlds:
 <!-- 2. 重启后 `/dynmap fullrender world`（范围按上面配置）或 `/dynmap radiusrender world 3000`（以玩家为中心限半径渲染） -->
 
 **推荐组合**：`jpg-q75` + 关 cave + 只渲染主世界 <!-- + visibilitylimits ±3000 → 体积可减到原来的 1/5 甚至更少。 -->
+
+## 性能优化（低配/轻量服按需渲染）
+
+Dynmap 默认**全局全量渲染**，低配/轻量服会出现 CPU、磁盘 IO 占用过高、后台刷屏日志。以下参数改为**按需增量渲染**：仅渲染玩家加载、区块改动、新建建筑的区域，零闲置扫描。
+
+### 紧急处置（立刻停止高负载渲染）
+
+```text
+# 终止主世界全量渲染
+/dynmap cancelrender world
+# 可选：暂停所有渲染任务
+/dynmap pause all
+# 恢复渲染（优化完成后）
+/dynmap pause none
+```
+
+### 低配按需渲染配置（configuration.txt）
+
+⚠️ 严格空格缩进、禁止 Tab；⚠️ **改完需完整重启生效（本版无 /dynmap reload）**：
+
+```text
+# ===== 全量渲染保护机制 =====
+# TPS 低于 18 自动暂停全量渲染
+fullrender-min-tps: 18.0
+# 只要有玩家在线即禁止全量渲染，杜绝后台负载抢占
+fullrenderplayerlimit: 1
+
+# ===== 按需增量渲染核心 =====
+# 区块变更刷新间隔（秒）
+renderinterval: 1
+# 渲染积压加速刷新间隔
+renderaccelerateinterval: 0.2
+# 单次最大同时渲染瓦片数（低配固定 2，极致低配可 1）
+tiles-rendered-at-once: 2
+# TPS 过低自动暂停增量更新
+update-min-tps: 18.0
+
+# ===== 磁盘 IO 减负 =====
+timesliceinterval: 0.1
+# 按需开启多线程暴力渲染（默认关）
+#parallelrendercnt: 1
+```
+
+### 运维指令注意
+
+- ⚠️ **本版 Dynmap 无 `/dynmap reload`、无 `/dynmap maps`**（实测有效子命令：cancelrender / purgeworld / purgequeue / fullrender / radiusrender / render / stats / pause / webregister / url / version 等）。**改任何配置必须完整重启服务器**。
+- 日常更新用 **`/dynmap radiusrender <半径>`**（局部按需），避免全局 `fullrender` 扫描。
+
+<!-- CARELOAD:三世界flat范本 -->
+
+### 只保留三世界平面视图（worlds.txt 白名单）——⚠️ 正确格式必读
+
+`worlds.txt` 决定 Dynmap **显示哪些世界、每个世界渲染哪些视图**。想"只显示三个维度世界、每世界只有平面图"：
+
+**视图类型（`maps:` 可选）**：`flat` 纯色平面（无光影）、`surface` 带光照俯视图、`3d` 立体、`cave` 洞穴。
+
+**完整正确范本（三世界各只留 flat）**：
+
+```yaml
+worlds:
+- name: world
+  title: "World"
+  maps:
+  - class: org.dynmap.hdmap.HDMap
+    name: flat
+    title: "Flat"
+    prefix: flat
+    perspective: iso_S_90_lowres
+    shader: stdtexture
+    lighting: shadows
+    mapzoomin: 1
+- name: world_nether
+  title: "Nether"
+  maps:
+  - class: org.dynmap.hdmap.HDMap
+    name: flat
+    title: "Flat"
+    prefix: flat
+    perspective: iso_S_90_lowres
+    shader: stdtexture
+    lighting: nethershadows
+    background: "#300806"
+    mapzoomin: 1
+- name: world_the_end
+  title: "The End"
+  maps:
+  - class: org.dynmap.hdmap.HDMap
+    name: flat
+    title: "Flat"
+    prefix: flat
+    perspective: iso_S_90_lowres
+    shader: stdtexture
+    lighting: nethershadows
+    background: "#300806"
+    mapzoomin: 1
+```
+
+**要点（血泪教训）**：
+
+1. **顶层 `worlds:` 键必须保留**！每个世界才是 `- name:` 列表项。**删掉顶层 `worlds:` 会导致整个文件解析失败、回退默认模板**，surface/cave/nt/st 全部冒出来（本服踩过的坑：误以为只要 `- name:` 列表，把 `worlds:` 删了，结果一直不生效）。
+2. **`maps` 只留 `flat`**：删掉 `surface`、`3d`、`cave`，网页只剩纯色平面图，视图切换按钮消失。
+3. **只保留需要世界的块**：其他世界的配置块删除或 `#` 注释。
+4. **`enabled: false` 是禁用整个世界**（不是"关多余图层"）——想让某世界不显示才用它；要显示的世界保持 `enabled: true`。
+5. **世界名要匹配**：主世界 `world`、下界 `world_nether`、末地 `world_the_end`（以 `/dynmap stats` 显示为准，如 `world.flat`）。
+6. 严格空格缩进、禁止 Tab；改完**完整重启**（本版无 `/dynmap reload`）。
+
+### 改视图后旧瓦片清理（必做）
+
+改成只留 flat 后，旧 surface/cave/nt 瓦片**不会自动删**，网页仍显示旧图/按钮。清空重渲：
+
+```text
+/dynmap purgeworld world
+/dynmap purgeworld world_nether
+/dynmap purgeworld world_the_end
+```
+
+随后重新渲染：`/dynmap fullrender <世界>` 或 `/dynmap radiusrender <半径>`；网页 Ctrl+F5 强刷。验证用 `/dynmap stats`（正常应只剩 `world.flat` / `world_nether.flat` / `world_the_end.flat`）。
 
 ## 领地图层（Residence 原生集成）——重点
 
