@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import net.milkbowl.vault.economy.Economy;
 
@@ -47,6 +48,13 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
     private YamlConfiguration daily;
     private File dataFile;
     private YamlConfiguration data;
+
+    // 防抖落盘：data 有改动时置 dirty，并延迟 100 ticks 合并写盘（避免每次卖出都同步全量写 yml）
+    private boolean dirty = false;
+    private BukkitTask saveTask = null;
+    private static final long SAVE_DELAY_TICKS = 100L;
+    // 旧日期数据保留天数（含当天），rollIfNeeded 检测到跨天时清理更早的键
+    private static final int KEEP_DAYS = 7;
 
     private int itemsPerDay;
     private int minPerItem;
@@ -131,7 +139,12 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
 
     @Override
     public void onDisable() {
-        saveData();
+        // 取消待执行的防抖写任务，强制把未刷盘的改动落盘一次，防止关服丢数据
+        if (saveTask != null) {
+            saveTask.cancel();
+            saveTask = null;
+        }
+        if (dirty) saveData();
     }
 
     private void loadParams() {
@@ -172,7 +185,31 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
                 .map(e -> e.mat.name() + ":" + e.price + ":" + e.quota)
                 .collect(Collectors.toList()));
         try { daily.save(dailyFile); } catch (IOException ex) { getLogger().severe("daily.yml 保存失败"); }
+        // 跨天：清理 data.yml 中 7 天前的旧日期键，并立即落盘一次
+        cleanOldDates(now);
         if (broadcast) broadcastToday();
+    }
+
+    /** 删除 players.<uuid>.<日期>.* 中早于 (今天-KEEP_DAYS+1) 的日期键，只保留最近 KEEP_DAYS 天（含当天） */
+    private void cleanOldDates(String todayStr) {
+        try {
+            LocalDate today = LocalDate.parse(todayStr);
+            Set<String> keep = new HashSet<>();
+            for (int i = 0; i < KEEP_DAYS; i++) keep.add(today.minusDays(i).toString());
+            if (!data.isConfigurationSection("players")) return;
+            for (String uuid : data.getConfigurationSection("players").getKeys(false)) {
+                String uRoot = "players." + uuid;
+                if (!data.isConfigurationSection(uRoot)) continue;
+                for (String dateStr : new ArrayList<>(data.getConfigurationSection(uRoot).getKeys(false))) {
+                    if (!keep.contains(dateStr)) {
+                        data.set(uRoot + "." + dateStr, null);
+                    }
+                }
+            }
+            saveData();
+        } catch (Throwable t) {
+            getLogger().warning("清理旧日期数据失败: " + t.getMessage());
+        }
     }
 
     /** 从 daily.yml 恢复当天已生成的清单（重启不刷新物品与额度） */
@@ -276,7 +313,24 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
     }
 
     private void saveData() {
-        try { data.save(dataFile); } catch (IOException ex) { getLogger().severe("data.yml 保存失败"); }
+        try {
+            data.save(dataFile);
+            dirty = false;
+        } catch (Throwable t) {
+            // 保存失败只记日志，绝不让主线程抛异常
+            getLogger().severe("data.yml 保存失败: " + t.getMessage());
+        }
+    }
+
+    /** data.set(...) 后调用：置脏并延迟合并写盘；100 ticks 内的多次卖出只触发一次写 */
+    private void markDirty() {
+        dirty = true;
+        if (saveTask == null) {
+            saveTask = getServer().getScheduler().runTaskLater(this, (Runnable) () -> {
+                saveTask = null;
+                if (dirty) saveData();
+            }, SAVE_DELAY_TICKS);
+        }
     }
 
     // ---------- GUI（27 格美化 + 多页） ----------
@@ -461,7 +515,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         removeItems(p, entry.mat, amt);
         econ.depositPlayer(p, entry.price * amt);
         data.set(soldKey(p, entry.mat), sold + amt);
-        saveData();
+        markDirty();
         p.sendMessage("§a已出售 §e" + zh(entry.mat) + "§a ×" + amt + "，获得 §e"
                 + fmt(entry.price * amt) + "§a 南瓜币（额度剩 §e" + (entry.quota - sold - amt) + "§a 个）");
         p.playSound(p.getLocation(), "entity.experience_orb.pickup", 0.6f, 1.4f);
@@ -564,7 +618,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         removeItems(p, entry.mat, 1);
         econ.depositPlayer(p, entry.price);
         data.set(soldKey(p, entry.mat), sold + 1);
-        saveData();
+        markDirty();
         p.sendMessage("§a已出售 §e" + zh(entry.mat) + "§a ×1，获得 §e" + fmt(entry.price)
                 + "§a 南瓜币（额度剩 §e" + (entry.quota - sold - 1) + "§a 个）");
     }
@@ -597,7 +651,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         removeItems(p, entry.mat, amount);
         econ.depositPlayer(p, entry.price * amount);
         data.set(soldKey(p, entry.mat), sold + amount);
-        saveData();
+        markDirty();
         p.sendMessage("§a已出售 §e" + zh(entry.mat) + "§a ×" + amount + "，获得 §e"
                 + fmt(entry.price * amount) + "§a 南瓜币（额度剩 §e" + (entry.quota - sold - amount) + "§a 个）");
     }

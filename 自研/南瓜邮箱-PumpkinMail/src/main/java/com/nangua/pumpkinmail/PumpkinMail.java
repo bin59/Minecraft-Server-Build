@@ -55,6 +55,7 @@ public final class PumpkinMail extends JavaPlugin {
     public void onDisable() {
         if (guiManager != null) guiManager.closeAll();
         if (storage != null) {
+            try { storage.clearPendingCache(); } catch (Exception ignored) { }
             try { storage.close(); } catch (Exception ignored) { }
         }
         instance = null;

@@ -208,22 +208,32 @@ public final class ActionExecutor {
         }
 
         // 执行上架命令（AuctionHouse 读取主手物品上架）
+        // 注意：拍卖行通常异步处理经济校验与背包扫描，performCommand 返回时物品可能尚未扣走。
+        // 立即还原会把物品塞回背包，造成"既上架又保留一份"的复制漏洞。
+        // 延迟 2 tick 再还原，等待拍卖行完成背包扣减。
         player.performCommand("ah sell " + price);
 
-        // 还原：上架成功后主手被扣走（AIR 或剩余）；失败则物品还在主手，归还原位
-        ItemStack after = inv.getItemInMainHand();
-        if (after != null && after.getType() == material) {
-            if (foundStorage >= 0) {
-                inv.setItem(foundStorage, after);
-            } else if (foundArmor >= 0) {
-                ItemStack[] armor = inv.getArmorContents();
-                armor[foundArmor] = after;
-                inv.setArmorContents(armor);
-            } else {
-                inv.setItemInOffHand(after);
+        final org.bukkit.inventory.PlayerInventory invRef = inv;
+        final Player playerRef = player;
+        final int foundStorageRef = foundStorage;
+        final int foundArmorRef = foundArmor;
+        final ItemStack currentRef = current;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            // 还原：上架成功后主手被扣走（AIR 或剩余）；失败则物品还在主手，归还原位
+            ItemStack after = invRef.getItemInMainHand();
+            if (after != null && after.getType() == material) {
+                if (foundStorageRef >= 0) {
+                    invRef.setItem(foundStorageRef, after);
+                } else if (foundArmorRef >= 0) {
+                    ItemStack[] armor = invRef.getArmorContents();
+                    armor[foundArmorRef] = after;
+                    invRef.setArmorContents(armor);
+                } else {
+                    invRef.setItemInOffHand(after);
+                }
             }
-        }
-        inv.setItemInMainHand(current);
+            invRef.setItemInMainHand(currentRef);
+        }, 2L);
     }
 
     /**

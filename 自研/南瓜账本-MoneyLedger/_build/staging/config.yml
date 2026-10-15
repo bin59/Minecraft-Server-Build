@@ -1,0 +1,4 @@
+# 南瓜账本 MoneyLedger 配置
+
+# 查询默认返回条数
+query-limit: 30

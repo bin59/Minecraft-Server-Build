@@ -1,0 +1,21 @@
+# ============================================================
+#  离线奖励 OfflineReward 配置
+#  按离线时长，下次上线在邮箱领取南瓜币（复用 PumpkinMail）
+# ============================================================
+
+reward:
+  coins-per-hour: 15        # 每离线 1 小时奖励的南瓜币数
+  min-hours: 1              # 离线不足该小时数不发
+  max-hours-per-day: 24     # 单次最多计入的离线小时（防长时间不上线刷爆）
+  max-reward: 0             # 单次奖励总封顶（0 = 不封顶）
+  cooldown-hours: 0         # 两次发放最小间隔（小时，0 = 不限），防反复上下线刷
+  floor-minutes: true       # true = 不足整小时的分钟舍去；false = 按精确小数计
+
+# 拥有该权限节点的玩家不上线发放（管理员/测试号）
+exempt-permission: offlinereward.exempt
+
+# 上线发放后是否发一条聊天提示（南瓜邮箱另有 ActionBar 待领提示）
+announce: true
+
+# 数据文件（plugins/OfflineReward/ 下）
+db: offline.db

@@ -1,0 +1,24 @@
+name: OfflineReward
+version: 1.0.0
+main: com.nangua.offlinereward.OfflineReward
+api-version: 1.21
+authors:
+  - 南瓜服
+description: 离线奖励 - 按离线时长上线后在邮箱领取南瓜币（复用 PumpkinMail）
+softdepend:
+  - PumpkinMail
+  - Vault
+commands:
+  offlinereward:
+    description: 离线奖励管理
+    usage: /offlinereward [reload|check <玩家>]
+    aliases:
+      - offr
+    permission: offlinereward.admin
+permissions:
+  offlinereward.admin:
+    description: 离线奖励管理（重载/查看）
+    default: op
+  offlinereward.exempt:
+    description: 豁免（不发放离线奖励）
+    default: false

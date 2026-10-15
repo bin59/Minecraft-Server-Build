@@ -1,0 +1,13 @@
+# ============================================================
+#  南瓜邮箱 PumpkinMail 配置
+# ============================================================
+
+# 上线/定时待领提示
+hint:
+  enabled: true            # 是否在 ActionBar 提示"有待领取奖励"
+  interval-seconds: 30     # 在线时每隔多少秒提示一次（上线时也会提示一次）
+
+# 奖励发放使用的命令（一般无需改动）
+reward:
+  money-command: "eco give {player} {amount}"   # 货币奖励（EssentialsX/Vault 加钱 = 南瓜币）
+  item-command: "give {player} {material} {amount}"

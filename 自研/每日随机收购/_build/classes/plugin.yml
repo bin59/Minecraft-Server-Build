@@ -1,0 +1,18 @@
+name: DailySell
+version: 1.2.1
+main: com.hh.dailysell.DailySell
+api-version: 1.20
+softdepend: [Vault]
+description: 每日随机收购 - 每天随机 N 种物品、每种额度随机、单价当日浮动，每人每日总收益封顶防刷（27格GUI多页 + 命令）
+commands:
+  ds:
+    description: 每日随机收购（/ds 打开收购界面）
+    usage: /ds [gui|sell|sellall|today|reload|reroll]
+    permission: dailysell.use
+permissions:
+  dailysell.use:
+    description: 允许出售/查看今日收购
+    default: true
+  dailysell.admin:
+    description: 允许 /ds reload 与 /ds reroll
+    default: op
