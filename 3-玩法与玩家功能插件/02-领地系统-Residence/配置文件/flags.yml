@@ -1,270 +1,270 @@
-# 这些是 Residence 的全局设置。
+# These are Global Settings for Residence.
 Global:
-  # 这些是玩家不在领地内时应用的世界标志。
+  # These are world flags that are applied when the player is NOT within a residence.
   Flags:
-    # 这些是所有世界的默认值，除非在下方另行指定，也可按分组覆盖
-    # 使用 command: false 标志可让你禁用和允许预定义的命令。命令列表可在 CommandLimits 部分定义
+    # these are default for all worlds unless specified below, they can be overridden per group
+    # Using command: false flag will allow you to disable and allow predefined commands. Command list can be difined under CommandLimits section
     Global:
-      use: false
-      build: false
-      ignite: false
-      firespread: false
-      damage: false
-      creeper: false
-      tnt: false
-      pvp: false
-  # 这给予所有分组修改特定标志的权限，除非该分组被明确拒绝。
+      use: true
+      build: true
+      ignite: true
+      firespread: true
+      damage: true
+      creeper: true
+      tnt: true
+      pvp: true
+  # This gives permission to change certain flags to all groups, unless specifically denied to the group.
   FlagPermission:
-    # 适用于：玩家
+    # Applies to: Player
     admin: true
-    # 适用于：两者
+    # Applies to: Both
     anchor: true
     animalfeeding: true
-    # 适用于：两者
+    # Applies to: Both
     animalkilling: true
-    # 适用于：领地
+    # Applies to: Residence
     animals: true
-    # 适用于：两者
+    # Applies to: Both
     anvil: true
-    # 适用于：领地
+    # Applies to: Residence
     anvilbreak: true
-    # 适用于：领地
+    # Applies to: Residence
     backup: false
-    # 适用于：两者
+    # Applies to: Both
     bank: true
-    # 适用于：两者
+    # Applies to: Both
     beacon: true
-    # 适用于：两者
+    # Applies to: Both
     bed: true
-    # 适用于：领地
+    # Applies to: Residence
     boarding: true
-    # 适用于：两者
+    # Applies to: Both
     brew: true
-    # 适用于：两者
+    # Applies to: Both
     brush: true
-    # 适用于：两者
+    # Applies to: Both
     build: true
-    # 适用于：领地
+    # Applies to: Residence
     burn: true
-    # 适用于：两者
+    # Applies to: Both
     button: true
-    # 适用于：两者
+    # Applies to: Both
     cake: true
-    # 适用于：领地
+    # Applies to: Residence
     canimals: true
-    # 适用于：两者
+    # Applies to: Both
     chat: true
-    # 适用于：两者
+    # Applies to: Both
     chorustp: true
-    # 适用于：领地
+    # Applies to: Residence
     cmonsters: true
-    # 适用于：两者
+    # Applies to: Both
     command: false
-    # 适用于：两者
+    # Applies to: Both
     commandblock: false
-    # 适用于：两者
+    # Applies to: Both
     container: true
-    # 适用于：领地
+    # Applies to: Residence
     coords: true
-    # 适用于：两者
+    # Applies to: Both
     copper: true
     coraldryup: true
-    # 适用于：领地
+    # Applies to: Residence
     craft: true
-    # 适用于：领地
-    creeper: true
-    # 适用于：领地
+    # Applies to: Residence
+    creeper: false
+    # Applies to: Residence
     damage: false
-    # 适用于：领地
+    # Applies to: Residence
     day: true
-    # 适用于：领地
+    # Applies to: Residence
     decay: true
-    # 适用于：两者
+    # Applies to: Both
     destroy: true
-    # 适用于：两者
+    # Applies to: Both
     diode: true
-    # 适用于：两者
+    # Applies to: Both
     door: true
-    # 适用于：领地
+    # Applies to: Residence
     dragongrief: true
-    # 适用于：领地
+    # Applies to: Residence
     dryup: true
-    # 适用于：两者
+    # Applies to: Both
     dye: true
-    # 适用于：两者
+    # Applies to: Both
     egg: true
-    # 适用于：两者
+    # Applies to: Both
     elytra: false
-    # 适用于：两者
+    # Applies to: Both
     enchant: true
-    # 适用于：两者
+    # Applies to: Both
     enderpearl: true
-    # 适用于：领地
+    # Applies to: Residence
     explode: false
-    # 适用于：领地
+    # Applies to: Residence
     falldamage: true
-    # 适用于：领地
+    # Applies to: Residence
     fallinprotection: true
-    # 适用于：领地
+    # Applies to: Residence
     feed: true
-    # 适用于：领地
+    # Applies to: Residence
     fireball: true
-    # 适用于：领地
+    # Applies to: Residence
     firespread: true
-    # 适用于：领地
+    # Applies to: Residence
     flow: true
-    # 适用于：两者
+    # Applies to: Both
     flowerpot: true
-    # 适用于：领地
+    # Applies to: Residence
     flowinprotection: true
-    # 适用于：两者
+    # Applies to: Both
     fly: false
-    # 适用于：玩家
+    # Applies to: Player
     friendlyfire: false
-    # 适用于：领地
+    # Applies to: Residence
     glow: true
-    # 适用于：两者
+    # Applies to: Both
     goathorn: true
     golemopenchest: true
-    # 适用于：领地
+    # Applies to: Residence
     grow: true
-    # 适用于：两者
+    # Applies to: Both
     harvest: true
-    # 适用于：领地
+    # Applies to: Residence
     healing: true
-    # 适用于：领地
+    # Applies to: Residence
     hidden: false
-    # 适用于：两者
+    # Applies to: Both
     honey: true
-    # 适用于：两者
+    # Applies to: Both
     honeycomb: true
-    # 适用于：两者
+    # Applies to: Both
     hook: true
-    # 适用于：领地
+    # Applies to: Residence
     hotfloor: true
-    # 适用于：领地
+    # Applies to: Residence
     iceform: true
-    # 适用于：领地
+    # Applies to: Residence
     icemelt: true
-    # 适用于：两者
+    # Applies to: Both
     ignite: false
-    # 适用于：两者
+    # Applies to: Both
     itemdrop: true
-    # 适用于：两者
+    # Applies to: Both
     itempickup: true
-    # 适用于：领地
+    # Applies to: Residence
     jump2: false
-    # 适用于：领地
+    # Applies to: Residence
     jump3: false
-    # 适用于：领地
+    # Applies to: Residence
     keepexp: false
-    # 适用于：领地
+    # Applies to: Residence
     keepinv: false
-    # 适用于：领地
+    # Applies to: Residence
     lavaflow: true
-    # 适用于：两者
+    # Applies to: Both
     leash: true
-    # 适用于：两者
+    # Applies to: Both
     lever: true
-    # 适用于：领地
+    # Applies to: Residence
     mobexpdrop: true
-    # 适用于：领地
+    # Applies to: Residence
     mobitemdrop: true
-    # 适用于：两者
+    # Applies to: Both
     mobkilling: true
-    # 适用于：领地
+    # Applies to: Residence
     monsters: true
-    # 适用于：两者
+    # Applies to: Both
     move: true
-    # 适用于：两者
+    # Applies to: Both
     nametag: true
-    # 适用于：领地
+    # Applies to: Residence
     nanimals: true
-    # 适用于：领地
+    # Applies to: Residence
     night: true
-    # 适用于：领地
+    # Applies to: Residence
     nmonsters: true
-    # 适用于：领地
+    # Applies to: Residence
     nodurability: false
-    # 适用于：两者
+    # Applies to: Both
     nofly: false
-    # 适用于：领地
+    # Applies to: Residence
     nomobs: true
-    # 适用于：两者
+    # Applies to: Both
     note: true
-    # 适用于：领地
+    # Applies to: Residence
     phantomspawn: true
-    # 适用于：领地
+    # Applies to: Residence
     piston: true
-    # 适用于：领地
+    # Applies to: Residence
     pistonprotection: true
-    # 适用于：两者
+    # Applies to: Both
     place: true
-    # 适用于：两者
+    # Applies to: Both
     pressure: true
-    # 适用于：领地
-    pvp: false
-    # 适用于：领地
+    # Applies to: Residence
+    pvp: true
+    # Applies to: Residence
     rain: true
-    # 适用于：领地
+    # Applies to: Residence
     respawn: false
-    # 适用于：两者
+    # Applies to: Both
     riding: true
-    # 适用于：领地
+    # Applies to: Residence
     safezone: false
-    # 适用于：领地
+    # Applies to: Residence
     sanimals: true
-    # 适用于：两者
+    # Applies to: Both
     shear: true
-    # 适用于：领地
+    # Applies to: Residence
     shoot: true
-    # 适用于：领地
+    # Applies to: Residence
     shop: true
-    # 适用于：领地
+    # Applies to: Residence
     skulk: true
-    # 适用于：领地
+    # Applies to: Residence
     smonsters: true
-    # 适用于：领地
+    # Applies to: Residence
     snowball: true
-    # 适用于：领地
+    # Applies to: Residence
     snowtrail: true
-    # 适用于：领地
+    # Applies to: Residence
     spread: true
-    # 适用于：两者
+    # Applies to: Both
     subzone: true
-    # 适用于：领地
+    # Applies to: Residence
     sun: true
-    # 适用于：两者
+    # Applies to: Both
     table: true
-    # 适用于：领地
+    # Applies to: Residence
     title: true
-    # 适用于：领地
-    tnt: false
-    # 适用于：两者
+    # Applies to: Residence
+    tnt: true
+    # Applies to: Both
     tp: true
-    # 适用于：两者
+    # Applies to: Both
     trade: true
-    # 适用于：领地
+    # Applies to: Residence
     trample: true
-    # 适用于：两者
+    # Applies to: Both
     use: true
     visualizer: true
-    # 适用于：两者
+    # Applies to: Both
     vehicledestroy: true
     vehicleplacing: true
-    # 适用于：领地
+    # Applies to: Residence
     waterflow: true
-    # 适用于：领地
+    # Applies to: Residence
     witherdamage: true
-    # 适用于：领地
+    # Applies to: Residence
     witherdestruction: true
-    # 适用于：领地
+    # Applies to: Residence
     witherspawn: true
-    # 适用于：领地
+    # Applies to: Residence
     wspeed1: true
-    # 适用于：领地
+    # Applies to: Residence
     wspeed2: true
-  # 此设置用于为每个标志指定 GUI 物品，若未指定，将使用灰色羊毛
+  # This sets GUI items to represent each flag, if not given, then gray wool will be used
   FlagGui:
     admin: BEDROCK
     anchor: RESPAWN_ANCHOR
@@ -394,7 +394,7 @@ Global:
     wspeed2: POTION
     safezone: APPLE
     skulk: SCULK_CATALYST
-  # 这些是应用于任何用户分组创建的所有领地的默认标志。
+  # These are default flags applied to all residences from any user group.
   ResidenceDefault:
     animalkilling: false
     build: false
@@ -408,7 +408,7 @@ Global:
     ignite: false
     leash: false
     riding: false
-    pistonprotection: true
+    pistonprotection: false
     pvp: false
     shear: false
     skulk: false
@@ -416,7 +416,7 @@ Global:
     tp: false
     use: false
     vehicledestroy: false
-  # 这些是应用于任何分组的领地创建者的默认标志。
+  # These are default flags applied to the residence creator of any group.
   CreatorDefault:
     animalkilling: true
     build: true
@@ -434,7 +434,7 @@ Global:
     trade: true
     use: true
     vehicledestroy: true
-  # 这些是应用于任何分组的领地租用者的默认标志。
+  # These are default flags applied to the residence renter of any group.
   RentedDefault:
     admin: true
     animalkilling: true
@@ -454,7 +454,7 @@ Global:
     use: true
     vehicledestroy: true
   GroupedFlagsIgnoreAccess: true
-  # 这些是分组标志，因此使用 /res pset 昵称 redstone true 时，玩家将获得列表中的所有标志，设置为 false 或移除时同理。
+  # These are grouped flags, so when using /res pset nickname redstone true, player will get all flags in list, same when setting to false or removing them.
   GroupedFlags:
     redstone:
       - note
@@ -466,7 +466,7 @@ Global:
       - brew
       - enchant
       - table
-    # 这组标志将用于 padd 子命令
+    # This group of flags will be used for padd sub command
     trusted:
       - animalkilling
       - beacon
@@ -488,40 +488,40 @@ Global:
     fire:
       - firespread
       - ignite
-  # 完全禁用定义的标志，即使使用 resadmin 命令也无法再访问
-  # 如果你不希望为特定标志使用特定检查，可以节省部分服务器处理资源
+  # Completely disables defined flag which will no longer be accesable even with resadmin command
+  # Can save some of the server processing resources if you don't want to utilize specific checks for specific flags
   TotalFlagDisabling:
     - Completely
     - Disable
     - Particular
     - Flags
-  # 提供你想要允许或阻止的命令列表
-  # 这是在为全局/世界标志使用 'command: false' 标志时生效
-  # 例如在允许部分添加 'res create'，而 '*' 将阻止除 'res create' 以外的所有命令
-  # 可以像世界标志一样按世界定义
-  # 这不适用于领地内部。领地内的命令限制基于领地的 command 标志及其设置的命令限制
-  # 领地本身需要设置 'command: false' 才能用该领地特定的命令限制覆盖全局命令限制
+  # Provide list of commands you want to allow or block
+  # This is when using 'command: false' flag for global/world flags
+  # For example 'res create' under allow section and '*' would block everything except 'res create' command
+  # Can be defined per world just like world flags can be
+  # This will NOT apply inside residences. Inside residence command limits are based on residence command flag and its set commands limits
+  # Residence itself will need to have 'command: false' to override global command limits with specific to that residence ones
   CommandLimits:
     Global:
-      # 启用后，领地内允许和阻止的命令将从全局列表继承，并与领地命令限制合并
+      # When enabled allowed and blocked commands inside residence will be inherited from global list and combined with residence command limits
       Inherit: false
       WhiteList:
         - some allowed command
       BlackList:
         - some blocked command
-# 你可以在此处创建黑名单 / 白名单
+# this is where you can create blacklists / whitelists
 ItemList:
-  # 列表名称不重要，只要唯一即可。建议使用描述性名称。
+  # list name is not important, as long as it is unique. Its good to use a descripive name.
   DefaultList:
-    # 列表类型，可以是黑名单（blacklist）、白名单（whitelist）或忽略列表（ignorelist）
+    # type of the list, can be blacklist, whitelist, or ignorelist
     Type: blacklist
-    # 如果需要，你可以让此列表仅应用于一个世界，否则它将应用于所有世界
+    # If you want, you can have this list only apply to one world, otherwise it applies to all worlds
     # World: world
-    # 你也可以让列表仅应用于一个分组，否则它将应用于所有分组
+    # You can also have the list apply only to one group, otherwise it applies for all groups
     # Group: default
-    # 这是该列表允许或禁止的材质名称列表
-    # 你可以通过输入 /res material <id> 在游戏中按物品 ID 查找材质名称
-    # 或者，你也可以直接在列表中使用物品 ID，但这样不够直观，难以一眼看出列表允许或禁止的内容
+    # this is the actual list of material names that this list allows or disallows
+    # You can look up the material name by item ID in game by typing /res material <id>
+    # Alternativly, you can simply use the item ID in the list, but its less descriptive and harder to see what the list allows or dissallows at a glance
     Items:
       - LAVA
       - WATER

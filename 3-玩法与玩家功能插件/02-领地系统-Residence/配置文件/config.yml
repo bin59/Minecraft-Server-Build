@@ -1,143 +1,143 @@
-# 以下是 Residence 的全局设置。
+# These are Global Settings for Residence.
 Global:
-  # 拥有 residence.versioncheck 权限节点的玩家登录时会收到新版本提示
+  # Players with residence.versioncheck permission node will be noticed about new residence version on login
   versionCheck: true
-  # 加载 Residence 语言文件夹中的 <language>.yml 文件
-  # 所有 Residence 文本均来自该文件。（尚未完成）
+  # This loads the <language>.yml file in the Residence Language folder
+  # All Residence text comes from this file. (NOT DONE YET)
   Language: Chinese
-  # 木锄是 Residence 的默认选区工具。
+  # Wooden Hoe is the default selection tool for Residence.
   SelectionToolId: WOODEN_HOE
   Selection:
-    # 设置为 true 后，所有选区将从基岩延伸到天空，忽略 Y 坐标
+    # By setting this to true, all selections will be made from bedrock to sky ignoring Y coordinates
     IgnoreY: false
-    # 设置为 true 时，在已有领地内的选区将从该领地的底部到顶部
-    # 设置为 false 时，在已有领地内的选区将保持原样
+    # When this set to true, selections inside existing residence will be from bottom to top of that residence
+    # When this set to false, selections inside existing residence will be exactly as they are
     IgnoreYInSubzone: false
-    # 定义创建领地时下界的高度。主要用于 /res select vert 或 /res auto 等将领地扩展到指定高度的命令
-    # 该值不能高于 319 或低于 1
+    # Defines height of nether when creating residences. This mostly applies when performing commands like /res select vert or /res auto which will expand residence to defined height
+    # This cant be higher than 319 or lower than 1
     netherHeight: 128
-    # 设置为 true 后，玩家只需支付 x*z 方块的费用，忽略高度
-    # 这将使领地价格最多降低 319 倍，因此请在启用此功能前调整方块单价
+    # By setting this to true, player will only pay for x*z blocks ignoring height
+    # This will lower residence price by up to 319 times, so adjust block price BEFORE enabling this
     NoCostForYBlocks: false
-    # 启用或禁用 Residence 插件与 WorldEdit 的集成
+    # Enable or disable world edit integration into Residence plugin
     WorldEditIntegration: true
-  # 决定使用哪种工具查看领地信息，默认为线（String）。
-  # 装备该工具后点击领地内的位置即可显示领地信息。
+  # This determins which tool you can use to see info on residences, default is String.
+  # Simply equip this tool and hit a location inside the residence and it will display the info for it.
   InfoToolId: STRING
   Optimizations:
-    # 启用后，将加载每个世界文件的数据，即使世界当前不存在但可能稍后加载
-    # 通常仅在安装了 Multiverse 等可在服务器运行期间加载世界的插件时有用
+    # When enabled we will load data from every single world file even if world doesn't exist but might be loaded later on
+    # Usually only useful when you have multiverse plugin which loads worlds durring server work time
     LoadEveryWorld: true
-    # 启用后，将避免在启动时显示额外的反馈信息
+    # While enabled we will avoid showing extra feedback lines on startup
     CleanerStartupLog: true
-    # 这将略微改变 groups 文件中 CanTeleport 部分的行为，将服务器所有者纳入检查
-    # 当此项为 false 且 CanTeleport 为 false 时，玩家只能传送到自己的领地，无法传送到其他玩家的领地
-    # 当此项为 true 且 CanTeleport 为 false 时，玩家将完全无法传送到任何领地
-    # 请注意，这仅适用于 /res tp 之类的命令
+    # This will slightly change behavior of groups file CanTeleport section which will include server owner into check
+    # When this is set to false and CanTeleport set to false, players will not have option to teleport to other player residences, only to their own
+    # When this is set to true and CanTeleport set to false, players will not have option to teleport to residences in general
+    # Keep in mind that this only applies for commands like /res tp
     CanTeleportIncludeOwner: false
-    # 你的主领地世界的名称。通常为普通起始世界 "world"。注意大小写
+    # Name of your main residence world. Usually normal starting world 'world'. Capitalization essential
     DefaultWorld: world
     DisabledWorlds:
-      # 插件被禁用的世界列表
-      # 确保世界名称的大小写正确
-      # 如果白名单（WhiteList）中包含任何条目，则此部分将被完全忽略
+      # List Of Worlds where this plugin is disabled
+      # Make sure that world names capitalization is correct
+      # In case WhiteList contains any entries then this section is ignored entirely
       BlackList: []
-      # 插件被启用的世界列表
-      # 确保世界名称的大小写正确
-      # 如果白名单（WhiteList）中包含任何条目，则黑名单（BlackList）部分将被完全忽略
+      # List Of Worlds where this plugin is enabled
+      # Make sure that world names capitalization is correct
+      # In case WhiteList contains any entries then BlackList section is ignored entirely
       WhiteList: []
-      # 禁用所包含世界中的所有监听器
+      # Disables all listeners in included worlds
       DisableListeners: true
-      # 禁用所包含世界中的所有命令使用
+      # Disables any command usage in included worlds
       DisableCommands: true
-      # 禁用所包含世界中的领地创建
+      # Disables residence creation in included worlds
       DisableResidenceCreation: true
-    # 领地标志阻止拾取物品后的拾取延迟（秒）
-    # 建议保持在 10 秒左右以减少不必要的检查
+    # Delay in seconds between item pickups after residence flag prevents it
+    # Keep it at arround 10 sec to lower unesecery checks
     ItemPickUpDelay: 10
     AutomaticResidenceCreation:
-      # 设置为 true 时，/res auto 命令将检查新区域是否与其他领地重叠
-      # 设为 false 可获得一些性能提升，但新领地可能会与旧领地重叠
+      # When set to true /res auto command will check for new area collision with other residences to avoid overlapping.
+      # Set it to false to gain some performace but new residence can often overlap with old ones
       CheckCollision: true
-      # 自动创建领地时检测形状不规则的领地
-      # 这将在创建前告知玩家领地形状是非规则长方体
+      # Weird shaped residence detection when using automatic residence creation
+      # This will inform player about residence shape being iregular cuboid before creation of it
       Ratio:
         Inform: true
         Confirmation: true
-        # 定义领地被视为形状不规则时的比例值
-        # 值为 3 表示长方体的一条边至少是另一条边的 3 倍
+        # Defines value of ration when residence will be counted as weird shaped ones
+        # Value of 3 will mean that one of the sides of cuboid is atleast 3 times bigger than one of the remaining ones
         Value: 3
-      # 启用后将切换到旧的领地面积计算方法
-      # 旧方法效率低得多，因此不建议在领地面积超过 100 时使用
+      # Enabled this will switch to old method for calculating new residence area
+      # Old method is allot less efficient, so its not recomended to be used when you have residence areas over 100
       OldMethod: false
-      # 使用自动创建领地命令时，若同名领地已存在，定义新领地名称的递增格式
+      # Defines new residence name increment when using automatic residence creation command if residence with that name already exist
       IncrementFormat: _[number]
       Size:
-        # 启用后，将尝试按定义的边界创建区域
+        # When enabled we will try to create region by defined bounds
         Enabled: false
-        # 1 到 100 之间的值，以百分比定义根据玩家权限组创建领地的大小
+        # Value between 1 and 100 which will define size of residence we will create in percentage depending on players permission group
         Percentage: 50
-        # 以方块为单位的值。前面的百分比决定大致大小，此项可用于避免出现过小的领地
-        # 例如，玩家拥有 30x30 领地权限且 Percentage 为 50% 时，将使用 20（默认）而不是 15 方块大小
-        # 请注意，这不会覆盖玩家实际可拥有的最大/最小领地大小
+        # Value in blocks. While previous percentage will determine general size, this can be used to avoid having tiny residences
+        # For example if player has access to 30x30 residence and Percentage is set to 50% then instead of using 15 block size we will use 20 (default)
+        # Keep in mind that this will not override actual max/min residence sizes player can have
         Min: 5
-        # 以方块为单位的值。前面的百分比决定大致大小，此项可用于避免出现过大的领地
-        # 例如，玩家拥有 500x500 领地权限且 Percentage 为 50% 时，将使用 100（默认）而不是 250 方块大小
-        # 请注意，这不会覆盖玩家实际可拥有的最大/最小领地大小
+        # Value in blocks. While previous percentage will determine general size, this can be used to avoid having huge residences
+        # For example if player has access to 500x500 residence and Percentage is set to 50% then instead of using 250 block size we will use 100 (default)
+        # Keep in mind that this will not override actual max/min residence sizes player can have
         Max: 100
     GlobalChat:
-      # 启用或禁用通过包含玩家主领地名称来修改聊天内容
+      # Enables or disables chat modification by including players main residence name
       Enabled: false
-      # 修改聊天以添加聊天标题。如果你使用聊天管理插件，可以在聊天格式中添加 {residence} 标签并禁用此选项。
+      # Modifys chat to add chat titles.  If you're using a chat manager, you may add the tag {residence} to your chat format and disable this.
       SelfModify: true
       Format: '&c[&e%1&c]'
-    # 设置为 true 时，任何传送到玩家没有 tp 标志的领地的行为都会被拒绝
-    # 这可以防止通过 Essentials /tpa 等第三方插件将玩家传送到领地
+    # When this set to true, any teleportation to residence where player don't have tp flag, action will be denyied
+    # This can prevent from teleporting players to residence with 3rd party plugins like esentials /tpa
     BlockAnyTeleportation: true
     KickLocation:
-      # 设置为 true 后，当玩家将其他玩家踢出领地时，对方将被传送到此位置而不是被传送到领地外
+      # By setting this to true, when player kicks another player from residence, he will be teleported to this location instead of getting outside residence
       Use: false
       World: world
       X: 0.5
       Y: 63.0
       Z: 0.5
-      # 小于 0 - 头朝上，大于 0 - 头朝下。范围 -90 到 90
+      # Less than 0 - head up, more than 0 - head down. Range from -90 to 90
       Pitch: 0.0
-      # 头部左右位置。范围 -180 到 180
+      # Head position to left and right. Range from -180 to 180
       Yaw: 0.0
     FlyLandLocation:
-      # 当玩家因 fly 标志导致飞行状态被关闭，且周围没有可落地的实心地面时使用
+      # Used when players fly state is being turned to false because of fly flag and there is no solid land where to land for player
       World: world
       X: 0.5
       Y: 63.0
       Z: 0.5
-      # 小于 0 - 头朝上，大于 0 - 头朝下。范围 -90 到 90
+      # Less than 0 - head up, more than 0 - head down. Range from -90 to 90
       Pitch: 0.0
-      # 头部左右位置。范围 -180 到 180
+      # Head position to left and right. Range from -180 to 180
       Yaw: 0.0
     InfoCommand:
-      # 设置为 true 后，使用 /res info 查看领地信息时只显示名称列表，悬停即可看到标志列表
+      # By setting this to true, when checking residence info with /res info, you will get only names in list, by hovering on them, you will get flag list
       ShortInformation: true
-      # 设置为 true 时，flags.yml 中设置的默认领地标志将从 info 命令输出中排除且不显示
-      # 如果标志状态与默认不同，则会显示
+      # When set to true default residence flags set in flags.yml file will get excluded from info command output and will not be shown
+      # If flag gets different state then it will be shown
       ExcludeDefaultFlags: false
     Vote:
-      # 玩家可投票的范围，默认为 0 到 10 分
+      # Range players can vote to, by default its from 0 to 10 points
       RangeFrom: 0
       RangeTo: 10
-      # 若为 true，玩家只能对商店点赞，而不能进行评分投票
+      # If this true, players can only give like for shop instead of point voting
       OnlyLike: false
     ConsoleLogs:
-      # 若为 true，通过 GUI 进行的标志更改将记录在控制台中
+      # If this true, flag changes throw GUI will be recorded in console
       ShowFlagChanges: true
     Intervals:
-      # 拥有相应标志的领地中，治疗/喂食玩家的间隔（秒）
-      # 数值越大越节省服务器资源
-      # 如果要完全禁用特定检查，请设为 0。在未使用特定标志时推荐
+      # How often in seconds to heal/feed players in residence with appropriate flag
+      # Bigger numbers can save some server resources
+      # Set to 0 if you want to disable specific checks entirely. Recommended in case you are not using specific flags
       Heal: 1
       Feed: 5
       SafeZone: 3
-    # 如果领地未设置 pvp true 标志，则包含以下任一效果的药水将被忽略
+    # Potions containing one of thos effects will be ignored if residence don't have pvp true flag set
     NegativePotionEffects:
       - blindness
       - confusion
@@ -153,64 +153,63 @@ Global:
       - instant_damage
       - poison
       - slowness
-    # 定义 wspeed1 和 wspeed2 标志的速度。范围为 0 到 5
+    # Defines speed for particular wspeed1 and wspeed2 flags. It can be from 0 up to 5
     WalkSpeed:
       '1': 0.5
       '2': 2.0
-  # 每个领地允许放置的领地相关告示牌（如出售、租用、租赁告示牌）的最大数量
   Signs:
     MaxPerResidence: 5
-  # 移动检查之间的间隔（毫秒）。
-  # 减小此值会增加服务器负载。
-  # 增大此值将允许玩家在移动受限区域中走得更远才被传送出去。
+  # The interval, in milliseconds, between movement checks.
+  # Reducing this will increase the load on the server.
+  # Increasing this will allow players to move further in movement restricted zones before they are teleported out.
   MoveCheckInterval: 500
   Tp:
-    # 传送间隔（秒）。
-    # 设为 0 以禁用
+    # The interval, in seconds, for teleportation.
+    # Use 0 to disable
     TeleportDelay: 3
-    # 玩家传送到领地时在标题消息区域显示附加消息
+    # Show aditional message in title message area when player is teleporting to residence
     TeleportTitleMessage: true
-    # 不允许使用 /res tp 传送的世界列表
-    # 仅阻止传送到这些世界，不阻止从这些世界传送出去
+    # List of worlds where teleportation using /res tp is not allowed
+    # This only blocks teleportation to those worlds, not from them
     BlockedWorlds:
       - SomeWorldNames
   RandomTeleportation:
     Worlds:
-      # 使用此功能的世界名称。添加其他世界名称以启用随机传送
+      # World name to use this feature. Add annother one with appropriate name to enable random teleportation
       world_the_end:
-        Enabled: false
-        # 传送的最大坐标，设置为 1000 时，玩家会被传送到 -1000 到 1000 之间
+        Enabled: true
+        # Max coordinate to teleport, setting to 1000, player can be teleported between -1000 and 1000 coordinates
         MaxCoord: 1000
-        # 若 maxcoord 为 1000、mincoord 为 500，则玩家会被传送到 -1000 到 -500 和 500 到 1000 之间
+        # If maxcoord set to 1000 and mincoord to 500, then player can be teleported between -1000 to -500 and 500 to 1000 coordinates
         MinCoord: 500
         CenterX: 0
         CenterZ: 0
       world_nether:
-        Enabled: false
+        Enabled: true
         MaxCoord: 1000
         MinCoord: 500
         CenterX: 0
         CenterZ: 0
       world:
-        Enabled: false
+        Enabled: true
         MaxCoord: 1000
         MinCoord: 500
         CenterX: 0
         CenterZ: 0
-    # 强制玩家等待多长时间后才能再次使用命令。
+    # How long force player to wait before using command again.
     Cooldown: 5
-    # 尝试寻找正确传送位置的次数。
-    # 保持较低数值，因为玩家可以在延迟后再次尝试
+    # How many times to try find correct location for teleportation.
+    # Keep it at low number, as player always can try again after delay
     MaxTries: 20
-  # 领地保存的间隔（分钟）。
+  # The interval, in minutes, between residence saves.
   SaveInterval: 10
   Backup:
     AutoCleanUp:
-      # 是否自动删除主备份文件夹中超过指定天数的备份文件
+      # Do you want to automatically remove backup files from main backup folder if they are older than defined day amount
       Use: false
       Days: 30
-    # 是否通过在领地主文件夹的 backup 文件夹中创建 zip 文件来备份
-    # 这不会影响 save 文件夹中创建的常规备份文件
+    # Do you want to backup files by creating zip files in main residence folder in backup folder
+    # This wont have effect on regular backuped files made in save folder
     UseZip: true
     IncludeFiles:
       Worlds: true
@@ -222,267 +221,267 @@ Global:
       groups: true
       config: true
   AutoCleanUp:
-    # 高度实验性功能：服务器启动时清理离线超过 x 天的玩家的领地。
-    # 玩家可以使用 residence.cleanbypass 权限节点绕过此功能
+    # HIGHLY EXPERIMENTAL residence cleaning on server startup if player is offline for x days.
+    # Players can bypass this with residence.cleanbypass permission node
     Use: false
-    # 玩家需要离线多长时间才会删除其领地
+    # For how long player should be offline to delete hes residence
     Days: 60
-    # 启用后，如果无法确定领地所有者，将向控制台输出一些基本信息
+    # When enabled in case residence owner can't be determined we will print out some basic information about it into console
     DetailsOnUnknown: false
-    # 对服务器负担极大，再生过程中会造成卡顿
-    # 是否重新生成旧领地区域
-    # 这需要安装 WorldEdit
+    # Extra heavy on server and will lag it out while regeneration is ongoing
+    # Do you want to regenerate old residence area
+    # This requires world edit to be present
     Regenerate: false
-    # 要纳入检查列表的世界
+    # Worlds to be included in check list
     Worlds:
       - world
-    # 启用后，将把领地转移给指定用户而不是删除
-    # 指定用户将被排除在清理操作之外
+    # When enabled we will transfer residence to defined user instead of removing it
+    # Defined user will be excluded from cleanup operation
     TrasnferToUser: false
-    # 接收被移除领地的用户名
+    # Name of the user which receives removed residence
     UserName: Server_Land
   Lwc:
-    # 移除领地时删除所有指定对象的 LWC 保护
+    # Removes lwc protection from all defined objects when removing residence
     OnDelete: true
-    # 购买领地时删除所有指定对象的 LWC 保护
+    # Removes lwc protection from all defined objects when buying residence
     OnBuy: true
-    # 取消租用领地时删除所有指定对象的 LWC 保护
+    # Removes lwc protection from all defined objects when unrenting residence
     OnUnrent: true
-    # 要移除保护的方块列表
+    # List of blocks you want to remove protection from
     MaterialList:
       - CHEST
       - TRAPPED_CHEST
       - furnace
       - dispenser
   AntiGreef:
-    # 领地之间需要保留的方块距离
-    # 这将防止领地紧挨着创建
-    # 如果新旧领地的所有者相同，则此距离限制不会生效
-    # 设为 0 或空列表以禁用此功能
-    # 如果想在所有世界使用相同限制，请使用 'all'
-    # 如果只想在特定世界使用此限制，请使用具体的世界名称
-    # 具体世界名称将覆盖 'all' 值
+    # Distance in blocks between residences to be left out
+    # This will prevent from residences being created back to back
+    # In case owner of old residence and new one is the same this range restriction wont be taken into effect
+    # Set to 0 or an empty list if you want to disable this
+    # Use 'all' if you want to use same limitation on all worlds
+    # Use specific world name if you only want to use this limitation on this world
+    # Specific world name will override 'all' value
     RangeGaps:
       - all-8
     TNT:
-      # 设置为 true 时，允许 TNT 和 TNT 矿车在领地外 62（默认）层以下爆炸
-      # 这将允许使用 TNT 采矿和更原版化的玩法
+      # When set to true will allow tnt and minecart with tnt to explode below 62 (default) level outside of residence
+      # This will allow mining with tnt and more vanilla play
       ExplodeBelow: false
       level: 62
     Creeper:
-      # 设置为 true 时，允许苦力怕在领地外 62（默认）层以下爆炸
-      # 这将使游戏玩法更贴近真实
-      # 要使此功能正常工作，需要禁用世界中的苦力怕爆炸。可在 flags 文件的 global world 部分进行设置
+      # When set to true will allow Creeper explode below 62 (default) level outside of residence
+      # This will give more realistic game play
+      # For this to work properly you will need to disable creeper explosion in the world in general. This can be done in flags file under global world section
       ExplodeBelow: false
       level: 62
     Flow:
-      # 开始阻止岩浆和水流动的层数
-      # 这在领地内不生效
+      # Level from which one to start lava and water flow blocking
+      # This don't have effect in residence area
       Level: 63
-      # 设为 true 时，领地外的岩浆流动将被阻止
+      # With this set to true, lava flow outside residence is blocked
       NoLavaFlow: false
-      # 设为 true 时，领地外的水流将被阻止
+      # With this set to true, water flow outside residence is blocked
       NoWaterFlow: false
       Worlds:
         - world
     Place:
-      # 开始阻止放置岩浆和水的层数
-      # 这在领地内不生效
+      # Level from which one to start block lava and water place
+      # This don't have effect in residence area
       Level: 63
-      # 设为 true 时，玩家无法在领地外放置岩浆
+      # With this set to true, playrs cant place lava outside residence
       NoLavaPlace: false
-      # 设为 true 时，玩家无法在领地外放置水
+      # With this set to true, players cant place water outside residence
       NoWaterPlace: false
       Worlds:
         - world
     BlockFall:
-      # 设为 true 时，下落的方块若落入不同区域将被删除
+      # With this set to true, falling blocks will be deleted if they will land in different area
       Use: true
-      # 开始阻止方块下落的层数
-      # 这在领地内外均不生效
+      # Level from which one to start block block's fall
+      # This don't have effect in residence area or outside
       Level: 62
       Worlds:
         - world
     ResCleaning:
-      # 设为 true 时，玩家移除领地后，下列所有方块将被替换为空气方块
-      # 防止在破坏目标附近创建领地后移除的有效方法
-      # 注意！较大的领地区域在清理时会给服务器带来较大负载。因此，如果普通玩家拥有巨大领地，请勿使用此功能。最大限制为 1500 万个方块
+      # With this set to true, after player removes its residence, all blocks listed below, will be replaced with air blocks
+      # Effective way to prevent residence creating near greefing target and then remove it
+      # ATTENTION! Bigger residence areas could want to create bigger loads on server when cleaning up areas. So don't use this if regular player have access to huge residences. 15 million blocks would be a max limit
       Use: false
-      # 从哪一层开始替换方块
+      # Level from whichone you want to replace blocks
       Level: 63
-      # 要替换的方块列表
-      # 默认仅替换水和岩浆
+      # Block list to be replaced
+      # By default only water and lava will be replaced
       Blocks:
         - WATER
         - LAVA
       Worlds:
         - world
     Flags:
-      # 设为 true 时，当领地内除所有者外还有其他玩家时，列表中的标志将受保护不被更改
-      # 例如防止有人邀请他人后将 pvp 标志改为 true 来击杀对方
+      # By setting this to true flags from list will be protected from change while there is some one inside residence besides owner
+      # Protects in example from people inviting some one and changing pvp flag to true to kill them
       Prevent: true
       list:
         - pvp
-  # 当权限插件无法附加或未使用权限插件时使用的默认组。
+  # The default group to use if Permissions fails to attach or your not using Permissions.
   DefaultGroup: default
-  # 启用 / 禁用租约系统。
+  # Enable / Disable the Lease System.
   UseLeaseSystem: false
-  # 设置租约或租用到期日期的显示格式
-  # 正确用法详见 http://www.tutorialspoint.com/java/java_date_time.htm
+  # Sets date format when shown in example lease or rent expire date
+  # How to use it properly, more information can be found at http://www.tutorialspoint.com/java/java_date_time.htm
   DateFormat: E yyyy.MM.dd 'at' hh:mm:ss a zzz
-  # 设置租约或租用到期日期的显示格式（短格式）
-  # 正确用法详见 http://www.tutorialspoint.com/java/java_date_time.htm
+  # Sets date format when shown in example lease or rent expire date
+  # How to use it properly, more information can be found at http://www.tutorialspoint.com/java/java_date_time.htm
   DateFormatShort: MM.dd hh:mm
-  # 设置显示日期所用的时区，当服务器所在国家与主要玩家群体不同时很有用
-  # 完整时区列表见 http://www.mkyong.com/java/java-display-list-of-timezone-with-gmt/
+  # Sets time zone for showing date, useful when server is in different country then main server player base
+  # Full list of possible time zones can be found at http://www.mkyong.com/java/java-display-list-of-timezone-with-gmt/
   TimeZone: Asia/Shanghai
-  # 启用 / 禁用移除领地时返还金钱。
+  # Enable / Disable money returning on residence removal.
   ResMoneyBack: false
-  # 启用 / 禁用移除领地时从领地银行返还金钱。
+  # Enable / Disable money returning from residence bank on residence removal.
   ResBankBack: true
-  # 领地租约检查的间隔（分钟）（如果启用了租约）。
+  # The interval, in minutes, between residence lease checks (if leases are enabled).
   LeaseCheckInterval: 10
-  # 只要玩家有足够金钱就自动续签租约；如果经济系统被禁用，此设置不生效。
+  # Allows leases to automatically renew so long as the player has the money, if economy is disabled, this setting does nothing.
   LeaseAutoRenew: true
-  # 是否与此配置一起使用权限系统。
+  # Whether or not to use the Permissions system in conjunction with this config.
   EnablePermissions: true
-  # 启用 / 禁用 Residence 的经济系统（支持 iConomy、MineConomy、Essentials、BOSEconomy 和 RealEconomy）。
-  EnableEconomy: false
-  # 定义何时收费。仅在启用经济系统时有效
+  # Enable / Disable Residence's Economy System (iConomy, MineConomy, Essentials, BOSEconomy, and RealEconomy supported).
+  EnableEconomy: true
+  # Defines when we should charge money. Only works if economy is enabled
   ChargeWhen:
-    # 创建领地时收费，包括 /res create 和 /res auto
+    # Charges money on residence creation, this includes /res create and /res auto
     Creating: true
-    # 领地面积扩展时收费
+    # Charges money on residence area expansion
     Expanding: true
-    # 添加区域时收费
+    # Charges money on area addition
     AreaAdd: true
-  # 默认为 Auto，将先通过 Vault API 查找默认经济引擎，失败时再尝试其他受支持的经济引擎
-  # 可定义自定义经济引擎以直接访问经济系统
-  # 支持的变量：Vault、iConomy、Essentials、RealEconomy、CMIEconomy、None
-  Type: Auto
-  # 启用后，如果领地位于待租或待售状态，聊天中会出现额外消息，告知玩家如何租用/购买领地及基本信息。
+  # Defaults to None which will start by looking to default economy engine throw vault API and if it fails to any supported economy engine
+  # Custom economy engines can be defined to access economy directly
+  # Supported variables: Vault, iConomy, Essentials, RealEconomy, CMIEconomy, None
+  Type: Vault
+  # When enabled extra message will appear in chat if residence is for rent or for sell to inform how he can rent/buy residence with basic information.
   ExtraEnterMessage: true
   Sell:
-    # 设为 true 将允许出售子领地。不过建议保持为 false
+    # If set to true, this will allow to sell subzones. Its recommended to keep it false tho
     Subzone: false
-  # 启用或禁用租用系统
+  # Enables or disables the Rent System
   EnableRentSystem: false
   Rent:
-    # 如果子领地仍被某人租用，则阻止移除领地/子领地
+    # Prevents residence/subzone removal if its subzone is still rented by some one
     PreventRemoval: true
-    # 设为 true 时，领地租金可从领地银行中扣除续租
+    # When set to true residence rent can be renewed from residence bank
     DeductFromBank: false
-    # 设为 true 时，领地租金可从领地银行中扣除续租，若余额不足则从玩家身上扣除剩余部分
-    # 这将覆盖 DeductFromBank 的行为
+    # When set to true residence rent can be renewed from residence bank and if there is not enough money then we will deduct rest of it from player
+    # This will override behavior of DeductFromBank
     DeductFromBankThenPlayer: false
     Inform:
-      # 在租用时间即将结束时通知玩家
+      # Informs players on rent time ending
       OnEnding: true
-      # 距租用结束前多长时间（分钟）开始通知
+      # Time range in minutes when to start informing about ending rent
       Before: 1440
-      # 玩家登录后等待多长时间（秒）再通知租用即将到期
+      # Time range in seconds for how long to wait after player logs in to inform about ending rents
       Delay: 60
     DefaultValues:
-      # 领地挂出租时的默认值
+      # Default values used when putting residence for rent
       AllowRenewing: true
       StayInMarket: true
       AllowAutoPay: true
-      # 设为 true 时，如果玩家在租用时未设置自动支付，将使用此值
+      # If set to true, when player is not defining auto pay on renting, then this value will be used
       PlayerAutoPay: true
     Schematics:
-      # 实验性功能！！！设为 true 时，领地将被恢复为 backup 标志设置为 true 时的状态
-      # 出于安全原因，只有拥有 residence.backup 权限节点的玩家才能设置 backup 标志
+      # EXPERIMENTAL!!! If set to true, residence will be restored to state it was when backup flag was set to true
+      # For securoty reassons only players with aditional residence.backup permission node can set backup flag
       RestoreAfterRentEnds: true
-      # 设为 true 时，仅在将 backup 设置为 true 时保存区域状态
-      # 设为 false 时，每次租用前都会保存区域状态，以始终保持最新的区域外观
-      # 请注意，设为 false 时服务器负载会略增，因为每次有人租用时都需要保存区域
+      # When set to true, area state will be saved only when setting backup to true value
+      # When set to false, area state will be saved before each renting to have always up to date area look
+      # Keep in mind that when its set to false, there is slightly bigger server load as it has to save area each time when some one rents it
       SaveOnFlagChange: true
   Bank:
-    # 定义领地银行可容纳的最大金额
-    # 设为 0 将取消限制
+    # Defines max amount residence bank can hold
+    # Setting to 0 will disable limitations
     Capacity: 0.0
-  # 领地租用到期检查的间隔（分钟）（如果启用了租用系统）。
+  # The interval, in minutes, between residence rent expiration checks (if the rent system is enabled).
   RentCheckInterval: 10
   Messages:
-    # 定义领地进入/离开/移动拒绝等消息的发送位置。可选值：ActionBar、TitleBar、ChatBox
-    # TitleBar 可使用 %subtitle% 变量定义第二行
+    # Defines where you want to send residence enter/leave/deny move and similar messages. Possible options: ActionBar, TitleBar, ChatBox
+    # TitleBar can have %subtitle% variable to define second line
     GeneralMessages: ActionBar
   ActionBar:
     ShowOnSelection: true
-  # 启用或禁用领地聊天频道。
+  # Enable or disable residence chat channels.
   ResidenceChatEnable: true
-  # 领地聊天的颜色。
+  # Color of residence chat.
   ResidenceChatColor: DARK_PURPLE
-  # 启用后，拥有 chat 标志权限的玩家无需加入领地聊天即可收听
+  # When enabled players with access to chat flag will be able to listen to residence chat without joining it
   ResidenceChatListening: false
-  # 领地聊天前缀的最大长度（包含颜色代码）
+  # Max lenght of residence chat prefix including color codes
   ResidenceChatPrefixLength: 16
-  # 是否忽略常规权限标志，仅允许 OP 和拥有 'residence.admin' 权限的组修改领地。
+  # Whether or not to ignore the usual Permission flags and only allow OPs and groups with 'residence.admin' to change residences.
   AdminOnlyCommands: false
-  # 设为 true 使服务器 OP 成为管理员。
+  # Setting this to true makes server OPs admins.
   AdminOPs: true
-  # 设为 true 时，如果管理员是 OP 或拥有 residence.admin 权限节点，则无需使用 /resadmin 命令即可访问管理命令。
+  # Setting this to true server administration wont need to use /resadmin command to access admin command if they are op or have residence.admin permission node.
   AdminFullAccess: false
-  # 你用于多世界的插件名称，如果没有多世界插件，可以安全地忽略此项。
-  # 它只用于检查多世界插件是否在 Residence 之前启用，以确保其他世界的领地能正确加载。
+  # This is the name of the plugin you use for multiworld, if you don't have a multiworld plugin you can safely ignore this.
+  # The only thing this does is check to make sure the multiworld plugin is enabled BEFORE Residence, to ensure properly loading residences for other worlds.
   MultiWorldPlugin: Multiverse-Core
-  # 设为 true 将使子领地继承父领地的标志。
+  # Setting this to true causes subzones to inherit flags from their parent zones.
   ResidenceFlagsInherit: true
-  # 设为 false 将允许租用者修改租用的领地。
+  # Setting this to false will allow rented residences to be modified by the renting player.
   PreventRentModify: true
-  # 设为 true 时，如果子领地所有者与父领地所有者不同，将阻止删除子领地。
+  # Setting this to true will prevent subzone deletion when subzone owner is not same as parent zone owner.
   PreventSubZoneRemoval: true
-  # 设为 false 时，即使保存文件中检测到错误，领地仍会继续加载。
+  # Setting this to false will cause residence to continue to load even if a error is detected in the save file.
   StopOnSaveFault: true
   ResidenceNameRegex: '[^a-zA-Z0-9\-\_]'
-  # 设为 true 时，每次 Residence 进行租用到期检查或租约到期检查都会向控制台发送消息。
+  # Setting this to true sends a message to the console every time Residence does a rent expire check or a lease expire check.
   ShowIntervalMessages: false
-  # 设为 true 时，新玩家在地面放置箱子时会收到教程消息。
+  # Setting this to true sends a tutorial message to the new player when he places chest on ground.
   ShowNoobMessage: true
-  # 设为 true 时，如果玩家没有领地，将在其放置的箱子周围创建领地。
-  # 如果玩家仍没有领地，每次服务器重启后仅触发一次
+  # Setting this to true creates residence around players placed chest if he don't have any.
+  # Only once every server restart if he still don't have any residence
   NewPlayer:
     Use: false
-    # 设为 true 时，领地免费创建
-    # 设为 false 时，将从玩家身上扣除金钱（如果他有）
+    # Setting this to true, residence will be created for free
+    # By setting to false, money will be taken from player, if he has them
     Free: true
-    # 从放置的箱子向两侧延伸的范围。设为 5 时，领地总宽度为 5+5+1 = 11 格
+    # Range from placed chest to both sides. By setting to 5, residence will be 5+5+1 = 11 blocks wide in total
     Range:
       X: 5
       Y: 5
       Z: 5
-  # 实验性 - 以下设置是方块 ID 列表，用于在装有模组时作为 'container' 和 'use' 标志检查的一部分。
+  # Experimental - The following settings are lists of block IDs to be used as part of the checks for the 'container' and 'use' flags when using mods.
   CustomContainers: []
   CustomBothClick: []
   CustomRightClick: []
   Visualizer:
-    # 启用后，玩家将看到标记选区边界的粒子效果
+    # With this enabled player will see particle effects to mark selection boundaries
     Use: true
-    # 为玩家绘制粒子效果的范围（方块）
-    # 不要超过 30，因为玩家最多只能看到 16 格
+    # Range in blocks to draw particle effects for player
+    # Keep it no more as 30, as player cant see more than 16 blocks
     Range: 16
-    # 粒子效果显示时长（毫秒，5000 = 5 秒）
+    # For how long in miliseconds (5000 = 5sec) to show particle effects
     ShowFor: 10000
-    # 每隔多少 tick 更新一次玩家的粒子效果
+    # How often in ticks to update particles for player
     updateInterval: 5
-    # 行之间粒子效果的间距（方块）
+    # Spacing in blocks between particle effects for rows
     RowSpacing: 1.0
-    # 列之间粒子效果的间距（方块）
+    # Spacing in blocks between particle effects for collums
     CollumnSpacing: 1.0
-    # 定义需要跳过的粒子数量
-    # 这将产生动态粒子效果，提升选区的整体观感
-    # 增加此数值可以降低更新频率
+    # Defines by how many particles we need to skip
+    # This will create moving particle effect and will improve overall look of selection
+    # By increasing this number, you can decrease update interval
     SkipBy: 15
-    # 每个玩家可显示的边框粒子最大数量
+    # Maximum amount of frame particles to show for one player
     FrameCap: 500
-    # 每个玩家可显示的侧面粒子最大数量
+    # Maximum amount of sides particles to show for one player
     SidesCap: 2000
-    # 粒子效果名称。可选：explode, largeexplode, hugeexplosion, fireworksSpark, splash, wake, crit, magicCrit
+    # Particle effect names. possible: explode, largeexplode, hugeexplosion, fireworksSpark, splash, wake, crit, magicCrit
     #  smoke, largesmoke, spell, instantSpell, mobSpell, mobSpellAmbient, witchMagic, dripWater, dripLava, angryVillager, happyVillager, townaura
     #  note, portal, enchantmenttable, flame, lava, footstep, cloud, reddust, snowballpoof, snowshovel, slime, heart, barrier
     #  droplet, take, mobappearance
 
-    # 如果使用基于 Spigot 的服务器，可以使用不同的粒子：
+    # If using spigot based server different particles can be used:
     # click2, click1, bow_fire, door_toggle, iron_door_toggle, trapdoor_toggle, iron_trapdoor_toggle, fence_gate_toggle, door_close, iron_door_close, trapdoor_close, iron_trapdoor_close, fence_gate_close, extinguish, record_play, ghast_shriek, ghast_shoot, blaze_shoot, zombie_chew_wooden_door, zombie_chew_iron_door, zombie_destroy_door, smoke, step_sound, potion_break, instant_potion_break, ender_signal, mobspawner_flames, brewing_stand_brew, chorus_flower_grow, chorus_flower_death, portal_travel, endereye_launch, firework_shoot, villager_plant_grow, dragon_breath, anvil_break, anvil_use, anvil_land, enderdragon_shoot, wither_break_block, wither_shoot, zombie_infect, zombie_converted_villager, bat_takeoff, end_gateway_spawn, enderdragon_growl, phantom_bite, zombie_converted_to_drowned, husk_converted_to_zombie, grindstone_use, book_page_turn, smithing_table_use, pointed_dripstone_land, pointed_dripstone_drip_lava_into_cauldron, pointed_dripstone_drip_water_into_cauldron, skeleton_converted_to_stray, composter_fill_attempt, lava_interact, redstone_torch_burnout, end_portal_frame_fill, dripping_dripstone, bone_meal_use, ender_dragon_destroy_block, sponge_dry, electric_spark, copper_wax_on, copper_wax_off, oxidised_copper_scrape, wither_spawned, ender_dragon_death, end_portal_created_in_overworld, sound_stop_jukebox_song, crafter_craft, crafter_fail, shoot_white_smoke, bee_growth, turtle_egg_placement, smash_attack, particles_sculk_charge, particles_sculk_shriek, particles_and_sound_brush_block_complete, particles_egg_crack, gust_dust, trial_spawner_spawn, trial_spawner_spawn_mob_at, trial_spawner_detect_player, trial_spawner_eject_item, vault_activate, vault_deactivate, vault_eject_item, spawn_cobweb, trial_spawner_detect_player_ominous, trial_spawner_become_ominous, trial_spawner_spawn_item, sound_with_charge_shot
     Selected:
       Frame: dust:125,150,150
@@ -490,53 +489,53 @@ Global:
     Overlap:
       Frame: dust:255,0,255
       Sides: dust:255,100,100
-    # 玩家进入领地时显示粒子效果。仅适用于主领地区域
+    # Shows particle effect when player enters residence. Only applies to main residence area
     EnterAnimation: true
-  # 玩家被推回时显示粒子效果
+  # Shows particle effect when player are being pushed back
   BounceAnimation: true
   GUI:
-    # 启用或禁用标志 GUI
+    # Enable or disable flag GUI
     Enabled: true
-    # 标志为 true 时使用的物品 ID 和数据
+    # Item id and data to use when flag is set to true
     setTrue: GREEN_WOOL
-    # 标志为 false 时使用的物品 ID 和数据
+    # Item id and data to use when flag is set to false
     setFalse: RED_WOOL
-    # 标志为移除时使用的物品 ID 和数据
+    # Item id and data to use when flag is set to remove
     setRemove: LIGHT_GRAY_WOOL
-  # 默认 = false。启用后，带有 nomobs 标志的领地会定期清除怪物。
-  # 这对服务器负载较大，仅在确实需要此功能时启用
+  # Default = false. Enabling this, residences with flag nomobs will be cleared from monsters in regular intervals.
+  # This is quite heavy on server side, so enable only if you really need this feature
   AutoMobRemoval:
     Use: false
-    # 每隔多少秒检查领地内的怪物。保持合理数值
+    # How often in seconds to check for monsters in residences. Keep it at reasonable amount
     Interval: 5
   EnforceAreaInsideArea: false
   EnableSpout: false
   EnableLeaseMoneyAccount: true
-  # 设为 true 将启用对 kCauldron 服务器的部分兼容。由于不正确的兼容性，操作栏消息和选区可视化将自动禁用
+  # By setting this to true, partial compatibility for kCouldron servers will be enabled. Action bar messages and selection visualizer will be disabled automatically as off incorrect compatibility
   Couldroncompatibility: false
 DynMap:
-  # 启用或禁用 DynMap 支持
+  # Enables or disable DynMap Support
   Use: true
-  # 设为 true 时，默认在 DynMap 窗口中隐藏领地区域
-  # 仍可通过左上角提供的 DynMap 选项启用领地显示
+  # When set to true we will hide residence areas by default on dynmap window
+  # Residences can still be enabled throw provided DynMap option on left top side
   HideByDefault: false
-  # 显示或隐藏领地标志
+  # Shows or hides residence flags
   ShowFlags: true
-  # 启用后，默认标志将不包含在领地概览中
+  # When enabled default flags will not be included in residence overview
   ExcludeDefaultFlags: true
-  # 设为 true 时，带有 hidden 标志的领地将从 DynMap 中隐藏
+  # If set true, residence with hidden flag set to true will be hidden from dynmap
   HideHidden: true
   Layer:
-    # 启用 3D 区域
+    # Enables 3D zones
     3dRegions: true
-    # 显示子领地的深度
+    # How deep to go into subzones to show
     SubZoneDepth: 2
   Border:
-    # 边框颜色。从该页面选择颜色 http://www.w3schools.com/colors/colors_picker.asp
+    # Color of border. Pick color from this page http://www.w3schools.com/colors/colors_picker.asp
     Color: '#FF0000'
-    # 透明度。0.3 表示仅显示 30% 的颜色
+    # Transparency. 0.3 means that only 30% of color will be visible
     Opacity: 0.3
-    # 边框粗细
+    # Border thickness
     Weight: 3
   Fill:
     Opacity: 0.3
@@ -544,31 +543,31 @@ DynMap:
     ForRent: '#33cc33'
     Rented: '#99ff33'
     ForSale: '#0066ff'
-  # 仅显示此列表中的区域
+  # Shows only regions on this list
   VisibleRegions: []
-  # 即使游戏内未隐藏，也会在地图上隐藏该区域
+  # Hides region on map even if its not hidden in game
   HiddenRegions: []
 Pl3xMap:
-  # 启用或禁用 Pl3xMap 支持
+  # Enables or disable Pl3xMap Support
   Use: true
-  # 设为 true 时，默认在 Pl3xMap 窗口中隐藏领地区域
-  # 仍可通过左上角提供的 Pl3xMap 选项启用领地显示
+  # When set to true we will hide residence areas by default on Pl3xMap window
+  # Residences can still be enabled throw provided Pl3xMap option on left top side
   HideByDefault: false
-  # 显示或隐藏领地标志
+  # Shows or hides residence flags
   ShowFlags: true
-  # 启用后，默认标志将不包含在领地概览中
+  # When enabled default flags will not be included in residence overview
   ExcludeDefaultFlags: true
-  # 设为 true 时，带有 hidden 标志的领地将从 Pl3xMap 中隐藏
+  # If set true, residence with hidden flag set to true will be hidden from Pl3xMap
   HideHidden: true
   Layer:
-    # 显示子领地的深度
+    # How deep to go into subzones to show
     SubZoneDepth: 2
   Border:
-    # 边框颜色。从该页面选择颜色 http://www.w3schools.com/colors/colors_picker.asp
+    # Color of border. Pick color from this page http://www.w3schools.com/colors/colors_picker.asp
     Color: '#FF0000'
-    # 透明度。0.3 表示仅显示 30% 的颜色
+    # Transparency. 0.3 means that only 30% of color will be visible
     Opacity: 0.3
-    # 边框粗细
+    # Border thickness
     Weight: 3
   Fill:
     Opacity: 0.3
@@ -576,51 +575,51 @@ Pl3xMap:
     ForRent: '#33cc33'
     Rented: '#99ff33'
     ForSale: '#0066ff'
-  # 仅显示此列表中的区域
+  # Shows only regions on this list
   VisibleRegions: []
-  # 即使游戏内未隐藏，也会在地图上隐藏该区域
+  # Hides region on map even if its not hidden in game
   HiddenRegions: []
-# 开发中
+# In development
 Raid:
-  # 决定是否要为服务器启用袭击功能
-  # 领地遭受袭击时，即使领地设置了 move false 标志，攻击者也可以在领地内移动
+  # Determines if you want to enable raid feature for your server
+  # When residence is under raid, attackers can move inside residence even if residence has move false flag
   Enabled: false
-  # 袭击开始前的等待时间（秒）
-  # 这将允许防守者返回领地做好防御准备
+  # Time in seconds before raid starts
+  # This will allow defenders to get back to residence and prepare for attack
   PreTimer: 120
-  # 袭击持续的时间（秒）
-  # 在此期间，攻击者可以窃取财物并击杀防守者
+  # Time in seconds raid should be
+  # During this time attackers can steal and kill defenders
   Timer: 120
-  # 领地免疫下一次袭击的时间（秒）
-  # 默认为 79200 秒（即 22 小时），服务器重启后可能会重置
+  # Time in seconds residence is immune for next raid
+  # Default is 79200 seconds which results into 22 hours, this might reset if you have server restart
   Cooldown: 79200
-  # 玩家免疫下一次袭击的时间（秒）
-  # 如果玩家拥有多个领地，这可以防止玩家再次被袭击
-  # 默认为 79200 秒（即 22 小时），服务器重启后可能会重置
+  # Time in seconds player is immune for next raid
+  # In case player has more than one residence, this can prevent player from being attacked again
+  # Default is 79200 seconds which results into 22 hours, this might reset if you have server restart
   PlayerCooldown: 79200
   Allow:
     Attacker:
-      # 即使领地设置了 destroy false，也允许在受袭领地内破坏方块
-      # 这仅适用于袭击期间内的攻击者
+      # Allows to break blocks inside raided residence even if it has destroy false
+      # This only applies for attackers and for raid time
       blockBreak: true
-      # 即使领地设置了 place false，也允许在受袭领地内放置方块
-      # 这仅适用于袭击期间内的攻击者
+      # Allows to place blocks inside raided residence even if it has place false
+      # This only applies for attackers and for raid time
       blockPlace: true
     Defender:
-      # 即使领地设置了 destroy false，也允许在受袭领地内破坏方块
-      # 这仅适用于袭击期间内的防守者
+      # Allows to break blocks inside raided residence even if it has destroy false
+      # This only applies for defenders and for raid time
       blockBreak: true
-      # 即使领地设置了 place false，也允许在受袭领地内放置方块
-      # 这仅适用于袭击期间内的防守者
+      # Allows to place blocks inside raided residence even if it has place false
+      # This only applies for defenders and for raid time
       blockPlace: true
-      # 允许传送到受袭领地，包括 /res tp 和其他第三方传送命令
-      # 这仅适用于袭击期间内的防守者
-      # 请注意，攻击者没有此选项，将被阻止传送到受袭领地内部
+      # Allows to teleport into raided residence, includes /res tp and other 3rd party teleport commands
+      # This only applies for defenders and for raid time
+      # keep in mind that attackers will not have this option and will be prevented from teleporting inside raided residence
       Teleport: false
-      # 允许在袭击期间使用容器（如箱子）
-      # 这仅适用于袭击期间内的防守者
-      # 保持为 false 可能会阻止玩家将物品转移到未受袭的其他领地
-      # 袭击期间，攻击者可以访问你领地内的任何容器
+      # Allows to use containers, such as chests, during raid time
+      # This only applies for defenders and for raid time
+      # Keeping this at false might prevent from players moving their items to another residence which is not in raid
+      # Attackers will have access to any container in your residence during raid
       containerUsage: false
-  # 设为 false 时，同一队伍（攻击方或防守方）的玩家不会互相造成伤害
+  # When set to false players in same teams (attackers or defenders) will not cause each other damage
   FriendlyFire: true

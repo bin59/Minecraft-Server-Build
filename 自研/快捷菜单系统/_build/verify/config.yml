@@ -1314,7 +1314,7 @@ menus:
         actions:
           - '[close]'
           - '[message] &7圈地步骤：'
-          - '[message] &71) &f手持木斧 &e//wand &7（创世神工具）'
+          - '[message] &71) &f手持木锄'
           - '[message] &72) &f左键选第一个角、右键选第二个角'
           - '[message] &73) &f执行 &e/res create 领地名'
           - '[message] &7提示：选区越大收费越贵，按格子计费'

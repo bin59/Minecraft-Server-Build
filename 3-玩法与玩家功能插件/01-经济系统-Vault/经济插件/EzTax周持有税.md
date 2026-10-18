@@ -23,7 +23,9 @@
 | `wealth-tax.percentage` | `1.0` | 超出部分按 1% 征收 |
 | `wealth-tax.interval` | `WEEKLY` | 每周征收一次 |
 | `server-treasury` | `false` | 税**直接销毁**（纯 Sink，不进金库） |
-| `death-fee` | `true` | EzTax 死亡费启用（余额 0.5%、上限 5000、无豁免；CDM 扣费仍禁用，2026-09-30 恢复启用） |
+| `death-fee.enabled` | `true` | 死亡费启用（玩家死亡时扣南瓜币） |
+| `death-fee.percentage` | `0.1` | 死亡扣费比例（按本服税率惯例 1.0=1%，此处约 0.1%；**以 `/eztax check` 实测为准**） |
+| `death-fee.max-loss` | `500` | 单次死亡**最多扣 500 南瓜币**（无豁免；CDM 死亡消息扣费仍禁用 cost 0.0，不重复扣） |
 | 交易税 | `1%`（仅转出方） | 玩家转账/交易时再抽 1% |
 
 ## 命令
@@ -47,4 +49,4 @@
 ## 注意事项
 
 - 持有税起征 10000 南瓜币：仅影响高余额玩家，普通玩家不受影响。
-- 死亡费启用中（余额 0.5%、上限 5000、无豁免，2026-09-30 恢复）；CustomDeathMessages 扣费仍禁用（cost 0.0），不会重复扣款。
+- 死亡费启用中（percentage 0.1 / max-loss 500，无豁免）；CustomDeathMessages 扣费仍禁用（cost 0.0），不会重复扣款。

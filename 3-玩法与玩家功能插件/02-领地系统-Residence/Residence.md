@@ -148,8 +148,11 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 
 | 命令                    | 说明                      |
 | ----------------------- | ------------------------- |
-| `/res bank <领地名>`    | 打开领地银行              |
-| `/res resbank <领地名>` | 领地银行操作              |
+| `/res bank <领地名>`                    | 打开领地银行界面                 |
+| `/res bank deposit <领地名> <金额>`     | 往领地银行存钱                   |
+| `/res bank withdraw <领地名> <金额>`    | 从领地银行取钱                   |
+| `/res bank info <领地名>`               | 查看余额与容量                    |
+| `/res resbank <领地名>`                 | 站在领地内时省略领地名，等价操作 |
 | `/res market`           | 打开领地市场（买卖/租赁） |
 | `/res shop`             | 领地商店                  |
 | `/res contract`         | 领地合约                  |
@@ -215,6 +218,66 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 | `/resadmin show <领地名>`              | 管理员显示任意领地边界                                          |
 | `/resadmin area`                       | 管理员查看选区区域信息                                          |
 
+## 领地银行（Residence Bank）
+
+> **一句话结论**：领地银行是绑定到某个领地的「共享钱袋」，钱属于领地而非某个玩家，用于公会/团队公共基金、领地付租金/买地。
+> **本服状态**：经济系统（`EnableEconomy`）早已开启、圈地本来就扣钱，银行功能本身已可用；实际用起来只需确保领地 `bank` flag 已开启 + 玩家有对应权限。
+>
+> **⚠️ 银行无利息**：Residence 领地银行是纯资金池，**不上利息**。官方 `config.yml` 的 `Bank` 段只有 `Capacity`（容量，当前 `0.0`=不限），没有任何利率配置项；所有版本（含新版）均不支持存款随时间增长。想做"公会存款生息"得另接经济插件或自写逻辑，光靠 Residence 做不到。
+
+### 命令
+
+| 命令                                    | 说明                                   |
+| --------------------------------------- | -------------------------------------- |
+| `/res bank <领地名>`                    | 打开领地银行界面                       |
+| `/res bank deposit <领地名> <金额>`     | 往领地银行存钱                         |
+| `/res bank withdraw <领地名> <金额>`    | 从领地银行取钱                         |
+| `/res bank info <领地名>`               | 查看余额与容量                          |
+| `/res resbank <领地名>`                 | 站在领地内时省略领地名，等价操作       |
+| `/resadmin bank <领地名>`               | 管理员操作领地银行                     |
+
+操作权限默认归领地拥有者/管理员；普通成员能否存取取决于对其设置的 `bank` 相关权限。
+
+### 前置条件
+
+| 配置项 | 当前值 | 说明 |
+| --- | --- | --- |
+| `EnableEconomy` | `true` ✅ | 经济已开启，银行可用 |
+| `Type` | `Auto` ✅ | 自动走 Vault→Essentials，无需改 |
+| `Bank.Capacity` | `0.0` ✅ | `0` = 不限容量，无需改 |
+| `flags.yml` 的 `bank` | `true` ✅ | 默认允许玩家用银行 flag，无需改 |
+
+### 如何开启（每个领地）
+
+银行无需额外的全局开关（经济已开）。每个领地默认就有 `bank` flag；若之前被人关过，恢复：
+
+```mcfunction
+/res set <领地名> bank true
+```
+
+玩家需有该领地 `bank` 权限（默认成员即可，具体看权限组设置）。
+
+> **依赖说明（供其他服参考）**：银行是经济子系统，必须 `EnableEconomy: true` 才可用；若某服经济关闭，需先在 `config.yml` 打开经济（并注意 `ChargeWhen` 会同时决定是否对圈地/扩建扣钱）。本服已满足，无需改动。
+
+### 每个领地自己的开关
+
+领地银行 flag 默认 `true`，正常新建领地不用动。仅当之前被人关过时恢复：
+
+```mcfunction
+/res set <领地名> bank true
+```
+
+### 验证
+
+```mcfunction
+/res bank <领地名>               # 能打开
+/res bank deposit <领地名> 100   # 能存钱 = 成功
+```
+
+### 排错
+
+若 `/res bank` 报错或无反应，多半是：① 该领地 `bank` flag 被设为 false（用上面命令开）；② 玩家无此领地 bank 权限；③ 经济插件（Vault / Essentials）未正常挂钩。把报错原文发我即可定位。
+
 ## 关键配置 (`plugins/Residence/config.yml`)
 
 ```yaml
@@ -223,7 +286,7 @@ Global:
   SelectionToolId: WOODEN_HOE # 选择工具: 木锄
   InfoToolId: STRING # 信息查看工具: 线
   DefaultWorld: world # 默认世界
-  EnableEconomy: false # 经济系统已禁用
+  EnableEconomy: true # 经济系统已启用（圈地扣钱）
   EnablePermissions: true # 权限系统启用
   ResidenceChatEnable: true # 领地聊天启用
   ResidenceChatColor: DARK_PURPLE # 领地聊天颜色: 深紫
@@ -267,7 +330,7 @@ Global:
   Sell.Subzone: false # 子区域出售
 ```
 
-> **经济开关实际值**：本服领地当前 `EnableEconomy: false`、`Type: Vault`、`UseLeaseSystem: false`、`EnableRentSystem: false`——圈地不扣钱、不可买卖/出租。
+> **经济开关实际值**：本服领地当前 `EnableEconomy: true`（经济已开启、圈地扣钱）、`Type: Vault`、`UseLeaseSystem: false`、`EnableRentSystem: false`——不可买卖/出租。领地银行功能已可用（详见上方「领地银行」章节）。
 
 ## flags.yml 权限配置文件
 

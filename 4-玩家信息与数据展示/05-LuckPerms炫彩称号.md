@@ -60,7 +60,7 @@ tablist-name-formatting:
   default:
     tabprefix: '%luckperms_prefix%'
     tabname: '&f%player_name%'
-    tabsuffix: ' &7| &f%player_health%&c❤'
+    # tabsuffix: ' &7| &f%player_health%&c❤'
     tagprefix: '%luckperms_prefix%'
     tagname: '&f%player_name%'
     tagsuffix: ''

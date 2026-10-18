@@ -10,7 +10,7 @@ Groups:
       # 决定该分组是否可以创建领地。此选项可通过权限节点 'residence.create' 覆盖
       CanCreate: true
       # 玩家可拥有的领地最大数量
-      MaxResidences: 1
+      MaxResidences: 999
       # 一个领地可拥有的最大物理区域数量
       MaxAreasPerResidence: 2
       # 领地东西方向（X 轴）的最大方块数
@@ -136,9 +136,9 @@ Groups:
       CanCreate: true
       MaxResidences: 1
       MaxAreasPerResidence: 2
-      MaxEastWest: 20
-      MaxNorthSouth: 20
-      MaxUpDown: 20
+      MaxEastWest: 999999
+      MaxNorthSouth: 999999
+      MaxUpDown: 999999
       MinHeight: -64
       MaxHeight: 320
       SubzoneDepth: 3

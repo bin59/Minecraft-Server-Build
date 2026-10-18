@@ -253,4 +253,24 @@ scoreboard:
 
 **性能**：TPS / 实体数占位符走 TAB 内置刷新周期，开销可忽略；侧边栏避免堆太多 PAPI 占位符即可。
 
+⚠️ **基岩版（NetherNet）高频刷新导致断线**
+本服侧边栏 `main` 含 10+ 个每秒/每 0.5 秒变化的占位符（`%plan_player_current_session_length%`、`%date%`、`%ping%`、`%clearlag_*%`、`%vault_eco_balance%` 等），且 `placeholder-refresh-intervals.default-refresh-interval` 默认 `500`（每 0.5 秒）。TAB 规则：**任意一行内容变化即重发整块记分板** → 单玩家记分板包量可达 **80 包/秒**。
+基岩玩家经 Geyser NetherNet 的 WebRTC 通道接收，进服前几秒侧边栏全量同步爆发 → 通道被冲爆 → 日志报 `Player 每秒收到了超过 20 个分数数据包` + 随即 `disconnect.lost` 掉线（**Java 玩家完全无感**）。
+
+**修复（二选一或叠加）**：
+1. **放慢 TAB 刷新（治本）**：`config.yml`
+   ```yaml
+   placeholder-refresh-intervals:
+     default-refresh-interval: 2000   # 0.5s → 2s，包量约降 4 倍
+   ```
+2. **给基岩玩家关闭侧边栏（最彻底）**：`scoreboards.main` 加显示条件，仅 Java 玩家授予 `tab.javaonly` 权限：
+   ```yaml
+   scoreboards:
+     main:
+       display-condition: 'permission:tab.javaonly'
+   ```
+3. **Geyser 侧兜底**：`Geyser/config.yml` 的 `advanced.scoreboard-packet-threshold` 从 `20` 提到 `100`。
+
+> 改完 `/tab reload` + 重启 Geyser（或 `/geyser reload`）生效；同步到云端需用相同配置。
+
 ---

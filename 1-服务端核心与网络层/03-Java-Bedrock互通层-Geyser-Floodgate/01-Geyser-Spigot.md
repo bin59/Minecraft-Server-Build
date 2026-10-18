@@ -69,3 +69,10 @@ advanced:
 | `/geyser reload`     | 重载配置         |
 | `/geyser statistics` | 查看统计信息     |
 | `/geyser offhand`    | 切换副手物品     |
+
+## NetherNet 迁移（重要）
+
+⚠️ **Bedrock 26.60（预计 2026-10-27）停用 RakNet，基岩客户端必须走 NetherNet。** 本服当前 `clone-remote-port: true` + 端口 `55551`（与 Java 同口），内置信令会因 TCP 端口冲突自动回退 Warden 外部信令。最晚 10-27 前须更新 Geyser（≥ build 1237）并开启 `transport: nethernet`，否则基岩玩家全部无法加入。
+
+- 完整迁移步骤、生产服（方案 B：独立端口 + 内置信令 + HTTPS）配置与启动命令见 **[02-NetherNet迁移准备.md](./02-NetherNet迁移准备.md)**。
+- 排错与玩家告知文案也在该文档。

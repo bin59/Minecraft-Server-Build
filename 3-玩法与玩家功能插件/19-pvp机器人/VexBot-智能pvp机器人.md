@@ -69,7 +69,7 @@ https://modrinth.com/plugin/vexbot?loader=paper&version=1.21.11
 | 方式 | 命令 | 说明 |
 | --- | --- | --- |
 | GUI 召唤（主推） | `/vexbot` | 打开主 GUI，点选机器人类型 / kit，在脚下生成 |
-| 命令召唤 | `/vexbot spawn` | 官方 spawn 命令，支持坐标：`/vexbot spawn x y z` |
+| 命令召唤 | `/vexbot spawn [<名字>] [<x y z>] [<kit>]` | 一条指令带 kit 召唤：`/vexbot spawn <名字> <kit>`（参数顺序：名字 → 坐标 → kit） |
 | 批量召唤 | `/vexbot mass_spawn` | 一次拉多个机器人 |
 | FFA 混战 | `/vexbot ffa` | 自动生成一批陪练机器人开混战 |
 
@@ -80,6 +80,26 @@ https://modrinth.com/plugin/vexbot?loader=paper&version=1.21.11
 - 机器人可以套用预设 Kit（武器、盔甲、物品配置）；
 - 支持 Kit 列表 GUI、Kit 图标菜单、保存/加载自定义 kit；
 - 报错 `Failed to load/save kit` 说明某个 kit 存档损坏，去 `plugins/VexBot/` 下检查对应文件。
+
+### 一条指令召唤带 kit 的机器人（命令版）
+
+> **前置开关**：`/vexbot settings advancedspawn on`（全局，默认 OFF）。不开则 spawn 不认 `<kit>` 参数，机器人会空手出来。队伍可单独覆盖：`/vexbot team <队名> settings advancedspawn on`。
+
+1. **先存一次 kit**（穿上你希望机器人带的装备，然后执行，把当前背包+护甲+副手+末影箱存成 kit）：
+   ```
+   /vexbot createkit <kit名>      # 新建（等价从当前背包保存）
+   /vexbot updatekit <kit名>      # 已存在则覆盖更新
+   ```
+2. **一条指令召唤并套 kit**（参数顺序：名字 → 坐标 → kit；省略坐标时直接 `<名字> <kit>`）：
+   ```
+   /vexbot spawn <名字> <kit名>
+   ```
+   例：
+   ```
+   /vexbot spawn spar1 netherite
+   /vexbot spawn botA 100 64 200 diamond     # 指定坐标 + kit
+   ```
+   > 注意：kit 名必须放在名字（和坐标）之后。若只写 `/vexbot spawn diamond`，插件会把 `diamond` 当成机器人名字而非 kit；想带 kit 就务必先给一个名字。
 
 ### 穿装备（套 Kit，操作）
 
