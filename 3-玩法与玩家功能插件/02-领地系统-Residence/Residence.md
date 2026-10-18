@@ -146,17 +146,17 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 
 ### 领地经济与买卖
 
-| 命令                    | 说明                      |
-| ----------------------- | ------------------------- |
-| `/res bank <领地名>`                    | 打开领地银行界面                 |
-| `/res bank deposit <领地名> <金额>`     | 往领地银行存钱                   |
-| `/res bank withdraw <领地名> <金额>`    | 从领地银行取钱                   |
-| `/res bank info <领地名>`               | 查看余额与容量                    |
-| `/res resbank <领地名>`                 | 站在领地内时省略领地名，等价操作 |
-| `/res market`           | 打开领地市场（买卖/租赁） |
-| `/res shop`             | 领地商店                  |
-| `/res contract`         | 领地合约                  |
-| `/res lease`            | 领地租赁                  |
+| 命令                                 | 说明                             |
+| ------------------------------------ | -------------------------------- |
+| `/res bank <领地名>`                 | 打开领地银行界面                 |
+| `/res bank deposit <领地名> <金额>`  | 往领地银行存钱                   |
+| `/res bank withdraw <领地名> <金额>` | 从领地银行取钱                   |
+| `/res bank info <领地名>`            | 查看余额与容量                   |
+| `/res resbank <领地名>`              | 站在领地内时省略领地名，等价操作 |
+| `/res market`                        | 打开领地市场（买卖/租赁）        |
+| `/res shop`                          | 领地商店                         |
+| `/res contract`                      | 领地合约                         |
+| `/res lease`                         | 领地租赁                         |
 
 ### 工具与可视化
 
@@ -227,24 +227,24 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 
 ### 命令
 
-| 命令                                    | 说明                                   |
-| --------------------------------------- | -------------------------------------- |
-| `/res bank <领地名>`                    | 打开领地银行界面                       |
-| `/res bank deposit <领地名> <金额>`     | 往领地银行存钱                         |
-| `/res bank withdraw <领地名> <金额>`    | 从领地银行取钱                         |
-| `/res bank info <领地名>`               | 查看余额与容量                          |
-| `/res resbank <领地名>`                 | 站在领地内时省略领地名，等价操作       |
-| `/resadmin bank <领地名>`               | 管理员操作领地银行                     |
+| 命令                                 | 说明                             |
+| ------------------------------------ | -------------------------------- |
+| `/res bank <领地名>`                 | 打开领地银行界面                 |
+| `/res bank deposit <领地名> <金额>`  | 往领地银行存钱                   |
+| `/res bank withdraw <领地名> <金额>` | 从领地银行取钱                   |
+| `/res bank info <领地名>`            | 查看余额与容量                   |
+| `/res resbank <领地名>`              | 站在领地内时省略领地名，等价操作 |
+| `/resadmin bank <领地名>`            | 管理员操作领地银行               |
 
 操作权限默认归领地拥有者/管理员；普通成员能否存取取决于对其设置的 `bank` 相关权限。
 
 ### 前置条件
 
-| 配置项 | 当前值 | 说明 |
-| --- | --- | --- |
-| `EnableEconomy` | `true` ✅ | 经济已开启，银行可用 |
-| `Type` | `Auto` ✅ | 自动走 Vault→Essentials，无需改 |
-| `Bank.Capacity` | `0.0` ✅ | `0` = 不限容量，无需改 |
+| 配置项                | 当前值    | 说明                            |
+| --------------------- | --------- | ------------------------------- |
+| `EnableEconomy`       | `true` ✅ | 经济已开启，银行可用            |
+| `Type`                | `Auto` ✅ | 自动走 Vault→Essentials，无需改 |
+| `Bank.Capacity`       | `0.0` ✅  | `0` = 不限容量，无需改          |
 | `flags.yml` 的 `bank` | `true` ✅ | 默认允许玩家用银行 flag，无需改 |
 
 ### 如何开启（每个领地）
@@ -387,6 +387,8 @@ Global:
 /res set zhucheng use true
 /res set zhucheng container true
 /res set zhucheng move true
+/res set zhucheng ignite true
+
 
 # 安全区：禁 PVP、禁伤害、禁怪物、禁爆炸破坏
 /res set zhucheng pvp false
