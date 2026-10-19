@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:custom_name": "&#E3C79A&l将宠物戴在头上"
+    },
+    "count": 1,
+    "id": "minecraft:diamond_helmet"
+  }
+}

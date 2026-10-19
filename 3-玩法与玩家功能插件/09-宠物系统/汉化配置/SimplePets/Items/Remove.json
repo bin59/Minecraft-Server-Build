@@ -1,0 +1,23 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:lore": [
+        "&#D1C9C9点击移除这只宠物",
+        "&#D1C9C9…或（选择界面打开时）移除全部宠物",
+        "&#D1C9C9Shift+点击选择宠物"
+      ],
+      "minecraft:custom_name": "&#B35349&l移除宠物",
+      "minecraft:profile": {
+        "properties": [
+          {
+            "name": "textures",
+            "value": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ=="
+          }
+        ]
+      }
+    },
+    "count": 1,
+    "id": "minecraft:player_head"
+  }
+}

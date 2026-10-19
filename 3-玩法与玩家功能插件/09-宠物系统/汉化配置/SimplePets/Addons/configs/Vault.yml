@@ -1,0 +1,419 @@
+# 禁用此项会让物品显示价格，但如果玩家拥有跳过付费权限则无需付费
+# 默认: true
+Hide-Price-If-Bypassed: true
+
+# 玩家每次召唤宠物时是否需要付费？
+# 默认: false
+Pay-Per-Use-Enabled: false
+Price:
+  # 宠物免费时，此文本会替代 lore 中的价格位置
+  # 默认: 'Free'
+  Free: 免费
+  # 玩家拥有跳过权限时，此文本会替代 lore 中的价格位置
+  # 默认: 'BYPASSED'
+  Bypassed: 已豁免
+
+# 这里可以为两个布尔值（true/false）设置翻译
+Boolean:
+  'true': '&#92fc98是'
+  'false': '&#fa7d7d否'
+Messages:
+  prefix: '&e简易宠物 &6>>'
+  PurchaseSuccessful:
+    # 购买成功时发送此消息
+    # 占位符：
+    # - {prefix}（使用自定义前缀）
+    # - {type}（宠物的类型）
+    # - {price}（宠物的价格）
+    One-Time-Purchase: '{prefix} &7你已成功购买 {type} 宠物。'
+    # 购买成功时发送此消息（当 Pay-Per-Use 设为 true 时）
+    # 占位符：
+    # - {prefix}（使用自定义前缀）
+    # - {type}（宠物的类型）
+    # - {price}（宠物的价格）
+    Pay-Per-Use: '{prefix} &7你已成功支付 {type} 宠物的费用。'
+  # 玩家余额不足时发送此消息
+  # 占位符：
+  # - {prefix}（使用自定义前缀）
+  # - {type}（宠物的类型）
+  # - {price}（宠物的价格）
+  InsufficientFunds: '{prefix} &c你的余额不足以购买这只宠物，还需要 {price}'
+  Lore-Lines:
+    # 这些 lore 行仅在 'Pay-Per-Use' 设为 false 时使用
+    # 占位符：
+    # - {price}（宠物的价格）
+    # - {purchased}（玩家是否已购买该宠物，true/false）
+    One-Time-Purchase:
+      - '&#ffbf5e价格: &#99ffac{price}'
+      - '&#ffbf5e已购买: {purchased}'
+    # 打开 GUI 时这些行会被添加到宠物物品上
+    # 占位符：
+    # - {price}（宠物的价格）
+    # - {purchased}（玩家是否已购买该宠物，true/false）
+    Pay-Per-Use:
+      - '&#ffbf5e价格: &#99ffac{price}'
+bypass_permissions:
+  # 这是主权限，会忽略下面列出的所有单独跳过权限
+  parent: pet.vault.bypass
+  type:
+    # 悦灵 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    allay: pet.vault.bypass.allay
+    # 犰狳 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    armadillo: pet.vault.bypass.armadillo
+    # 盔甲架 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    armor_stand: pet.vault.bypass.armor_stand
+    # 美西螈 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    axolotl: pet.vault.bypass.axolotl
+    # 蝙蝠 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    bat: pet.vault.bypass.bat
+    # 蜜蜂 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    bee: pet.vault.bypass.bee
+    # 烈焰人 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    blaze: pet.vault.bypass.blaze
+    # 微风 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    breeze: pet.vault.bypass.breeze
+    # 沼骸 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    bogged: pet.vault.bypass.bogged
+    # 骆驼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    camel: pet.vault.bypass.camel
+    # 骆驼干尸 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    camel_husk: pet.vault.bypass.camel_husk
+    # 猫 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    cat: pet.vault.bypass.cat
+    # 洞穴蜘蛛 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    cave_spider: pet.vault.bypass.cave_spider
+    # 鸡 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    chicken: pet.vault.bypass.chicken
+    # 鳕鱼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    cod: pet.vault.bypass.cod
+    # 牛 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    cow: pet.vault.bypass.cow
+    # 苦力怕 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    creeper: pet.vault.bypass.creeper
+    # 吱嘎怪 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    creaking: pet.vault.bypass.creaking
+    # 铜傀儡 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    copper_golem: pet.vault.bypass.copper_golem
+    # 海豚 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    dolphin: pet.vault.bypass.dolphin
+    # 驴 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    donkey: pet.vault.bypass.donkey
+    # 溺尸 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    drowned: pet.vault.bypass.drowned
+    # 远古守卫者 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    elder_guardian: pet.vault.bypass.elder_guardian
+    # 末影人 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    enderman: pet.vault.bypass.enderman
+    # 末影螨 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    endermite: pet.vault.bypass.endermite
+    # 唤魔者 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    evoker: pet.vault.bypass.evoker
+    # 狐狸 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    fox: pet.vault.bypass.fox
+    # 青蛙 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    frog: pet.vault.bypass.frog
+    # 恶魂 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    ghast: pet.vault.bypass.ghast
+    # 巨人 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    giant: pet.vault.bypass.giant
+    # 发光鱿鱼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    glow_squid: pet.vault.bypass.glow_squid
+    # 山羊 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    goat: pet.vault.bypass.goat
+    # 守卫者 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    guardian: pet.vault.bypass.guardian
+    # 快乐恶魂 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    happy_ghast: pet.vault.bypass.happy_ghast
+    # 猪灵兽 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    hoglin: pet.vault.bypass.hoglin
+    # 马 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    horse: pet.vault.bypass.horse
+    # 尸壳 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    husk: pet.vault.bypass.husk
+    # 幻术师 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    illusioner: pet.vault.bypass.illusioner
+    # 铁傀儡 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    iron_golem: pet.vault.bypass.iron_golem
+    # 羊驼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    llama: pet.vault.bypass.llama
+    # 岩浆怪 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    magma_cube: pet.vault.bypass.magma_cube
+    # 蘑菇牛 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    mooshroom: pet.vault.bypass.mooshroom
+    # 骡 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    mule: pet.vault.bypass.mule
+    # 鹦鹉螺 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    nautilus: pet.vault.bypass.nautilus
+    # 豹猫 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    ocelot: pet.vault.bypass.ocelot
+    # 熊猫 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    panda: pet.vault.bypass.panda
+    # parched 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    parched: pet.vault.bypass.parched
+    # 鹦鹉 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    parrot: pet.vault.bypass.parrot
+    # 幻翼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    phantom: pet.vault.bypass.phantom
+    # 猪 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    pig: pet.vault.bypass.pig
+    # 猪灵 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    piglin: pet.vault.bypass.piglin
+    # 猪灵蛮兵 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    piglin_brute: pet.vault.bypass.piglin_brute
+    # 掠夺者 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    pillager: pet.vault.bypass.pillager
+    # 北极熊 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    polarbear: pet.vault.bypass.polarbear
+    # 河豚 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    pufferfish: pet.vault.bypass.pufferfish
+    # 兔子 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    rabbit: pet.vault.bypass.rabbit
+    # 劫掠兽 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    ravager: pet.vault.bypass.ravager
+    # 鲑鱼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    salmon: pet.vault.bypass.salmon
+    # 绵羊 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    sheep: pet.vault.bypass.sheep
+    # 潜影贝 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    shulker: pet.vault.bypass.shulker
+    # 蠹虫 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    silverfish: pet.vault.bypass.silverfish
+    # 骷髅 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    skeleton: pet.vault.bypass.skeleton
+    # 骷髅马 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    skeleton_horse: pet.vault.bypass.skeleton_horse
+    # 史莱姆 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    slime: pet.vault.bypass.slime
+    # 嗅探兽 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    sniffer: pet.vault.bypass.sniffer
+    # 雪傀儡 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    snowman: pet.vault.bypass.snowman
+    # 蜘蛛 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    spider: pet.vault.bypass.spider
+    # 鱿鱼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    squid: pet.vault.bypass.squid
+    # 流浪者 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    stray: pet.vault.bypass.stray
+    # 炽足兽 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    strider: pet.vault.bypass.strider
+    # sulfur_cube 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    sulfur_cube: pet.vault.bypass.sulfur_cube
+    # 蝌蚪 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    tadpole: pet.vault.bypass.tadpole
+    # 商队羊驼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    trader_llama: pet.vault.bypass.trader_llama
+    # 热带鱼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    tropical_fish: pet.vault.bypass.tropical_fish
+    # 海龟 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    turtle: pet.vault.bypass.turtle
+    # 恼鬼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    vex: pet.vault.bypass.vex
+    # 村民 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    villager: pet.vault.bypass.villager
+    # 卫道士 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    vindicator: pet.vault.bypass.vindicator
+    # 流浪商人 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    wandering_trader: pet.vault.bypass.wandering_trader
+    # 监守者 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    warden: pet.vault.bypass.warden
+    # 女巫 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    witch: pet.vault.bypass.witch
+    # 凋灵 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    wither: pet.vault.bypass.wither
+    # 凋灵骷髅 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    wither_skeleton: pet.vault.bypass.wither_skeleton
+    # 狼 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    wolf: pet.vault.bypass.wolf
+    # 僵尸猪灵兽 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    zoglin: pet.vault.bypass.zoglin
+    # 僵尸 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    zombie: pet.vault.bypass.zombie
+    # 僵尸马 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    zombie_horse: pet.vault.bypass.zombie_horse
+    # 僵尸鹦鹉螺 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    zombie_nautilus: pet.vault.bypass.zombie_nautilus
+    # 僵尸村民 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    zombie_villager: pet.vault.bypass.zombie_villager
+    # 僵尸猪灵 宠物的跳过付费权限（拥有者无需为该宠物付费）
+    zombified_piglin: pet.vault.bypass.zombified_piglin
+type:
+  # 悦灵 宠物的价格
+  allay: 8000
+  # 犰狳 宠物的价格
+  armadillo: 2000
+  # 盔甲架 宠物的价格
+  armor_stand: 2000
+  # 美西螈 宠物的价格
+  axolotl: 2000
+  # 蝙蝠 宠物的价格
+  bat: 2000
+  # 蜜蜂 宠物的价格
+  bee: 2000
+  # 烈焰人 宠物的价格
+  blaze: 2000
+  # 微风 宠物的价格
+  breeze: 2000
+  # 沼骸 宠物的价格
+  bogged: 2000
+  # 骆驼 宠物的价格
+  camel: 2000
+  # 骆驼干尸 宠物的价格
+  camel_husk: 2000
+  # 猫 宠物的价格
+  cat: 2000
+  # 洞穴蜘蛛 宠物的价格
+  cave_spider: 2000
+  # 鸡 宠物的价格
+  chicken: 2000
+  # 鳕鱼 宠物的价格
+  cod: 2000
+  # 牛 宠物的价格
+  cow: 2000
+  # 苦力怕 宠物的价格
+  creeper: 2000
+  # 吱嘎怪 宠物的价格
+  creaking: 2000
+  # 铜傀儡 宠物的价格
+  copper_golem: 2000
+  # 海豚 宠物的价格
+  dolphin: 2000
+  # 驴 宠物的价格
+  donkey: 2000
+  # 溺尸 宠物的价格
+  drowned: 2000
+  # 远古守卫者 宠物的价格
+  elder_guardian: 2000
+  # 末影人 宠物的价格
+  enderman: 2000
+  # 末影螨 宠物的价格
+  endermite: 2000
+  # 唤魔者 宠物的价格
+  evoker: 2000
+  # 狐狸 宠物的价格
+  fox: 2000
+  # 青蛙 宠物的价格
+  frog: 2000
+  # 恶魂 宠物的价格
+  ghast: 2000
+  # 巨人 宠物的价格
+  giant: 2000
+  # 发光鱿鱼 宠物的价格
+  glow_squid: 2000
+  # 山羊 宠物的价格
+  goat: 2000
+  # 守卫者 宠物的价格
+  guardian: 2000
+  # 快乐恶魂 宠物的价格
+  happy_ghast: 2000
+  # 猪灵兽 宠物的价格
+  hoglin: 2000
+  # 马 宠物的价格
+  horse: 2000
+  # 尸壳 宠物的价格
+  husk: 2000
+  # 幻术师 宠物的价格
+  illusioner: 2000
+  # 铁傀儡 宠物的价格
+  iron_golem: 2000
+  # 羊驼 宠物的价格
+  llama: 2000
+  # 岩浆怪 宠物的价格
+  magma_cube: 2000
+  # 蘑菇牛 宠物的价格
+  mooshroom: 2000
+  # 骡 宠物的价格
+  mule: 2000
+  # 鹦鹉螺 宠物的价格
+  nautilus: 2000
+  # 豹猫 宠物的价格
+  ocelot: 2000
+  # 熊猫 宠物的价格
+  panda: 2000
+  # parched 宠物的价格
+  parched: 2000
+  # 鹦鹉 宠物的价格
+  parrot: 2000
+  # 幻翼 宠物的价格
+  phantom: 2000
+  # 猪 宠物的价格
+  pig: 2000
+  # 猪灵 宠物的价格
+  piglin: 2000
+  # 猪灵蛮兵 宠物的价格
+  piglin_brute: 2000
+  # 掠夺者 宠物的价格
+  pillager: 2000
+  # 北极熊 宠物的价格
+  polarbear: 2000
+  # 河豚 宠物的价格
+  pufferfish: 2000
+  # 兔子 宠物的价格
+  rabbit: 2000
+  # 劫掠兽 宠物的价格
+  ravager: 2000
+  # 鲑鱼 宠物的价格
+  salmon: 2000
+  # 绵羊 宠物的价格
+  sheep: 2000
+  # 潜影贝 宠物的价格
+  shulker: 2000
+  # 蠹虫 宠物的价格
+  silverfish: 2000
+  # 骷髅 宠物的价格
+  skeleton: 2000
+  # 骷髅马 宠物的价格
+  skeleton_horse: 2000
+  # 史莱姆 宠物的价格
+  slime: 2000
+  # 嗅探兽 宠物的价格
+  sniffer: 2000
+  # 雪傀儡 宠物的价格
+  snowman: 2000
+  # 蜘蛛 宠物的价格
+  spider: 2000
+  # 鱿鱼 宠物的价格
+  squid: 2000
+  # 流浪者 宠物的价格
+  stray: 2000
+  # 炽足兽 宠物的价格
+  strider: 2000
+  # sulfur_cube 宠物的价格
+  sulfur_cube: 2000
+  # 蝌蚪 宠物的价格
+  tadpole: 2000
+  # 商队羊驼 宠物的价格
+  trader_llama: 2000
+  # 热带鱼 宠物的价格
+  tropical_fish: 2000
+  # 海龟 宠物的价格
+  turtle: 2000
+  # 恼鬼 宠物的价格
+  vex: 2000
+  # 村民 宠物的价格
+  villager: 2000
+  # 卫道士 宠物的价格
+  vindicator: 2000
+  # 流浪商人 宠物的价格
+  wandering_trader: 2000
+  # 监守者 宠物的价格
+  warden: 2000
+  # 女巫 宠物的价格
+  witch: 2000
+  # 凋灵 宠物的价格
+  wither: 2000
+  # 凋灵骷髅 宠物的价格
+  wither_skeleton: 2000
+  # 狼 宠物的价格
+  wolf: 2000
+  # 僵尸猪灵兽 宠物的价格
+  zoglin: 2000
+  # 僵尸 宠物的价格
+  zombie: 2000
+  # 僵尸马 宠物的价格
+  zombie_horse: 2000
+  # 僵尸鹦鹉螺 宠物的价格
+  zombie_nautilus: 2000
+  # 僵尸村民 宠物的价格
+  zombie_villager: 2000
+  # 僵尸猪灵 宠物的价格
+  zombified_piglin: 2000

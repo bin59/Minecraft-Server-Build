@@ -1,0 +1,156 @@
+
+##############################################################################
+#  NOTICE: All the messages in this file can be customized with color codes  #
+#              That includes the HEX color codes added in 1.16              #
+#                     Example HEX color: &#ff0000 = RED                     #
+##############################################################################
+
+# Will replace the {prefix} placeholder
+prefix: '&e简易宠物 &6>>'
+
+# Message will be sent when the player does not have permission for when a permission is required
+no_permission: '&{prefix} &c你没有使用该指令的权限。'
+
+# This message will only be used if the player does not have any pets unlocked and 'Needs-Pet-Permission-for-GUI' is TRUE
+no_pets_unlocked: '&{prefix} &c你还没有解锁任何宠物。'
+summon:
+  # Message that will be sent when pets are spawned via '/pet summon all' (Mostly for OPs to show off)
+  all_pets: '&{prefix} &7成功召唤了 {count} 只宠物！'
+  # Message that will be sent when a pet is spawned via '/pet summon'
+  pet: '&{prefix} &7成功召唤了 {type} 宠物！'
+  # Message that will be sent when a pet fails to spawn
+  failed: '&{prefix} &c抱歉，{type} 宠物暂时无法被召唤。'
+  # Message that will be sent if a player attempts to spawn more pets than they are allowed.
+  cant_spawn_more_pets: '&{prefix} &c你无法再召唤更多宠物了！'
+purchased:
+  # Message that will be sent when a pet is added to the players purchased list (via '/pets purchased add')
+  added: '&{prefix} &7已将 {type} 添加到 &c{player} 的已购买宠物列表中'
+  # Message that will be sent when a pet is removed from the players purchased list (via '/pets purchased remove')
+  removed: '&{prefix} &7已将 {type} 从 &c{player} 的已购买宠物列表中移除'
+  # Is what is sent before the pets are listed (via '/pets purchased list')
+  list_prefix: '&{prefix} &7已拥有的宠物：'
+pet_type:
+  # The pet type is missing
+  missing: '&{prefix} &c缺少宠物类型。'
+  # The input is not a valid pet (spelling?)
+  invalid: '&{prefix} &c抱歉，&7''{arg}'' &c不是有效的宠物类型。'
+  # The selected pet is not supported for the servers version
+  # (Or is missing in the jar file [in case it is modified])
+  not_registered: '&{prefix} &c抱歉，{type} 尚未注册。'
+  not_registered_lore: '&c未注册'
+  # The selected pet is in development for your version of SimplePets
+  # AKA we are still working on it expect issues
+  in_development: '&{prefix} &c抱歉，{type} 目前正在开发中，暂不可用。'
+  not_supported: '&{prefix} &c抱歉，{type} 不支持当前版本。'
+  not_supported_lore: '&c不支持'
+nbt:
+  # Message that will show before the 'nbt error message'
+  invalid: '&{prefix} &c输入了无效的 NBT。'
+  # The error message sent alongside the invalid nbt message
+  error: '&{prefix} &c{message}'
+
+# Message that will be sent when the target player is not online
+player_not_online: '&{prefix} &c{player} 不在线（拼写错误？）'
+remove:
+  # Message that will be sent when a pet is removed
+  removed_pet: '&{prefix} &7成功移除了 {type} 宠物！'
+  # Message that will be sent when all pets are removed
+  all_pets: '&{prefix} &7成功移除了 {count} 只宠物！'
+  # Message that will be sent when attempting to remove a pet that is not spawned
+  not_spawned: '&{prefix} &c抱歉，{type} 还没有被召唤。'
+modify:
+  # Message contains what the player has set the pets data to
+  # Set this as an empty string "" to prevent it from being sent
+  compound: '&{prefix} &7NBT 复合标签：&e{compound}'
+  # Message that will be sent when the compound is applied to the entity
+  applied: '&{prefix} &7数据已应用到 {type} 宠物！'
+rename:
+  # Message that will be sent when the player is renaming the pet via chat
+  via_chat: '&{prefix} &7请在聊天中输入宠物的新名字：'
+  # Message that will be sent when the player canceled renaming the pet
+  cancel: '&{prefix} &c已取消宠物重命名'
+  anvil:
+    # The title for the pet rename Anvil GUI
+    title: '&#de9790[] &#b35349重命名宠物'
+    # The name for the NAME_TAG in the Anvil GUI
+    tag_name: '&#de9790新名字'
+  dialog:
+    # The title shown in the rename Dialog GUI
+    title: 重命名宠物
+    # The body text shown in the rename Dialog GUI
+    #   - {type} will be replaced with the pet type name
+    body: |-
+      请输入你的 {type} 宠物的新名字。
+      输入 'reset' 可清除名字。
+    # The label shown above the text input in the rename Dialog GUI
+    input_label: 宠物名字
+    # The label for the submit button in the rename Dialog GUI
+    submit_button: 重命名
+  sign:
+    # The text that will be set for the sign
+    #   - One line MUST have {input} to mark what line the player types the pets name
+    #   - Hex colors can NOT be used for this
+    #   - MUST have 4 lines
+    lines:
+    - '{input}'
+    - '&l^^^^^^^^'
+    - '&9&l请输入'
+    - '&9&l宠物名字'
+pet-saves:
+  # Message that will be sent when the player has reached their global limit for any pet type
+  limit-reached: '&{prefix} &c你已达到保存宠物的数量上限'
+  # Message that will be sent when the player has reached their per-pet-type limit
+  limit-reached-per-type: '&{prefix} &c你已达到保存 {type} 宠物的数量上限'
+admin:
+  regenerate:
+    # Message will be sent when the pets folder has been reset
+    pets: '&{prefix} &7宠物文件夹已重置为默认文件。'
+    # Message will be sent when the inventories folder has been reset
+    inventories: '&{prefix} &7物品与界面文件夹已重置为默认文件。'
+    # Message will be sent when the items folder has been reset
+    items: '&{prefix} &7物品文件夹已重置为默认文件。'
+    # Message will be sent when the particles folder has been reset
+    particles: '&{prefix} &7粒子文件夹已重置为默认文件。'
+    # Message will be sent when the selected pet file has been reset
+    pet_type: '&{prefix} &7{type} 宠物的文件已重置为默认文件。'
+  reload:
+    # Message that will be sent when the main config has been reloaded.
+    config: '&{prefix} &7插件配置文件已重新加载！'
+    # Message that will be sent when the messages config has been reloaded.
+    messages: '&{prefix} &7插件的消息配置文件已重新加载！'
+    # Message that will be sent when the inventories manager has been reloaded.
+    inventories: '&{prefix} &7物品与界面已重新加载！'
+    # Message that will be sent when the particles manager has been reloaded.
+    particles: '&{prefix} &7粒子已重新加载！'
+    # Message that will be sent when the pets manager has been reloaded.
+    pets: '&{prefix} &7宠物已重新加载！'
+    # Message that will be sent when all plugin elements have been reloaded.
+    all: '&{prefix} &7所有插件元素已重新加载！'
+  pet-config:
+    # The key entered is not in the selected pets json file
+    unknown-key: '&{prefix} &7{key} &c不是宠物 json 文件中的有效键。'
+    # The value entered is not a boolean (aka it is not true or false)
+    invalid-boolean: '&{prefix} &7{value} &c不是有效的布尔值，请使用 true/false'
+    # The value entered is not a valid integer (1,2,3)
+    invalid-integer: '&{prefix} &7{value} &c不是有效的整数。'
+    # The value entered is not a valid double (0.1, 0.02, 0.003)
+    invalid-double: '&{prefix} &7{value} &c不是有效的浮点数。'
+    # The key entered is not able to be updated via the command (probably is an array or an object)
+    unable-to-update: '&{prefix} &c无法更新此键。'
+    # The key has been updated with the new value
+    # 
+    # Placeholders:
+    # {key} - The target key
+    # {value} - The new value
+    # {type} - The type of pet selected
+    value-set: '&{prefix} &a{key} &7已设置为 &e{value}'
+    # The key has been reset with the default value
+    # 
+    # Placeholders:
+    # {key} - The target key
+    # {value} - The new value
+    # {type} - The type of pet selected
+    value-reset: '&{prefix} &a{key} &7已重置为默认值'
+cooldown:
+  # Sent when a player tries to spawn a pet while on cooldown. {seconds} = remaining seconds.
+  on_cooldown: '&{prefix} &c你需要等待 &e{seconds} &c秒才能更换宠物。'

@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:lore": [
+        "&7",
+        "&7查看已保存的宠物"
+      ],
+      "minecraft:custom_name": "&#E3C79A&l宠物存档"
+    },
+    "count": 1,
+    "id": "minecraft:command_block"
+  }
+}

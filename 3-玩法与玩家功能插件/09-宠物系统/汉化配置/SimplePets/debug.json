@@ -1,0 +1,472 @@
+{
+  "premium_purchase": true,
+  "reloaded": false,
+  "server": {
+    "java": "21",
+    "server-information": {
+      "server-type": "Leaf",
+      "minecraft-version": "1.21.11",
+      "server-build": "174",
+      "bukkit-version": "1.21.11-R0.1-SNAPSHOT",
+      "raw-version": "1.21.11-174-3727fcc (MC: 1.21.11)",
+      "paper": true,
+      "mojang-mapped": true
+    },
+    "server-version": {
+      "nms": "v1_21_R7",
+      "name": "v1_21_11"
+    },
+    "simplepets": {
+      "version": "R5-B315",
+      "legacy-pathfinding": false
+    }
+  },
+  "plugins": [
+    "AuctionHouse (1.1.4)",
+    "CMILib (1.5.9.9)",
+    "DecentHolograms (2.10.1)",
+    "Essentials (2.22.1-dev+25-cfb6f12)",
+    "EvenMoreFish (2.5.1)",
+    "ExcellentEnchants (5.4.3)",
+    "Geyser-Spigot (2.12.0-SNAPSHOT)",
+    "LuckPerms (5.5.81)",
+    "PlaceholderAPI (2.12.3)",
+    "ProtocolLib (5.4.0)",
+    "PumpkinMail (1.0.0)",
+    "Quests (3.16.1-430c34a)",
+    "Residence (6.0.0.1)",
+    "SimpleVoice-Geyser (0.1.4)",
+    "Sit (1.7.3)",
+    "SpacePortal (${project.version})",
+    "TAB (6.1.2)",
+    "UuidMigrate (1.0.0)",
+    "Vault (1.7.3-b131)",
+    "VexBot (3.0.14+paper-mc1.21.11)",
+    "ViaVersion (5.12.0-SNAPSHOT)",
+    "WorldEdit (7.4.2+7450-eb8e82c)",
+    "dynmap (3.7-SNAPSHOT-1015)",
+    "floodgate (2.2.5-SNAPSHOT (b141-81b65cc))",
+    "nightcore (2.16.6)",
+    "voicechat (2.6.21)"
+  ],
+  "loaded_addons": [
+    {
+      "addon-name": "Vault(v0.4) by: brainsynder",
+      "addon-file-name": "VaultAddon.jar",
+      "addon-modules": [
+        "Module: 'Vault' | Loaded: true | Enabled: true"
+      ]
+    }
+  ],
+  "debug_log": [
+    {
+      "time/date": "2026/10/17 | 02:03:13:721",
+      "level": "Warning",
+      "message": [
+        " *** As of version R5-B296 includes some major changes, If any issues are found please create a bug report"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 107)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:13:723",
+      "level": "Warning",
+      "message": [
+        " *** This version is still under development any issues found please report",
+        " *** On the Github: https://tiny.bsdevelopment.org/pet-issues"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 112)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:13:734",
+      "level": "Debug",
+      "message": [
+        "Targeting version: 1.21.11"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 126)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:13:734",
+      "level": "Debug",
+      "message": [
+        "Setting API instance"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 141)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:13:735",
+      "level": "Debug",
+      "message": [
+        "Initializing Message file"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 146)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:13:754",
+      "level": "Debug",
+      "message": [
+        "Initializing Config file"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 150)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:13:781",
+      "level": "Debug",
+      "message": [
+        "Plugin reloaded: false"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 156)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:14:160",
+      "level": "Warning",
+      "message": [
+        "The 'sulfur_cube' pet is not supported for your server version [will NOT affect your server]"
+      ],
+      "caller": "SpawnerUtil(method: <init>() | line: 52)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:14:175",
+      "level": "Debug",
+      "message": [
+        "Successfully Linked to v1_21_11 SpawnUtil Class"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 169)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:14:175",
+      "level": "Debug",
+      "message": [
+        "Initializing plugin managers"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 170)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:14:789",
+      "level": "Debug",
+      "message": [
+        "Initializing Menu Items..."
+      ],
+      "caller": "ItemManager(method: initiate() | line: 31)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:14:789",
+      "level": "Debug",
+      "message": [
+        "Loading Customizable Item Files..."
+      ],
+      "caller": "ItemManager(method: initiate() | line: 34)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:132",
+      "level": "Debug",
+      "message": [
+        "Files have been loaded."
+      ],
+      "caller": "ItemManager(method: initiate() | line: 60)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:134",
+      "level": "Debug",
+      "message": [
+        "Initializing Inventories..."
+      ],
+      "caller": "PetCore(method: onEnable() | line: 170)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:134",
+      "level": "Debug",
+      "message": [
+        "Loading Customizable Inventories Files..."
+      ],
+      "caller": "PetCore(method: onEnable() | line: 170)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:200",
+      "level": "Debug",
+      "message": [
+        "Files have been loaded."
+      ],
+      "caller": "PetCore(method: onEnable() | line: 170)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:200",
+      "level": "Debug",
+      "message": [
+        "Initializing SQL Handler"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 172)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:239",
+      "level": "ADDON",
+      "message": [
+        "Loading modules for the Vault addon"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 180)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:264",
+      "level": "Permissions",
+      "message": [
+        "Registering 'pet.vault.bypass' permission and its children permissions for the 'Vault' addon"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 180)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:265",
+      "level": "Debug",
+      "message": [
+        "Registering commands"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 183)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:489",
+      "level": "Debug",
+      "message": [
+        "Registering plugin listeners"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 218)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:506",
+      "level": "Debug",
+      "message": [
+        "Initializing update checker"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 219)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:509",
+      "level": "Debug",
+      "message": [
+        "Hooked into PlaceholderAPI"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 224)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:03:15:509",
+      "level": "ADDON",
+      "message": [
+        "Loading addons in '5 SECONDS'"
+      ],
+      "caller": "PetCore(method: onEnable() | line: 238)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:04:01:768",
+      "level": "Debug",
+      "message": [
+        "Loading Metrics"
+      ],
+      "caller": "FoliaScheduler(method: runTaskLater() | line: 58)"
+    },
+    {
+      "time/date": "2026/10/17 | 02:11:20:644",
+      "level": "Debug",
+      "message": [
+        "Saving player pets (if there are any)"
+      ],
+      "caller": "PetCore(method: onDisable() | line: 277)"
+    }
+  ],
+  "was_reloaded": false,
+  "config": {
+    "Reload-Detected": false,
+    "Simpler-Pet-GUI-Command": true,
+    "Update-Checking.Enabled": true,
+    "Permissions.Ignored-List": [
+      
+    ],
+    "Permissions.Enabled": true,
+    "Permissions.Needs-Pet-Permission-for-GUI": false,
+    "Permissions.Data-Permissions": true,
+    "Permissions.Only-Show-Pets-Player-Can-Access": true,
+    "addon-initialization.unit": "SECONDS",
+    "addon-initialization.time": 5,
+    "RemovePetsOnWorldChange": true,
+    "Respawn-Last-Pet-On-Login": true,
+    "Utilize-Purchased-Pets": false,
+    "auto-remove.enabled": true,
+    "auto-remove.tick-delay": 10000,
+    "Particles.Summon": true,
+    "Particles.Failed": true,
+    "Particles.Remove": true,
+    "Particles.Name-Change": true,
+    "Particles.Teleport": true,
+    "Particles.Failed-Task": true,
+    "pathfinding.min-distance-to-player": 5,
+    "pathfinding.max-distance-to-player": 10,
+    "pathfinding.follow-when-inside-vehicle": true,
+    "pathfinding.distance-till-teleport": 1000,
+    "legacy-pathfinding.enabled": false,
+    "legacy-pathfinding.distance-to-player.large.walk": 7,
+    "legacy-pathfinding.distance-to-player.small.walk": 7,
+    "legacy-pathfinding.update-interval": 10,
+    "Worlds.Enabled": false,
+    "Worlds.Allowed-Worlds": [
+      "world"
+    ],
+    "Worlds.fail-message": "&cPets are not allowed to spawn in this world",
+    "MySQL.Enabled": false,
+    "MySQL.Table": "simplepets",
+    "MySQL.Host": "[REDACTED]",
+    "MySQL.Port": 3306,
+    "MySQL.DatabaseName": "SimplePets",
+    "MySQL.Login.Username": "[REDACTED]",
+    "MySQL.Login.Password": "[REDACTED]",
+    "MySQL.Options.UseSSL": false,
+    "Debug.Enabled": true,
+    "Debug.Levels.NORMAL": true,
+    "Debug.Levels.WARNING": true,
+    "Debug.Levels.ERROR": true,
+    "misc-toggles.ignore-allows-default": false,
+    "misc-toggles.restrict-pet-list": false,
+    "misc-toggles.auto-closing.on-pet-remove": true,
+    "misc-toggles.auto-closing.on-pet-ride": true,
+    "misc-toggles.auto-closing.on-pet-hat": true,
+    "misc-toggles.remove-all-pets": true,
+    "misc-toggles.remove-all-placeholders": false,
+    "misc-toggles.console-bypasses-pet-limit": true,
+    "misc-toggles.disable-pet-right-clicking": false,
+    "misc-toggles.vanishing.pet-visibility": true,
+    "misc-toggles.vanishing.remove-pet-when-vanished": false,
+    "misc-toggles.world-confines-pet-limits.enabled": false,
+    "misc-toggles.world-confines-pet-limits.spawning-error-message": "&cPets are not allowed to be spawned outside of the worlds vertical confines",
+    "misc-toggles.spawn-failure-diagnostics": true,
+    "pet-toggles.mob-spawn-bypass": true,
+    "pet-toggles.allow-in-development-mobs": false,
+    "pet-toggles.move-pets-get-out-da-way": false,
+    "pet-toggles.fall-damage.non-flying-pets": true,
+    "pet-toggles.fall-damage.flying-pets": true,
+    "pet-toggles.traits.spider-wall-climbing": true,
+    "pet-toggles.traits.warden-animations": true,
+    "pet-toggles.traits.glow-when-vanished": true,
+    "pet-toggles.show-pet-names": true,
+    "pet-toggles.hide-pet-names-when-shifting": true,
+    "pet-toggles.all-pets-are-mountable": true,
+    "pet-toggles.all-pets-hat": true,
+    "pet-toggles.all-pets-flyable": false,
+    "pet-toggles.pet-spawn-limit": 3,
+    "pet-toggles.default-pet-walk-speed": 0.580804838418579,
+    "pet-toggles.default-pet-ride-speed": 0.200004838418579,
+    "pet-toggles.default-pet-fly-speed": 0.300000438418579,
+    "pet-toggles.default-pet-water-speed": 0.15,
+    "pet-saves.enabled": true,
+    "pet-saves.default-limit": -1,
+    "pet-saves.pet-type-limits": [
+      ""
+    ],
+    "RenamePet.Enabled": true,
+    "RenamePet.Type": "ANVIL",
+    "RenamePet.Trim-Name": false,
+    "RenamePet.Character-Limit.Enabled": false,
+    "RenamePet.Character-Limit.Limit": 10,
+    "RenamePet.Blocked-Words": [
+      "jeb_"
+    ],
+    "RenamePet.Blocked-RegexPattern": "",
+    "RenamePet.Allow-&k": false,
+    "RenamePet.ColorCodes.Enabled": true,
+    "RenamePet.ColorCodes.Allow-HEX-Colors": true,
+    "pet-cooldown.enabled": false,
+    "pet-cooldown.duration": 5
+  },
+  "pet_types": {
+    "available": [
+      "allay",
+      "armadillo",
+      "axolotl",
+      "bat",
+      "bee",
+      "blaze",
+      "breeze",
+      "bogged",
+      "camel",
+      "camel_husk",
+      "cat",
+      "cave_spider",
+      "chicken",
+      "cod",
+      "cow",
+      "creeper",
+      "creaking",
+      "copper_golem",
+      "dolphin",
+      "donkey",
+      "drowned",
+      "elder_guardian",
+      "enderman",
+      "endermite",
+      "evoker",
+      "fox",
+      "frog",
+      "ghast",
+      "giant",
+      "glow_squid",
+      "goat",
+      "guardian",
+      "happy_ghast",
+      "hoglin",
+      "horse",
+      "husk",
+      "illusioner",
+      "iron_golem",
+      "llama",
+      "magma_cube",
+      "mooshroom",
+      "mule",
+      "nautilus",
+      "ocelot",
+      "panda",
+      "parched",
+      "parrot",
+      "phantom",
+      "pig",
+      "piglin",
+      "piglin_brute",
+      "pillager",
+      "polarbear",
+      "pufferfish",
+      "rabbit",
+      "ravager",
+      "salmon",
+      "sheep",
+      "silverfish",
+      "skeleton",
+      "skeleton_horse",
+      "slime",
+      "sniffer",
+      "snowman",
+      "spider",
+      "squid",
+      "stray",
+      "strider",
+      "tadpole",
+      "trader_llama",
+      "tropical_fish",
+      "turtle",
+      "vex",
+      "villager",
+      "vindicator",
+      "wandering_trader",
+      "warden",
+      "witch",
+      "wither",
+      "wither_skeleton",
+      "wolf",
+      "zoglin",
+      "zombie",
+      "zombie_horse",
+      "zombie_nautilus",
+      "zombie_villager",
+      "zombified_piglin"
+    ],
+    "not_registered": [
+      "sulfur_cube"
+    ],
+    "in_development": [
+      "armor_stand",
+      "shulker"
+    ]
+  }
+}

@@ -1,0 +1,479 @@
+
+# 此选项供插件检测它是否曾被卸载（通过 /reload 或某个插件）
+#     不可自定义
+Reload-Detected: false
+
+# 此配置项让 `/pet` 直接打开 GUI（类似 `/pet gui`）
+# 某些情况下需要重启服务器才能生效 ¯\_(ツ)_/¯
+# 
+# 默认: false
+Simpler-Pet-GUI-Command: true
+Update-Checking:
+  # 是否检查插件更新？
+  # 
+  # 默认: true
+  Enabled: true
+Permissions:
+  # 此列表中的任意权限在插件检查玩家权限时都会被忽略
+  # （玩家会表现得像拥有该权限，即使实际上没有）
+  # 
+  # 默认: []
+  Ignored-List: []
+  # 禁用此项会让所有玩家都能使用宠物（无需任何权限）
+  # 
+  # 默认: true
+  Enabled: true
+  # 启用此项会要求玩家至少拥有 1 个宠物权限才能使用
+  # 
+  # 默认: false
+  Needs-Pet-Permission-for-GUI: false
+  # 禁用此项会让玩家无需任何数据权限（例如 pet.type.armorstand.data.silent）
+  # 
+  # 默认: true
+  Data-Permissions: true
+  # 启用此项会把玩家无权使用的宠物从 GUI 中移除
+  # 
+  # 默认: true
+  Only-Show-Pets-Player-Can-Access: true
+addon-initialization:
+  # 扩展模块加载所用的时间单位
+  # 
+  # 时间单位：
+  # - 秒（SECONDS）
+  # - 分（MINUTES）
+  # - 时（HOURS）
+  # - 天（DAYS）
+  # 
+  # 默认: SECONDS
+  unit: SECONDS
+  # 与所选单位对应的整数值
+  # 
+  # 示例：
+  #     unit: HOURS
+  #     time: 12
+  # 扩展模块将在 12 小时后初始化
+  # 
+  # 默认: 5
+  time: 5
+
+# 禁用此项会在玩家切换世界时移除其宠物
+# 
+# 默认: true
+RemovePetsOnWorldChange: true
+
+# 玩家重新登录时，其宠物是否也一并召唤出来？
+# 注意：如果玩家在登出前移除了宠物，则不会重新生成。
+# 
+# 默认: true
+Respawn-Last-Pet-On-Login: true
+
+# 此项表示：若玩家已拥有该宠物（通过经济系统或指令购买）
+# 则无论玩家是否拥有对应权限，都允许召唤该宠物
+# 
+# 默认: false
+Utilize-Purchased-Pets: false
+auto-remove:
+  # 禁用此项会让宠物在玩家挂机(afk)时不会被自动移除
+  # 
+  # 默认: true
+  enabled: true
+  # 等待时长应为多少？
+  # 单位为 tick（20 tick = 1 秒）
+  # 示例： 10000 ≈ 8 分 20 秒
+  # 
+  # 默认: 10000
+  tick-delay: 10000
+Particles:
+  # 禁用此项后，玩家召唤宠物时将不显示粒子效果
+  # 
+  # 默认: true
+  Summon: true
+  # 禁用此项后，玩家操作失败（如召唤、骑乘等）时将不显示粒子效果
+  # 
+  # 默认: true
+  Failed: true
+  # 禁用此项后，玩家移除宠物时将不显示粒子效果
+  # 
+  # 默认: true
+  Remove: true
+  # 禁用此项后，玩家重命名宠物时将不显示粒子效果
+  # 
+  # 默认: true
+  Name-Change: true
+  # 禁用此项后，宠物传送回主人身边时将不显示粒子效果
+  # 
+  # 默认: true
+  Teleport: true
+  # 禁用此项后，宠物任务失败时将不显示粒子效果
+  # 
+  # 默认: true
+  Failed-Task: true
+pathfinding:
+  # 宠物与玩家之间的最小距离
+  # 注意：这是指宠物可能更靠近玩家的某个随机位置
+  # 
+  # 默认: 5
+  min-distance-to-player: 5
+  # 宠物停下时与玩家之间的最大距离
+  # 
+  # 默认: 10
+  max-distance-to-player: 10
+  # 当玩家处于载具中（或骑乘另一只宠物）时，宠物是否跟随？
+  # 
+  # 默认: true
+  follow-when-inside-vehicle: true
+  # 宠物距离玩家多远时才会传送靠近
+  # 
+  # 默认: 1000
+  distance-till-teleport: 1000
+legacy-pathfinding:
+  # 是否使用旧版寻路系统？
+  # 
+  # 注意：
+  # - 启用后将无法获得该寻路系统的技术支持，因为我们优先维护新系统
+  # - 旧版寻路系统已知会导致服务器 TPS 大幅下降（新系统已修复）
+  #   详见：https://github.com/brainsynder-Dev/SimplePets/issues/260
+  # 
+  # 默认: false
+  enabled: false
+  distance-to-player:
+    large:
+      # 宠物距离玩家多远时会停止向玩家走近？
+      # 大型宠物包括： 劫掠兽、恶魂、巨人、凋灵 等……
+      # 
+      # 说明：宠物走向玩家时，会在距离玩家 7 格内停下
+      # 
+      # 默认: 7
+      walk: 7
+    small:
+      # 宠物距离玩家多远时会停止向玩家走近？
+      # 小型宠物包括：牛、鸡、末影人、盔甲架等……
+      # 
+      # 说明：宠物走向玩家时，会在距离玩家 7 格内停下
+      # 
+      # 默认: 7
+      walk: 7
+  # 修改此值以控制宠物尝试重新计算前往主人路径的频率
+  # 注意： This is in ticks ( 20 ticks = 1 second )
+  # 
+  # 默认: 10
+  update-interval: 10
+Worlds:
+  # 启用此项后，宠物只能在 'Allowed-Worlds' 中列出的世界里使用
+  # 
+  # 默认: false
+  Enabled: false
+  # 列出允许召唤宠物的世界
+  # 
+  # 默认: [world]
+  Allowed-Worlds:
+  - world
+  # 此消息仅在玩家悬停在失败提示上时才可见
+  # 
+  # 默认: &cPets are not allowed to spawn in this world
+  fail-message: '&cPets are not allowed to spawn in this world'
+MySQL:
+  # 是否使用 MySQL 保存玩家/宠物数据？
+  # 若禁用，插件将使用 SQLite 保存所有数据
+  # 
+  # 默认: false
+  Enabled: false
+  # 默认: simplepets
+  Table: simplepets
+  # 默认: localhost
+  Host: localhost
+  # 默认: 3306
+  Port: 3306
+  # 默认: SimplePets
+  DatabaseName: SimplePets
+  Login:
+    Username: username
+    Password: password
+  Options:
+    # 默认: false
+    UseSSL: false
+Debug:
+  # 是否在控制台/日志中显示调试信息？
+  # 它可以帮助你定位问题或警告
+  # 
+  # 默认: true
+  Enabled: true
+  Levels:
+    # 此级别调试信息通常无关紧要，仅显示一些提示
+    # 
+    # 默认: true
+    NORMAL: true
+    # 此级别调试信息通常用于轻微问题，例如缺少配置项
+    # 
+    # 默认: true
+    WARNING: true
+    # 此级别调试信息通常在出现必须处理的问题时发送
+    # 
+    # 默认: true
+    ERROR: true
+misc-toggles:
+  # 帮助指令是否忽略默认就允许的指令？
+  # 示例： Could be used to hide commands they do not have permission to
+  # 
+  # 默认: false
+  ignore-allows-default: false
+  # 设为 true 会隐藏所有未注册/不支持的宠物，只在 `/pet list` 中显示玩家可使用/购买的宠物。
+  # 
+  # 默认: false
+  restrict-pet-list: false
+  auto-closing:
+    # 移除宠物时是否关闭宠物 GUI？
+    # 
+    # 默认: true
+    on-pet-remove: true
+    # 开始骑乘宠物时是否关闭宠物 GUI？
+    # 
+    # 默认: true
+    on-pet-ride: true
+    # 将宠物设为帽子时是否关闭宠物 GUI？
+    # 
+    # 默认: true
+    on-pet-hat: true
+  # 点击“移除宠物”物品时是否移除所有宠物？
+  #     （若为 true，则只能通过 Shift+点击 物品来选择特定宠物）
+  # 还是打开选择 GUI 来挑选要移除的宠物？
+  # 
+  # 默认: true
+  remove-all-pets: true
+  # 此选项允许移除占位物品（玻璃板）
+  # 
+  # 注意：这些占位物在 GUI 中仍是必需的，此选项仅在之后将其移除
+  # 
+  # 默认: false
+  remove-all-placeholders: false
+  # 通过服务器控制台为玩家召唤宠物时，是否强制生效宠物数量上限？
+  # 
+  # 默认: true
+  console-bypasses-pet-limit: true
+  # 宠物主人右键点击宠物时，是否可以打开其数据菜单？
+  # 
+  # 默认: false
+  disable-pet-right-clicking: false
+  vanishing:
+    # 当主人不可见（通过旁观模式或隐身药水）时，宠物是否也变为不可见？
+    # 
+    # 默认: true
+    pet-visibility: true
+    # 当主人隐身(vanished)时，是否移除玩家当前激活的宠物？
+    # 
+    # 注意：此项会覆盖 'pet-visibility' 选项
+    # 
+    # 默认: false
+    remove-pet-when-vanished: false
+  world-confines-pet-limits:
+    # 当宠物超出世界的垂直边界时，将
+    # 被移除，并且阻止生成更多宠物
+    # 
+    # 注意： 如果你遇到因宠物和玩家处于高空而导致卡顿的情况，建议开启此项
+    # 注意： 此项在永久修复方案实施后将来可能会被移除
+    # 
+    # 默认: false
+    enabled: false
+    # 当宠物超出世界的垂直边界时，将
+    # 被移除，并且阻止生成更多宠物
+    # 
+    # 注意： 如果你遇到因宠物和玩家处于高空而导致卡顿的情况，建议开启此项
+    # 注意： 此项在永久修复方案实施后将来可能会被移除
+    # 
+    # 默认: &cPets are not allowed to be spawned outside of the worlds vertical confines
+    spawning-error-message: '&cPets are not allowed to be spawned outside of the worlds
+      vertical confines'
+  # 当宠物生成失败时，SimplePets 是否尝试找出是哪个插件阻止了它？
+  # 
+  # 注意： 若另一个插件在看到相同生成事件两次时行为异常，请禁用此项
+  # 
+  # 默认: true
+  spawn-failure-diagnostics: true
+pet-toggles:
+  # 启用此项后，宠物可以在任何地方生成
+  # 这在 WorldGuard/PlotSquared 阻止生物生成时尤为有用
+  # 
+  # 默认: true
+  mob-spawn-bypass: true
+  # 若为 true，则允许任何当前处于开发中的生物被生成/注册
+  # 
+  # 默认: false
+  allow-in-development-mobs: false
+  # 宠物是否可以被推动？
+  # 
+  # 默认: false
+  move-pets-get-out-da-way: false
+  fall-damage:
+    # 非飞行宠物是否承受跌落伤害？
+    # 示例： 牛、猪、山羊等……
+    # 
+    # 默认: true
+    non-flying-pets: true
+    # 飞行宠物是否承受跌落伤害？
+    # 示例： 蝙蝠、蜜蜂、鹦鹉等……
+    # 
+    # 默认: true
+    flying-pets: true
+  traits:
+    # 蜘蛛类宠物是否可以爬墙？
+    # 
+    # 默认: true
+    spider-wall-climbing: true
+    # 是否使用监守者的生成/消失动画，还是直接出现/消失？
+    # 
+    # 默认: true
+    warden-animations: true
+    # 当主人隐身(vanished)时，主人是否仍能以发光效果看到自己的宠物？
+    # 只有宠物主人能看到它
+    # 
+    # 默认: true
+    glow-when-vanished: true
+  # 是否显示宠物名字？
+  # 
+  # 默认: true
+  show-pet-names: true
+  # 主人潜行时是否隐藏宠物名字？
+  # 
+  # 默认: true
+  hide-pet-names-when-shifting: true
+  # 所有宠物是否都可以被骑乘？
+  # 设为 false 时，仅允许 JSON 文件中 'mount' 为 true 的宠物
+  # 
+  # 默认: true
+  all-pets-are-mountable: true
+  # 所有宠物是否都可以作为帽子佩戴？
+  # 设为 false 时，仅允许 JSON 文件中 'hat' 为 true 的宠物
+  # 
+  # 默认: true
+  all-pets-hat: true
+  # 骑乘时所有宠物是否都可以飞行？
+  # 设为 false 时，仅允许 JSON 文件中 'fly' 为 true 宠物
+  # 
+  # 默认: false
+  all-pets-flyable: false
+  # 玩家一次最多可召唤的宠物数量。
+  # 可通过 pet.amount.<数字> 覆盖，例如 pet.amount.1 表示只允许同时 1 只。
+  # 
+  # 默认: 3
+  pet-spawn-limit: 3
+  # 每只宠物的默认行走速度。
+  # 可在单个宠物 JSON 文件中用 'walk_speed' 键覆盖。
+  # 
+  # 默认: 0.580804838418579
+  default-pet-walk-speed: 0.580804838418579
+  # 骑乘时每只宠物的默认骑行速度。
+  # 可在单个宠物 .json 文件中用 ride_speed 键覆盖。
+  # 
+  # 默认: 0.200004838418579
+  default-pet-ride-speed: 0.200004838418579
+  # 骑乘时每只宠物的默认骑行速度。
+  # 可在单个宠物 .json 文件中用 ride_speed 键覆盖。
+  # 
+  # 默认: 0.300000438418579
+  default-pet-fly-speed: 0.300000438418579
+  # 宠物在水中被骑乘时的默认移动速度。
+  # 可在单个宠物 .json 文件中用 water_speed 键覆盖。
+  # 
+  # 默认: 0.15
+  default-pet-water-speed: 0.15
+pet-saves:
+  # 是否允许玩家保存已召唤的宠物，
+  # 以免每次都要重新自定义宠物状态？
+  # 
+  # 此项实际上会禁用“保存”GUI/物品
+  # 
+  # 默认: true
+  enabled: true
+  # 你希望玩家最多可保存多少只宠物？
+  # 若不想限制，请设为 `-1`
+  # 
+  # 可通过权限 `pet.saves.<数量>` 覆盖
+  # 跳过权限：`pet.saves.bypass`
+  # 
+  # 默认: -1
+  default-limit: -1
+  # 此选项允许你列出宠物类型及其可保存数量上限
+  # 
+  # 示例： "牛-2"
+  # 此示例表示 牛类型最多只能保存 2 次
+  # 
+  # 可通过权限 `pet.saves.<类型>.<数量>` 覆盖
+  # 跳过权限：`pet.saves.bypass`
+  # 跳过权限：`pet.saves.<类型>.bypass`
+  # 
+  # 默认: []
+  pet-type-limits:
+  - ''
+RenamePet:
+  # 玩家是否可以重命名宠物？
+  # 这也会控制 '/pet rename' 指令与“重命名宠物”物品是否可用
+  # 
+  # 默认: true
+  Enabled: true
+  # 玩家应如何修改宠物名字？
+  # 类型：
+  # - COMMAND（必须使用 '/pet rename' 指令设置名字）
+  # - CHAT（必须在聊天框中输入名字）
+  # - ANVIL（打开铁砧 GUI，可在其中修改名字）
+  # - SIGN [需要 ProtocolLib]（打开告示牌 GUI，在配置行输入名字）
+  # - DIALOG（打开对话框，让玩家输入宠物的新名字）
+  # 
+  # 默认: ANVIL
+  Type: ANVIL
+  # 名字首尾是否允许包含空格？
+  # 
+  # 默认: false
+  Trim-Name: false
+  Character-Limit:
+    # 名字是否限制字符数量？
+    # 
+    # 默认: false
+    Enabled: false
+    # 字符上限应设为多少？
+    # 
+    # 默认: 10
+    Limit: 10
+  # 是否有不希望出现在宠物名字中的词汇？
+  #    若在词/文本开头加 ^，则会忽略大小写
+  #          示例：^ass 也会标记 ASS，因为它会忽略字母大小写
+  #    若将词放在 () 中，会检查是否包含该词的任意部分
+  #          示例：(ass) 也会标记 glass，因为它包含该词
+  #    若只写该词，则只检查完全匹配的词
+  #          示例：'ass' 仅标记自身，因此 'glass' 可以说
+  # 
+  # 默认: [jeb_]
+  Blocked-Words:
+  - jeb_
+  # 此规则禁止宠物名字包含任何匹配该模式的内容
+  # 例如 MergedMobs 的模式 '([0-9]+)(x)' 会屏蔽 '999x' 这样的名字
+  # 若想使用相同模式但忽略大小写，请用 '/([0-9]+)(x)/gmi'
+  # 仅检查名字是否匹配该模式
+  # 
+  # 默认: 
+  Blocked-RegexPattern: ''
+  # 宠物名字是否允许使用 &k 颜色代码？
+  # 
+  # 默认: false
+  Allow-&k: false
+  ColorCodes:
+    # 宠物名字是否允许上色？
+    # 
+    # 默认: true
+    Enabled: true
+    # 宠物名字是否允许使用 HEX 颜色？
+    # 注意：若禁用，则仅使用常规聊天颜色（例如 '&c'）
+    # 示例： '&#c986b2'
+    # 
+    # 默认: true
+    Allow-HEX-Colors: true
+pet-cooldown:
+  # 启用后，玩家必须等待固定时长才能召唤下一只宠物。
+  # 跳过权限：pet.cooldown.bypass
+  # 
+  # 默认: false
+  enabled: false
+  # 玩家两次召唤宠物之间必须等待多少秒。
+  # 仅在 'pet-cooldown.enabled' 为 true 时生效。
+  # 
+  # 默认: 5
+  duration: 5

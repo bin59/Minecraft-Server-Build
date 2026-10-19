@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:lore": [
+        "&7点击保存当前宠物",
+        "&7以便之后随时召唤"
+      ],
+      "minecraft:custom_name": "&#E3C79A&l保存宠物"
+    },
+    "count": 1,
+    "id": "minecraft:chain_command_block"
+  }
+}

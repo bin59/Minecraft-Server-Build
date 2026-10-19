@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<particle count="10" extra="0.0" force="false" type="SMOKE">
+  <offset x="1.3" y="1.3" z="1.3"/>
+</particle>

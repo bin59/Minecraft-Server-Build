@@ -1,0 +1,14 @@
+{
+  "enabled": true,
+  "item": {
+    "components": {
+      "minecraft:custom_name": "&#E3C79A&l宠物数据",
+      "minecraft:lore": [
+        "&#D1C9C9点击修改宠物的各项数据",
+        "&#D1C9C9（大小、颜色、声音等）"
+      ]
+    },
+    "count": 1,
+    "id": "minecraft:chest"
+  }
+}
