@@ -221,8 +221,20 @@ menus:
 | `[player-selector] 命令模板` | 点击后列出在线玩家（排除自己），`{target}` 替换为所选玩家名                            |
 | `[item-selector] 命令模板`    | 点击后列出背包物品（自动排除触发物品、同材质合并），`{item}` 替换为材质名（小写）      |
 | `[ah-sell] 价格 材质名`       | 拍卖行上架：自动把背包中该材质物品换到主手执行 `/ah sell 价格`，再还原主手（解决触发物品占主手无法直接上架），如 `[ah-sell] 5000 elytra` |
+| `[residence-selector] 命令模板` | 点击后列出玩家自己名下的所有领地（基于 Residence 插件的 `ResidenceApi` 软依赖，反射访问），`{residence}` 替换为所点领地名称。典型：`res tp {residence}` 传送、`res info {residence}` 查看信息；玩家无领地时给出提示。需 Residence 插件在线，否则选择器为空 |
 
 动作可叠加，按列表顺序执行。常见组合：先 `[close]` 关界面，再执行指令，避免指令输出被界面遮挡。
+
+领地选择器示例（无需手敲领地名，直接在菜单里点选）：
+
+```yaml
+# 两端统一走 QuickMenu 领地选择器：动态列出玩家自己的领地，点哪个就操作哪个
+actions:
+  - '[residence-selector] res tp {residence}'    # 传送到所选领地
+  # 查看领地信息同理：- '[residence-selector] res info {residence}'
+```
+
+> 领地选择器界面由 `residence-selector` 配置段控制（`title` / `content` / `lore` / `no-residences` / `back-menu`），界面右下角「返回」回到 `back-menu` 指定的上级菜单（默认 `residence`）。
 
 ### 4.5 两端分发：同一功能两端指令不同
 
@@ -273,7 +285,7 @@ actions:
 | `main`      | 主菜单     | —                         | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达；含**南瓜邮箱**（`/mailbox`，slot 30，第 4 行）领活动奖励                                                                                                |
 | `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                                |
 | `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                 |
-| `residence` | 我的领地   | **Residence**             | 建/删/传送领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                                                           |
+| `residence` | 我的领地   | **Residence**             | 传送/查看**自己**的领地（点选式 `[residence-selector]`，无需手敲领地名）、建/删领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                       |
 | `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                                          |
 | `kit`       | 工具包     | EssentialsX               | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次） |
 | `skin`      | 皮肤管理   | **SkinsRestorer**         | 皮肤库浏览（/skins 选择菜单，含皮肤/历史/收藏三入口）、历史皮肤（/skin history）、收藏皮肤（/skin favourites）、清除、刷新、随机、撤销                                                                                              |

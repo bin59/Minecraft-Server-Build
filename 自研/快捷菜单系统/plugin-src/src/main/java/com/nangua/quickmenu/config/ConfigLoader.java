@@ -72,6 +72,12 @@ public final class ConfigLoader {
         settings.setItemSelectorTitle(config.getString("item-selector.title", "&6&l选择物品"));
         settings.setItemSelectorLore(config.getString("item-selector.lore", "&7点击后对所选物品执行操作"));
         settings.setItemSelectorNoItems(config.getString("item-selector.no-items", "&c背包里没有可选择的物品"));
+
+        settings.setResidenceSelectorTitle(config.getString("residence-selector.title", "&2&l选择我的领地"));
+        settings.setResidenceSelectorContent(config.getString("residence-selector.content", "请选择要操作的领地"));
+        settings.setResidenceSelectorLore(config.getString("residence-selector.lore", "&7点击执行对应操作"));
+        settings.setResidenceSelectorNoResidences(config.getString("residence-selector.no-residences", "&c你还没有任何领地"));
+        settings.setResidenceSelectorBackMenu(config.getString("residence-selector.back-menu", "residence"));
     }
 
     /** 从主 config.yml 的 menus 节点加载 */
@@ -249,6 +255,9 @@ public final class ConfigLoader {
             } else if (lower.startsWith("[item-selector]")) {
                 actions.add(new Action(ActionType.ITEM_SELECTOR,
                         strip(trimmed, "[item-selector]")));
+            } else if (lower.startsWith("[residence-selector]")) {
+                actions.add(new Action(ActionType.RESIDENCE_SELECTOR,
+                        strip(trimmed, "[residence-selector]")));
             } else if (lower.startsWith("[ah-sell]")) {
                 actions.add(new Action(ActionType.AH_SELL,
                         strip(trimmed, "[ah-sell]")));

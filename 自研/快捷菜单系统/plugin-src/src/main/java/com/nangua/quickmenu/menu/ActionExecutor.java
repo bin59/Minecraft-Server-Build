@@ -107,6 +107,14 @@ public final class ActionExecutor {
                 }
                 break;
 
+            case RESIDENCE_SELECTOR:
+                if (!value.isEmpty()) {
+                    // 打开"我的领地"选择器，点击领地后执行 value 中的命令模板
+                    // （{residence} 替换为所点领地名称）
+                    plugin.getMenuManager().openResidenceSelector(player, value);
+                }
+                break;
+
             case AH_SELL:
                 // 格式："价格 材质名"，如 "5000 elytra"
                 if (!value.isEmpty()) {

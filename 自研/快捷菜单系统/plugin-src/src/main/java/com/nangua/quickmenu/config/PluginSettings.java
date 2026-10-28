@@ -64,6 +64,13 @@ public final class PluginSettings {
     private String itemSelectorLore = "&7点击后对所选物品执行操作";
     private String itemSelectorNoItems = "&c背包里没有可选择的物品";
 
+    // ===== 领地选择器（我的领地列表/传送界面）=====
+    private String residenceSelectorTitle = "&2&l选择我的领地";
+    private String residenceSelectorContent = "请选择要操作的领地";
+    private String residenceSelectorLore = "&7点击执行对应操作";
+    private String residenceSelectorNoResidences = "&c你还没有任何领地";
+    private String residenceSelectorBackMenu = "residence";
+
     // ===== 菜单注册表 =====
     private final List<Menu> menus = new ArrayList<>();
 
@@ -267,5 +274,45 @@ public final class PluginSettings {
 
     public void setItemSelectorNoItems(String itemSelectorNoItems) {
         this.itemSelectorNoItems = itemSelectorNoItems;
+    }
+
+    public String getResidenceSelectorTitle() {
+        return residenceSelectorTitle;
+    }
+
+    public void setResidenceSelectorTitle(String residenceSelectorTitle) {
+        this.residenceSelectorTitle = residenceSelectorTitle;
+    }
+
+    public String getResidenceSelectorContent() {
+        return residenceSelectorContent;
+    }
+
+    public void setResidenceSelectorContent(String residenceSelectorContent) {
+        this.residenceSelectorContent = residenceSelectorContent;
+    }
+
+    public String getResidenceSelectorLore() {
+        return residenceSelectorLore;
+    }
+
+    public void setResidenceSelectorLore(String residenceSelectorLore) {
+        this.residenceSelectorLore = residenceSelectorLore;
+    }
+
+    public String getResidenceSelectorNoResidences() {
+        return residenceSelectorNoResidences;
+    }
+
+    public void setResidenceSelectorNoResidences(String residenceSelectorNoResidences) {
+        this.residenceSelectorNoResidences = residenceSelectorNoResidences;
+    }
+
+    public String getResidenceSelectorBackMenu() {
+        return residenceSelectorBackMenu;
+    }
+
+    public void setResidenceSelectorBackMenu(String residenceSelectorBackMenu) {
+        this.residenceSelectorBackMenu = residenceSelectorBackMenu == null ? "" : residenceSelectorBackMenu;
     }
 }

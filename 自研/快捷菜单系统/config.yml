@@ -161,6 +161,25 @@ item-selector:
   # 背包里没有可选择的物品时显示的提示
   no-items: '&c背包里没有可选择的物品'
 
+# ==================== 领地选择器（我的领地列表/传送界面） ===================
+# 用于 [residence-selector] 动作（如传送到自己的领地、查看领地信息）。
+# 点击菜单项后动态列出玩家自己名下的所有领地（无需手敲领地名），
+# 玩家再点选某个领地即可执行命令，{residence} 会被替换为所点领地名称。
+# 典型模板：res tp {residence}（传送）/ res info {residence}（查看信息）。
+# Java 端显示为箱子界面（地图图标），基岩端显示为原生表单按钮列表。
+
+residence-selector:
+  # 界面标题（支持 & 颜色码）
+  title: '&2&l选择我的领地'
+  # 基岩表单的正文说明（Java 箱子界面不显示）
+  content: '请选择要操作的领地'
+  # 每个领地图标下的说明文字
+  lore: '&7点击执行对应操作'
+  # 玩家没有任何领地时显示的提示
+  no-residences: '&c你还没有任何领地'
+  # 点击界面右下角"返回"后回到的菜单 id（留空则仅关闭界面）
+  back-menu: residence
+
 ############################################################
 # 菜单定义
 #
@@ -192,6 +211,7 @@ item-selector:
 #   [close]            关闭界面/表单
 #   [player-selector] 命令模板  打开在线玩家选择器，{target} 替换为所选玩家名
 #   [item-selector] 命令模板    打开背包物品选择器，{item} 替换为材质名（小写）
+#   [residence-selector] 命令模板  打开"我的领地"选择器，{residence} 替换为所点领地名
 #   [ah-sell] 价格 材质名        自动把背包中该材质物品换到主手执行 /ah sell 价格（解决触发物品占主手无法直接上架）
 #   不带前缀的命令      等同于 [player]
 #
@@ -534,23 +554,35 @@ menus:
       name: '&8'
 
     items:
-      reslist:
-        material: BOOKSHELF
-        display-name: '&a我的领地列表'
+      res-tp:
+        material: ENDER_PEARL
+        display-name: '&b&l传送到我的领地'
         lore:
           - '&7列出你名下的所有领地'
+          - '&7点击其中一个即可传送过去'
+          - '&e需领地传送权限'
         slot: 10
+        permission: residence.teleport
+        actions:
+          - '[residence-selector] res tp {residence}'
+
+      res-list:
+        material: MAP
+        display-name: '&a&l我的领地列表'
+        lore:
+          - '&7列出你名下的所有领地'
+          - '&7点击其中一个查看详细信息'
+        slot: 11
         permission: residence.list
         actions:
-          - '[close]'
-          - '[player] res list'
+          - '[residence-selector] res info {residence}'
 
       resinfo:
-        material: MAP
+        material: COMPASS
         display-name: '&b查看当前领地信息'
         lore:
           - '&7显示你所在领地的详细资料'
-        slot: 11
+        slot: 12
         permission: residence.info
         actions:
           - '[close]'
@@ -563,7 +595,7 @@ menus:
           - '&7需先框选两个对角点'
           - '&e用法：/res create 领地名'
           - '&8先用木斧或 /res select 选区'
-        slot: 12
+        slot: 13
         permission: residence.create
         actions:
           - '[close]'
@@ -577,24 +609,12 @@ menus:
           - '&7需手动补充领地名称'
           - '&e用法：/res remove 领地名'
           - '&c不可恢复'
-        slot: 13
+        slot: 14
         permission: residence.delete
         actions:
           - '[close]'
           - '[message] &7删除领地：&e/res remove 领地名'
           - '[message] &7先执行 &e/res list &7确认名称'
-
-      restp:
-        material: ENDER_PEARL
-        display-name: '&b传送到我的领地'
-        lore:
-          - '&7需手动补充领地名称'
-          - '&e用法：/res tp 领地名'
-        slot: 14
-        permission: residence.teleport
-        actions:
-          - '[close]'
-          - '[message] &7传送到领地：&e/res tp 领地名'
 
       restpset:
         material: RECOVERY_COMPASS

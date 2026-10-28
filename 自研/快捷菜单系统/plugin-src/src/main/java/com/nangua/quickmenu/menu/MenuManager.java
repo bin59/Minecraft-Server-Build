@@ -209,6 +209,33 @@ public final class MenuManager {
     }
 
     /**
+     * 打开"我的领地"选择器（residence 列表 / 传送界面）。
+     *
+     * <p>动态列出玩家自己名下的所有领地，玩家点击某领地后执行传入的命令模板
+     * （{@code {residence}} 会被替换为所点领地名称）。
+     * 两端分发规则与 {@link #openPlayerSelector} 一致：基岩玩家优先原生表单，
+     * 发送失败自动回退箱子界面。
+     *
+     * @param player          目标玩家
+     * @param commandTemplate 命令模板，如 {@code res tp {residence}}
+     */
+    public void openResidenceSelector(Player player, String commandTemplate) {
+        boolean bedrockNative = plugin.getSettings().isBedrockUseNativeForm()
+                && isBedrockPlayer(player);
+
+        if (bedrockNative && formRenderer != null) {
+            boolean sent = formRenderer.renderResidenceSelector(player, commandTemplate);
+            if (sent) {
+                return;
+            }
+            plugin.getLogger().warning("向 " + player.getName()
+                    + " 发送领地选择器表单失败，回退到箱子界面");
+        }
+
+        chestRenderer.renderResidenceSelector(player, commandTemplate);
+    }
+
+    /**
      * 关闭所有玩家打开中的菜单界面（服务器关闭时调用）。
      */
     public void closeAll() {

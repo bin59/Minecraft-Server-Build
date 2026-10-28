@@ -48,6 +48,12 @@ public final class ChestMenuRenderer {
     /** 物品选择器：存储所选物品的材质名（小写，供命令模板 {item} 替换） */
     private final NamespacedKey selectorItemMaterialKey;
 
+    /** 领地选择器：标记"这是玩家的一个领地"，值为固定标识 __residence_selector__ */
+    private final NamespacedKey selectorResidenceTargetKey;
+
+    /** 领地选择器：存储所点领地名称（供命令模板 {residence} 替换） */
+    private final NamespacedKey selectorResidenceNameKey;
+
     private final QuickMenuPlugin plugin;
 
     public ChestMenuRenderer(QuickMenuPlugin plugin) {
@@ -59,6 +65,8 @@ public final class ChestMenuRenderer {
         this.selectorNameKey = new NamespacedKey(plugin, "selector_name");
         this.selectorTemplateKey = new NamespacedKey(plugin, "selector_template");
         this.selectorItemMaterialKey = new NamespacedKey(plugin, "selector_item_material");
+        this.selectorResidenceTargetKey = new NamespacedKey(plugin, "selector_residence_target");
+        this.selectorResidenceNameKey = new NamespacedKey(plugin, "selector_residence_name");
     }
 
     public NamespacedKey getTriggerKey() {
@@ -87,6 +95,14 @@ public final class ChestMenuRenderer {
 
     public NamespacedKey getSelectorItemMaterialKey() {
         return selectorItemMaterialKey;
+    }
+
+    public NamespacedKey getSelectorResidenceTargetKey() {
+        return selectorResidenceTargetKey;
+    }
+
+    public NamespacedKey getSelectorResidenceNameKey() {
+        return selectorResidenceNameKey;
     }
 
     /**
@@ -343,6 +359,101 @@ public final class ChestMenuRenderer {
             lore.add(ActionExecutor.color("&7点击关闭选择界面"));
             meta.setLore(lore);
             meta.getPersistentDataContainer().set(itemKey, PersistentDataType.STRING, "__close__");
+            stack.setItemMeta(meta);
+        }
+        return stack;
+    }
+
+    /**
+     * 构建并打开"我的领地"选择器箱子界面。
+     *
+     * <p>动态列出玩家自己名下的所有领地（通过 ResidenceHook 反射获取），
+     * 每个领地一个地图图标，点击后执行 {@code commandTemplate}
+     * （其中 {@code {residence}} 替换为领地名称）。
+     * 界面每次打开都重新生成，因此领地增删后列表始终是最新状态。
+     * 右下角为"返回"按钮，点击回到配置的上一级菜单。
+     */
+    public void renderResidenceSelector(Player player, String commandTemplate) {
+        ResidenceSelectorHolder holder = new ResidenceSelectorHolder();
+        holder.setBackMenu(plugin.getSettings().getResidenceSelectorBackMenu());
+        int size = 54;
+        Inventory inventory = Bukkit.createInventory(holder, size,
+                ActionExecutor.color(plugin.getSettings().getResidenceSelectorTitle()));
+        holder.setInventory(inventory);
+
+        // 背景填充
+        ItemStack filler = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        ItemMeta fillerMeta = filler.getItemMeta();
+        if (fillerMeta != null) {
+            fillerMeta.setDisplayName(" ");
+            fillerMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+            filler.setItemMeta(fillerMeta);
+        }
+        for (int slot = 0; slot < size; slot++) {
+            inventory.setItem(slot, filler);
+        }
+
+        // 玩家名下领地列表（owner）
+        List<String> residences = com.nangua.quickmenu.hook.ResidenceHook.getOwnResidenceNames(player);
+
+        if (residences.isEmpty()) {
+            ItemStack empty = new ItemStack(Material.BARRIER);
+            ItemMeta emptyMeta = empty.getItemMeta();
+            if (emptyMeta != null) {
+                emptyMeta.setDisplayName(ActionExecutor.color(plugin.getSettings().getResidenceSelectorNoResidences()));
+                List<String> emptyLore = new ArrayList<>();
+                emptyLore.add(ActionExecutor.color("&7用 &e/res create 领地名 &7创建第一个领地"));
+                emptyMeta.setLore(emptyLore);
+                empty.setItemMeta(emptyMeta);
+            }
+            inventory.setItem(22, empty);
+        } else {
+            for (int i = 0; i < residences.size() && i < size - 1; i++) {
+                inventory.setItem(i, buildResidenceSelectorItem(residences.get(i), commandTemplate));
+            }
+        }
+
+        // 返回按钮：固定在右下角
+        inventory.setItem(size - 1, buildSelectorBackButton());
+
+        player.openInventory(inventory);
+    }
+
+    /** 构建可点击的领地图标（标记领地名与命令模板，点击后执行） */
+    private ItemStack buildResidenceSelectorItem(String residenceName, String commandTemplate) {
+        ItemStack stack = new ItemStack(Material.FILLED_MAP);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta == null) {
+            return stack;
+        }
+
+        meta.setDisplayName(ActionExecutor.color("&a" + residenceName));
+
+        List<String> lore = new ArrayList<>();
+        lore.add(ActionExecutor.color(plugin.getSettings().getResidenceSelectorLore()));
+        lore.add(ActionExecutor.color("&8点击执行：" + commandTemplate.replace("{residence}", residenceName)));
+        meta.setLore(lore);
+
+        meta.getPersistentDataContainer().set(itemKey, PersistentDataType.STRING, "__residence_selector__");
+        meta.getPersistentDataContainer().set(selectorResidenceTargetKey, PersistentDataType.STRING, "__residence_selector__");
+        meta.getPersistentDataContainer().set(selectorResidenceNameKey, PersistentDataType.STRING, residenceName);
+        meta.getPersistentDataContainer().set(selectorTemplateKey, PersistentDataType.STRING, commandTemplate);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+
+        stack.setItemMeta(meta);
+        return stack;
+    }
+
+    /** 构建选择器界面的返回按钮（回到上一级菜单） */
+    private ItemStack buildSelectorBackButton() {
+        ItemStack stack = new ItemStack(Material.ARROW);
+        ItemMeta meta = stack.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ActionExecutor.color("&c返回"));
+            List<String> lore = new ArrayList<>();
+            lore.add(ActionExecutor.color("&7点击返回上一级菜单"));
+            meta.setLore(lore);
+            meta.getPersistentDataContainer().set(itemKey, PersistentDataType.STRING, "__res_back__");
             stack.setItemMeta(meta);
         }
         return stack;

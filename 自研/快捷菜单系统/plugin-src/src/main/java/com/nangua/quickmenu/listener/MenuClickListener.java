@@ -5,6 +5,7 @@ import com.nangua.quickmenu.gui.ChestMenuRenderer;
 import com.nangua.quickmenu.gui.ItemSelectorHolder;
 import com.nangua.quickmenu.gui.MenuHolder;
 import com.nangua.quickmenu.gui.PlayerSelectorHolder;
+import com.nangua.quickmenu.gui.ResidenceSelectorHolder;
 import com.nangua.quickmenu.menu.ActionExecutor;
 import com.nangua.quickmenu.menu.Menu;
 import com.nangua.quickmenu.menu.MenuItem;
@@ -74,6 +75,12 @@ public final class MenuClickListener implements Listener {
         // 背包物品选择器界面（动态构建，非配置化菜单）
         if (holder instanceof ItemSelectorHolder) {
             handleItemSelectorClick(event, topInventory);
+            return;
+        }
+
+        // 我的领地选择器界面（动态构建，非配置化菜单）
+        if (holder instanceof ResidenceSelectorHolder) {
+            handleResidenceSelectorClick(event, topInventory);
             return;
         }
 
@@ -256,6 +263,73 @@ public final class MenuClickListener implements Listener {
     }
 
     /**
+     * 处理"我的领地"选择器界面的点击。
+     *
+     * <p>物品通过 PDC 标记区分：
+     * <ul>
+     *   <li>{@code __residence_selector__} — 某个领地，读取领地名与命令模板，
+     *       关闭界面后以玩家身份执行模板（{residence} 替换为领地名）</li>
+     *   <li>{@code __res_back__} — 返回按钮，回到配置的上一级菜单</li>
+     * </ul>
+     */
+    private void handleResidenceSelectorClick(InventoryClickEvent event, Inventory topInventory) {
+        event.setCancelled(true);
+
+        HumanEntity whoClicked = event.getWhoClicked();
+        if (!(whoClicked instanceof Player)) {
+            return;
+        }
+        Player player = (Player) whoClicked;
+
+        if (!player.hasPermission("quickmenu.use")) {
+            return;
+        }
+
+        // 只响应菜单区域点击
+        if (event.getClickedInventory() != topInventory) {
+            return;
+        }
+
+        if (isSpamming(player.getUniqueId(), event.getSlot())) {
+            return;
+        }
+
+        ItemStack clickedItem = event.getCurrentItem();
+        String itemId = readItemId(clickedItem);
+        if (itemId == null || itemId.isEmpty()) {
+            return; // 点到了填充物或空格
+        }
+
+        if ("__res_back__".equals(itemId)) {
+            String backMenu = ((ResidenceSelectorHolder) topInventory.getHolder()).getBackMenu();
+            if (backMenu != null && !backMenu.isEmpty()) {
+                player.closeInventory();
+                plugin.getMenuManager().openMenu(player, backMenu);
+            } else {
+                player.closeInventory();
+            }
+            return;
+        }
+
+        if ("__residence_selector__".equals(itemId)) {
+            ItemMeta meta = clickedItem.getItemMeta();
+            if (meta == null) {
+                return;
+            }
+            org.bukkit.persistence.PersistentDataContainer pdc = meta.getPersistentDataContainer();
+            ChestMenuRenderer renderer = plugin.getMenuManager().getChestRenderer();
+            String residence = pdc.get(renderer.getSelectorResidenceNameKey(), PersistentDataType.STRING);
+            String template = pdc.get(renderer.getSelectorTemplateKey(), PersistentDataType.STRING);
+            if (residence == null || template == null) {
+                return;
+            }
+            player.closeInventory();
+            player.performCommand(template.replace("{residence}", residence));
+        } else if ("__close__".equals(itemId)) {
+            player.closeInventory();
+        }
+    }
+    /**
      * 拦截拖拽行为。
      *
      * <p>触屏玩家（基岩端箱子界面回退时）与部分 Java 客户端可用拖拽把物品
@@ -265,7 +339,7 @@ public final class MenuClickListener implements Listener {
     public void onDrag(InventoryDragEvent event) {
         InventoryHolder holder = event.getInventory().getHolder();
         if (holder instanceof MenuHolder || holder instanceof PlayerSelectorHolder
-                || holder instanceof ItemSelectorHolder) {
+                || holder instanceof ItemSelectorHolder || holder instanceof ResidenceSelectorHolder) {
             event.setCancelled(true);
         }
     }

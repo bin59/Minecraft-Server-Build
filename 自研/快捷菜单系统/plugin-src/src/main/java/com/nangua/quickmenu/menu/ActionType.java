@@ -53,6 +53,19 @@ public enum ActionType {
      */
     AH_SELL,
 
+    /**
+     * 打开"我的领地"选择器（动态列出玩家自己名下的领地，点击后执行命令模板）。
+     * value 为命令模板，其中 {@code {residence}} 会被替换为玩家点击的领地名称。
+     * 例：{@code [residence-selector] res tp {residence}}
+     *
+     * <p>与 [player-selector] / [item-selector] 同属"动态列表"范式：点击菜单项后
+     * 插件直接展示该玩家名下所有领地（Java 端箱子界面 / 基岩端原生表单），
+     * 玩家点选某个领地即执行模板命令，无需手敲领地名。
+     * 典型用法：传送到领地（{@code res tp {residence}}）或查看领地信息
+     * （{@code res info {residence}}）。
+     */
+    RESIDENCE_SELECTOR,
+
     // ==================== 平台条件动作 ====================
 
     /** 仅基岩玩家：以玩家身份执行命令 */

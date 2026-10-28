@@ -306,6 +306,91 @@ public final class BedrockFormRenderer {
     }
 
     /**
+     * 向基岩玩家发送"我的领地"选择器表单。
+     *
+     * <p>动态为玩家自己名下的每个领地添加一个按钮，玩家点击后
+     * 以玩家身份执行命令模板（{@code {residence}} 替换为所点领地名）。
+     * 若玩家没有任何领地，显示一个提示按钮（点击无效）。
+     * 末尾追加"返回"按钮，点击回到配置的上一级菜单。
+     * 回调在 Netty 网络线程触发，因此命令执行通过主线程调度。
+     *
+     * @return true 表示发送成功；false 表示玩家不是基岩玩家或发送失败
+     */
+    public boolean renderResidenceSelector(Player player, String commandTemplate) {
+        if (!isBedrockPlayer(player)) {
+            return false;
+        }
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+                .title(ActionExecutor.color(plugin.getSettings().getResidenceSelectorTitle()))
+                .content(ActionExecutor.color(plugin.getSettings().getResidenceSelectorContent()));
+
+        List<String> residences = com.nangua.quickmenu.hook.ResidenceHook.getOwnResidenceNames(player);
+        boolean hasBackButton = true; // 始终提供返回按钮，便于从领地列表退回
+
+        if (residences.isEmpty()) {
+            builder.button(ActionExecutor.stripColor(plugin.getSettings().getResidenceSelectorNoResidences()));
+        } else {
+            for (String name : residences) {
+                builder.button(name);
+            }
+        }
+
+        if (hasBackButton) {
+            builder.button(ActionExecutor.stripColor("&c返回"));
+        }
+
+        final int resCount = residences.size();
+
+        builder.validResultHandler((SimpleFormResponse response) -> {
+            int index = response.clickedButtonId();
+
+            // 返回按钮（始终位于列表末尾）
+            if (hasBackButton && index == resCount) {
+                String backMenu = plugin.getSettings().getResidenceSelectorBackMenu();
+                if (backMenu != null && !backMenu.isEmpty()) {
+                    List<Action> backAction = new ArrayList<>(1);
+                    backAction.add(new Action(
+                            com.nangua.quickmenu.menu.ActionType.OPEN_MENU, backMenu));
+                    plugin.getActionExecutor().runAsyncSafe(player, backAction);
+                }
+                return;
+            }
+
+            if (index < 0 || index >= resCount) {
+                return;
+            }
+            String residence = residences.get(index);
+            // Netty 线程 → 主线程
+            Bukkit.getScheduler().runTask(plugin, () ->
+                    player.performCommand(commandTemplate.replace("{residence}", residence)));
+        });
+
+        builder.closedResultHandler(() -> {
+            if (plugin.getSettings().isDebug()) {
+                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了领地选择器表单");
+            }
+        });
+
+        builder.invalidResultHandler(() -> {
+            plugin.getLogger().warning("玩家 " + player.getName()
+                    + " 的领地选择器表单响应无效");
+        });
+
+        try {
+            FloodgateApi api = FloodgateApi.getInstance();
+            FloodgatePlayer floodgatePlayer = api.getPlayer(player.getUniqueId());
+            if (floodgatePlayer == null) {
+                return false;
+            }
+            return floodgatePlayer.sendForm(builder);
+        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
+            plugin.getLogger().warning("Floodgate API 不可用，无法发送领地选择器表单: " + ex.getMessage());
+            return false;
+        }
+    }
+
+    /**
      * 获取基岩玩家的客户端信息（用于 /qm info 调试）。
      *
      * <p>此处刻意只调用返回 String 的 API 方法。Floodgate 的

@@ -33,6 +33,7 @@ public class ConfigProbe {
             "[player]", "[console]", "[menu]", "[message]", "[close]",
             // 选择器动作：打开动态列表界面
             "[player-selector]", "[item-selector]", "[ah-sell]",
+            "[residence-selector]",
             // 平台条件动作：仅对应客户端执行
             "[bedrock-player]", "[bedrock-console]",
             "[java-player]", "[java-console]");
@@ -238,7 +239,8 @@ public class ConfigProbe {
                                     || lower.startsWith("[message]") || lower.startsWith("[menu]")
                                     || lower.startsWith("[player-selector]")
                                     || lower.startsWith("[item-selector]")
-                                    || lower.startsWith("[ah-sell]")) {
+                                    || lower.startsWith("[ah-sell]")
+                                    || lower.startsWith("[residence-selector]")) {
                                 // 提供实际功能或反馈，两端通用
                                 coversBedrock = true;
                                 coversJava = true;
