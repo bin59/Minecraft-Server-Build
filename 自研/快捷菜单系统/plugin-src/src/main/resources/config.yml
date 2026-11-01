@@ -161,25 +161,6 @@ item-selector:
   # 背包里没有可选择的物品时显示的提示
   no-items: '&c背包里没有可选择的物品'
 
-# ==================== 领地选择器（我的领地列表/传送界面） ===================
-# 用于 [residence-selector] 动作（如传送到自己的领地、查看领地信息）。
-# 点击菜单项后动态列出玩家自己名下的所有领地（无需手敲领地名），
-# 玩家再点选某个领地即可执行命令，{residence} 会被替换为所点领地名称。
-# 典型模板：res tp {residence}（传送）/ res info {residence}（查看信息）。
-# Java 端显示为箱子界面（地图图标），基岩端显示为原生表单按钮列表。
-
-residence-selector:
-  # 界面标题（支持 & 颜色码）
-  title: '&2&l选择我的领地'
-  # 基岩表单的正文说明（Java 箱子界面不显示）
-  content: '请选择要操作的领地'
-  # 每个领地图标下的说明文字
-  lore: '&7点击执行对应操作'
-  # 玩家没有任何领地时显示的提示
-  no-residences: '&c你还没有任何领地'
-  # 点击界面右下角"返回"后回到的菜单 id（留空则仅关闭界面）
-  back-menu: residence
-
 ############################################################
 # 菜单定义
 #
@@ -248,6 +229,20 @@ menus:
         actions:
           - '[close]'
           - '[player] mailbox'
+
+      # ---------- 附魔商店 ----------
+      enchshop:
+        material: ENCHANTED_BOOK
+        display-name: '&5&l附魔商店'
+        lore:
+          - '&7用经验等级给手持装备买额外附魔'
+          - '&8基岩玩家也能用，不用蹲铁砧'
+          - '&8点击打开附魔商店'
+        slot: 15
+        glowing: true
+        actions:
+          - '[close]'
+          - '[player] eshop'
 
       # ---------- 传送功能 ----------
       teleport:
@@ -319,17 +314,6 @@ menus:
         slot: 14
         actions:
           - '[menu] kit'
-
-      # ---------- 皮肤 ----------
-      skin:
-        material: PLAYER_HEAD
-        display-name: '&d&l皮肤管理'
-        lore:
-          - '&7更换、清除、随机皮肤'
-          - '&8点击查看子菜单'
-        slot: 15
-        actions:
-          - '[menu] skin'
 
       # ---------- 社交 ----------
       social:
@@ -415,6 +399,18 @@ menus:
         actions:
           - '[player] csz gui'
 
+      # ---------- 更多鱼 ----------
+      fishing:
+        material: FISHING_ROD
+        display-name: '&b&l更多鱼'
+        lore:
+          - '&7钓鱼日志、鱼饵、卖鱼、排行榜'
+          - '&8点击查看子菜单'
+        slot: 24
+        glowing: true
+        actions:
+          - '[menu] fishing'
+
       # ---------- 新人指南 ----------
       guide:
         material: WRITABLE_BOOK
@@ -438,7 +434,7 @@ menus:
           - '&7玩家管理、处罚、领地、审计'
           - '&7世界、服务器、权限管理'
           - '&c仅管理员可见'
-        slot: 24
+        slot: 26
         glowing: true
         permission: quickmenu.admin
         actions:
@@ -797,105 +793,6 @@ menus:
         actions:
           - '[close]'
           - '[player] kit daily'
-
-  # ==================== 皮肤子菜单（SkinsRestorer） ====================
-  skin:
-    title: '&d&l皮肤管理'
-    bedrock-content: '&7皮肤功能（SkinsRestorer）'
-    size: 27
-    back-menu: main
-    filler:
-      material: MAGENTA_STAINED_GLASS_PANE
-      name: '&8'
-
-    items:
-      skingui:
-        material: PLAYER_HEAD
-        display-name: '&a皮肤库浏览'
-        lore:
-          - '&7打开皮肤库选择菜单，点 [皮肤菜单] 进入浏览'
-          - '&8选择菜单含：皮肤菜单 / 历史菜单 / 收藏菜单'
-        slot: 10
-        actions:
-          - '[close]'
-          - '[bedrock-player] skin'
-          - '[java-player] skins'
-
-      skinhistory:
-        material: BOOK
-        display-name: '&b历史皮肤'
-        lore:
-          - '&7查看最近使用过的皮肤，点击可再用'
-        slot: 11
-        actions:
-          - '[close]'
-          - '[player] skin history'
-
-      skinfavourites:
-        material: GOLD_INGOT
-        display-name: '&6收藏皮肤'
-        lore:
-          - '&7查看已收藏的皮肤'
-          - '&8在皮肤库里 Shift+单击 可收藏/取消'
-        slot: 12
-        actions:
-          - '[close]'
-          - '[player] skin favourites'
-
-      skinset:
-        material: LEATHER_CHESTPLATE
-        display-name: '&e更换皮肤'
-        lore:
-          - '&7使用正版玩家名作为皮肤来源'
-          - '&e用法：/skin set 皮肤名'
-        slot: 13
-        permission: skinsrestorer.command.set
-        actions:
-          - '[close]'
-          - '[message] &7更换皮肤：&e/skin set 皮肤名'
-          - '[message] &7也可用图片链接：&e/skin url 链接'
-
-      skinclear:
-        material: MILK_BUCKET
-        display-name: '&c清除皮肤'
-        lore:
-          - '&7恢复为默认皮肤'
-        slot: 15
-        permission: skinsrestorer.command.clear
-        actions:
-          - '[close]'
-          - '[player] skin clear'
-
-      skinupdate:
-        material: CLOCK
-        display-name: '&b刷新皮肤'
-        lore:
-          - '&7换肤后未生效时使用'
-        slot: 17
-        permission: skinsrestorer.command.update
-        actions:
-          - '[close]'
-          - '[player] skin update'
-
-      skinrandom:
-        material: ENDER_CHEST
-        display-name: '&d随机皮肤'
-        lore:
-          - '&7随机应用一个皮肤'
-        slot: 21
-        permission: skinsrestorer.command.set
-        actions:
-          - '[close]'
-          - '[player] skin random'
-
-      skinundo:
-        material: SPONGE
-        display-name: '&7撤销上次换肤'
-        slot: 23
-        permission: skinsrestorer.command.set
-        actions:
-          - '[close]'
-          - '[player] skin undo'
 
   # ==================== 社交子菜单 ====================
   social:
@@ -1505,17 +1402,6 @@ menus:
           - '[message] &7下车：&f潜行 + 右键 &7（或按使用键）'
           - '[message] &7适用：和朋友一起赶路、整活'
 
-      skin:
-        material: PLAYER_HEAD
-        display-name: '&d&l皮肤管理'
-        lore:
-          - '&7换皮肤、清除、随机'
-          - '&8点击打开皮肤菜单'
-        slot: 12
-        actions:
-          - '[close]'
-          - '[player] skins'
-
       voice:
         material: NOTE_BLOCK
         display-name: '&b&l语音聊天'
@@ -1683,6 +1569,18 @@ menus:
         actions:
           - '[menu] admin-economy'
 
+      # ---------- 更多鱼管理 ----------
+      admin-fishing:
+        material: FISHING_ROD
+        display-name: '&b&l更多鱼管理'
+        lore:
+          - '&7钓鱼比赛控制、重载配置'
+          - '&7重置玩家统计、发放鱼杆'
+        slot: 24
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin-fishing'
+
       # ---------- 玩家位置记录 ----------
       admin-mailbox:
         material: PUMPKIN
@@ -1730,6 +1628,20 @@ menus:
         permission: buildrate.admin
         actions:
           - '[menu] buildrate-admin'
+
+      # ---------- 离线奖励管理（OfflineReward 自研） ----------
+      admin-offlinereward:
+        material: CLOCK
+        display-name: '&a&l离线奖励管理'
+        lore:
+          - '&7点击重载离线奖励配置'
+          - '&7查询玩家最后发放时间戳'
+        slot: 25
+        permission: offlinereward.admin
+        actions:
+          - '[close]'
+          - '[player] offlinereward reload'
+          - '[message] &7查询玩家时间戳：&e/offlinereward check 玩家名'
 
   # ==================== 玩家管理 ====================
   admin-player:
@@ -3104,6 +3016,181 @@ menus:
         lore:
           - '&7回到管理面板'
         slot: 22
+        permission: quickmenu.admin
+        actions:
+          - '[menu] admin'
+
+  # ============================================================
+  # 更多鱼子菜单（EvenMoreFish）
+  # ============================================================
+  fishing:
+    title: '&b&l更多鱼 &8» &f钓鱼功能'
+    bedrock-content: '&7选择你要使用的钓鱼功能'
+    size: 27
+    filler:
+      material: BLACK_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      # ---------- 钓鱼主菜单 ----------
+      fish-main:
+        material: FISHING_ROD
+        display-name: '&b&l钓鱼主菜单'
+        lore:
+          - '&7打开 EvenMoreFish 主界面'
+          - '&7查看鱼饵、鱼杆、比赛等'
+          - '&8点击打开'
+        slot: 11
+        glowing: true
+        actions:
+          - '[close]'
+          - '[player] emf'
+
+      # ---------- 钓鱼日志 ----------
+      fish-journal:
+        material: BOOK
+        display-name: '&a&l钓鱼日志'
+        lore:
+          - '&7查看你钓过的鱼种类和数量'
+          - '&7收集图鉴，解锁成就'
+          - '&8点击打开'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] emf journal'
+
+      # ---------- 鱼饵/商店 ----------
+      fish-baits:
+        material: STRING
+        display-name: '&e&l钓鱼商店'
+        lore:
+          - '&7打开钓鱼商店界面'
+          - '&7查看比赛信息、鱼饵和兑换'
+          - '&8点击打开'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[player] emf shop'
+
+      # ---------- 卖鱼 ----------
+      fish-sell:
+        material: EMERALD
+        display-name: '&6&l卖鱼换钱'
+        lore:
+          - '&7一键卖掉背包里所有鱼'
+          - '&7快速换取南瓜币'
+          - '&8点击卖鱼'
+        slot: 20
+        actions:
+          - '[close]'
+          - '[player] emf sellall'
+
+      # ---------- 比赛提醒 ----------
+      fish-top:
+        material: GOLD_INGOT
+        display-name: '&6&l比赛提醒开关'
+        lore:
+          - '&7开启/关闭钓鱼比赛开始提醒'
+          - '&7避免错过精彩比赛'
+          - '&8点击切换'
+        slot: 22
+        actions:
+          - '[close]'
+          - '[player] emf toggle'
+
+      # ---------- 返回 ----------
+      fish-back:
+        material: ARROW
+        display-name: '&7返回'
+        lore:
+          - '&7回到主菜单'
+        slot: 18
+        actions:
+          - '[menu] main'
+
+  # ============================================================
+  # 更多鱼管理子菜单（EvenMoreFish 管理员）
+  # ============================================================
+  admin-fishing:
+    title: '&b&l更多鱼管理 &8» &f管理员功能'
+    bedrock-content: '&7选择一个管理操作'
+    size: 27
+    back-menu: admin
+    filler:
+      material: RED_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      # ---------- 开始比赛 ----------
+      afish-start:
+        material: BEACON
+        display-name: '&a&l开始钓鱼比赛'
+        lore:
+          - '&7立即开始一场钓鱼比赛'
+          - '&7玩家自动获得参与通知'
+        slot: 11
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[player] emf admin competition start'
+
+      # ---------- 结束比赛 ----------
+      afish-end:
+        material: BARRIER
+        display-name: '&c&l结束当前比赛'
+        lore:
+          - '&7立即结束正在进行的比赛'
+          - '&7发放排名奖励'
+        slot: 13
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[player] emf admin competition end'
+
+      # ---------- 比赛列表 ----------
+      afish-list:
+        material: BOOK
+        display-name: '&e&l比赛列表'
+        lore:
+          - '&7查看所有已配置的比赛'
+          - '&7包括定时自动比赛'
+        slot: 15
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[player] emf admin competition list'
+
+      # ---------- 重载配置 ----------
+      afish-reload:
+        material: COMMAND_BLOCK
+        display-name: '&6&l重载插件配置'
+        lore:
+          - '&7重载 EvenMoreFish 所有配置文件'
+          - '&7修改配置后使用'
+        slot: 20
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[player] emf admin'
+
+      # ---------- 发放鱼杆 ----------
+      afish-giverod:
+        material: FISHING_ROD
+        display-name: '&b&l发放专业鱼杆'
+        lore:
+          - '&7给选中玩家发放专业钓鱼竿'
+        slot: 22
+        permission: quickmenu.admin
+        actions:
+          - '[player-selector] emf admin customrod {target}'
+
+      # ---------- 返回 ----------
+      afish-back:
+        material: ARROW
+        display-name: '&7返回'
+        lore:
+          - '&7回到管理面板'
+        slot: 18
         permission: quickmenu.admin
         actions:
           - '[menu] admin'

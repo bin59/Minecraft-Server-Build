@@ -1,0 +1,15 @@
+# ============================================================
+#  南瓜邮箱 PumpkinMail 配置
+# ============================================================
+
+# 待领取奖励提示（ActionBar）
+hint:
+  enabled: true            # 总开关；关闭后连上线提示也不会发
+  on-join-only: true       # true = 只在玩家进入服务器时提醒一次，不再定时循环刷屏
+  interval-seconds: 30     # 仅当 on-join-only: false 时生效；设为 0 同样表示只提醒一次
+
+# 奖励发放使用的命令（一般无需改动）
+# 注意：item 类型已改为直接调用背包 API 发放，不再拼 give 命令（item-command 仅作备用格式说明）
+reward:
+  money-command: "eco give {player} {amount}"   # 货币奖励（EssentialsX/Vault 加钱 = 南瓜币）
+  item-command: "give {player} {material} {amount}"   # 备用：不再实际使用，见上方说明

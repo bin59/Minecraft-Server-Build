@@ -209,10 +209,15 @@ public class GuiManager implements Listener {
         switch (r.rewardType()) {
             case "money" -> { mat = Material.GOLD_INGOT; head = "货币奖励"; }
             case "item" -> {
-                String[] p = r.data().split(":", 2);
-                mat = Material.matchMaterial(p[0].toUpperCase());
-                if (mat == null) mat = Material.GRASS_BLOCK;
-                head = p[0].toUpperCase() + " x" + (p.length > 1 ? p[1] : "1");
+                // 复用 RewardApplier 的解析器：统一支持 DIAMOND:64 / minecraft:diamond:64 等写法
+                ItemStack proto = RewardApplier.parseItem(r.data());
+                if (proto != null) {
+                    mat = proto.getType();
+                    head = mat.name() + " x" + proto.getAmount();
+                } else {
+                    mat = Material.GRASS_BLOCK;
+                    head = "未知物品 " + r.data();
+                }
             }
             case "command" -> { mat = Material.PAPER; head = "命令奖励"; }
             default -> { mat = Material.BOOK; head = "奖励"; }

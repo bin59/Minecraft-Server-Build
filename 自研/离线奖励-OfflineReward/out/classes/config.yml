@@ -11,7 +11,10 @@ reward:
   cooldown-hours: 0         # 两次发放最小间隔（小时，0 = 不限），防反复上下线刷
   floor-minutes: true       # true = 不足整小时的分钟舍去；false = 按精确小数计
 
-# 拥有该权限节点的玩家不上线发放（管理员/测试号）
+# 拥有该权限节点的玩家不上线发放（仅用于豁免测试号/特殊情况账号）
+# 注意：管理员默认【照常领取】——op 只会自动拿到 offlinereward.admin，
+# 不会拿到本权限，所以管理组的离线奖励照发不误。
+# 若确实不想让某个管理员拿，单独给他加 offlinereward.exempt 即可。
 exempt-permission: offlinereward.exempt
 
 # 上线发放后是否发一条聊天提示（南瓜邮箱另有 ActionBar 待领提示）

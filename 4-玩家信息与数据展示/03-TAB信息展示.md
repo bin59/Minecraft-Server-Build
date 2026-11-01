@@ -196,7 +196,6 @@ TAB 插件本身性能开销极低，即使在玩家数量众多的服务器上�
 | **Plan**           | 提供在线时长、击杀等统计数据占位符 |
 | **Vault**          | 经济系统桥接，显示余额等信息       |
 
-
 ---
 
 ### 📌 侧边公告栏（Scoreboard）
@@ -237,19 +236,18 @@ scoreboard:
 
 **占位符**：
 
-| 占位符                      | 来源                      | 说明                           |
-| --------------------------- | ------------------------- | ------------------------------ |
-| `%online%` / `%maxplayers%` | TAB 内置                  | 在线人数 / 最大人数            |
-| `%tps%`                     | TAB 内置                  | 服务器 TPS（满 20.0）          |
-| `%clearlag_entity_total%`   | ClearLag++ 扩展           | 全服已加载实体总数             |
-| `%clearlag_ram%`            | ClearLag++ 扩展           | 内存使用情况                   |
+| 占位符                      | 来源            | 说明                  |
+| --------------------------- | --------------- | --------------------- |
+| `%online%` / `%maxplayers%` | TAB 内置        | 在线人数 / 最大人数   |
+| `%tps%`                     | TAB 内置        | 服务器 TPS（满 20.0） |
+| `%clearlag_entity_total%`   | ClearLag++ 扩展 | 全服已加载实体总数    |
+| `%clearlag_ram%`            | ClearLag++ 扩展 | 内存使用情况          |
 
 **为什么不用 PAPI 官方 Server 扩展（`%server_total_entities%`）？** 该扩展在请求时**同步遍历 chunk 取实体**，而 TAB 在**异步线程**刷新占位符，Leaf/Paper 的 AsyncCatcher 会拦截并**周期性刷屏报错**。
 
 **ClearLag++ 扩展**（`plugins/PlaceholderAPI/expansions/ClearLag*.jar`）：ClearLag 自带的 PAPI 扩展，异步安全、零报错。部署：`/papi ecloud download ClearLag` → `/papi reload` → `/tab reload`。
 
 **玩家个人取消**：输入 `/sb` 或 `/tab scoreboard off` 隐藏，再输一次恢复。权限 `tab.scoreboard.toggle`（默认开放，见权限速查）。
-
 
 **性能**：TPS / 实体数占位符走 TAB 内置刷新周期，开销可忽略；侧边栏避免堆太多 PAPI 占位符即可。
 
@@ -258,11 +256,20 @@ scoreboard:
 基岩玩家经 Geyser NetherNet 的 WebRTC 通道接收，进服前几秒侧边栏全量同步爆发 → 通道被冲爆 → 日志报 `Player 每秒收到了超过 20 个分数数据包` + 随即 `disconnect.lost` 掉线（**Java 玩家完全无感**）。
 
 **修复（二选一或叠加）**：
+
 1. **放慢 TAB 刷新（治本）**：`config.yml`
    ```yaml
    placeholder-refresh-intervals:
-     default-refresh-interval: 2000   # 0.5s → 2s，包量约降 4 倍
+     default-refresh-interval: 2000 # 0.5s → 2s，包量约降 4 倍
    ```
+
+又改回了500，因为发现没啥作用
+
+```yaml
+placeholder-refresh-intervals:
+  default-refresh-interval: 500
+```
+
 2. **给基岩玩家关闭侧边栏（最彻底）**：`scoreboards.main` 加显示条件，仅 Java 玩家授予 `tab.javaonly` 权限：
    ```yaml
    scoreboards:

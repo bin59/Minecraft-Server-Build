@@ -16,7 +16,6 @@
 | -------------------- | ----------------------------------------- | -------------------------- |
 | EssentialsX          | 传送 / 经济 / 工具包 / 社交 / 信息 | 玩家管理 / 处罚 / 传送管理 |
 | Residence            | 我的领地                                  | 领地管理                   |
-| SkinsRestorer        | 皮肤管理                                  | —                          |
 | Simple Voice Chat    | 语音聊天                                  | 服务器监控（语音管理）     |
 | EasyBot              | 社交（绑定 QQ）                           | 服务器监控（重载）         |
 | CoreProtect          | —                                         | 审计与回滚                 |
@@ -26,9 +25,10 @@
 | spark                | —                                         | 服务器监控                 |
 | Geyser / ViaVersion  | —                                         | 服务器监控                 |
 | LuckPerms            | —                                         | 权限管理                   |
-| BedrockPlayerSupport | 传送 / 皮肤（表单）                | —                          |
+| BedrockPlayerSupport | 传送（表单）                       | —                          |
 | EvenMoreFish         | 更多鱼（钓鱼中心/卖鱼/鱼饵/日记）         | 更多鱼管理（比赛控制）     |
 | **PumpkinMail（自研）** | 南瓜邮箱（/mailbox，领活动奖励）    | 南瓜邮箱管理（/mailbox admin 发放面板，权限 `pumpkinmail.admin`） |
+| **OfflineReward（自研）** | 离线奖励自动发放到邮箱（玩家无独立入口，上线后在邮箱领取；**管理员/管理组同样适用**） | 离线奖励管理（`/offlinereward reload` / `check`，权限 `offlinereward.admin`） |
 
 ---
 
@@ -288,7 +288,6 @@ actions:
 | `residence` | 我的领地   | **Residence**             | 传送/查看**自己**的领地（点选式 `[residence-selector]`，无需手敲领地名）、建/删领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                       |
 | `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                                          |
 | `kit`       | 工具包     | EssentialsX               | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次） |
-| `skin`      | 皮肤管理   | **SkinsRestorer**         | 皮肤库浏览（/skins 选择菜单，含皮肤/历史/收藏三入口）、历史皮肤（/skin history）、收藏皮肤（/skin favourites）、清除、刷新、随机、撤销                                                                                              |
 | `social`    | 社交设置   | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                           |
 | `info`      | 服务器信息 | EssentialsX               | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                                          |
 | `voice`     | 语音聊天   | **Simple Voice Chat**     | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                            |
@@ -296,7 +295,7 @@ actions:
 | `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                              |
 | `guide-build`   | 领地建房   | **Residence**             | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                             |
 | `guide-move`    | 传送出行   | EssentialsX + SpacePortal | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                             |
-| `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SkinsRestorer + SVC + PatPat + EssentialsX | 宠物、骑玩家、皮肤、语音、摸头、工具包、服务器信息                                                                                                               |
+| `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                               |
 
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah，slot 9）、玩家商店（/shop，slot 11）
@@ -321,7 +320,7 @@ actions:
 | `guide-economy` 怎么赚钱 | 每日任务 / 每日收购 / 玩家商店 / 拍卖行 / 转账 / 余额财富榜 / 周税 | 能直接执行的（`/quests` `/ds` `/balance`）点击即执行；需参数的（`/pay`）给用法提示 |
 | `guide-build` 领地建房 | 建领地步骤、传送点、邀请玩家、flag 开关、子领地、卡住脱身 | 建领地给出完整 3 步圈地流程；其余给命令示例 |
 | `guide-move` 传送出行 | 回主城、传送点、tpa、传送阵 | 回主城 / 传送阵直接执行，其余给命令示例 |
-| `guide-play` 玩法大全 | 宠物、骑玩家、皮肤、语音、摸头、工具包、服务器信息 | 宠物 / 皮肤 / 工具包直接执行，骑玩家 / 摸头给说明 |
+| `guide-play` 玩法大全 | 宠物、骑玩家、语音、摸头、工具包、服务器信息 | 宠物 / 工具包直接执行，骑玩家 / 摸头给说明 |
 
 **基岩端兼容**：全部说明类按钮走 `[message]`（原生表单按钮不支持 lore），基岩玩家点击同样看到完整说明文字；按钮文本自动去色。
 
@@ -341,7 +340,7 @@ actions:
 
 | 菜单 id           | 名称         | 对接插件                                              | 主要内容                                                                                     |
 | ----------------- | ------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `admin`           | 管理面板     | —                                                     | 一级入口，10 个分类 + 返回玩家菜单；含**南瓜邮箱管理**（slot 18，`/mailbox admin` 发放面板，权限 `pumpkinmail.admin`）                                                           |
+| `admin`           | 管理面板     | —                                                     | 一级入口，10 个分类 + 返回玩家菜单；含**南瓜邮箱管理**（slot 18，`/mailbox admin` 发放面板，权限 `pumpkinmail.admin`）、**离线奖励管理**（slot 25，`/offlinereward reload`，权限 `offlinereward.admin`）                                                           |
 | `admin-player`    | 玩家管理     | **OpenInv** + EssentialsX                             | 看背包、传送/拉人、切模式、治疗、飞行、无敌、喂食、隐身、清背包、查信息、修复、发物品        |
 | `gamemode`        | 切换游戏模式 | EssentialsX                                           | `admin-player` 的子菜单：生存/创造/冒险/旁观四种模式，选模式后再从在线列表选玩家执行        |
 | `admin-punish`    | 处罚管理     | EssentialsX                                           | 踢出、封禁、临时封禁、解封、封 IP、禁言、解禁、关押、释放、广播、私信监视                    |
@@ -354,6 +353,7 @@ actions:
 | `admin-qm`        | 菜单管理     | QuickMenu 自身                                        | 重载配置、菜单列表、客户端诊断、发放触发物品                                                 |
 | `admin-economy` | 经济管理     | EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell | 财富榜、查余额（选人）、发钱/扣钱/设余额（指引）、拍卖行管理、系统商店管理、税务统计、每日收购重生成/重载 |
 | `postracker`       | 玩家位置记录 | **PosTracker**                                        | 位于 `admin` 菜单内（非独立菜单），查询玩家历史位置轨迹（`/pos radius:10 time:1h`）          |
+| `admin-offlinereward` | 离线奖励管理 | **OfflineReward**                                  | 位于 `admin` 菜单内（非独立菜单），点击重载配置；查询时间戳 `/offlinereward check 玩家名`     |
 
 层级：`admin` 的二级菜单共 10 个（`back-menu` 均为 `admin`），`admin-player` 另有三级子菜单 `gamemode`（选模式）；`admin` 的 `back-menu` 为 `main`，
 管理员可在两条线之间自由往返。
@@ -548,7 +548,6 @@ actions:
 | `teleport.warps`                                            | 统一 QuickMenu 传送点 GUI（`[menu] warps`，双端通用）                | 同左                                                                                   |
 | `teleport.tpa` / `teleport.tpahere`                         | 统一 QuickMenu 玩家选择器（`[player-selector]`，两端从在线列表选人） | 同左                                                                                   |
 | `social.msg`                                                | `/msggui`（BPS 私信表单）                                            | 文字提示 `/msg` 用法                                                                   |
-| `skin.skin*`                                                | `/skin`（指令方式）                                                  | `/skins`（GUI 选择菜单）+ `/skin history` + `/skin favourites`                          |
 
 > **未安装 BedrockPlayerSupport 时**：基岩玩家点击这些项，`[bedrock-player] xxxgui`
 > 会执行一个不存在的指令，客户端提示「未知指令」，不崩溃但无效果。若不打算装 BPS，
@@ -894,6 +893,9 @@ lp group admin permission set dailysell.admin true
 
 # ---- PumpkinMail：南瓜邮箱管理（管理面板「南瓜邮箱管理」入口）----
 lp group admin permission set pumpkinmail.admin true
+
+# ---- OfflineReward：离线奖励管理（管理面板「离线奖励管理」入口）----
+lp group admin permission set offlinereward.admin true
 
 # ---- LuckPerms：日常查询（危险项不给，见 8.4）----
 lp group admin permission set luckperms.info true
