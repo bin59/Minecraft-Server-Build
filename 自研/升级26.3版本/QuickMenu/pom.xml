@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  QuickMenu 插件 Maven 构建配置（Leaf 26.3 移植版）
+
+  ⚠️ 本文件为可选。本机若无 Maven，可直接用 javac 验证（见任务说明）。
+     提供本文件的目的是：让你在 IntelliJ IDEA / Eclipse 中导入工程，
+     获得代码补全与即时编译错误提示。
+
+  依赖说明：
+   - leaf-api 26.3.build.13-alpha：服务端 API（用 systemPath 引用共享 lib）
+   - Geyser-Spigot / floodgate-api / Residence：外置软依赖，运行时由服务器提供
+     ⚠️ TODO: 下述三个 jar 路径为 1.21.11 版本（仅用于 javac 尽力验证）。
+        最终构建请替换为 26.3 兼容版本（Maven Central 坐标或 26.3 构建产物）：
+          - Geyser-Spigot 26.3 版
+          - Floodgate 26.3 版（api）
+          - Residence 26.3 版
+        替换后只需改下方 version 或将 systemPath 换为常规 Maven 坐标。
+
+  编译目标：Java 21（maven.compiler.release=21），严禁使用 Java 25。
+  产物位置：target/QuickMenu-1.0.0.jar
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.nangua</groupId>
+    <artifactId>QuickMenu</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>QuickMenu</name>
+    <description>双轨快捷菜单 - Java 玩家箱子 GUI，基岩玩家原生 Form 表单（Leaf 26.3 移植版）</description>
+
+    <properties>
+        <!-- Leaf 26.3 运行于 Java 21，编译目标与之一致 -->
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+        <!--
+          全部使用 provided 语义：
+          这些依赖在运行时由服务器核心（Leaf）与已安装的
+          Floodgate / Residence 插件提供，绝不能打进插件 jar，否则会类冲突。
+        -->
+
+        <!-- 服务端 API：Leaf 26.3（Paper 26.3 衍生，API 兼容） -->
+        <dependency>
+            <groupId>cn.dreeam.leaf</groupId>
+            <artifactId>leaf-api</artifactId>
+            <version>26.3.build.13-alpha</version>
+            <scope>provided</scope>
+            <systemPath>${project.basedir}/../lib/leaf-api-26.3.build.13-alpha.jar</systemPath>
+        </dependency>
+
+        <!--
+          Geyser-Spigot：提供 cumulus 原生表单 API（org.geysermc.cumulus.*）。
+          ⚠️ TODO: 替换为 26.3 兼容版本（当前为 1.21.11 版 jar，仅用于验证）。
+        -->
+        <dependency>
+            <groupId>org.geysermc</groupId>
+            <artifactId>Geyser-Spigot</artifactId>
+            <version>1.21.11</version>
+            <scope>provided</scope>
+            <systemPath>F:/game/pc/MC/开服/所需文件/互通服/Geyser互通端/Geyser-Spigot.jar</systemPath>
+        </dependency>
+
+        <!--
+          Floodgate API：提供 isFloodgatePlayer / sendForm 等能力（org.geysermc.floodgate.api.*）。
+          ⚠️ TODO: 替换为 26.3 兼容版本（当前为 1.21.11 版 jar，仅用于验证）。
+        -->
+        <dependency>
+            <groupId>org.geysermc.floodgate</groupId>
+            <artifactId>api</artifactId>
+            <version>1.21.11</version>
+            <scope>provided</scope>
+            <systemPath>F:/game/pc/MC/开服/Minecraft-Server-Build/自研/快捷菜单系统/_build/libs/floodgate-api.jar</systemPath>
+        </dependency>
+
+        <!--
+          Residence：领地系统（软依赖，插件用反射调用，未装时不生效）。
+          ⚠️ TODO: 替换为 26.3 兼容版本（当前为 1.21.11 版 jar，仅用于验证）。
+        -->
+        <dependency>
+            <groupId>com.bekvon.bukkit.residence</groupId>
+            <artifactId>Residence</artifactId>
+            <version>1.21.11</version>
+            <scope>provided</scope>
+            <systemPath>F:/game/pc/MC/开服/所需文件/插件/3-玩法与玩家功能插件/02-领地系统-Residence/Residence6.0.0.1.jar</systemPath>
+        </dependency>
+
+        <!-- 仅用于消除 leaf-api 中 @Contract 等注解的编译警告 -->
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>24.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- 传递依赖：systemPath 引入的 leaf-api 不带传递依赖，显式声明（provided，运行时服务端提供） -->
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <version>5.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+    <build>
+        <!-- 产物固定命名，便于部署脚本引用 -->
+        <finalName>${project.artifactId}-${project.version}</finalName>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <includes>
+                    <include>plugin.yml</include>
+                    <include>config.yml</include>
+                </includes>
+            </resource>
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>21</release>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <!-- 开启全部 lint 检查，serial 噪音除外 -->
+                        <arg>-Xlint:all,-serial,-deprecation</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

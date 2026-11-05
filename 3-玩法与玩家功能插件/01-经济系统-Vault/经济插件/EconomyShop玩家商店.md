@@ -131,6 +131,38 @@ lp group default permission unset essentials.signs.break.sell
 
 > 同名插件说明：EconomyShopGUI 等分支用 `/eshop reload`；本服使用的是 iliüs 版，认准 `/shop admin reload` 即可。
 
+## 管理员上架带附魔/特殊属性的物品（系统商店）
+
+系统商店给玩家**购买**的商品（区别于玩家间商店），默认只能上架"材质 + 数量"（如 `minecraft:diamond`）。要上架**带附魔、带数据组件、带 lore/自定义名**等特殊物品，走 EconomyShop 的「自定义物品」通道——它存的是整个 `ItemStack` 的 Bukkit 序列化（Base64），NBT/组件/lore 全保留。
+
+### 原理
+- `es_items.item_data` 列存的是 **Base64 + BukkitObjectOutputStream 序列化的完整 ItemStack**，不是可读 SNBT，也不是 `/give` 命令字符串。
+- 上架时，插件把"你手里的实物"整件序列化写库；玩家购买时反序列化 → `setAmount` → 进背包，**组件原样保留**。
+- 所以所有"特殊属性"都来自你**手里那件实物**，而不是命令文本本身。
+
+### 方法一：手持上架（推荐，最稳）
+1. 先用 `/give` 给自己造出这件特殊物品（1.21.x 用数据组件语法）：
+   ```
+   /give @s minecraft:stick[minecraft:enchantments={levels:{minecraft:knockback:10}}]
+   ```
+   - 这是 1.21 的 **item component** 写法（方括号 + 键值对），不是旧版 NBT 大括号里的 `Enchantments` 标签。
+   - 命令给的**超上限附魔**（如 knockback 10，远超附魔台上限 2）会原样保留；只要序列化保留组件，玩家买回来仍是 10 级。
+   - 基岩端用 `/minecraft:give`（带命名空间前缀），避免被 `commands.yml` 别名吞掉材质名。
+2. 把物品**拿在右手**。
+3. 游戏内 `/shop admin` → 进对应分类 → 找到子分类「自定义物品」(`CUSTOM_ITEMS`) → 点 **slot22 “Add Custom Item”**（手持物品点击它，会抓取你手里的 ItemStack）。
+4. 设买价、数量 → 确认。买回来的物品与手里这件完全一致（附魔/组件/lore 全在）。
+   - 系统商品通常**只设买价**，`sell_price` 留 0（因全局 `sell-to-shop: false`，玩家不能卖给系统商店）。
+
+### 方法二：批量上架（sync_shop.py）
+- 当前 `sync_shop.py` 写死 `item_data=None`，**只能上架普通材质物品**（Excel 的 material 列），**不支持**附魔/组件列。
+- 若要批量上架带组件物品，需脚本把组件字符串解析成 `ItemStack` 再序列化写 `item_data`——原版 `/give` 字符串 EconomyShop 不能直吃。
+- 该能力为**待办**：将脚本扩展为支持"组件列"，一行写 `minecraft:stick[minecraft:enchantments={levels:{minecraft:knockback:10}}]` 之类，自动转成 ItemStack 上架。
+
+### 注意事项
+- **不能直接把 `/give` 命令字符串贴进商店配置**：EconomyShop 不吃命令，只吃"实物序列化"。要么手持上架，要么脚本喂 ItemStack。
+- 上架后务必 `/shop admin reload` 重载，并让一名玩家试买，确认附魔/组件确实到账（防老版本序列化丢组件）。
+- 特殊物品定价应明显高于其"裸材质"市价，避免被囤货倒卖套利。
+
 ## 注意事项
 
 - 关闭 `/sell` 后玩家可能不适应，需在公告中说明"量产物品走玩家间交易（/ah /shop）"。

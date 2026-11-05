@@ -77,15 +77,60 @@ tablist-name-formatting:
 
 ## 前缀设置示例
 
-- 默认组：`/lp group default meta setprefix "[&d玩家&f] &6"`
-- 基岩版（Floodgate 按 UUID）：`/lp user 00000000-0000-0000-0009-01f42087bd04 meta setprefix &a[青蛙🐸]`
-- 指定 Java 玩家：`/lp user PumpkinVegetable meta setprefix "[&4南瓜🎃&f] &6"`
+### 1.初始前缀设置
 
-`/lp user TODAO_owo meta setprefix "[&4至道大王👑&f][玩家] &6"`
+（1）默认组
+`/lp group default meta setprefix "[&d玩家&f] &6"`
+
+（2）基岩版玩家
+需要用UUID设置
+
+```bash
+/lp user 00000000-0000-0000-0009-01f42087bd04 meta setprefix "&a[青蛙🐸] "
+/lp user 00000000-0000-0000-0009-01f068214d30 meta setprefix "&d[枣温] &6"
+/lp user 00000000-0000-0000-0009-01f9d96dcdd1 meta setprefix "&d[末] &6"
+/lp user 00000000-0000-0000-0009-01f702bfe1ff meta setprefix "&d[魖飕(野人版)] &6"
+/lp user 00000000-0000-0000-0009-01f4c3b0ae33 meta setprefix "&d[nangua1896] &6"
+/lp user 00000000-0000-0000-0009-01f0f44e3cb2 meta setprefix "&d[镜寒火] &6"
+
+```
+
+（3）Java版玩家
+用真实id
+
+```bash
+/lp user yyzsy meta setprefix "&d[猫猫🐱] &6"
+/lp user tiebi666 meta setprefix "&d[铁臂] &6"
+/lp user JPZS9527 meta setprefix "&d[江姐农场主] &6"
+/lp user j4rvx meta setprefix "&d[j4rvx] &6"
+/lp user MatchaKing meta setprefix "&d[抹茶] &6"
+/lp user BambooLoveFlower meta setprefix "&d[花的眷属] &6"
+```
+
+### 2.活动专属
+
+如pvp比赛前三可自定义称号
+`&4[至道大王👑]`
+
+```bash
+/lp user TODAO_owo meta setprefix "&4[pvp亚军]&d[至道大王👑] &6"
+```
+
+### 3.赞助
+
+`&4[天使投资人]`
+
+```bash
+/lp user zuojiating meta setprefix "&4[天使投资人]&d[夏霞] &6"
+/lp user 00000000-0000-0000-0009-01fab3620d50 meta setprefix "&4[天使投资人]&d[咸微饼] &6"
+```
 
 ## 注意事项
 
-- 多行前缀**最后一行**应为玩家名颜色前缀（如 `&7`），否则名字会继承上一行颜色
+- 多行前缀\*\*
+
+最后一行\*\*应为玩家名颜色前缀（如 `&7`），否则名字会继承上一行颜色
+
 - `\n` 换行在头顶名牌（tag）有效，TAB 列表中可能只显示第一行
 - HEX 颜色 `&#RRGGBB` 仅 **1.16+** 生效，低版本自动降级为最近颜色码
 - 前缀不生效时执行 `/papi parse me %luckperms_prefix%` 验证占位符是否正常返回

@@ -1,0 +1,12 @@
+# PlanTop - 从 Plan 数据库读取在线时间排行
+# 数据库连接参数与 plugins/Plan/config.yml 的 Database 段保持一致
+database:
+  host: "123.207.3.73"
+  port: 3306
+  database: "Plan"
+  user: "host21k5c4"
+  password: "xxx"          # ← 填入 Plan 的真实数据库密码（见 plugins/Plan/config.yml）
+  server-id: 1             # plan_servers 表里当前服的 id（单服通常为 1）
+refresh-seconds: 300       # 排行榜聚合刷新间隔（秒），建议 300（5 分钟）
+top-size: 30               # 排行人数（全息 3 页 × 10 名）
+query-timeout-seconds: 15  # 单次查询超时（秒）

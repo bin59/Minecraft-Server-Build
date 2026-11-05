@@ -51,7 +51,7 @@ Leaf 是 [Gale](https://github.com/GaleMC/Gale) 的一个高性能分支，而 G
 | `spawn-protection` | `16` | 出生点保护半径 |
 | `enforce-secure-profile` | `false` | 不强制安全档案（兼容离线/基岩版） |
 | `rate-limit` | `0` | 无速率限制（基岩版兼容需要） |
-| `network-compression-threshold` | `64` | 网络压缩阈值 |
+| `network-compression-threshold` | `256` | 网络压缩阈值（原版默认；<256 字节的小包不压缩，省 CPU、略增带宽） |
 | `region-file-compression` | `deflate` | 区域文件压缩算法 |
 
 ### Bukkit/Spigot 配置 (`spigot.yml` 关键项)
@@ -106,12 +106,25 @@ async:
 
 ```batch
 @Echo off
-java -Xmx4G -Xms1G -javaagent:YggdrasilOfficialProxy-2.3.0-paperclip.jar -jar leaf-1.21.11-174.jar nogui
+java -Xmx12G -Xms12G -XX:+UseG1GC -XX:+UseStringDeduplication -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:MaxTenuringThreshold=1 -Xlog:gc*:logs/gc.log:time,uptime,level,tags:filecount=5,filesize=50M -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -javaagent:YggdrasilOfficialProxy-2.3.0-paperclip.jar -jar leaf-1.21.11-174.jar nogui
 pause
 ```
 
-**启动参数说明**:
-- `-Xmx4G`: 最大堆内存 4GB
-- `-Xms1G`: 初始堆内存 1GB
-- `-javaagent:YggdrasilOfficialProxy...`: 加载 Yggdrasil 外置登录代理
-- `nogui`: 无图形界面模式
+> 该脚本基于 [Aikar's flags](https://mcflags.emc.gs) 的 G1GC 调优模板，并按本服硬件（云服务器 **8 核 CPU / 32G 内存**）将堆上调至 12G。
+
+**关键启动参数**:
+- `-Xmx12G -Xms12G`: 堆上限 = 初始 = 12GB。两者相等可避免运行时动态扩堆带来的碎片与停顿。
+- `-XX:+UseG1GC`: 使用 G1 垃圾回收器（Leaf 1.21.11 需 **JDK 21**）。
+- `-XX:+UseStringDeduplication`: G1 字符串去重。MC 存在海量重复字符串（方块/物品命名空间 ID、NBT 标签名、玩家名、配置键等），去重让内容相同的 `String` 共享同一份底层字符数组，通常可回收 **10%~30%** 的字符串内存；12G 堆下可省数百 MB ~ 1G+。生效是渐进的，跑过几次 GC 后才逐步体现。
+- `-Xlog:gc*:logs/gc.log:time,uptime,level,tags:filecount=5,filesize=50M`: 滚动 GC 日志（5 个文件 × 50M，含时间/耗时/级别/标签）。重启后生成 `logs/gc.log`，用于排查 TPS 抖动、频繁 Full GC。
+- `-XX:+DisableExplicitGC`: 禁止 `System.gc()`，防止插件误触发 Full GC 卡服。
+- `-XX:+AlwaysPreTouch`: 启动即真正占满 12G 物理内存，避免运行时缺页卡顿。
+- `-javaagent:YggdrasilOfficialProxy...`: 加载 Yggdrasil 外置登录代理（要求该 jar 与 `start.bat` 同目录）。
+- `nogui`: 无图形界面模式。
+
+**内存规划（本服 32G / 8 核）**:
+- 12G 堆 + 堆外开销（Netty/Geyser 的 direct buffer、元空间、线程栈、JIT 缓存，约 1~3G）≈ 15G 进程占用，物理内存剩 **~17G** 余量，**不会触发 swap**。
+- 8 核 CPU 对 G1 并行回收友好，`MaxGCPauseMillis=200` 目标在 12G 堆下可压住，单次 GC 停顿可控。
+- 堆越大单次 GC 停顿略长（回收对象更多），但 12G 以内 G1 足够；超过 12G 才需考虑 ZGC（JDK 21+）。
+- ⚠️ 加内存**解决不了跨公网 MySQL 连接池耗尽 / Watchdog 杀服这类 IO 问题**，那类问题要先查网络与连接池，而非继续加堆。
+- ⚠️ 启动前确认服务器 `java -version` 为 **JDK 21**，否则 `-Xlog` 与字符串去重所在特性无法支持，启动会直接报错。

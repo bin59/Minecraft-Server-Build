@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.nangua.moneyledger</groupId>
+  <artifactId>moneyledger</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <!-- Leaf / Paper API (26.3)，运行时由服务器提供 -->
+    <dependency>
+      <groupId>cn.dreeam.leaf</groupId><artifactId>leaf-api</artifactId><version>26.3.build.13-alpha</version><scope>provided</scope>
+      <systemPath>${project.basedir}/../lib/leaf-api-26.3.build.13-alpha.jar</systemPath>
+    </dependency>
+    <!--
+      EssentialsX API（外部依赖）。
+      TODO: 替换为与 Leaf 26.3 兼容的 EssentialsX 版本。
+      下方 systemPath 指向本机验证用 jar，仅用于本地编译；
+      正式构建请改用 EssentialsX 官方 Maven 仓库坐标。
+    -->
+    <dependency>
+      <groupId>net.essentialsx</groupId><artifactId>EssentialsX</artifactId><version>2.21.0</version><scope>provided</scope>
+      <systemPath>F:/game/pc/MC/开服/Minecraft-Server-Build/自研/南瓜账本-MoneyLedger/lib/EssentialsX.jar</systemPath>
+    </dependency>
+    <!--
+      SQLite JDBC（运行时需提供：服务器放置或插件自带 lib）。
+      本插件自带 sqlite-jdbc-3.53.4.0.jar，编译/运行均依赖。
+    -->
+    <dependency>
+      <groupId>org.xerial</groupId><artifactId>sqlite-jdbc</artifactId><version>3.53.4.0</version><scope>provided</scope>
+    </dependency>
+      <!-- 传递依赖：systemPath 引入的 leaf-api 不带传递依赖，显式声明（provided，运行时服务端提供） -->
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <version>5.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>23.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+    <resources><resource><directory>src/main/resources</directory><filtering>false</filtering></resource></resources>
+  </build>
+</project>

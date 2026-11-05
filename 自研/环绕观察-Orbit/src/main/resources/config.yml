@@ -1,0 +1,28 @@
+# ===== 环绕参数 =====
+# 环绕半径（格，离目标玩家的水平距离）
+radius: 6.0
+# 相机高度（目标玩家脚底上方格数）
+height: 5.0
+# 旋转速度（度/秒）。越小越慢。16 度/秒 ≈ 22.5 秒一圈
+speed-degrees-per-second: 16.0
+# 相机看向目标玩家的身体高度偏移（相对脚底，1.0 约等于腰部）
+look-height: 1.0
+
+# ===== 提示文本（支持 & 颜色代码）=====
+messages:
+  started: '&a开始环绕观察 &e%player%'
+  stopped: '&a已结束环绕观察'
+  target-offline: '&c目标玩家不在线'
+  self: '&c不能环绕观察自己'
+  no-permission: '&c你没有权限'
+
+# ===== 定时巡视 =====
+auto-tour:
+  # 是否启用定时自动巡视
+  enabled: false
+  # 巡视员玩家名；留空则使用第一个在线的 orbit.admin 玩家
+  viewer: ''
+  # 两轮巡视之间的间隔（秒）
+  interval-seconds: 3600
+  # 每个玩家的巡视时长（秒）
+  per-player-seconds: 30

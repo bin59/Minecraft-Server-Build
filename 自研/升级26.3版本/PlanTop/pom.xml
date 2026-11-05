@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.plantop</groupId>
+  <artifactId>plantop</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <!-- Leaf / Paper API (26.3)，运行时由服务器提供 -->
+    <dependency>
+      <groupId>cn.dreeam.leaf</groupId><artifactId>leaf-api</artifactId><version>26.3.build.13-alpha</version><scope>provided</scope>
+      <systemPath>${project.basedir}/../lib/leaf-api-26.3.build.13-alpha.jar</systemPath>
+    </dependency>
+    <!--
+      PlaceholderAPI（外部依赖，softdepend）。
+      TODO: 替换为与 Leaf 26.3 兼容的 PlaceholderAPI 版本。
+      下方 systemPath 指向本机验证用 jar，仅用于本地编译；
+      正式构建请改用 PlaceholderAPI 官方 Maven 仓库坐标。
+    -->
+    <dependency>
+      <groupId>me.clip</groupId><artifactId>placeholderapi</artifactId><version>2.12.3</version><scope>provided</scope>
+      <systemPath>F:/game/pc/MC/开服/所需文件/插件/4-玩家信息与数据展示/04-PlaceholderAPI占位符/PlaceholderAPI-2.12.3.jar</systemPath>
+    </dependency>
+    <!--
+      Plan 数据库驱动：PlanTop 使用 java.sql 标准 API 直连 Plan 的 MySQL，
+      运行时由 Plan 插件提供的 MySQL 驱动即可，无需在 pom 显式声明。
+      （源码未 import com.mysql.*，故不添加 mysql 依赖。）
+    -->
+      <!-- 传递依赖：systemPath 引入的 leaf-api 不带传递依赖，显式声明（provided，运行时服务端提供） -->
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <version>5.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>23.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+    <resources><resource><directory>src/main/resources</directory><filtering>false</filtering></resource></resources>
+  </build>
+</project>

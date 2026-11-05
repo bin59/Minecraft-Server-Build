@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.nangua.offlinereward</groupId>
+  <artifactId>offlinereward</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <!-- Leaf 26.3 API（与服务器同版本；运行时由服务器提供，故 provided） -->
+    <dependency>
+      <groupId>cn.dreeam.leaf</groupId>
+      <artifactId>leaf-api</artifactId>
+      <version>26.3.build.13-alpha</version>
+      <scope>provided</scope>
+      <systemPath>${project.basedir}/../lib/leaf-api-26.3.build.13-alpha.jar</systemPath>
+    </dependency>
+    <!-- SQLite JDBC：原插件通过 Class.forName("org.sqlite.JDBC") 在运行时加载，
+         原版将其打包进 jar。Leaf 服务器不自带，这里用 shade 插件一并打入最终 jar，保留 100% 功能。 -->
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>3.53.4.0</version>
+      <scope>compile</scope>
+    </dependency>
+    <!-- 南瓜邮箱 PumpkinMail（softdepend）：OfflineReward 直接调用其 storage()/Reward/Storage API。
+         运行时由 PumpkinMail 插件提供（provided）。
+         TODO: 此处引用的是旧版（1.21.11）PumpkinMail.jar 仅用于编译；
+               上线前需替换为与 Leaf 26.3 兼容的 PumpkinMail 构建（同目录 PumpkinMail 模块产出）。 -->
+    <dependency>
+      <groupId>com.nangua</groupId>
+      <artifactId>PumpkinMail</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+      <systemPath>${project.basedir}/../lib/PumpkinMail.jar</systemPath>
+    </dependency>
+      <!-- 传递依赖：systemPath 引入的 leaf-api 不带传递依赖，显式声明（provided，运行时服务端提供） -->
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <version>5.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>23.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <!-- 将 sqlite-jdbc 打进最终 jar（不重定位包名，保持 org.sqlite.JDBC 可寻址） -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.xerial:sqlite-jdbc</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.xerial:sqlite-jdbc</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
