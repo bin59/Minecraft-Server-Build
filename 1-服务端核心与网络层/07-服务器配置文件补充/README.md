@@ -269,7 +269,6 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `QuickMenu-1.0.0.jar` | 自研·快捷菜单系统 | `QuickMenu/`（config.yml 84KB） |
 | `Residence6.0.0.1.jar` | 领地系统 | `Residence/`（config.yml/Save/Backup/） |
 | `RideOnHead-1.1.3.jar` | 玩家骑乘（RideOnHead） | `RideOnHead/`（config.yml） |
-| `ride-players-1.0-1.21.jar` | 骑玩家（轻量替代） | `ride-players/`（config.yml） |
 | `SimplePets.jar` | 宠物系统 | `SimplePets/`（storage.db/Pets/） |
 | `sit-1.7.3.jar` | 坐下 | `Sit/`（config.yml） |
 | `SkinsRestorer.jar` | 皮肤管理 | `SkinsRestorer/`（cache/skins/players/） |

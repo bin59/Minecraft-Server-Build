@@ -101,3 +101,16 @@ mvn -q -f 升级26.3版本\BuildRate\pom.xml clean package
 - **无 NMS 反射**：编译期已证明（若引用 `craftbukkit`/`net.minecraft` 会直接编译失败）。全项目 `Class.forName` 仅用于 SQLite 驱动与插件间软依赖（MoneyLedger/PumpkinMail/Residence/Floodgate），安全。
 - **Adventure 5**：全项目几乎不走 Component，仅 SpacePortal 动作栏一处已迁移。
 - 参考：`F:/game/pc/MC/开服/test/1.21.11升级26版本/1.21.11-to-26.3-全量变化对比.md`
+
+---
+
+## 九、环绕观察-Orbit（第 10 个自研插件，独立目录）
+
+> 不算 `disabled/`，本服自研插件实际为 **10 个**；前 9 个见上，第 10 个是 `环绕观察-Orbit`（独立目录，非本集合子目录）。
+
+- 目录：`自研/环绕观察-Orbit/`，同属 26.3 适配目标。
+- 适配动作：
+  - `plugin.yml` 的 `api-version` 由 `1.21` 改为 **`26.3`**（否则 26.3 服加载失败/告警）；
+  - `pom.xml` 依赖由 `paper-api 1.21.11` 改为 `leaf-api 26.3.build.13-alpha`（同本集合 `../升级26.3版本/lib/`）。
+- 编译：JDK25 `javac --release 21` + leaf-api 26.3（复用 `_deps/` 缓存），产物 `Orbit.jar`（13K，5 class + plugin.yml + config.yml）。
+- 功能：`/orbit <玩家>` 环绕镜头观察 + 定时巡视（半径/高度/速度可配），详见其目录内 `README.md`。

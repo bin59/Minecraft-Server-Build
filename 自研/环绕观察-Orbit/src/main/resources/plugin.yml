@@ -1,7 +1,7 @@
 name: Orbit
 version: '1.0.0'
 main: com.nangua.orbit.OrbitPlugin
-api-version: '1.21'
+api-version: '26.3'
 author: 南瓜
 description: 环绕镜头观察与定时巡视
 commands:

@@ -25,12 +25,13 @@
     </repositories>
 
     <dependencies>
-        <!-- 若 1.21.11 的 paper-api 版本号不同，改这里即可；编译期 provided，不打进 jar -->
+        <!-- 26.3 适配：leaf-api（与升级26.3版本集合一致）；编译期 provided，不打进 jar -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.21.11-R0.1-SNAPSHOT</version>
+            <artifactId>leaf-api</artifactId>
+            <version>26.3.build.13-alpha</version>
             <scope>provided</scope>
+            <systemPath>${project.basedir}/../升级26.3版本/lib/leaf-api-26.3.build.13-alpha.jar</systemPath>
         </dependency>
     </dependencies>
 
