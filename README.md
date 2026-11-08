@@ -160,7 +160,7 @@
 | 全息             | DecentHolograms                           | 浮动文字 / 物品 / 头颅 / 动画                                                              |
 | 死亡信息         | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题，扣费已关闭）                                             |
 | 宠物             | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                                            |
-| 摸头互动         | PatPat（Modrinth）                        | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用                                     |
+| 摸头互动         | PatPat（CurseForge / Modrinth）           | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用                                     |
 | 玩家骑乘         | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                                             |
 | 语音             | Simple Voice Chat                         | 近距离语音聊天                                                                             |
 | 菜单（自研）     | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 15 套 + 管理线 12 套，含新人指南、南瓜邮箱入口）            |
@@ -527,7 +527,7 @@ Minecraft-Server-Build/
 │   ├── 03-皮肤管理-SkinsRestorer（禁用）/   SkinsRestorer.md
 │   ├── 04-网页世界地图/             BlueMap / Dynmap / 地图选择
 │   ├── 05-Simple Voice Chat/        Simple Voice Chat.md
-│   ├── 06-PatPat摸头/               PatPat摸头.md
+│   ├── 06-PatPat摸头/               PatPat摸头.md + patpat.webp
 │   ├── 07-EssentialsX多功能指令整合/ EssentialsX（功能说明与完整配置）.md
 │   ├── 08-自定义死亡信息/           自定义死亡信息customdeathmessages.md
 │   ├── 09-宠物系统/                 SimplePets / 宠物对比 / Vault经济联动
@@ -538,7 +538,8 @@ Minecraft-Server-Build/
 │   ├── 14-自定义附魔-ExcellentEnchants/  ExcellentEnchants自定义附魔.md
 │   ├── 15-坐下插件-GSit/            GSit.md
 │   ├── 16-拴绳牵玩家-LeashablePlayers/  LeashablePlayers.md
-│   └── 17-点击收纳生物-ClickMobs/   ClickMobs.md
+│   ├── 17-点击收纳生物-ClickMobs/   ClickMobs.md
+│   └── 摸摸头-PatPat/                README.md（PatPat 插件完整说明）
 │
 ├── 4-玩家信息与数据展示/
 │   ├── 01-玩家信息收集与展示.md
@@ -585,6 +586,7 @@ Minecraft-Server-Build/
 
 ## 更新记录
 
+- **2026-11-09 更新**：新增 `3-玩法与玩家功能插件/摸摸头-PatPat/README.md`（按实跑 `config.json` 逐项说明，含 CurseForge 插件页出处、完整命令树与权限节点、名单文件格式、常见问题）；修正 `06-PatPat摸头/PatPat摸头.md` 中配置文件名（`config.yml`→`config.json`）、名单文件名、`api` 字段用途、`patpat.pat` 权限语义与命令表缺项；主索引总览表与目录树同步。
 - **2026-11-09 更新**：新增 `1-服务端核心与网络层/10-向下兼容-ViaBackwards/README.md`（按实跑 `config.yml` 逐项说明，30 个配置键全覆盖，含官方组合表、命令权限与排错）；修正 `04-跨版本协议兼容-ViaVersion/ViaVersion.md` 中 ViaVersion / ViaBackwards 的方向与"未装 ViaBackwards"的过时表述；主索引目录树与分类表补入 10- 章节。
 - **2026-10-04 更新**：插件与玩法总览"自研"类目补齐 MoneyLedger、AdvZone、EntityCount、DragonManager、DailySell、PlanTop；目录树"自研/"段目录名与实际对齐（`南瓜邮箱/`→`南瓜邮箱-PumpkinMail/`、`基岩皮肤记录器/`→`基岩皮肤记录-BedrockSkinRecorder/`），并补入 `南瓜账本-MoneyLedger/`、`在线时间排行-PlanTop/`；文档更新日期改为 2026-10-04。
 - **关于"服务端目录 `C:\mc_serve\1.21.11-test`"**：该处保留为历史记录未改动；实际运行目录以部署机器为准，本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-1.21.11`（Leaf 1.21.11 生产运行目录备份）为运行服参照。｜升级到 Leaf 26.3 后，运行目录备份命名将相应更新为 `leaf-26.3`，本文档路径引用待升级完成后同步修正。
