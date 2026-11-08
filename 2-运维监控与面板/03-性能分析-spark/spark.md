@@ -2,8 +2,6 @@
 
 spark 是 LuckPerms 作者开发的高性能服务器性能分析工具，实时监控 CPU、TPS、内存，profiler 生成报告定位卡顿。本文给出关键配置与常用命令。
 
-**文件**: 内置于 `plugins/spark/` 目录 ｜ **官网**: https://spark.lucko.me
-
 ## 关键配置 (`plugins/spark/config.json`)
 
 ```json

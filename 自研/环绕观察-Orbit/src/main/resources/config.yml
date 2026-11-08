@@ -5,8 +5,12 @@ radius: 6.0
 height: 5.0
 # 旋转速度（度/秒）。越小越慢。16 度/秒 ≈ 22.5 秒一圈
 speed-degrees-per-second: 16.0
-# 相机看向目标玩家的身体高度偏移（相对脚底，1.0 约等于腰部）
+# 看向目标玩家的身体高度偏移（相对脚底，1.0 约等于腰部）
 look-height: 1.0
+# 观察者本体位置更新间隔（tick）。
+# 1 = 20Hz 最平滑；2 = 10Hz，传送事件减半，慢速环绕下肉眼无差别（推荐）
+# 改这个值不会改变实际转速，插件会按间隔自动换算角速度
+update-interval-ticks: 2
 
 # ===== 提示文本（支持 & 颜色代码）=====
 messages:
@@ -15,14 +19,19 @@ messages:
   target-offline: '&c目标玩家不在线'
   self: '&c不能环绕观察自己'
   no-permission: '&c你没有权限'
+  # 自动巡视切换目标时发给巡视员；占位符 %player% %index% %total%
+  tour-switch: '&7巡视 &e%player% &7(%index%/%total%)'
 
 # ===== 定时巡视 =====
 auto-tour:
-  # 是否启用定时自动巡视
-  enabled: false
-  # 巡视员玩家名；留空则使用第一个在线的 orbit.admin 玩家
+  # 是否启用自动巡视。true = 插件启用后立即开始依次环绕全部在线玩家
+  # 不希望上线就被自动切为旁观者时改为 false，需要时用 /orbit tour start 手动开启
+  enabled: true
+  # 巡视员玩家名；建议填自己的 ID。
+  # 留空 = 使用第一个在线且拥有 orbit.admin 的玩家。
+  # 用 /orbit tour start 手动启动时，以命令发起者为准，忽略此项。
   viewer: ''
-  # 两轮巡视之间的间隔（秒）
-  interval-seconds: 3600
-  # 每个玩家的巡视时长（秒）
+  # 两轮巡视之间的间隔（秒）。一轮遍历完所有在线玩家后等待该时长再开下一轮
+  interval-seconds: 60
+  # 每个玩家的巡视时长（秒），到点自动切到下一个玩家
   per-player-seconds: 30

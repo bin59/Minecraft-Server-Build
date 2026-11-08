@@ -10,7 +10,6 @@
 > `[ProtocolLib] Version (MC: 1.21.11) has not yet been tested! Proceed with caution.`
 > 1.21.11 的支持是在 **5.5.0-SNAPSHOT** 中加入的（`add support for 1.21.11` #3578 / `Mark 1.21.11 as supported` #3589），建议升级到 **5.5.0 或更高**。详见 §六。
 
----
 
 ## 一、简介
 
@@ -30,9 +29,9 @@ ProtocolLib 在 Netty 网络层与 Bukkit 事件系统之间架了一座桥：
 |---|---|
 | **AntiLitematica 7.0.1** | 拦截 `servux:litematics` 通道包、检测 EasyPlace 异常向量、NBT 查询信号（config.yml `detection.signals`） |
 | **EssentialsX 2.22.1** | 部分数据包级功能（如假方块、背包查看底层） |
-| **CoreProtect 24.0** | 方块改动的数据包级记录 |
-| **DecentHolograms 2.10.1** | 全息实体的数据包级渲染（ ArmorStand 替换为数据包实体） |
-| **Residence 6.0.0.1** | 领地 flag 的数据包级交互检测 |
+| **CoreProtect CE 24.1（26.3 自编译开发版）** | 方块改动的数据包级记录 |
+| **DecentHolograms 2.10.2** | 全息实体的数据包级渲染（ ArmorStand 替换为数据包实体） |
+| **Residence 6.0.4.2** | 领地 flag 的数据包级交互检测 |
 
 > 装 ProtocolLib 后，这些插件启动时会自动加载其 hook，无需手动配置。
 
@@ -92,7 +91,7 @@ global:
   1. **自动更新**：`plugins/ProtocolLib/config.yml` 把 `global.auto updater.download` 改 `true`（本服默认 `false`），重启后自行拉取最新版。
   2. **手动替换**：从 [GitHub Releases](https://github.com/dmulloy2/ProtocolLib/releases) 或 [SpigotMC](https://www.spigotmc.org/resources/protocollib.1997/) 下载 **≥ 5.5.0**，替换 jar 后**完整重启**（不能 `/reload`）。dev build 已从 Jenkins 迁到 GitHub。
   升级后验证：`/protocol lib` 看版本号、`/protocol verify` 校验字段映射、`/protocol list` 确认 AntiLitematica 等仍在挂钩。
-  > 5.5.0+ 要求 **Java 17+**（本服 JDK 21，满足）。
+  > 5.5.0+ 要求 **Java 17+**（本服 JDK 25，满足）。
 - **新版本 Minecraft 出来后插件报 NoSuchFieldError**：等 ProtocolLib 更新结构修改器；临时可开 `background compiler: true`（本服已开）让它自动适配。
 
 ---

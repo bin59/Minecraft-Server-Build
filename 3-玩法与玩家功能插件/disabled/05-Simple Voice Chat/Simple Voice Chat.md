@@ -30,7 +30,7 @@ Simple Voice Chat 由作者 **Max Henkel（henkelmax）** 开发，核心特性�
 
 **支持的模组加载器**：Forge、Fabric、Quilt、NeoForge（仅 **Java 版客户端** 需要，服务端插件端不依赖）
 
-**支持的 MC 版本**：1.12.2 ~ 1.21.x（覆盖面非常广）
+**支持的 MC 版本**：1.12.2 ~ 26.3（含 1.21.x、26.x；Bukkit/Spigot/Paper 插件端最新 2.6.x 已官方声明支持 26.3，如 2.6.24 "Added support for 26.3"、2.6.25）
 
 #### 服务端 / Java 客户端 / 基岩客户端是三种不同的包，务必区分
 

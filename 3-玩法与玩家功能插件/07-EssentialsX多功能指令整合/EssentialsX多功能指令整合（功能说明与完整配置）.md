@@ -18,13 +18,12 @@ EssentialsX 是原版 Essentials（2014 年停更）的现代化分支，由社�
 
 | 项目       | 说明                                           |
 | ---------- | ---------------------------------------------- |
-| 支持版本   | MC 1.8.8 ~ 1.21.11+                            |
+| 支持版本   | MC 1.8.8 ~ 26.3 |
 | 服务端要求 | CraftBukkit / Spigot / **Paper（推荐）**       |
 | Java 要求  | Java 8+                                        |
 | 核心依赖   | Vault（经济接口）、LuckPerms（权限管理，推荐） |
 | 配置文件   | `plugins/Essentials/config.yml`                |
 
----
 
 ### 🏠 传送系统（家园 /home 系列已禁用）
 

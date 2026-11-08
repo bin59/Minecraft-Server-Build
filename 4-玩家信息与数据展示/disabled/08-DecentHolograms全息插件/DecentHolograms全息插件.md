@@ -2,7 +2,7 @@
 
 本文介绍 DecentHolograms（简称 DH）这款不依赖 ProtocolLib 的全息投影插件，讲解在世界中生成浮动文字、物品、头颅与方块，以及点击交互、多页翻页、动画和按权限隐藏等玩法。内容按安装、目录结构、config.yml、全息文件格式、命令与权限、实战示例和排错顺序组织，适合 Paper/Spigot/Folia 服主照做。
 
-**MC 要求**: Java 1.8.9 – 26.2（含 1.21.11）
+**MC 要求**: Java 1.8.9 – 26.3（含 1.21.11；最新 2.10.2 新增 26.3 + Folia 支持）
 
 **官方网站**: https://www.decentholograms.eu | **Modrinth**: https://modrinth.com/plugin/decentholograms
 

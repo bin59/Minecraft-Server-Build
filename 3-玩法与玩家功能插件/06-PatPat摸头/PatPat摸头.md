@@ -4,11 +4,7 @@
 
 **下载**: https://modrinth.com/plugin/patpat（同项目内下载 jar 时选平台：服务端装 Bukkit/Paper 版，Java 客户端装 Fabric/Forge 版）
 
-**兼容**: MC 1.16.x ~ 1.21.x（含 1.21.11）；平台 Bukkit/Spigot/Paper/Purpur/Folia（服务端）+ Fabric/Forge/NeoForge/Quilt（客户端）；LGPL-3.0
-
-> ⚠️ **核心机制（重要）**：服务端插件**只负责数据包中转与权限/限流控制**，**必须搭配客户端 mod 才能触发摸头**（作者原文："The plugin does not work without the client mod"）。所以：
-> - **Java 玩家**：客户端装 PatPat mod（Fabric/Forge）→ 游戏里 Shift + 右键摸生物
-> - **基岩玩家**：无法安装 Java 客户端 mod，**用不了摸头功能**
+**兼容**: MC 1.16.x ~ 26.3（含 1.21.11、26.x）；平台 Bukkit/Spigot/Paper/Purpur/Folia（服务端）+ Fabric/Forge/NeoForge/Quilt（客户端）；LGPL-3.0
 
 ## 功能
 

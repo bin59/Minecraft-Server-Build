@@ -7,7 +7,7 @@
 - 插件名：UserOverUUID（JAR 内部名：UuidMigrate）
 - 最新版本：UuidMigrate-1.0.0（2026-01-04 更新）
 - 支持核心：Spigot / Paper / Purpur / Bukkit，API 版本 1.19+
-- 支持游戏版本：1.19 ~ 1.21.11
+- 支持游戏版本：1.19 ~ 1.21.11（官方兼容性仅到 1.21.x；**Leaf 26.3 需测试服实测**——本插件读取原版 playerdata，理论上可兼容，但无 26.3 构建证据）
 - 运行环境：Java 17 及以上
 
 ---

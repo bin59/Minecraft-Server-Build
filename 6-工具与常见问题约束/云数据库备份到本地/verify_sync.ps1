@@ -1,6 +1,6 @@
 ﻿# 云端 vs 本地 数据库完整性核验（含 Plan 库）
 $mysql = "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
-$dbs = @('coreprotect', 'postracker', 'host21k5c4', 'Plan')
+$dbs = @('coreprotect', 'host21k5c4', 'Plan')
 
 function Q-Cloud([string]$sql) {
     $env:MYSQL_PWD = 'pId5XpS5CcBi'

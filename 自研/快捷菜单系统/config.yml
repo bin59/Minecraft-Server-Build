@@ -1594,19 +1594,6 @@ menus:
           - '[close]'
           - '[player] mailbox admin'
 
-      postracker:
-        material: FILLED_MAP
-        display-name: '&6&l玩家位置记录'
-        lore:
-          - '&7查询玩家历史位置轨迹'
-          - '&e用法：/pos radius:10 time:1h'
-        slot: 21
-        permission: quickmenu.admin
-        actions:
-          - '[close]'
-          - '[message] &7查询玩家位置：&e/pos radius:10 time:1h'
-          - '[message] &7指定玩家：&e/pos radius:10 time:1h name:玩家名'
-
       backmain:
         material: NETHER_STAR
         display-name: '&f返回玩家主菜单'

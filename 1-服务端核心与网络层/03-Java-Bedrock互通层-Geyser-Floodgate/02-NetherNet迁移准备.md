@@ -117,7 +117,7 @@ bedrock:
 
 **② 独立信令端口（可选，避开端口冲突）**：若 TCP 信令端口确被占用，启动加参数并放行对应 TCP：
 ```bash
-java -DgeyserTransport=nethernet -DgeyserSignalingPort=19134 -jar leaf-1.21.11.jar
+java -DgeyserTransport=nethernet -DgeyserSignalingPort=19134 -jar leaf-26.3-18.jar
 ```
 玩家仍用 UDP 19132 加入，需额外放行 TCP 19134。
 

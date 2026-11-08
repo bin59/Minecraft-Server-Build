@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +24,7 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
 
     private static final List<String> SUBS = Arrays.asList(
             "help", "gui", "create", "remove", "list", "link", "link2way",
-            "sethue", "setcost", "setlimit", "tp", "reload");
+            "sethue", "setcost", "setlimit", "tp", "item", "reload");
     private static final List<String> HUES = Arrays.asList(
             "cyan", "blue", "purple", "pink", "red", "orange", "yellow", "green", "white");
 
@@ -73,6 +74,9 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
                 break;
             case "tp":
                 teleport(sender, args);
+                break;
+            case "item":
+                item(sender, args);
                 break;
             case "reload":
                 reload(sender);
@@ -136,6 +140,7 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(msg("&f/csz setcost <钻石数> &7- 修改传送费用，立即生效（管理员）"));
             sender.sendMessage(msg("&f/csz setlimit <数量> &7- 修改玩家建阵上限，立即生效（管理员）"));
             sender.sendMessage(msg("&f/csz tp <名字> &7- 直接传送过去（管理员）"));
+            sender.sendMessage(msg("&f/csz item set|give|reset|refresh &7- 管理阵法标记物品（管理员）"));
             sender.sendMessage(msg("&f/csz reload &7- 重载配置（管理员）"));
         }
     }
@@ -156,8 +161,11 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
                     ? "&8未连接"
                     : "&a→ " + portal.getDestName();
             String owner = portal.getOwner() == null ? "&7公共" : "&e私人";
-            sender.sendMessage(msg("&f✦ " + portal.getName() + " &7[" + portal.getWorldName()
-                    + " " + (int) portal.getX() + "," + (int) portal.getY() + "," + (int) portal.getZ()
+            String loc = portal.getWorldName();
+            if (plugin.isShowCoordinates()) {
+                loc += " " + (int) portal.getX() + "," + (int) portal.getY() + "," + (int) portal.getZ();
+            }
+            sender.sendMessage(msg("&f✦ " + portal.getName() + " &7[" + loc
                     + "] " + dest + " " + owner));
         }
     }
@@ -202,6 +210,7 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
             player.sendMessage(msg("&c已存在名为 &f" + name + " &c的传送阵"));
             return;
         }
+        plugin.getDisplayManager().refresh();
         player.sendMessage(msg("&a✔ 传送阵 &f" + name + " &a已创建在脚下（颜色：" + args2Color(args) + "）"));
         player.sendMessage(msg("&7下一步：&f/csz link2way " + name + " <另一个阵法名>"));
     }
@@ -220,6 +229,7 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
             return;
         }
         if (plugin.getPortals().remove(args[1])) {
+            plugin.getDisplayManager().refresh();
             sender.sendMessage(msg("&a✔ 传送阵 &f" + args[1] + " &a已删除（指向它的连接已断开）"));
         } else {
             sender.sendMessage(msg("&c未找到传送阵 &f" + args[1]));
@@ -328,6 +338,71 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
         player.sendMessage(msg("&a✔ 已传送到阵法 &f" + portal.getName()));
     }
 
+    /** /csz item <set|give|reset|refresh>：管理阵法标记用的「特殊物品」 */
+    private void item(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("spaceportal.admin")) {
+            sender.sendMessage(msg("&c你没有权限执行该操作"));
+            return;
+        }
+        String action = args.length >= 2 ? args[1].toLowerCase(Locale.ROOT) : "info";
+        switch (action) {
+            case "set": {
+                if (!(sender instanceof Player player)) {
+                    sender.sendMessage(msg("&c该指令只能由玩家执行"));
+                    return;
+                }
+                ItemStack held = player.getInventory().getItemInMainHand();
+                if (held == null || held.getType().isAir()) {
+                    player.sendMessage(msg("&c请先把要作为标记的特殊物品拿在主手上"));
+                    return;
+                }
+                ItemStack copy = held.clone();
+                copy.setAmount(1);
+                plugin.setCustomDisplayItem(copy);
+                plugin.getDisplayManager().refresh();
+                player.sendMessage(msg("&a✔ 已把主手物品设为阵法标记（附魔/数据组件/自定义模型一并保存）"));
+                player.sendMessage(msg("&7已写入 override.yml，重启后依然生效"));
+                break;
+            }
+            case "give": {
+                if (!(sender instanceof Player player)) {
+                    sender.sendMessage(msg("&c该指令只能由玩家执行"));
+                    return;
+                }
+                if (player.getInventory().addItem(plugin.getDisplayManager().getDisplayItem()).isEmpty()) {
+                    player.sendMessage(msg("&a✔ 已发放一份传送阵信物"));
+                } else {
+                    player.sendMessage(msg("&c背包已满，无法发放"));
+                }
+                break;
+            }
+            case "reset": {
+                plugin.clearCustomDisplayItem();
+                plugin.getDisplayManager().refresh();
+                sender.sendMessage(msg("&a✔ 已恢复 config.yml 里的默认标记物品"));
+                break;
+            }
+            case "refresh": {
+                plugin.getDisplayManager().refresh();
+                sender.sendMessage(msg("&a✔ 已重建所有传送阵的物品标记"));
+                break;
+            }
+            default: {
+                ItemStack current = plugin.getDisplayManager().getDisplayItem();
+                sender.sendMessage(msg("&b&l━━ 阵法标记物品 ━━"));
+                sender.sendMessage(msg("&7当前：&f" + current.getType().name()
+                        + (plugin.getCustomDisplayItem() == null ? " &8(config 默认)" : " &8(自定义)")));
+                sender.sendMessage(msg("&f/csz item set &7- 把主手物品设为标记（支持带数据组件的物品）"));
+                sender.sendMessage(msg("&f/csz item give &7- 给自己发一份当前标记物品"));
+                sender.sendMessage(msg("&f/csz item reset &7- 恢复 config.yml 默认物品"));
+                sender.sendMessage(msg("&f/csz item refresh &7- 手动重建所有标记实体"));
+                sender.sendMessage(msg("&7展示实体类型：&f" + plugin.getDisplayMode()));
+                sender.sendMessage(msg("&7物品凭证模式：&f" + (plugin.isItemTriggerEnabled() ? "开启" : "关闭")));
+                sender.sendMessage(msg("&7粒子/音效特效：&f" + (plugin.isEffectsEnabled() ? "开启" : "关闭")));
+            }
+        }
+    }
+
     private void reload(CommandSender sender) {
         if (!sender.hasPermission("spaceportal.admin")) {
             sender.sendMessage(msg("&c你没有权限执行该操作"));
@@ -380,6 +455,15 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
                         addNames(out, args[1]);
                     } else if (sub.equals("sethue") && args.length == 3) {
                         out.addAll(HUES);
+                    }
+                    break;
+                case "item":
+                    if (args.length == 2) {
+                        for (String s : Arrays.asList("set", "give", "reset", "refresh")) {
+                            if (s.startsWith(args[1].toLowerCase(Locale.ROOT))) {
+                                out.add(s);
+                            }
+                        }
                     }
                     break;
                 case "link":

@@ -22,7 +22,7 @@ PlayTime 插件从**安装那一刻**才开始计时，此前玩家的在线时�
 
 验证注册：`/papi parse me %ptop_1_name%` 返回玩家名；`/papi parse me %ptop_updated%` 返回时间即正常。
 
-## 创建全息（命令方式，DecentHolograms 2.10.1）
+## 创建全息（命令方式，DecentHolograms 2.10.2）
 
 > ⚠️ **不要手写 yml**：2.10.1 文件缺字段（`location`/`actions`）会在 `/dh reload` 报 NPE、全息图全部消失；用命令创建最稳。`location` 必须是 **4 段** `<world>:<x>:<y>:<z>`（无 yaw/pitch，朝向由 `facing` 控制），逗号格式或 6 段都会解析成 null。命令内容**不要加单引号**（DH 不是 shell，`'` 会原样显示）。
 >
@@ -33,7 +33,7 @@ PlayTime 插件从**安装那一刻**才开始计时，此前玩家的在线时�
 ```
 /dh h create playtime -l:world:41:65:32
 /dh lines add playtime 1 &6&l🏆 &f&l在线时间排行榜 &7[1/3]
-/dh lines add playtime 1 &7&m                            
+/dh lines add playtime 1 &7&m
 /dh lines add playtime 1 &e#1  &f%ptop_1_displayname%  &7%ptop_1_time%
 /dh lines add playtime 1 &f#2  &f%ptop_2_displayname%  &7%ptop_2_time%
 /dh lines add playtime 1 &f#3  &f%ptop_3_displayname%  &7%ptop_3_time%
@@ -44,7 +44,7 @@ PlayTime 插件从**安装那一刻**才开始计时，此前玩家的在线时�
 /dh lines add playtime 1 &f#8  &f%ptop_8_displayname%  &7%ptop_8_time%
 /dh lines add playtime 1 &f#9  &f%ptop_9_displayname%  &7%ptop_9_time%
 /dh lines add playtime 1 &f#10 &f%ptop_10_displayname%  &7%ptop_10_time%
-/dh lines add playtime 1 &7&m                            
+/dh lines add playtime 1 &7&m
 ```
 
 ### 二、第 2 页（#11-#20）
@@ -53,7 +53,7 @@ PlayTime 插件从**安装那一刻**才开始计时，此前玩家的在线时�
 /dh p add playtime
 /dh p switch playtime 2
 /dh lines add playtime 2 &6&l🏆 &f&l在线时间排行榜 &7[2/3]
-/dh lines add playtime 2 &7&m                            
+/dh lines add playtime 2 &7&m
 /dh lines add playtime 2 &f#11 &f%ptop_11_displayname%  &7%ptop_11_time%
 /dh lines add playtime 2 &f#12 &f%ptop_12_displayname%  &7%ptop_12_time%
 /dh lines add playtime 2 &f#13 &f%ptop_13_displayname%  &7%ptop_13_time%
@@ -64,7 +64,7 @@ PlayTime 插件从**安装那一刻**才开始计时，此前玩家的在线时�
 /dh lines add playtime 2 &f#18 &f%ptop_18_displayname%  &7%ptop_18_time%
 /dh lines add playtime 2 &f#19 &f%ptop_19_displayname%  &7%ptop_19_time%
 /dh lines add playtime 2 &f#20 &f%ptop_20_displayname%  &7%ptop_20_time%
-/dh lines add playtime 2 &7&m                            
+/dh lines add playtime 2 &7&m
 ```
 
 ### 三、第 3 页（#21-#30）
@@ -73,7 +73,7 @@ PlayTime 插件从**安装那一刻**才开始计时，此前玩家的在线时�
 /dh p add playtime
 /dh p switch playtime 3
 /dh lines add playtime 3 &6&l🏆 &f&l在线时间排行榜 &7[3/3]
-/dh lines add playtime 3 &7&m                            
+/dh lines add playtime 3 &7&m
 /dh lines add playtime 3 &f#21 &f%ptop_21_displayname%  &7%ptop_21_time%
 /dh lines add playtime 3 &f#22 &f%ptop_22_displayname%  &7%ptop_22_time%
 /dh lines add playtime 3 &f#23 &f%ptop_23_displayname%  &7%ptop_23_time%
@@ -84,7 +84,7 @@ PlayTime 插件从**安装那一刻**才开始计时，此前玩家的在线时�
 /dh lines add playtime 3 &f#28 &f%ptop_28_displayname%  &7%ptop_28_time%
 /dh lines add playtime 3 &f#29 &f%ptop_29_displayname%  &7%ptop_29_time%
 /dh lines add playtime 3 &f#30 &f%ptop_30_displayname%  &7%ptop_30_time%
-/dh lines add playtime 3 &7&m                            
+/dh lines add playtime 3 &7&m
 ```
 
 ### 四、翻页动作（`/dh p` = `/dh pages`）

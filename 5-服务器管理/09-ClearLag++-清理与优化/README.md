@@ -3,8 +3,8 @@
 ClearLag++ 是一款综合性能优化插件，自动清理地面掉落物、限制每区块实体数量、优化红石与物理计算，并提供实时 TPS/MSPT 监控、热点区块诊断、性能历史记录和网页仪表盘。
 
 **官网/下载**：https://modrinth.com/plugin/clearlag++
-**版本**：1.14.1
-**支持版本**：MC 1.18 – 1.21.11
+**版本**：2.0.0（`ClearLag-2.0.0-VER-1.18-26.3.jar`）
+**支持版本**：MC 1.18 – 26.3
 **平台**：Bukkit / Spigot / Paper / Purpur / Folia
 
 > 本文档标注了本服每个功能的实际开启状态。✅ = 已开启，❌ = 未开启。
@@ -79,9 +79,9 @@ ClearLag++ 是一款综合性能优化插件，自动清理地面掉落物、限
 
 ### ⚠️ 船/筏：1.21 起必须逐木头写（`BOAT`/`CHEST_BOAT` 已废弃）
 
-> **踩坑结论**：1.21 起船**不再有统一的 `BOAT` / `CHEST_BOAT` 实体类型**。ClearLag 用 Bukkit `EntityType` 枚举名做匹配，只写 `BOAT` 不会报错，但**该类型根本不存在 → 匹配不到任何实体 → 船照样被清（静默失效）**。本服已改为逐木头列出全部 20 种。
+> **踩坑结论**：1.21 起船**不再有统一的 `BOAT` / `CHEST_BOAT` 实体类型**。ClearLag 用 Bukkit `EntityType` 枚举名做匹配，只写 `BOAT` 不会报错，但**该类型根本不存在 → 匹配不到任何实体 → 船照样被清（静默失效）**。本服已改为逐木头列出（Leaf 26.3 下共 22 种，含杨木）。
 
-**本服排除列表（20 种，1.21.11 实际枚举常量）**：
+**本服排除列表（22 种，26.3 实际枚举常量；在 1.21.11 的 20 种基础上新增杨木 2 种）**：
 
 | 木头 | 普通船 | 箱子船 | 注释（与 config 一致） |
 | --- | --- | --- | --- |
@@ -95,10 +95,11 @@ ClearLag++ 是一款综合性能优化插件，自动清理地面掉落物、限
 | CHERRY 樱花 | `CHERRY_BOAT` | `CHERRY_CHEST_BOAT` | 樱花木船 / 樱花木箱船 |
 | PALE_OAK 苍白橡木 | `PALE_OAK_BOAT` | `PALE_OAK_CHEST_BOAT` | 苍白橡木船 / 苍白橡木箱船 |
 | BAMBOO 竹（筏） | `BAMBOO_RAFT` | `BAMBOO_CHEST_RAFT` | 竹筏 / 竹箱筏 |
+| POPLAR 杨木 | `POPLAR_BOAT` | `POPLAR_CHEST_BOAT` | 杨木船 / 杨木箱船（26.3 新增） |
 
-> ⚠️ 切勿写入 `POPLAR_BOAT` / `POPLAR_CHEST_BOAT`——杨木（Poplar）是 **Java 26.3**（Wilderness Bound 更新，2026 年左右）才加入的**全新木头类型，属于 1.21.x 之后的另一条更高主版本线**，不在本服的 1.21.11 范围内。已实测 **Paper 1.21.11 的 `EntityType` 枚举里没有 `POPLAR_*` 任何常量**（只有上表 20 种），写了同样静默失效。等本服升级到 26.3+ 时再补这两行即可。
-> - 出处：Minecraft Wiki「Poplar Boat」历史段标注 *Java Edition 26.3* 加入 → <https://minecraft.wiki/w/Poplar_Boat>；实测枚举见 <https://jd.redguy.ru/paper/1.21.11/org/bukkit/entity/EntityType.html>（船类常量仅 `OAK…PALE_OAK`×2 + `BAMBOO_RAFT`×2，无 POPLAR）。
-> - 佐证：Minecraft 官方 ItemSprite 库已含 `poplar-boat.png`（与 `oak-boat`/`spruce-boat`/…/`bamboo-raft` 并列），证明杨木船是当前（26.3+）正式物品；但本服 API 为 1.21.11，故仍不可写。
+> 📌 **杨木船（POPLAR）**：杨木（Poplar）是 **Java 26.3**（Wilderness Bound 更新）加入的木头类型。本服运行 **Leaf 26.3**，`POPLAR_BOAT` / `POPLAR_CHEST_BOAT` 已进入 Bukkit `EntityType` 枚举，**建议加入上方排除列表**以防杨木船被自动清理误删。
+> - 出处：Minecraft Wiki「Poplar Boat」标注 *Java Edition 26.3* 加入 → <https://minecraft.wiki/w/Poplar_Boat>。
+> - 佐证：Minecraft 官方 ItemSprite 库已含 `poplar-boat.png`（与 `oak-boat`/`spruce-boat`/…/`bamboo-raft` 并列），为 26.3+ 正式物品；本服可补入排除列表。
 
 **官方船/筏物品精灵图全集（ItemSprite 仓库，跟踪最新版 26.3+）**：
 
@@ -116,9 +117,9 @@ ClearLag++ 是一款综合性能优化插件，自动清理地面掉落物、限
 | `cherry-boat` | 樱花木船 | ✅ 是 | `CHERRY_BOAT` / `CHERRY_CHEST_BOAT` | 已在本服排除列表 |
 | `pale-oak-boat` | 苍白橡木船 | ✅ 是 | `PALE_OAK_BOAT` / `PALE_OAK_CHEST_BOAT` | 已在本服排除列表 |
 | `bamboo-raft` | 竹筏 | ✅ 是 | `BAMBOO_RAFT` / `BAMBOO_CHEST_RAFT` | 已在本服排除列表 |
-| `poplar-boat` | 杨木船 | ❌ 否（26.3+ 才有） | 无（1.21.11 枚举缺失） | **已写入配置（标 26.3+）**：当前 1.21.11 静默无效，升级到 26.3+ 后自动生效，无需再改 |
+| `poplar-boat` | 杨木船 | ✅ 是（26.3 新增） | `POPLAR_BOAT` / `POPLAR_CHEST_BOAT` | **升级到 Leaf 26.3 后生效**，建议加入 `excluded-entities` 排除列表（需测试服确认枚举存在） |
 
-> 说明：上表为**普通船/筏**（`*_boat` / `*_raft`）。各木头（除 bamboo 为筏）另有**箱子船**变体，命名规律为 `*-chest-boat` 物品 ↔ `EntityType` 的 `*_CHEST_BOAT` 常量；`poplar-chest-boat` 同样属 26.3+。本服 1.21.11 的 9 种木箱船（`OAK_CHEST_BOAT`…`PALE_OAK_CHEST_BOAT`）+ 竹箱筏（`BAMBOO_CHEST_RAFT`）均已列入排除列表，共 20 种（见上表「本服排除列表」）。
+> 说明：上表为**普通船/筏**（`*_boat` / `*_raft`）。各木头（除 bamboo 为筏）另有**箱子船**变体，命名规律为 `*-chest-boat` 物品 ↔ `EntityType` 的 `*_CHEST_BOAT` 常量；`poplar-chest-boat` 同样属 26.3+。本服在 Leaf 26.3 下的 10 种木箱船（含杨木）+ 竹箱筏（`BAMBOO_CHEST_RAFT`）均已列入排除列表，共 22 种（见上表「本服排除列表」）。
 
 **出处与说明（为什么必须逐条写）**：
 

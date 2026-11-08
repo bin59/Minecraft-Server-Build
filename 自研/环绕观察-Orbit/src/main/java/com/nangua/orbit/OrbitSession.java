@@ -2,23 +2,30 @@ package com.nangua.orbit;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 /**
  * 单个观察者对一个目标玩家的环绕会话。
- * 每 tick 计算圆周坐标并移动隐形相机，观察者以旁观者模式跟随相机。
+ *
+ * 实现：观察者切到旁观者模式，本体直接按圆周坐标传送并朝向目标。
+ *
+ * 旧版用「隐形 ArmorStand + setSpectatorTarget」当相机，但 Camera 包要求客户端
+ * 已经追踪到该实体；spawn 后立刻绑定常被客户端丢弃，表现为「盔甲架在转、
+ * 观察者画面不动」，且盔甲架可能意外可见。改为直接移动观察者本体后，
+ * 不依赖任何实体或相机包，行为确定、跨核心一致。
  */
 public final class OrbitSession {
+
+    private static final double FULL_CIRCLE = Math.PI * 2.0;
 
     private final OrbitPlugin plugin;
     private final Player viewer;
     private Player target;
     private OrbitConfig config;
-    private ArmorStand camera;
     private BukkitTask task;
     private double angle;
+    private long ticks;
     private GameMode previousGameMode;
     private Location previousLocation;
 
@@ -49,47 +56,55 @@ public final class OrbitSession {
         this.previousGameMode = viewer.getGameMode();
         this.previousLocation = viewer.getLocation().clone();
         this.angle = 0.0;
+        this.ticks = 0L;
 
-        // 跨世界无法旁观，先把观察者挪到目标世界
+        // 跨世界先挪到目标世界（旁观者不受地形限制）
         if (!viewer.getWorld().equals(target.getWorld())) {
             viewer.teleport(target.getLocation());
         }
-
-        this.camera = spawnCamera();
         viewer.setGameMode(GameMode.SPECTATOR);
+        clearSpectatorTarget();
 
-        // 延后 1 tick 绑定旁观目标，确保模式已切换生效
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
-            if (viewer.isOnline() && camera != null && camera.isValid()) {
-                viewer.setSpectatorTarget(camera);
-            }
-        });
+        // 立即到位，不必等第一个 tick
+        move();
 
-        this.task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, 0L, 1L);
-    }
-
-    private ArmorStand spawnCamera() {
-        Location location = computeLocation();
-        return target.getWorld().spawn(location, ArmorStand.class, stand -> {
-            stand.setInvisible(true);
-            stand.setMarker(true);
-            stand.setGravity(false);
-            stand.setSilent(true);
-            stand.setInvulnerable(true);
-            stand.setSmall(true);
-            stand.setBasePlate(false);
-            stand.setArms(false);
-            stand.setPersistent(false);
-        });
+        // 固定 1 tick 调度，内部按 update-interval-ticks 抽帧，reload 后立即生效
+        this.task = plugin.getServer().getScheduler().runTaskTimer(plugin, this::tick, 1L, 1L);
     }
 
     private void tick() {
-        if (!viewer.isOnline() || !target.isOnline() || camera == null || !camera.isValid()) {
-            stop();
+        if (!viewer.isOnline() || !target.isOnline()) {
+            // 从插件会话表中一并移除，避免留下僵尸 session
+            plugin.stopSession(viewer);
             return;
         }
-        angle += Math.toRadians(config.getSpeedDegreesPerSecond()) / 20.0;
-        camera.teleport(computeLocation());
+        if (viewer.getGameMode() != GameMode.SPECTATOR) {
+            viewer.setGameMode(GameMode.SPECTATOR);
+            clearSpectatorTarget();
+        }
+        int interval = Math.max(1, config.getUpdateIntervalTicks());
+        ticks++;
+        if (ticks % interval != 0) {
+            return;
+        }
+        // 按实际抽帧间隔换算角速度，改 update-interval-ticks 不影响转速
+        angle += Math.toRadians(config.getSpeedDegreesPerSecond()) * interval / 20.0;
+        if (angle > FULL_CIRCLE) {
+            angle -= FULL_CIRCLE;
+        }
+        move();
+    }
+
+    private void move() {
+        viewer.teleport(computeLocation());
+    }
+
+    private void clearSpectatorTarget() {
+        try {
+            viewer.setSpectatorTarget(null);
+        } catch (IllegalArgumentException ignored) {
+            // 不在旁观者模式时该调用会抛异常，忽略
+        }
     }
 
     private Location computeLocation() {
@@ -105,14 +120,13 @@ public final class OrbitSession {
         return location;
     }
 
-    /** 自动巡视切换目标：不重建会话，避免游戏模式闪烁。 */
+    /** 自动巡视切换目标：不重建会话，避免游戏模式与位置来回闪烁。 */
     public void retarget(Player newTarget, OrbitConfig newConfig) {
         this.target = newTarget;
         this.config = newConfig;
         this.angle = 0.0;
-        if (camera != null && camera.isValid()) {
-            camera.teleport(computeLocation());
-        }
+        this.ticks = 0L;
+        move();
     }
 
     public void stop() {
@@ -120,18 +134,8 @@ public final class OrbitSession {
             task.cancel();
             task = null;
         }
-        if (camera != null) {
-            if (camera.isValid()) {
-                camera.remove();
-            }
-            camera = null;
-        }
         if (viewer.isOnline()) {
-            try {
-                viewer.setSpectatorTarget(null);
-            } catch (IllegalArgumentException ignored) {
-                // 已不在旁观状态，忽略
-            }
+            clearSpectatorTarget();
             if (previousLocation != null && previousLocation.getWorld() != null) {
                 viewer.teleport(previousLocation);
             }

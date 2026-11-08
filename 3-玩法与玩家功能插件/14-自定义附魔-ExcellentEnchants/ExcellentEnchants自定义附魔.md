@@ -8,12 +8,14 @@
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 最新版   | **5.4.3**（2026-06 更新）                                                                                                                                                   |
 | 语言     | **官方支持中文**（Spigot 页：All Translatable + Español, 中文, Polski；附魔名称 / 消息随语言显示）                                                                          |
-| 服务端   | **1.21.11：Paper ✔ / Spigot ✔ / Folia ❌**；Java 21                                                                                                                         |
+| 服务端   | **Paper ✔ / Spigot ✔ / Folia ❌**；服务端 Java 25                                                                                                                         |
 | 依赖     | **必须安装 NightCore**（同作者前置库，无玩家命令，后台支撑）                                                                                                                |
 | 下载     | [SpigotMC](https://www.spigotmc.org/resources/excellentenchants-%E2%AD%90-80-vanilla-like-enchantments.61693/) ｜ [Modrinth](https://modrinth.com/plugin/excellentenchants) |
 | 前置     | [NightCore (Modrinth)](https://modrinth.com/plugin/nightcore)                                                                                                               |
 | 官方站   | [nightexpressdev.com/excellentenchants](https://nightexpressdev.com/excellentenchants/)                                                                                     |
-| 中文文档 | [snowcutieowo.github.io/ExcellentEnchants](https://snowcutieowo.github.io/ExcellentEnchants/)                                                                               |
+| 中文文档 | [snowcutieowo.github.io/ExcellentEnchants](https://snowcutieowo.github.io/ExcellentEnchants/) |
+
+## 安装
 
 ## 安装
 

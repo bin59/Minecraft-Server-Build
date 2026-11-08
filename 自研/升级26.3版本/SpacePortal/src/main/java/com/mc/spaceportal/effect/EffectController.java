@@ -25,6 +25,13 @@ public class EffectController {
 
     private static final double TWO_PI = Math.PI * 2;
 
+    /** 特效总开关：false 时所有绘制/音效方法直接返回（由主类 applyConfig 设置） */
+    private static volatile boolean enabled = true;
+
+    public static void setEnabled(boolean value) { enabled = value; }
+
+    public static boolean isEnabled() { return enabled; }
+
     /** 地面法阵整体亮度（0~1，越大越亮） */
     private static final float GLOW = 0.9f;
 
@@ -47,7 +54,7 @@ public class EffectController {
      * @param charge 充能进度（0~1），未充能时传 0；充能时追加聚拢螺旋并在完成时闪光
      */
     public static void drawPortalCircle(Location center, double radius, float hue, double phase, double charge) {
-        if (center.getWorld() == null) {
+        if (!enabled || center.getWorld() == null) {
             return;
         }
         Location p = center.clone();
@@ -113,6 +120,7 @@ public class EffectController {
 
     /** 充能完成瞬间的爆发特效 */
     public static void chargeComplete(Player player, Location center, float hue) {
+        if (!enabled) { return; }
         Location p = center.clone();
         emit(p, center.getX(), center.getY() + 1.0, center.getZ(), hue, 2.2f, 30, 0.15);
         for (int i = 0; i < 12; i++) {
@@ -126,6 +134,7 @@ public class EffectController {
 
     /** 传送瞬间：起点收缩漩涡 + 终点爆发闪光 */
     public static void teleportBurst(Location from, Location to, float hue) {
+        if (!enabled) { return; }
         Location p = new Location(from.getWorld(), 0, 0, 0);
         for (int i = 0; i < 12; i++) {
             double a = i * TWO_PI / 12;
@@ -149,6 +158,7 @@ public class EffectController {
      * @return true 表示特效已结束
      */
     public static boolean drawTimeTunnel(Player player, int age, int total) {
+        if (!enabled) { return true; }
         if (!player.isOnline()) {
             return true;
         }
@@ -189,7 +199,7 @@ public class EffectController {
 
     /** 充能取消的熄灭特效 */
     public static void cancelPuff(Location location, float hue) {
-        if (location.getWorld() == null) {
+        if (!enabled || location.getWorld() == null) {
             return;
         }
         Location p = location.clone();
@@ -243,6 +253,7 @@ public class EffectController {
 
     /** 供外部调用的简化接口：绘制一个传送阵的一帧 */
     public static void drawPortalFrame(Portal portal, Location center, double radius, double phase, double charge) {
+        if (!enabled) { return; }
         drawPortalCircle(center, radius, portal.getHue(), phase, charge);
     }
 

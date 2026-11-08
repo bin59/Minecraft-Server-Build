@@ -43,6 +43,12 @@ public class TeleportService {
 
     /** 玩家进入阵法范围时调用，尝试开始充能 */
     public void tryStartCharge(Player player, Portal portal) {
+        // 可选：必须手持特殊物品才能启动传送阵（use-as-trigger）
+        if (plugin.isItemTriggerEnabled()
+                && !plugin.getDisplayManager().matchesHeld(player)) {
+            player.sendMessage(msg("&c需要手持传送阵信物才能启动，找管理员用 &f/csz item give &c领取"));
+            return;
+        }
         UUID id = player.getUniqueId();
         if (sessions.containsKey(id)) {
             return;
@@ -64,7 +70,9 @@ public class TeleportService {
         boolean free = isFree(player);
         if (!free && countDiamonds(player) < cost) {
             player.sendMessage(msg("&c钻石不足！传送需要 &b" + cost + " 颗钻石"));
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            if (EffectController.isEnabled()) {
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            }
             return;
         }
 
@@ -75,7 +83,9 @@ public class TeleportService {
         sessionTasks.put(id, task);
 
         player.sendMessage(msg("&b空间阵法开始充能，请站在阵法中央不要移动…"));
-        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 0.7f);
+        if (EffectController.isEnabled()) {
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 0.7f);
+        }
     }
 
     /** 该玩家传送是否免费（免费权限，或创造/旁观且开启 free-in-creative） */
@@ -111,8 +121,10 @@ public class TeleportService {
             int percent = (int) (session.progress() * 100);
             player.sendActionBar(Component.text(
                     "⟡ 空间充能 " + percent + "% ⟡", NamedTextColor.AQUA));
-            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_AMBIENT,
-                    0.6f, 0.8f + (float) session.progress() * 0.8f);
+            if (EffectController.isEnabled()) {
+                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_AMBIENT,
+                        0.6f, 0.8f + (float) session.progress() * 0.8f);
+            }
         }
 
         if (session.tick >= session.total) {
@@ -158,8 +170,10 @@ public class TeleportService {
             return;
         }
 
-        // 充能完成特效
-        EffectController.chargeComplete(player, fromCenter, from.getHue());
+        // 充能完成特效（特效关闭时整段跳过）
+        if (EffectController.isEnabled()) {
+            EffectController.chargeComplete(player, fromCenter, from.getHue());
+        }
 
         // 收集随行实体（当前坐骑 + 属于本人的已驯服宠物），非本人宠物会收到提示
         Entity vehicle = player.getVehicle();
@@ -176,22 +190,29 @@ public class TeleportService {
         destLoc.setPitch(player.getLocation().getPitch());
         float hue = from.getHue();
 
+        // 关闭特效后不再保留 6 tick 的蓄力停顿，直接传送
+        long releaseDelay = EffectController.isEnabled() ? 6L : 0L;
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (!player.isOnline() || player.isDead()) {
                 return;
             }
-            EffectController.teleportBurst(fromCenter, destLoc, hue);
+            if (EffectController.isEnabled()) {
+                EffectController.teleportBurst(fromCenter, destLoc, hue);
+            }
             player.teleport(destLoc);
             // 坐骑/宠物随行：先传实体，再让玩家重新骑上坐骑
             teleportFollowers(player, vehicle, destLoc, followers);
             applyCooldown(player);
             player.sendMessage(msg("&a✦ 空间跳跃完成，已抵达 &f" + dest.getName()));
-            startTimeTunnel(player, hue);
-        }, 6L);
+            if (EffectController.isEnabled()) {
+                startTimeTunnel(player, hue);
+            }
+        }, releaseDelay);
     }
 
     /** 传送落地后的时光穿梭特效 */
     private void startTimeTunnel(Player player, float hue) {
+        if (!EffectController.isEnabled()) { return; }
         // 隧道特效每 2 tick 渲染一帧（总时长不变，调用次数减半）
         int frames = Math.max(1, plugin.getTunnelTicks() / TUNNEL_FRAME_TICKS);
         final int[] age = {0};
@@ -240,7 +261,9 @@ public class TeleportService {
             } else {
                 player.sendMessage(msg("&c钻石不足！传送需要 &b" + total + " 颗钻石"));
             }
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            if (EffectController.isEnabled()) {
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
+            }
             return false;
         }
         removeDiamonds(player, total);

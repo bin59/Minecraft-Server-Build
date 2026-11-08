@@ -350,7 +350,6 @@ lp group admin permission set cdm.admin
 lp group admin permission set dh.admin
 lp group admin permission set deluxemenus.admin
 lp group admin permission set spaceportal.admin
-lp group admin permission set postracker.admin
 
 # QuickMenu：工具包按钮已对普通玩家隐藏，admin 仍可见
 lp group admin permission set quickmenu.kit

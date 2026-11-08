@@ -6,8 +6,8 @@
 
 | 项 | 值 |
 |---|---|
-| 最新版 | **2.12.2**（2026-09-29 发布） |
-| 最低服务端 | **1.21.4**（`api-version: 1.21.4`）；实测 1.21 / 26.1 / 26.2，**1.21.11 可用** |
+| 最新版 | **2.14.0**（2026-10-30 发布；已支持 26.3） |
+| 最低服务端 | **1.21.4**（`api-version: 1.21.4`）；实测 1.21 / 26.1 / 26.2 / **26.3**，**1.21.11 可用** |
 | 依赖 | **无**（MagmaCore 已内置）；软依赖：WorldGuard / WorldEdit / GriefPrevention / Vault / Floodgate / Geyser-Spigot |
 | 下载 | [SpigotMC](https://www.spigotmc.org/resources/free-minecraft-models.111660/) |
 | 源码 | [GitHub](https://github.com/MagmaGuy/FreeMinecraftModels) |

@@ -2,7 +2,7 @@
 
 本文档介绍南瓜生存服经济体系的玩家商店插件 EconomyShop（iliüs），说明其作为玩家间交易渠道的定位、防印钞关键配置（关闭系统商店回收）、开店费与成交税，以及玩家命令和权限。
 
-> 落地环境：测试服 `C:\mc_serve\1.21.11-test\`（Leaf 1.21.11）｜ 落地日期：2026-09-17
+> 落地环境：测试服 `C:\mc_serve\1.21.11-test\`（Leaf 26.3）｜ 落地日期：2026-09-17
 
 ## 功能定位
 
@@ -30,7 +30,7 @@
 `EconomyShop` 的 `sell-commands` 只关它自己，**EssentialsX 的 `/sell`、`/sellall`、`/worth` 与 `[sell]` 木牌是独立的印钞口**（卖给系统、系统凭空付钱），需两层一起关：
 
 1. `plugins/Essentials/config.yml` → `disabled-commands:` 加 `sell`、`sellall`、`worth`（命令级禁用，已配置，`/ess reload` 生效）；
-2. LuckPerms 移除 default 组权限（控制台/游戏内执行，**完整 8 条，已对照 EssentialsX 2.22.1-dev+25 实际权限树**）：
+2. LuckPerms 移除 default 组权限（控制台/游戏内执行，**完整 8 条，已对照 EssentialsX 2.22.1-dev+28 实际权限树**）：
 
 ```
 lp group default permission unset essentials.sell

@@ -78,15 +78,6 @@ pay-exempt: []
 
 ## 三、 Vault 安装与配置（关键桥梁）
 
-#### 1. 版本选择（针对 1.21.11）
-
-由于你的服务端是 **1.21.11**，原版 Vault 可能显示“过时”，但通常可用。为了最佳兼容性，推荐使用更新版：
-
-- **推荐版本 (Vault Updated)**: [GitHub 下载 (Roydogman/Vault-Updated)](https://github.com/Roydogman/Vault-Updated)
-  - _优势：专为 1.20+ 编译，完美支持 LuckPerms 和现代服务端。_
-- **原版 Vault**: [SpigotMC 下载](https://www.spigotmc.org/resources/vault.34315/)
-  - _注意：如果安装后报错，请换用上面的推荐版本。_
-
 #### 2. 安装步骤
 
 1.  将 `Vault.jar` 放入 `plugins` 文件夹。

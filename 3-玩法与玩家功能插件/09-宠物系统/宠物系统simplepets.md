@@ -2,7 +2,7 @@
 
 本文介绍 SimplePets 这款 GUI 管理的纯服务端宠物插件，支持 90 多种生物当跟随伙伴，可骑乘、戴头、多宠同出并存档重召，本服还已接入 Vault Addon 用主货币购买。文档覆盖安装、目录结构、界面汉化、config.yml、/pet 命令、权限与经济联动，末尾另附一起客户端猫模型错位的排查结论（与服务端无关，升级 Realistic Animals 资源包即可）。
 
-**当前版本**: SimplePets R5-B315 | **MC 要求**: 1.17 – 26.2（含 1.21.11，需 Java 21）
+**当前版本**: SimplePets **R5-B321**（26.3 自编译版，`SimplePets.jar`） | **MC 要求**: 1.17 – 26.3
 
 **作者/发布**: brainsynder-Dev（BS-Development） | **协议**: GPL-3.0（开源）
 
@@ -10,8 +10,8 @@
 
 **官方 Wiki**: https://github.com/brainsynder-Dev/SimplePets-Wiki
 
-> EchoPets 的精神继任者（自 2015 年起），纯服务端、GUI 管理的宠物插件。本服 1.21.11 需 **Java 21**；南瓜生存服为 Paper，直接放入 `plugins/` 即可。勿与 FarPets / RZXPets 同装（功能重叠，二选一）。
-
+> EchoPets 的精神继任者（自 2015 年起），纯服务端、GUI 管理的宠物插件。服务端需 **Java 25**；南瓜生存服为 Paper，直接放入 `plugins/` 即可。勿与 FarPets / RZXPets 同装（功能重叠，二选一）。
+>
 ## 功能说明
 
 SimplePets 把「跟随伙伴」做成了开箱即用的装饰/养成系统，核心能力：
@@ -30,7 +30,7 @@ SimplePets 把「跟随伙伴」做成了开箱即用的装饰/养成系统，�
 
 1. 确认服务端为 **Paper / Spigot / Purpur / Folia**（Spigot 及其分支均可）。
 2. **Java 版本必须匹配**（否则启动失败）：
-   - 1.21.x（含 1.21.11）→ **Java 21**
+   - 1.21.x → **Java 21**
    - 1.19 – 1.20.4 → Java 17
    - 26.x → Java 25
 3. 下载 **单一 jar**（一个文件覆盖全部支持版本），放入 `plugins/` 并**完整重启**服务端。
@@ -236,7 +236,7 @@ Pet.economy.bypass
 
 ## 性能与排错
 
-- **Java 版本必须匹配**：1.21.11 用 Java 21，否则启动直接失败；先确认服务端 Java 版本再放 jar。
+- **Java 版本必须匹配**：本服 26.3 用 **Java 25**，否则启动直接失败；先确认服务端 Java 版本再放 jar。
 - **单一 jar 已含全版本支持**，无需按 MC 版本挑 jar；1.21.x 需精确支持，控制台会提示版本链接情况。
 - **性能上限**：宠物与粒子吃一点性能，几十人服建议每玩家 1 只宠物、粒子距离 ≤ 32 格。
 - **勿与 FarPets / RZXPets 同装**：功能重叠，二选一即可。
@@ -254,8 +254,8 @@ A：宠物是服务端实体，Geyser 会同步显示给基岩客户端；命令
 **Q：宠物数据存在哪？**
 A：默认 SQLite 本地文件（`pets/`），可改 MySQL 实现跨服共享；存档包含宠物类型、名字、外观数据。
 
-**Q：1.21.11 需要什么 Java？**
-A：**Java 21**（1.20.5+ 与 1.21.x 均要求 Java 21）。
+**Q：26.3 需要什么 Java？**
+A：**Java 25**（26.x 线要求 Java 25；1.21.x 线为 Java 21）。
 
 **Q：想做「买宠物蛋」经济玩法？**
 A：本服已装 **SimplePets Vault Addon**，在 `plugins/SimplePets/AddonConfig.yml` 给宠物标价即可用服务器主货币购买（当前默认 2000/只），货币自动统一；调价后 `/pet addon` 禁用再启用刷新。管理组免费用 **`pet.vault.bypass`**，再用 LuckPerms 分组控制可拥有数量。

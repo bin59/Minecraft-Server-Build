@@ -2,12 +2,10 @@
 
 > **南瓜国际服** — Minecraft Java / 基岩双端互通服务器的完整技术文档与运维手册
 >
-> 本文档是一份**从零复现这台服务器**的指南：涵盖服务端选型、组件清单、网络架构、端口规划、玩法与插件、玩家命令、日常运维与故障排查。技术底座沿用本仓库已有的「南瓜生存服」配置（Java 1.21.11 / Leaf 核心），对外以「南瓜国际服」品牌运营。
+> 本文档是一份**从零复现这台服务器**的指南：涵盖服务端选型、组件清单、网络架构、端口规划、玩法与插件、玩家命令、日常运维与故障排查。技术底座沿用本仓库已有的「南瓜生存服」配置（Java 26.3 / Leaf 核心），对外以「南瓜国际服」品牌运营。
 
 > ⚠️ **隐私说明**：本文档中所有敏感信息（公网 IP、Token、密码、密钥、AccessKey）均已替换为占位符（如 `<公网IP>`、`<随机32位字符串>`）。
 > 部署时请**自行生成**并妥善保管，切勿将真实凭据提交到公开仓库。
-
----
 
 ## 目录
 
@@ -72,8 +70,8 @@
 | --------------- | ------------------------------------ |
 | 服务器名称      | 南瓜国际服                           |
 | MOTD            | `§e南瓜§f国际服`                     |
-| 服务端核心      | Leaf `1.21.11-174`（Paper 分支）     |
-| Minecraft 版本  | Java 1.21.11                         |
+| 服务端核心      | Leaf `26.3`（Paper 分支）            |
+| Minecraft 版本  | Java 26.3                            |
 | 运行模式        | 单端（可扩展为多服 Velocity 网络）   |
 | 正版验证        | `online-mode=true`（经外置登录代理） |
 | Java 版端口     | **55551**（TCP）                     |
@@ -119,14 +117,14 @@
             │
    ┌────────▼────────┐
    │  运维与联动层     │  OPanel(Web) · spark · MCSM · EasyBot(QQ)
-   │                  │  Plan · TAB · PosTracker · CMILib · bStats
+   │                  │  Plan · TAB  · CMILib · bStats
    └─────────────────┘
 ```
 
 - **服务端核心**：Leaf（Paper 分支，高性能、反作弊友好、修复大量卡顿）。
 - **外置登录**：YggdrasilOfficialProxy 配合 authlib-injector 做字节码注入，实现外置登录与皮肤加载；基岩版经 Floodgate 免正版验证。
 - **跨端互通**：Geyser 把基岩版协议翻译成 Java 版协议，Floodgate 负责基岩玩家身份识别（带前缀）。
-- **跨版本兼容**：ViaVersion 让老版本客户端也能连入 1.21.11。
+- **跨版本兼容**：ViaVersion 让老版本客户端也能连入 26.3。
 - **多服扩展（可选）**：通过 Velocity 代理把单服升级为多子服网络（详见[文档导航](#十一文档导航详细分册)）。
 
 ---
@@ -149,7 +147,7 @@
 
 | 分类             | 插件 / 组件                               | 作用                                                                                       |
 | ---------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------ |
-| 服务端核心       | Leaf 1.21.11-174                          | 高性能服务端内核                                                                           |
+| 服务端核心       | Leaf 26.3                                 | 高性能服务端内核                                                                           |
 | 外置登录         | YggdrasilOfficialProxy + authlib-injector | 外置登录、皮肤认证                                                                         |
 | 跨端互通         | Geyser-Spigot + Floodgate                 | Java/基岩同服；基岩免正版                                                                  |
 | 跨版本           | ViaVersion                                | 1.8 ~ 最新客户端直连                                                                       |
@@ -175,7 +173,7 @@
 | 每日收购（自研） | DailySell                                 | 每日随机收购指定物品，玩家可出售换币                                                       |
 | 在线排行（自研） | PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                                             |
 | 基岩 GUI         | BedrockPlayerSupport                      | 基岩玩家免敲指令的表单界面                                                                 |
-| 数据展示         | Plan / TAB / PosTracker                   | 玩家行为分析、炫彩称号、坐标轨迹                                                           |
+| 数据展示         | Plan / TAB                                | 玩家行为分析、炫彩称号、坐标轨迹                                                           |
 | 运维             | OPanel / spark / MCSM / EasyBot           | Web 面板、性能分析、进程管理、QQ 联动                                                      |
 | 依赖库           | CMILib / ProtocolLib / bStats             | 多插件共享底层库、协议库、匿名统计                                                         |
 
@@ -476,7 +474,7 @@
 | **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充、协议库 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服 · ProtocolLib                                                                             |
 | **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动                      | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                                                                                           |
 | **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件                     | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · LeashablePlayers · ClickMobs |
-| **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                            | Plan · TAB · 炫彩多层称号 · DecentHolograms · PosTracker                                                                                                                    |
+| **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                            | Plan · TAB · 炫彩多层称号 · DecentHolograms                                                                                                                                 |
 | **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移                       | LuckPerms · CoreProtect · WorldEdit · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID                                                                                |
 | **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                          | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · AntiLitematica                                                                                                     |
 
@@ -547,7 +545,6 @@ Minecraft-Server-Build/
 │   ├── 03-TAB信息展示.md
 │   ├── 04-PlaceholderAPI占位符.md
 │   ├── 05-LuckPerms炫彩称号.md
-│   ├── 06-PosTracker玩家位置记录.md
 │   ├── 07-在线时间排行榜（PlanTop）.md
 │   └── 08-DecentHolograms全息插件/  DecentHolograms全息插件.md
 │
@@ -563,7 +560,7 @@ Minecraft-Server-Build/
 │   └── 反作弊（开了一会问题太多，已关闭）/  NovaAC / 反作弊部署与配置指南
 │
 ├── 6-工具与常见问题约束/
-│   ├── 01-服务器优化/               Plan、CoreProtect、PosTracker 性能优化
+│   ├── 01-服务器优化/               Plan、CoreProtect 性能优化
 │   ├── 02-常见问题/                 常见问题排查 / UUID踩坑 / 发消息闪退（服务器内存相关）
 │   ├── 03-禁用影响平衡的插件功能/    AntiLitematica（1.禁用影响平衡的插件功能.md）
 │   ├── 云数据库备份到本地/          增量备份技术文档 + sync/verify/register 脚本
@@ -588,4 +585,4 @@ Minecraft-Server-Build/
 ## 更新记录
 
 - **2026-10-04 更新**：插件与玩法总览"自研"类目补齐 MoneyLedger、AdvZone、EntityCount、DragonManager、DailySell、PlanTop；目录树"自研/"段目录名与实际对齐（`南瓜邮箱/`→`南瓜邮箱-PumpkinMail/`、`基岩皮肤记录器/`→`基岩皮肤记录-BedrockSkinRecorder/`），并补入 `南瓜账本-MoneyLedger/`、`在线时间排行-PlanTop/`；文档更新日期改为 2026-10-04。
-- **关于"服务端目录 `C:\mc_serve\1.21.11-test`"**：该处保留为历史记录未改动；实际运行目录以部署机器为准，本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-1.21.11`（Leaf 1.21.11 生产运行目录备份）为运行服参照。
+- **关于"服务端目录 `C:\mc_serve\1.21.11-test`"**：该处保留为历史记录未改动；实际运行目录以部署机器为准，本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-1.21.11`（Leaf 1.21.11 生产运行目录备份）为运行服参照。｜升级到 Leaf 26.3 后，运行目录备份命名将相应更新为 `leaf-26.3`，本文档路径引用待升级完成后同步修正。

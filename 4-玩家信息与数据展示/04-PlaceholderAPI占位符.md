@@ -4,7 +4,7 @@
 
 > **一句话**：PlaceholderAPI（PAPI）是服务端的**占位符解析中间层**，让 TAB、DecentHolograms、Chat 等插件能引用其他插件的数据（玩家名、余额、在线人数、TPS 等），用 `%placeholder%` 语法动态渲染文本。
 >
-> **本服版本**：2.12.3（jar：`PlaceholderAPI-2.12.3.jar`）
+> **本服版本**：2.12.3（jar：`PlaceholderAPI-2.12.3.jar`，覆盖 Minecraft 1.8 – 26.3）
 
 ---
 

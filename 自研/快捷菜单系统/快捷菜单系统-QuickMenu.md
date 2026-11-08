@@ -12,22 +12,22 @@
 
 **插件与菜单的对应关系**（本菜单已覆盖的后端）：
 
-| 插件                 | 玩家菜单                                  | 管理菜单                   |
-| -------------------- | ----------------------------------------- | -------------------------- |
-| EssentialsX          | 传送 / 经济 / 工具包 / 社交 / 信息 | 玩家管理 / 处罚 / 传送管理 |
-| Residence            | 我的领地                                  | 领地管理                   |
-| Simple Voice Chat    | 语音聊天                                  | 服务器监控（语音管理）     |
-| EasyBot              | 社交（绑定 QQ）                           | 服务器监控（重载）         |
-| CoreProtect          | —                                         | 审计与回滚                 |
-| OpenInv              | —                                         | 玩家管理（查背包）         |
-| Chunky               | —                                         | 世界管理                   |
-| WorldEdit            | —                                         | 世界管理                   |
-| spark                | —                                         | 服务器监控                 |
-| Geyser / ViaVersion  | —                                         | 服务器监控                 |
-| LuckPerms            | —                                         | 权限管理                   |
-| BedrockPlayerSupport | 传送（表单）                       | —                          |
-| EvenMoreFish         | 更多鱼（钓鱼中心/卖鱼/鱼饵/日记）         | 更多鱼管理（比赛控制）     |
-| **PumpkinMail（自研）** | 南瓜邮箱（/mailbox，领活动奖励）    | 南瓜邮箱管理（/mailbox admin 发放面板，权限 `pumpkinmail.admin`） |
+| 插件                      | 玩家菜单                                                                              | 管理菜单                                                                      |
+| ------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| EssentialsX               | 传送 / 经济 / 工具包 / 社交 / 信息                                                    | 玩家管理 / 处罚 / 传送管理                                                    |
+| Residence                 | 我的领地                                                                              | 领地管理                                                                      |
+| Simple Voice Chat         | 语音聊天                                                                              | 服务器监控（语音管理）                                                        |
+| EasyBot                   | 社交（绑定 QQ）                                                                       | 服务器监控（重载）                                                            |
+| CoreProtect               | —                                                                                     | 审计与回滚                                                                    |
+| OpenInv                   | —                                                                                     | 玩家管理（查背包）                                                            |
+| Chunky                    | —                                                                                     | 世界管理                                                                      |
+| WorldEdit                 | —                                                                                     | 世界管理                                                                      |
+| spark                     | —                                                                                     | 服务器监控                                                                    |
+| Geyser / ViaVersion       | —                                                                                     | 服务器监控                                                                    |
+| LuckPerms                 | —                                                                                     | 权限管理                                                                      |
+| BedrockPlayerSupport      | 传送（表单）                                                                          | —                                                                             |
+| EvenMoreFish              | 更多鱼（钓鱼中心/卖鱼/鱼饵/日记）                                                     | 更多鱼管理（比赛控制）                                                        |
+| **PumpkinMail（自研）**   | 南瓜邮箱（/mailbox，领活动奖励）                                                      | 南瓜邮箱管理（/mailbox admin 发放面板，权限 `pumpkinmail.admin`）             |
 | **OfflineReward（自研）** | 离线奖励自动发放到邮箱（玩家无独立入口，上线后在邮箱领取；**管理员/管理组同样适用**） | 离线奖励管理（`/offlinereward reload` / `check`，权限 `offlinereward.admin`） |
 
 ---
@@ -103,8 +103,8 @@ if (api.isFloodgatePlayer(uuid)) {
 
 ### 3.1 环境要求
 
-| 项目       | 要求               | 本服                         |
-| ---------- | ------------------ | ---------------------------- |
+| 项目       | 要求               | 本服                          |
+| ---------- | ------------------ | ----------------------------- |
 | 服务端核心 | Paper 或其分支     | ✅ Leaf 1.21.11（Paper 分支） |
 | Java       | 21+                | ✅ 已装 JDK 21                |
 | Minecraft  | 1.21.x             | ✅ 1.21.11                    |
@@ -211,16 +211,16 @@ menus:
 | ------------------- | ---------------------------- |
 | `[bedrock-player]`  | 仅基岩玩家，以玩家身份执行   |
 | `[java-player]`     | 仅 Java 玩家，以玩家身份执行 |
-| `[bedrock-console]`  | 仅基岩玩家，控制台身份       |
-| `[java-console]`     | 仅 Java 玩家，控制台身份      |
+| `[bedrock-console]` | 仅基岩玩家，控制台身份       |
+| `[java-console]`    | 仅 Java 玩家，控制台身份     |
 
 **动态目标动作**：
 
-| 前缀                         | 作用                                                                                    |
-| ---------------------------- | --------------------------------------------------------------------------------------- |
-| `[player-selector] 命令模板` | 点击后列出在线玩家（排除自己），`{target}` 替换为所选玩家名                            |
-| `[item-selector] 命令模板`    | 点击后列出背包物品（自动排除触发物品、同材质合并），`{item}` 替换为材质名（小写）      |
-| `[ah-sell] 价格 材质名`       | 拍卖行上架：自动把背包中该材质物品换到主手执行 `/ah sell 价格`，再还原主手（解决触发物品占主手无法直接上架），如 `[ah-sell] 5000 elytra` |
+| 前缀                            | 作用                                                                                                                                                                                                                                                       |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[player-selector] 命令模板`    | 点击后列出在线玩家（排除自己），`{target}` 替换为所选玩家名                                                                                                                                                                                                |
+| `[item-selector] 命令模板`      | 点击后列出背包物品（自动排除触发物品、同材质合并），`{item}` 替换为材质名（小写）                                                                                                                                                                          |
+| `[ah-sell] 价格 材质名`         | 拍卖行上架：自动把背包中该材质物品换到主手执行 `/ah sell 价格`，再还原主手（解决触发物品占主手无法直接上架），如 `[ah-sell] 5000 elytra`                                                                                                                   |
 | `[residence-selector] 命令模板` | 点击后列出玩家自己名下的所有领地（基于 Residence 插件的 `ResidenceApi` 软依赖，反射访问），`{residence}` 替换为所点领地名称。典型：`res tp {residence}` 传送、`res info {residence}` 查看信息；玩家无领地时给出提示。需 Residence 插件在线，否则选择器为空 |
 
 动作可叠加，按列表顺序执行。常见组合：先 `[close]` 关界面，再执行指令，避免指令输出被界面遮挡。
@@ -230,7 +230,7 @@ menus:
 ```yaml
 # 两端统一走 QuickMenu 领地选择器：动态列出玩家自己的领地，点哪个就操作哪个
 actions:
-  - '[residence-selector] res tp {residence}'    # 传送到所选领地
+  - '[residence-selector] res tp {residence}' # 传送到所选领地
   # 查看领地信息同理：- '[residence-selector] res info {residence}'
 ```
 
@@ -280,22 +280,22 @@ actions:
 
 ### 5.1 玩家菜单（15 套）
 
-| 菜单 id     | 名称       | 对接插件                  | 主要内容                                                                                                                                                                                                                          |
-| ----------- | ---------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `main`      | 主菜单     | —                         | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达；含**南瓜邮箱**（`/mailbox`，slot 30，第 4 行）领活动奖励                                                                                                |
-| `teleport`  | 传送功能   | EssentialsX + BPS         | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                                |
-| `warps`     | 传送点     | EssentialsX               | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                 |
-| `residence` | 我的领地   | **Residence**             | 传送/查看**自己**的领地（点选式 `[residence-selector]`，无需手敲领地名）、建/删领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                       |
-| `economy`   | 经济中心   | EssentialsX + Vault       | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                                          |
-| `kit`       | 工具包     | EssentialsX               | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次） |
-| `social`    | 社交设置   | EssentialsX + **EasyBot** | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                           |
-| `info`      | 服务器信息 | EssentialsX               | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                                          |
-| `voice`     | 语音聊天   | **Simple Voice Chat**     | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                            |
-| `guide`     | 新人指南   | —（说明书）               | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                                  |
-| `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                              |
-| `guide-build`   | 领地建房   | **Residence**             | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                             |
-| `guide-move`    | 传送出行   | EssentialsX + SpacePortal | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                             |
-| `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                               |
+| 菜单 id         | 名称       | 对接插件                                                              | 主要内容                                                                                                                                                                                                            |
+| --------------- | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main`          | 主菜单     | —                                                                     | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达；含**南瓜邮箱**（`/mailbox`，slot 30，第 4 行）领活动奖励 |
+| `teleport`      | 传送功能   | EssentialsX + BPS                                                     | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                        |
+| `warps`         | 传送点     | EssentialsX                                                           | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                    |
+| `residence`     | 我的领地   | **Residence**                                                         | 传送/查看**自己**的领地（点选式 `[residence-selector]`，无需手敲领地名）、建/删领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                        |
+| `economy`       | 经济中心   | EssentialsX + Vault                                                   | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                   |
+| `kit`           | 工具包     | EssentialsX                                                           | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次）                                                                                                                              |
+| `social`        | 社交设置   | EssentialsX + **EasyBot**                                             | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                             |
+| `info`          | 服务器信息 | EssentialsX                                                           | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                            |
+| `voice`         | 语音聊天   | **Simple Voice Chat**                                                 | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                              |
+| `guide`         | 新人指南   | —（说明书）                                                           | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                      |
+| `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                                                                                                  |
+| `guide-build`   | 领地建房   | **Residence**                                                         | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                                                                                |
+| `guide-move`    | 传送出行   | EssentialsX + SpacePortal                                             | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                                                                                                 |
+| `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX                  | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                                                                                        |
 
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah，slot 9）、玩家商店（/shop，slot 11）
@@ -314,17 +314,18 @@ actions:
 
 **设计原则**：这是给新玩家的游戏内说明书——不是命令手册，而是"该做什么、怎么做"。分 5 套菜单：
 
-| 菜单 | 内容 | 呈现方式 |
-|---|---|---|
-| `guide` 首页 | 新人必做 3 件事（领新手包→圈领地→熟悉菜单）、4 个分册入口、常用指令速查、服务器规则 | 说明类按钮 = 关闭界面 + 逐行 `[message]` 图文提示（两端通用） |
-| `guide-economy` 怎么赚钱 | 每日任务 / 每日收购 / 玩家商店 / 拍卖行 / 转账 / 余额财富榜 / 周税 | 能直接执行的（`/quests` `/ds` `/balance`）点击即执行；需参数的（`/pay`）给用法提示 |
-| `guide-build` 领地建房 | 建领地步骤、传送点、邀请玩家、flag 开关、子领地、卡住脱身 | 建领地给出完整 3 步圈地流程；其余给命令示例 |
-| `guide-move` 传送出行 | 回主城、传送点、tpa、传送阵 | 回主城 / 传送阵直接执行，其余给命令示例 |
-| `guide-play` 玩法大全 | 宠物、骑玩家、语音、摸头、工具包、服务器信息 | 宠物 / 工具包直接执行，骑玩家 / 摸头给说明 |
+| 菜单                     | 内容                                                                                | 呈现方式                                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `guide` 首页             | 新人必做 3 件事（领新手包→圈领地→熟悉菜单）、4 个分册入口、常用指令速查、服务器规则 | 说明类按钮 = 关闭界面 + 逐行 `[message]` 图文提示（两端通用）                      |
+| `guide-economy` 怎么赚钱 | 每日任务 / 每日收购 / 玩家商店 / 拍卖行 / 转账 / 余额财富榜 / 周税                  | 能直接执行的（`/quests` `/ds` `/balance`）点击即执行；需参数的（`/pay`）给用法提示 |
+| `guide-build` 领地建房   | 建领地步骤、传送点、邀请玩家、flag 开关、子领地、卡住脱身                           | 建领地给出完整 3 步圈地流程；其余给命令示例                                        |
+| `guide-move` 传送出行    | 回主城、传送点、tpa、传送阵                                                         | 回主城 / 传送阵直接执行，其余给命令示例                                            |
+| `guide-play` 玩法大全    | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                        | 宠物 / 工具包直接执行，骑玩家 / 摸头给说明                                         |
 
 **基岩端兼容**：全部说明类按钮走 `[message]`（原生表单按钮不支持 lore），基岩玩家点击同样看到完整说明文字；按钮文本自动去色。
 
 **给新人的完整链路**（建议）：
+
 1. 进服自动发放触发时钟（`give-on-join: true`）+ TAB footer / 公告栏提示"右键时钟打开快捷菜单"；
 2. 新人打开主菜单 → 点「新人指南」→ 先看「新人必做 4 件事」；
 3. 按需进入 赚钱 / 领地 / 出行 / 玩法 分册学习。
@@ -332,28 +333,28 @@ actions:
 **维护提醒**：新增玩法插件后，在主菜单加对应按钮时，顺手在 `guide-play` 或对应分册补一条说明项，说明书与功能同步更新。
 
 **部署到线上服务器**（config.yml 已存在的服务器不会随 jar 更新）：
+
 1. 用仓库模板 `自研/快捷菜单系统/config.yml` **整体替换**服务器 `plugins/QuickMenu/config.yml`（模板已含全部线上菜单 + guide 系列；若线上有本地化自定义，先备份再替换后手工合并）；
 2. 执行 `/qm reload` 即时生效，无需重启；
 3. 验证：主菜单 slot 17 出现「新人指南」，`/qm open guide` 可进入。
 
 ### 5.2 管理菜单（12 套）
 
-| 菜单 id           | 名称         | 对接插件                                              | 主要内容                                                                                     |
-| ----------------- | ------------ | ----------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `admin`           | 管理面板     | —                                                     | 一级入口，10 个分类 + 返回玩家菜单；含**南瓜邮箱管理**（slot 18，`/mailbox admin` 发放面板，权限 `pumpkinmail.admin`）、**离线奖励管理**（slot 25，`/offlinereward reload`，权限 `offlinereward.admin`）                                                           |
-| `admin-player`    | 玩家管理     | **OpenInv** + EssentialsX                             | 看背包、传送/拉人、切模式、治疗、飞行、无敌、喂食、隐身、清背包、查信息、修复、发物品        |
-| `gamemode`        | 切换游戏模式 | EssentialsX                                           | `admin-player` 的子菜单：生存/创造/冒险/旁观四种模式，选模式后再从在线列表选玩家执行        |
-| `admin-punish`    | 处罚管理     | EssentialsX                                           | 踢出、封禁、临时封禁、解封、封 IP、禁言、解禁、关押、释放、广播、私信监视                    |
-| `admin-teleport`  | 传送管理     | EssentialsX                                           | 强制传送/拉人、全员传送、头顶、设出生点、建/删传送点、静默传送                               |
-| `admin-residence` | 领地管理     | **Residence**                                         | 全服领地列表、查看/删除/转移归属、传送、选取他人领地                                         |
-| `admin-inspect`   | 审计与回滚   | **CoreProtect**                                       | 查询模式、附近变更、条件查询、回滚、撤销回滚、清理数据库、重载、帮助                         |
-| `admin-world`     | 世界管理     | **Chunky** + **WorldEdit** + 原版                     | 时间/天气切换、区块预生成全套、创世神木斧/撤销/重做/复制/粘贴                                |
-| `admin-server`    | 服务器监控   | **spark** + **Geyser** + **ViaVersion** + **EasyBot** | TPS、健康报告、延迟、性能采样、堆内存、Geyser 重载/诊断/统计、版本分布、机器人重载、插件列表 |
-| `admin-perm`      | 权限管理     | **LuckPerms**                                         | 网页编辑器、同步、重载、权限树、信息、查玩家权限、实时追踪                                   |
-| `admin-qm`        | 菜单管理     | QuickMenu 自身                                        | 重载配置、菜单列表、客户端诊断、发放触发物品                                                 |
-| `admin-economy` | 经济管理     | EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell | 财富榜、查余额（选人）、发钱/扣钱/设余额（指引）、拍卖行管理、系统商店管理、税务统计、每日收购重生成/重载 |
-| `postracker`       | 玩家位置记录 | **PosTracker**                                        | 位于 `admin` 菜单内（非独立菜单），查询玩家历史位置轨迹（`/pos radius:10 time:1h`）          |
-| `admin-offlinereward` | 离线奖励管理 | **OfflineReward**                                  | 位于 `admin` 菜单内（非独立菜单），点击重载配置；查询时间戳 `/offlinereward check 玩家名`     |
+| 菜单 id               | 名称         | 对接插件                                                     | 主要内容                                                                                                                                                                                                 |
+| --------------------- | ------------ | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| `admin`               | 管理面板     | —                                                            | 一级入口，10 个分类 + 返回玩家菜单；含**南瓜邮箱管理**（slot 18，`/mailbox admin` 发放面板，权限 `pumpkinmail.admin`）、**离线奖励管理**（slot 25，`/offlinereward reload`，权限 `offlinereward.admin`） |
+| `admin-player`        | 玩家管理     | **OpenInv** + EssentialsX                                    | 看背包、传送/拉人、切模式、治疗、飞行、无敌、喂食、隐身、清背包、查信息、修复、发物品                                                                                                                    |
+| `gamemode`            | 切换游戏模式 | EssentialsX                                                  | `admin-player` 的子菜单：生存/创造/冒险/旁观四种模式，选模式后再从在线列表选玩家执行                                                                                                                     |
+| `admin-punish`        | 处罚管理     | EssentialsX                                                  | 踢出、封禁、临时封禁、解封、封 IP、禁言、解禁、关押、释放、广播、私信监视                                                                                                                                |
+| `admin-teleport`      | 传送管理     | EssentialsX                                                  | 强制传送/拉人、全员传送、头顶、设出生点、建/删传送点、静默传送                                                                                                                                           |
+| `admin-residence`     | 领地管理     | **Residence**                                                | 全服领地列表、查看/删除/转移归属、传送、选取他人领地                                                                                                                                                     |
+| `admin-inspect`       | 审计与回滚   | **CoreProtect**                                              | 查询模式、附近变更、条件查询、回滚、撤销回滚、清理数据库、重载、帮助                                                                                                                                     |
+| `admin-world`         | 世界管理     | **Chunky** + **WorldEdit** + 原版                            | 时间/天气切换、区块预生成全套、创世神木斧/撤销/重做/复制/粘贴                                                                                                                                            |
+| `admin-server`        | 服务器监控   | **spark** + **Geyser** + **ViaVersion** + **EasyBot**        | TPS、健康报告、延迟、性能采样、堆内存、Geyser 重载/诊断/统计、版本分布、机器人重载、插件列表                                                                                                             |
+| `admin-perm`          | 权限管理     | **LuckPerms**                                                | 网页编辑器、同步、重载、权限树、信息、查玩家权限、实时追踪                                                                                                                                               |
+| `admin-qm`            | 菜单管理     | QuickMenu 自身                                               | 重载配置、菜单列表、客户端诊断、发放触发物品                                                                                                                                                             |
+| `admin-economy`       | 经济管理     | EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell | 财富榜、查余额（选人）、发钱/扣钱/设余额（指引）、拍卖行管理、系统商店管理、税务统计、每日收购重生成/重载                                                                                                |     |
+| `admin-offlinereward` | 离线奖励管理 | **OfflineReward**                                            | 位于 `admin` 菜单内（非独立菜单），点击重载配置；查询时间戳 `/offlinereward check 玩家名`                                                                                                                |
 
 层级：`admin` 的二级菜单共 10 个（`back-menu` 均为 `admin`），`admin-player` 另有三级子菜单 `gamemode`（选模式）；`admin` 的 `back-menu` 为 `main`，
 管理员可在两条线之间自由往返。
@@ -362,161 +363,161 @@ actions:
 
 管理面板「经济管理」入口（**slot 17**，金锭，仅管理员可见）→ `admin-economy` 菜单（size 27，back 到 admin）。功能与权限：
 
-| 菜单项 | 功能 | 命令 | 权限 |
-|---|---|---|---|
-| `baltop` | 财富排行榜 | `/baltop` | `essentials.balancetop` |
-| `balance` | 查询玩家余额（在线列表选人） | `/balance <玩家>` | `essentials.balance.others` |
-| `eco-give` | 给玩家发钱（文字指引） | `/eco give 玩家 金额` | `essentials.eco` |
-| `eco-take` | 扣回玩家余额（文字指引） | `/eco take 玩家 金额` | `essentials.eco` |
-| `eco-set` | 设置玩家余额（文字指引） | `/eco set 玩家 金额` | `essentials.eco` |
-| `ahadmin` | 拍卖行管理（删单/查记录） | `/ahadmin` | `auction.admin` |
-| `shopadmin` | 系统商店管理（加物品/定价） | `/shop admin` | `economyshop.admin` |
-| `eztax` | 税务统计 | `/eztax stats` | `eztax.stats` |
-| `ds-reroll` | 每日收购·重新生成今日清单 | `/ds reroll` | `dailysell.admin` |
-| `ds-reload` | 每日收购·重载配置 | `/ds reload` | `dailysell.admin` |
+| 菜单项      | 功能                         | 命令                  | 权限                        |
+| ----------- | ---------------------------- | --------------------- | --------------------------- |
+| `baltop`    | 财富排行榜                   | `/baltop`             | `essentials.balancetop`     |
+| `balance`   | 查询玩家余额（在线列表选人） | `/balance <玩家>`     | `essentials.balance.others` |
+| `eco-give`  | 给玩家发钱（文字指引）       | `/eco give 玩家 金额` | `essentials.eco`            |
+| `eco-take`  | 扣回玩家余额（文字指引）     | `/eco take 玩家 金额` | `essentials.eco`            |
+| `eco-set`   | 设置玩家余额（文字指引）     | `/eco set 玩家 金额`  | `essentials.eco`            |
+| `ahadmin`   | 拍卖行管理（删单/查记录）    | `/ahadmin`            | `auction.admin`             |
+| `shopadmin` | 系统商店管理（加物品/定价）  | `/shop admin`         | `economyshop.admin`         |
+| `eztax`     | 税务统计                     | `/eztax stats`        | `eztax.stats`               |
+| `ds-reroll` | 每日收购·重新生成今日清单    | `/ds reroll`          | `dailysell.admin`           |
+| `ds-reload` | 每日收购·重载配置            | `/ds reload`          | `dailysell.admin`           |
 
 > **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时替换 jar 不会更新它——需手动插入以下两段（段一进 `admin` 菜单，段二追加到 `menus:` 末尾），再 `/qm reload` 生效。完整 YAML 亦可解压 jar 内嵌 config.yml 复制 `admin-economy` 相关段。
 
-**段一：admin 面板入口（加在 `admin` 菜单 items 里 `admin-qm` 按钮项之后，即管理面板「菜单管理」下方；源码中紧随其后的是 postracker、backmain）**
+**段一：admin 面板入口（加在 `admin` 菜单 items 里 `admin-qm` 按钮项之后，即管理面板「菜单管理」下方；源码中紧随其后的是backmain）**
 
 ```yaml
-      admin-economy:
-        material: GOLD_INGOT
-        display-name: '&6&l经济管理'
-        lore:
-          - '&7查余额、发钱/扣钱、财富榜'
-          - '&7拍卖行 / 系统商店 / 税务 / 每日收购'
-        slot: 17
-        permission: quickmenu.admin
-        actions:
-          - '[menu] admin-economy'
+admin-economy:
+  material: GOLD_INGOT
+  display-name: '&6&l经济管理'
+  lore:
+    - '&7查余额、发钱/扣钱、财富榜'
+    - '&7拍卖行 / 系统商店 / 税务 / 每日收购'
+  slot: 17
+  permission: quickmenu.admin
+  actions:
+    - '[menu] admin-economy'
 ```
 
 **段二：admin-economy 菜单定义（追加到 `menus:` 末尾）**
 
 ```yaml
-  admin-economy:
-    title: '&6&l经济管理'
-    bedrock-content: '&7经济系统管理'
-    size: 27
-    back-menu: admin
-    filler:
-      material: YELLOW_STAINED_GLASS_PANE
-      name: '&8'
+admin-economy:
+  title: '&6&l经济管理'
+  bedrock-content: '&7经济系统管理'
+  size: 27
+  back-menu: admin
+  filler:
+    material: YELLOW_STAINED_GLASS_PANE
+    name: '&8'
 
-    items:
-      baltop:
-        material: GOLD_BLOCK
-        display-name: '&e财富排行榜'
-        lore:
-          - '&7查看全服最富有玩家'
-        slot: 10
-        permission: essentials.balancetop
-        actions:
-          - '[close]'
-          - '[player] baltop'
+  items:
+    baltop:
+      material: GOLD_BLOCK
+      display-name: '&e财富排行榜'
+      lore:
+        - '&7查看全服最富有玩家'
+      slot: 10
+      permission: essentials.balancetop
+      actions:
+        - '[close]'
+        - '[player] baltop'
 
-      balance:
-        material: PLAYER_HEAD
-        display-name: '&6查询玩家余额'
-        lore:
-          - '&7点击后从在线列表选择玩家'
-        slot: 11
-        permission: essentials.balance.others
-        actions:
-          - '[player-selector] balance {target}'
+    balance:
+      material: PLAYER_HEAD
+      display-name: '&6查询玩家余额'
+      lore:
+        - '&7点击后从在线列表选择玩家'
+      slot: 11
+      permission: essentials.balance.others
+      actions:
+        - '[player-selector] balance {target}'
 
-      eco-give:
-        material: EMERALD
-        display-name: '&a给玩家发钱'
-        lore:
-          - '&7需手动补充玩家名与金额'
-          - '&e用法：/eco give 玩家名 金额'
-        slot: 12
-        permission: essentials.eco
-        actions:
-          - '[close]'
-          - '[message] &7发钱：&e/eco give 玩家名 金额'
-          - '[message] &7例：&e/eco give Steve 500'
+    eco-give:
+      material: EMERALD
+      display-name: '&a给玩家发钱'
+      lore:
+        - '&7需手动补充玩家名与金额'
+        - '&e用法：/eco give 玩家名 金额'
+      slot: 12
+      permission: essentials.eco
+      actions:
+        - '[close]'
+        - '[message] &7发钱：&e/eco give 玩家名 金额'
+        - '[message] &7例：&e/eco give Steve 500'
 
-      eco-take:
-        material: BARRIER
-        display-name: '&c扣回玩家余额'
-        lore:
-          - '&7需手动补充玩家名与金额'
-          - '&e用法：/eco take 玩家名 金额'
-        slot: 13
-        permission: essentials.eco
-        actions:
-          - '[close]'
-          - '[message] &7扣钱：&e/eco take 玩家名 金额'
+    eco-take:
+      material: BARRIER
+      display-name: '&c扣回玩家余额'
+      lore:
+        - '&7需手动补充玩家名与金额'
+        - '&e用法：/eco take 玩家名 金额'
+      slot: 13
+      permission: essentials.eco
+      actions:
+        - '[close]'
+        - '[message] &7扣钱：&e/eco take 玩家名 金额'
 
-      eco-set:
-        material: DIAMOND
-        display-name: '&b设置玩家余额'
-        lore:
-          - '&7需手动补充玩家名与金额'
-          - '&e用法：/eco set 玩家名 金额'
-        slot: 14
-        permission: essentials.eco
-        actions:
-          - '[close]'
-          - '[message] &7设余额：&e/eco set 玩家名 金额'
+    eco-set:
+      material: DIAMOND
+      display-name: '&b设置玩家余额'
+      lore:
+        - '&7需手动补充玩家名与金额'
+        - '&e用法：/eco set 玩家名 金额'
+      slot: 14
+      permission: essentials.eco
+      actions:
+        - '[close]'
+        - '[message] &7设余额：&e/eco set 玩家名 金额'
 
-      ahadmin:
-        material: GOLD_INGOT
-        display-name: '&6拍卖行管理'
-        lore:
-          - '&7删除违规上架、查看拍卖记录'
-        slot: 15
-        permission: auction.admin
-        actions:
-          - '[close]'
-          - '[player] ahadmin'
+    ahadmin:
+      material: GOLD_INGOT
+      display-name: '&6拍卖行管理'
+      lore:
+        - '&7删除违规上架、查看拍卖记录'
+      slot: 15
+      permission: auction.admin
+      actions:
+        - '[close]'
+        - '[player] ahadmin'
 
-      shopadmin:
-        material: CHEST
-        display-name: '&e系统商店管理'
-        lore:
-          - '&7添加/调整商店物品与价格'
-        slot: 16
-        permission: economyshop.admin
-        actions:
-          - '[close]'
-          - '[player] shop admin'
+    shopadmin:
+      material: CHEST
+      display-name: '&e系统商店管理'
+      lore:
+        - '&7添加/调整商店物品与价格'
+      slot: 16
+      permission: economyshop.admin
+      actions:
+        - '[close]'
+        - '[player] shop admin'
 
-      eztax:
-        material: WRITABLE_BOOK
-        display-name: '&c税务统计'
-        lore:
-          - '&7查看周持有税与交易税征收'
-        slot: 17
-        permission: eztax.stats
-        actions:
-          - '[close]'
-          - '[player] eztax stats'
+    eztax:
+      material: WRITABLE_BOOK
+      display-name: '&c税务统计'
+      lore:
+        - '&7查看周持有税与交易税征收'
+      slot: 17
+      permission: eztax.stats
+      actions:
+        - '[close]'
+        - '[player] eztax stats'
 
-      ds-reroll:
-        material: EMERALD_BLOCK
-        display-name: '&a每日收购·重新生成'
-        lore:
-          - '&7重新随机今日 4 种收购物品'
-        slot: 19
-        permission: dailysell.admin
-        actions:
-          - '[close]'
-          - '[player] ds reroll'
+    ds-reroll:
+      material: EMERALD_BLOCK
+      display-name: '&a每日收购·重新生成'
+      lore:
+        - '&7重新随机今日 4 种收购物品'
+      slot: 19
+      permission: dailysell.admin
+      actions:
+        - '[close]'
+        - '[player] ds reroll'
 
-      ds-reload:
-        material: PAPER
-        display-name: '&a每日收购·重载配置'
-        lore:
-          - '&7改完配置后应用（今日清单不变）'
-        slot: 20
-        permission: dailysell.admin
-        actions:
-          - '[close]'
-          - '[player] ds reload'
+    ds-reload:
+      material: PAPER
+      display-name: '&a每日收购·重载配置'
+      lore:
+        - '&7改完配置后应用（今日清单不变）'
+      slot: 20
+      permission: dailysell.admin
+      actions:
+        - '[close]'
+        - '[player] ds reload'
 ```
 
 ### 5.3 管理面板如何进入
@@ -533,7 +534,7 @@ actions:
 | 途径                      | 说明                                                                                                  |
 | ------------------------- | ----------------------------------------------------------------------------------------------------- |
 | 主菜单点「管理面板」      | `main.admin` 配了 `permission: quickmenu.admin`，**只有管理员能看到这一项**，普通玩家界面里根本不出现 |
-| 直接执行 `/qm open admin` | 适合管理员快速直达，也可绑到其他命令/菜单                                                              |
+| 直接执行 `/qm open admin` | 适合管理员快速直达，也可绑到其他命令/菜单                                                             |
 
 > **纵深防御**：管理菜单里**每一个**菜单项都单独配了 `permission`
 > （如 `essentials.ban`、`coreprotect.rollback`、`chunky.trim`）。即便有人知道
@@ -543,11 +544,11 @@ actions:
 
 以下菜单项对两端调用不同指令：
 
-| 菜单项                                                      | 基岩端                                                               | Java 端                                                                                |
-| ----------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `teleport.warps`                                            | 统一 QuickMenu 传送点 GUI（`[menu] warps`，双端通用）                | 同左                                                                                   |
-| `teleport.tpa` / `teleport.tpahere`                         | 统一 QuickMenu 玩家选择器（`[player-selector]`，两端从在线列表选人） | 同左                                                                                   |
-| `social.msg`                                                | `/msggui`（BPS 私信表单）                                            | 文字提示 `/msg` 用法                                                                   |
+| 菜单项                              | 基岩端                                                               | Java 端              |
+| ----------------------------------- | -------------------------------------------------------------------- | -------------------- |
+| `teleport.warps`                    | 统一 QuickMenu 传送点 GUI（`[menu] warps`，双端通用）                | 同左                 |
+| `teleport.tpa` / `teleport.tpahere` | 统一 QuickMenu 玩家选择器（`[player-selector]`，两端从在线列表选人） | 同左                 |
+| `social.msg`                        | `/msggui`（BPS 私信表单）                                            | 文字提示 `/msg` 用法 |
 
 > **未安装 BedrockPlayerSupport 时**：基岩玩家点击这些项，`[bedrock-player] xxxgui`
 > 会执行一个不存在的指令，客户端提示「未知指令」，不崩溃但无效果。若不打算装 BPS，
@@ -618,11 +619,11 @@ powershell -ExecutionPolicy Bypass -File build.ps1 -SkipDeps
 
 ### 6.4 依赖版本已锁定，勿随意升级
 
-| 依赖           | 锁定版本              | 原因                           |
-| -------------- | --------------------- | ------------------------------ |
-| spigot-api     | 1.21.11-R0.1-SNAPSHOT | 对应 Leaf 1.21.11 核心         |
-| floodgate api  | 2.2.5-SNAPSHOT        | Floodgate 当前 API             |
-| **cumulus**    | **1.1.2**             | ⚠️ **不可换成 2.0.0-SNAPSHOT** |
+| 依赖          | 锁定版本              | 原因                           |
+| ------------- | --------------------- | ------------------------------ |
+| spigot-api    | 1.21.11-R0.1-SNAPSHOT | 对应 Leaf 1.21.11 核心         |
+| floodgate api | 2.2.5-SNAPSHOT        | Floodgate 当前 API             |
+| **cumulus**   | **1.1.2**             | ⚠️ **不可换成 2.0.0-SNAPSHOT** |
 
 > Floodgate 2.2.5 依赖 cumulus **1.1.2**；2.0.0-SNAPSHOT 缺少旧版 `FormBuilder`
 > 路径，会导致 `FloodgatePlayer.sendForm()` 重载决议失败、编译报错。
@@ -631,29 +632,29 @@ powershell -ExecutionPolicy Bypass -File build.ps1 -SkipDeps
 
 ## 7. 故障排查
 
-| 现象                                       | 原因                                                              | 处理                                                                                                                               |
-| ------------------------------------------ | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| 右键物品没反应                             | 物品不是插件发放的（`strict-match: true` 时要求 PDC 标记）        | 用 `/qm give` 重新获取；或把 `strict-match` 设为 `false`                                                                           |
-| 菜单打开但点击提示无权限                   | 只给了 `quickmenu.use`，漏了底层 `essentials.*`                   | 按第 3.3 / 第 8 节补齐权限                                                                                                         |
-| 某个菜单项不显示                           | 配了 `permission` 且玩家无权，被过滤跳过                          | 属正常行为；要显示就去掉该项的 permission                                                                                           |
-| 基岩玩家也看到箱子界面                     | Floodgate 未装 / `bedrock-native-form: false` / 表单发送失败回退 | 执行 `/qm info` 诊断；检查控制台回退警告                                                                                           |
-| 基岩表单按钮显示乱码                       | 在 `button-label` 里写了 `&` 颜色码                                | 原生按钮不支持颜色码，删掉即可（插件会自动去除 `display-name` 的色码）                                                             |
-| 返回按钮不显示                             | 右下角槽位（`size-1`）被其他菜单项占用                            | 控制台会有警告；把该物品的 slot 改开                                                                                               |
-| 改配置不生效                               | 未热重载                                                          | 执行 `/qm reload`；若改的是 `plugin.yml` 需重启                                                                                    |
-| 物品被玩家丢弃后丢失                       | `strict-match: true` 时插件会阻止丢弃                             | 若被丢（如死亡掉落），用 `/qm give` 补发                                                                                           |
-| 进服时背包满没拿到触发物品                 | 自动发放失败（背包已满），插件会提示「请用 /qm」                  | 腾出背包空位（快捷栏第 9 格）后重进服自动补发；或直接输入 `/qm` 打开菜单                                                           |
-| 右键触发物品被其他插件抢走（如被绑定传送） | 其他插件在同一右键事件上抢先处理                                  | 插件已用 LOWEST 最早优先级拦截：识别为触发物品即取消右键并打开菜单；仍异常时检查其他插件的右键绑定                                 |
-| **Java 玩家点某项没反应**                  | 该项只配了 `[bedrock-*]` 动作，Java 端被跳过                      | 补一条 `[java-player] 指令` 或 `[message] 指引`；开 `debug: true` 看控制台「跳过平台条件动作」日志                                 |
-| **基岩玩家点某项没反应**                   | 该项只配了 `[java-*]` 动作，基岩端被跳过                          | 补一条 `[bedrock-player] 指令`；同上开 debug 查日志                                                                                |
-| **点了报「未知指令」**                      | 用了 `[bedrock-player] warpgui` 但未装 BedrockPlayerSupport       | 装上 BPS，或把该项改回无条件动作（如 `[player] warp`）                                                                            |
-| 构建告警「无任何有效反馈」                 | 菜单项某一端只有 `[close]`，没有实际功能或提示                    | 属真实缺陷，按第 4.5 节补齐另一端动作                                                                                              |
-| 构建报 `cumulus` 找不到                    | 依赖版本被改成 2.0.0-SNAPSHOT                                     | 改回 **1.1.2**，见第 6.4 节                                                                                                        |
-| **主菜单看不到「管理面板」**               | 没有 `quickmenu.admin`，该项被权限过滤跳过                        | 按第 8.3 节给组授权；先确认自己所在组 `/lp user <自己> info`                                                                        |
-| **`/qm open admin` 打开后是空的**          | 管理项每个都单独配了 permission，你一个都没有                      | 按第 8.3 / 8.4 节补齐 EssentialsX / Residence / CoreProtect 等权限                                                                  |
-| 管理项点了提示无权限                       | 有 `quickmenu.admin` 但缺该插件自身的权限                         | 例：点「封禁」需 `essentials.ban`（仅服主组），见第 8.4 节                                                                         |
-| 菜单项只显示指令用法、不执行               | 该项需要参数（玩家名/领地名），设计如此                           | 见第 5.5 节；复制提示里的指令补上参数即可                                                                                          |
-| 点「获取选区木斧」没反应                   | //wand 经 performCommand 分发可能无效                             | 把 config.yml 里该项改为 [player] wand（去掉双斜杠）后 /qm reload                                                                  |
-| **「回主城」点了报未知指令/没反应**        | 未装 EssentialsSpawn 模块，/spawn 命令不存在                      | 已在 Essentials 建 warp 传送点 主城，并把主菜单 spawn 按钮动作改为 `[player] warp 主城`                                            |
+| 现象                                       | 原因                                                             | 处理                                                                                               |
+| ------------------------------------------ | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| 右键物品没反应                             | 物品不是插件发放的（`strict-match: true` 时要求 PDC 标记）       | 用 `/qm give` 重新获取；或把 `strict-match` 设为 `false`                                           |
+| 菜单打开但点击提示无权限                   | 只给了 `quickmenu.use`，漏了底层 `essentials.*`                  | 按第 3.3 / 第 8 节补齐权限                                                                         |
+| 某个菜单项不显示                           | 配了 `permission` 且玩家无权，被过滤跳过                         | 属正常行为；要显示就去掉该项的 permission                                                          |
+| 基岩玩家也看到箱子界面                     | Floodgate 未装 / `bedrock-native-form: false` / 表单发送失败回退 | 执行 `/qm info` 诊断；检查控制台回退警告                                                           |
+| 基岩表单按钮显示乱码                       | 在 `button-label` 里写了 `&` 颜色码                              | 原生按钮不支持颜色码，删掉即可（插件会自动去除 `display-name` 的色码）                             |
+| 返回按钮不显示                             | 右下角槽位（`size-1`）被其他菜单项占用                           | 控制台会有警告；把该物品的 slot 改开                                                               |
+| 改配置不生效                               | 未热重载                                                         | 执行 `/qm reload`；若改的是 `plugin.yml` 需重启                                                    |
+| 物品被玩家丢弃后丢失                       | `strict-match: true` 时插件会阻止丢弃                            | 若被丢（如死亡掉落），用 `/qm give` 补发                                                           |
+| 进服时背包满没拿到触发物品                 | 自动发放失败（背包已满），插件会提示「请用 /qm」                 | 腾出背包空位（快捷栏第 9 格）后重进服自动补发；或直接输入 `/qm` 打开菜单                           |
+| 右键触发物品被其他插件抢走（如被绑定传送） | 其他插件在同一右键事件上抢先处理                                 | 插件已用 LOWEST 最早优先级拦截：识别为触发物品即取消右键并打开菜单；仍异常时检查其他插件的右键绑定 |
+| **Java 玩家点某项没反应**                  | 该项只配了 `[bedrock-*]` 动作，Java 端被跳过                     | 补一条 `[java-player] 指令` 或 `[message] 指引`；开 `debug: true` 看控制台「跳过平台条件动作」日志 |
+| **基岩玩家点某项没反应**                   | 该项只配了 `[java-*]` 动作，基岩端被跳过                         | 补一条 `[bedrock-player] 指令`；同上开 debug 查日志                                                |
+| **点了报「未知指令」**                     | 用了 `[bedrock-player] warpgui` 但未装 BedrockPlayerSupport      | 装上 BPS，或把该项改回无条件动作（如 `[player] warp`）                                             |
+| 构建告警「无任何有效反馈」                 | 菜单项某一端只有 `[close]`，没有实际功能或提示                   | 属真实缺陷，按第 4.5 节补齐另一端动作                                                              |
+| 构建报 `cumulus` 找不到                    | 依赖版本被改成 2.0.0-SNAPSHOT                                    | 改回 **1.1.2**，见第 6.4 节                                                                        |
+| **主菜单看不到「管理面板」**               | 没有 `quickmenu.admin`，该项被权限过滤跳过                       | 按第 8.3 节给组授权；先确认自己所在组 `/lp user <自己> info`                                       |
+| **`/qm open admin` 打开后是空的**          | 管理项每个都单独配了 permission，你一个都没有                    | 按第 8.3 / 8.4 节补齐 EssentialsX / Residence / CoreProtect 等权限                                 |
+| 管理项点了提示无权限                       | 有 `quickmenu.admin` 但缺该插件自身的权限                        | 例：点「封禁」需 `essentials.ban`（仅服主组），见第 8.4 节                                         |
+| 菜单项只显示指令用法、不执行               | 该项需要参数（玩家名/领地名），设计如此                          | 见第 5.5 节；复制提示里的指令补上参数即可                                                          |
+| 点「获取选区木斧」没反应                   | //wand 经 performCommand 分发可能无效                            | 把 config.yml 里该项改为 [player] wand（去掉双斜杠）后 /qm reload                                  |
+| **「回主城」点了报未知指令/没反应**        | 未装 EssentialsSpawn 模块，/spawn 命令不存在                     | 已在 Essentials 建 warp 传送点 主城，并把主菜单 spawn 按钮动作改为 `[player] warp 主城`            |
 
 ---
 
@@ -955,23 +956,23 @@ lp group owner permission set openinv.override true
 
 #### ✅ 确认安全
 
-| 检测项 | 结果 |
-| --- | --- |
-| `[console]` 动作（玩家点击→控制台执行） | 运行服 config 中 **0 个** |
-| 管理菜单门控 | 入口 `quickmenu.admin` + 各按钮具体管理权限 |
-| 渲染过滤 + 点击二次校验 | Java 箱子 / 基岩表单均过滤无权限按钮，点击时 `hasItemPermission` 再验 |
-| default 组管理权限 | **无** quickmenu.admin / luckperms.* / essentials.ban/kick/give/eco/gamemode |
-| build/打开箱子按钮 | 全是教学 message（`/res set 领地名 build true` 仅为提示文字，不执行） |
+| 检测项                                  | 结果                                                                          |
+| --------------------------------------- | ----------------------------------------------------------------------------- |
+| `[console]` 动作（玩家点击→控制台执行） | 运行服 config 中 **0 个**                                                     |
+| 管理菜单门控                            | 入口 `quickmenu.admin` + 各按钮具体管理权限                                   |
+| 渲染过滤 + 点击二次校验                 | Java 箱子 / 基岩表单均过滤无权限按钮，点击时 `hasItemPermission` 再验         |
+| default 组管理权限                      | **无** quickmenu.admin / luckperms.\* / essentials.ban/kick/give/eco/gamemode |
+| build/打开箱子按钮                      | 全是教学 message（`/res set 领地名 build true` 仅为提示文字，不执行）         |
 
 **结论**：快捷菜单**不可能**给玩家打开全局权限；`residence.flags.build/destroy` 是领地 flag 管理权限，仅领地内生效。
 
 #### 三组权限实测（H2 直查）
 
-| 组 | 权限 | 成员 |
-| --- | --- | --- |
-| **admin** | `*`（**通配全权限**）+ residence.admin.setowner + residence.group.admin + 前缀 | 1 人（UUID 8e682ed5） |
-| **default** | 65 条玩家权限（无任何管理权限） | 163 人（全部玩家） |
-| **guildmaster** | 仅 residence.create + residence.use | **0 人（残留空组）** |
+| 组              | 权限                                                                           | 成员                  |
+| --------------- | ------------------------------------------------------------------------------ | --------------------- |
+| **admin**       | `*`（**通配全权限**）+ residence.admin.setowner + residence.group.admin + 前缀 | 1 人（UUID 8e682ed5） |
+| **default**     | 65 条玩家权限（无任何管理权限）                                                | 163 人（全部玩家）    |
+| **guildmaster** | 仅 residence.create + residence.use                                            | **0 人（残留空组）**  |
 
 > ⚠️ 文档 8.3/8.4 写的 **owner 组实际不存在**（H2 里没有），服主目前靠 admin 组的 `*` 通配或 OP 身份。
 
@@ -1014,12 +1015,12 @@ lp group default permission unset essentials.compass
 
 两者都给基岩玩家提供表单，但定位不同：
 
-|          | QuickMenu（本章）                | BedrockPlayerSupport                                   |
-| -------- | -------------------------------- | ------------------------------------------------------ |
+|          | QuickMenu（本章）                | BedrockPlayerSupport                                  |
+| -------- | -------------------------------- | ----------------------------------------------------- |
 | 定位     | **自定义菜单**，内容完全由你配置 | **既有指令的表格外壳**，把 `/tpa` `/kit` 等包装成表单 |
-| 覆盖面   | 任意指令、任意层级菜单           | 固定的传送/私信/工具包表单                        |
+| 覆盖面   | 任意指令、任意层级菜单           | 固定的传送/私信/工具包表单                            |
 | 触发方式 | 物品右键 / `/qm`                 | 各自的 `/tpgui` `/kitgui` 等指令                      |
-| Java 端  | 有箱子 GUI                       | 无（仅基岩端）                                         |
+| Java 端  | 有箱子 GUI                       | 无（仅基岩端）                                        |
 
 **推荐组合**：QuickMenu 负责「物品右键唤出的总菜单」，BPS 负责「事件驱动的自动表单」
 （收到传送请求、死亡重生时主动弹出，这类场景菜单插件无法覆盖）。本配置已把

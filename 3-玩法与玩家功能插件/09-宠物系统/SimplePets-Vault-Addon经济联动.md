@@ -2,9 +2,9 @@
 
 本文是 SimplePets 主文档的经济扩展篇，专门讲本服已启用的 Vault Addon：让玩家用服务器主货币（EssentialsX 余额，与全服同一套账）花钱购买或解锁宠物，而不是另起一套货币。内容包括 AddonConfig.yml 与 Vault.yml 价格配置、按生物类型调价的方法，以及 pet.vault.bypass 免付权限的用法。
 
-> **状态**：✅ 已安装启用 | **Addon 版本**：0.4（适配本服 1.21.11）
+> **状态**：✅ 已安装启用 | **Addon 版本**：0.4（随 SimplePets 主插件运行；主插件当前最高声明支持 26.2，Leaf 26.3 需待官方 26.3 构建或测试服实测）
 > **所属**：[宠物系统 SimplePets](宠物系统simplepets.md) 的经济扩展 | **上层经济**：[Vault](../01-经济系统-Vault/Vault.md) + [EssentialsX](../07-EssentialsX多功能指令整合/EssentialsX多功能指令整合（功能说明与完整配置）.md)
-
+>
 ## 一、这是什么
 
 SimplePets 通过「经济 Addon」实现**花钱买宠物 / 解锁宠物类型**。Vault Addon 是其中一种实现：Hook 进服务器已有的 Vault 经济（本服为 EssentialsX），宠物用**服务器主货币**购买——与 `/bal` 余额、Residence、死亡收费**同一套账**，玩家无需第二套货币。

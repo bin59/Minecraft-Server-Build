@@ -7,7 +7,7 @@
 
 ## 一、一句话结论
 
-**9 个插件全部移植完成，源码功能不变，且已用「真 leaf-api 26.3 + JDK 25 `--release 21`」逐个编译通过（rc=0，共 81 个 class）。** 8 个插件源码与原版**字节一致**（仅 `api-version` 改为 26.3 + 新增 pom），SpacePortal 仅 1 处必要适配，QuickMenu 仅加注释。
+**9 个插件全部移植完成，源码功能不变，且已用「真 leaf-api 26.3 + JDK 25 `--release 21`」逐个编译通过。** 8 个插件源码与原版**字节一致**（仅 `api-version` 改为 26.3 + 新增 pom），QuickMenu 仅加注释；SpacePortal 原为 1 处必要适配，2026-11-07 已与旧版同步加入「特效总开关 + 特殊物品标记」（见第四节第 6 条），当前 14 class。
 
 ---
 
@@ -28,17 +28,17 @@
 
 ## 三、逐插件状态
 
-| 插件 | 源码与原版 | 适配点 | 外置依赖（上线前替换为 26.3 版） | 编译 |
-|---|---|---|---|---|
-| **SpacePortal** 传送阵 | 1 处改动 | Bungee 动作栏 → Adventure `sendActionBar`（行为一致） | 无（用命令/API 互通 Geyser） | ✅ 13 class |
-| **EnchantShop** 附魔商店 | 字节一致 | 无 | 无（磁盘读 ExcellentEnchants 配置） | ✅ 3 |
-| **BuildRate** 建筑评分 | 字节一致 | 无（已回退 `getName()` 保 DB 格式） | PumpkinMail（同级构建） | ✅ 13 |
-| **PumpkinMail** 南瓜邮箱 | 字节一致 | 无 | 无（SQLite 自带） | ✅ 12 |
-| **OfflineReward** 离线奖励 | 字节一致 | 无 | PumpkinMail（同级构建） | ✅ 6 |
-| **DailySell** 每日收购 | 字节一致 | 无 | **Vault**（26.3 版 / VaultUnlocked） | ✅ 3 |
-| **QuickMenu** 快捷菜单 | 2 处仅加 TODO 注释 | 无 | **Geyser / Floodgate / Residence** | ✅ 20 |
-| **MoneyLedger** 南瓜账本 | 字节一致 | 无 | **EssentialsX**（26.3 版） | ✅ 8 |
-| **PlanTop** 在线排行 | 字节一致 | 无 | **PlaceholderAPI**；运行连 Plan MySQL | ✅ 3 |
+| 插件                       | 源码与原版         | 适配点                                                                                         | 外置依赖（上线前替换为 26.3 版）      | 编译        |
+| -------------------------- | ------------------ | ---------------------------------------------------------------------------------------------- | ------------------------------------- | ----------- |
+| **SpacePortal** 传送阵     | 与旧版同步迭代     | Bungee 动作栏 → Adventure `sendActionBar`；`Particle.DUST`；坐标 override；特效开关 + 物品标记 | 无（用命令/API 互通 Geyser）          | ✅ 14 class |
+| **EnchantShop** 附魔商店   | 字节一致           | 无                                                                                             | 无（磁盘读 ExcellentEnchants 配置）   | ✅ 3        |
+| **BuildRate** 建筑评分     | 字节一致           | 无（已回退 `getName()` 保 DB 格式）                                                            | PumpkinMail（同级构建）               | ✅ 13       |
+| **PumpkinMail** 南瓜邮箱   | 字节一致           | 无                                                                                             | 无（SQLite 自带）                     | ✅ 12       |
+| **OfflineReward** 离线奖励 | 字节一致           | 无                                                                                             | PumpkinMail（同级构建）               | ✅ 6        |
+| **DailySell** 每日收购     | 字节一致           | 无                                                                                             | **Vault**（26.3 版 / VaultUnlocked）  | ✅ 3        |
+| **QuickMenu** 快捷菜单     | 2 处仅加 TODO 注释 | 无                                                                                             | **Geyser / Floodgate / Residence**    | ✅ 20       |
+| **MoneyLedger** 南瓜账本   | 字节一致           | 无                                                                                             | **EssentialsX**（26.3 版）            | ✅ 8        |
+| **PlanTop** 在线排行       | 字节一致           | 无                                                                                             | **PlaceholderAPI**；运行连 Plan MySQL | ✅ 3        |
 
 > “源码与原版字节一致”= 与 `自研/<插件>/` 原目录逐字节 diff 无差异，仅 `plugin.yml` 的 `api-version` 改为 `26.3`。
 
@@ -51,6 +51,7 @@
 3. **BuildRate/BuildRateCommand**：曾改为 `world.getKey().toString()` 会得到 `minecraft:world`、破坏既有数据库里 `world` 的匹配；已**回退为 `world.getName()`**（26.3 仍可用，仅 obsolete），保证存储格式与老数据一致。
 4. **QuickMenu**：`BedrockFormRenderer`、`ResidenceHook` 仅追加 26.3 TODO 注释，逻辑零改动。
 5. **其余 6 个**：源码零改动即可在 26.3 编译运行——它们只用了跨版本稳定的 Bukkit API（`sendMessage(String)`、`ChatColor`、`ItemStack`/`ItemMeta`、`Inventory`、`BukkitRunnable` 等）。
+6. **SpacePortal（2026-11-07 迭代）**：与 `自研/传送阵/SpacePortal/` 同步加入 `effects-enabled` 总开关（默认关闭全部粒子/音效/隧道）与 `display/PortalDisplayManager`（用特殊物品静态标记阵法，支持 `ITEM_DISPLAY` / `ARMOR_STAND`，`/csz item set` 可保存带数据组件的自定义物品）。26.3 侧仍保留 `Particle.DUST`、Adventure `sendActionBar`、`show-coordinates` override 三处差异。同时修复 `build_all.py` 资源复制未替换 `${project.version}`、导致 jar 内 `plugin.yml` 版本为字面量的问题。详见 `自研/传送阵/CHANGELOG.md`。
 
 ---
 
@@ -92,7 +93,7 @@ mvn -q -f 升级26.3版本\BuildRate\pom.xml clean package
    - Vault（或 VaultUnlocked 2.20.1）、Geyser ≥2.12.0、Floodgate、Residence 6.0.3.3、EssentialsX（dev build）、PlaceholderAPI 2.12.3、PumpkinMail（用本目录构建产物）。
 2. **插件世界数据迁移**：带老世界时，插件存在 `world/<数据>` 的要搬到 `world/dimensions/minecraft/overworld/<数据>`（SpacePortal 等，见 `1.21.11-to-26.3-全量变化对比.md` 2.4）。
 3. **真机验证**：QuickMenu 基岩表单 / Residence 反射、PlanTop 连 Plan MySQL、MoneyLedger 监听 Essentials `UserBalanceUpdateEvent`、SpacePortal 传送与粒子特效。
-4. `disabled/` 里的插件（AdvZone、DragonManager、UuidMigrate、PosTracker 等）**不在本次范围**，未处理。
+4. `disabled/` 里的插件（AdvZone、DragonManager、UuidMigrate等）**不在本次范围**，未处理。
 
 ---
 
@@ -112,5 +113,7 @@ mvn -q -f 升级26.3版本\BuildRate\pom.xml clean package
 - 适配动作：
   - `plugin.yml` 的 `api-version` 由 `1.21` 改为 **`26.3`**（否则 26.3 服加载失败/告警）；
   - `pom.xml` 依赖由 `paper-api 1.21.11` 改为 `leaf-api 26.3.build.13-alpha`（同本集合 `../升级26.3版本/lib/`）。
-- 编译：JDK25 `javac --release 21` + leaf-api 26.3（复用 `_deps/` 缓存），产物 `Orbit.jar`（13K，5 class + plugin.yml + config.yml）。
+- 编译：JDK25 `javac --release 21` + leaf-api 26.3（复用 `_deps/` 缓存），产物 `Orbit.jar`（5 class + plugin.yml + config.yml）。
+  ⚠️ 只用 `lib/leaf-api-26.3.build.13-alpha.jar` 会报「找不到 `net.kyori.adventure.key.Namespaced`」，必须把 `_deps/` 全部 jar 一起进 classpath；Windows 分隔符为 `;`。
 - 功能：`/orbit <玩家>` 环绕镜头观察 + 定时巡视（半径/高度/速度可配），详见其目录内 `README.md`。
+- **1.0.1（2026-11-07）**：修复「只有盔甲架动、观察者不动」「盔甲架不隐形」「自动巡视不循环」。相机实体方案已废弃，改为观察者在 `SPECTATOR` 下本体按圆周直接传送；新增 `/orbit tour status`、`update-interval-ticks`、`messages.tour-switch`；`auto-tour.enabled` 默认 `true`、`interval-seconds` 默认 60。详见 `环绕观察-Orbit/CHANGELOG.md`。`_out/Orbit.jar` 已同步。

@@ -105,6 +105,7 @@ def build(module, depsdir):
         print(r.stderr[-3500:])
         return False
 
+    version = read_version(module)
     if os.path.isdir(res):
         for root, _, files in os.walk(res):
             for f in files:
@@ -112,9 +113,13 @@ def build(module, depsdir):
                 rel = os.path.relpath(sp, res)
                 dp = os.path.join(out, rel)
                 os.makedirs(os.path.dirname(dp), exist_ok=True)
-                shutil.copy(sp, dp)
+                if f.endswith((".yml", ".yaml")):
+                    # 手工补齐 Maven filtering 的 ${project.version}，否则 jar 内会留下字面量
+                    txt = open(sp, encoding="utf-8").read().replace("${project.version}", version)
+                    open(dp, "w", encoding="utf-8", newline="\n").write(txt)
+                else:
+                    shutil.copy(sp, dp)
 
-    version = read_version(module)
     jarname = f"{module}-{version}.jar"
     jarpath = os.path.join(BASE, module, "target", jarname)
     with zipfile.ZipFile(jarpath, "w", zipfile.ZIP_DEFLATED) as z:

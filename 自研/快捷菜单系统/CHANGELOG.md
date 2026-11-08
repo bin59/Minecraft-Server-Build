@@ -8,7 +8,7 @@
   - 点击执行 `[player] offlinereward reload`（重载离线奖励配置）
   - 随后提示 `[message] &7查询玩家时间戳：&e/offlinereward check 玩家名`
   - 权限 `offlinereward.admin`（OfflineReward 自带，默认 op，**无需改权限即生效**）
-  - 说明：`check` 需要输入玩家名，故保留文字指引，与同菜单 `postracker` 项风格一致。
+  - 说明：`check` 需要输入玩家名，故保留文字指引。
 - 玩家侧**不加**入口：离线奖励上线自动发放到南瓜邮箱（PumpkinMail），玩家在 `/mailbox` 领取即可。
 - 文档同步：依赖表补 OfflineReward 行、`admin` 菜单描述、管理菜单表补 `admin-offlinereward` 行、LuckPerms 授权块补 `offlinereward.admin`。
 

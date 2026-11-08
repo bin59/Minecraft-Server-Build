@@ -1,5 +1,5 @@
 name: Orbit
-version: '1.0.0'
+version: '1.0.1'
 main: com.nangua.orbit.OrbitPlugin
 api-version: '26.3'
 author: 南瓜
@@ -7,7 +7,7 @@ description: 环绕镜头观察与定时巡视
 commands:
   orbit:
     description: 环绕观察玩家
-    usage: /orbit <玩家> | /orbit stop | /orbit reload | /orbit tour <start|stop>
+    usage: /orbit <玩家> | /orbit stop | /orbit reload | /orbit tour <start|stop|status>
 permissions:
   orbit.use:
     description: 允许使用 /orbit <玩家>

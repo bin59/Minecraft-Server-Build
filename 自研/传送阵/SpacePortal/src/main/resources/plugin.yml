@@ -2,7 +2,7 @@ name: SpacePortal
 version: '${project.version}'
 main: com.mc.spaceportal.SpacePortalPlugin
 api-version: '1.20'
-description: 空间传送阵 - Java/基岩（Geyser）互通两点传送，大型粒子阵法 + 时光穿梭特效
+description: 空间传送阵 - Java/基岩（Geyser）互通两点传送，特殊物品标记 + 可选粒子特效
 commands:
   spaceportal:
     description: 空间传送阵指令

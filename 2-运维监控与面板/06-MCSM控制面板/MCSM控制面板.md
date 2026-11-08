@@ -29,7 +29,7 @@
     - 一个常见的修改是将 **`online-mode`** 的值改为 `false`，这样非正版玩家也能进入你的服务器。
 3.  **检查 Java 环境**：MCSM 需要正确的 Java 环境才能启动服务器。
     - **确认 Java 已安装**：在命令提示符（CMD）中输入 `java -version`，如果能显示版本信息，则说明已安装。
-    - **设置 Java 路径（如需要）**：如果面板无法自动找到 Java，你需要在实例的 **“参数设置”** 中，手动指定 `java.exe` 的路径，例如 `C:\Program Files\Java\jdk-17.0.2\bin\java.exe`。
+    - **设置 Java 路径（如需要）**：如果面板无法自动找到 Java，你需要在实例的 **“参数设置”** 中，手动指定 `java.exe` 的路径，例如 `C:\Program Files\Java\jdk-25\bin\java.exe`（26.3 需 Java 25）。
     - **调整内存分配**：在同样的“参数设置”或“启动命令”中，可以修改 `-Xms`（初始内存）和 `-Xmx`（最大内存）的值，例如 `-Xms1024M -Xmx2048M` 表示分配 1G 到 2G 的内存。
 
 ### ▶️ 第四步：启动与验证
@@ -159,7 +159,7 @@ New-NetFirewallRule -DisplayName "MCSM Daemon" -Direction Inbound -Protocol TCP 
 3. **实例目录**：填入电脑 A 上MC服务端的绝对路径，如 `c:\mc_serve\1.21.11-test`
 4. **启动命令**：填入电脑 A 上已有的启动命令，如：
    ```
-   java -Xms1G -Xmx4G -jar leaf-1.21.11-174.jar nogui
+   java -Xms1G -Xmx4G -jar leaf-26.3-18.jar nogui
    ```
 5. 填写实例名称后保存
 

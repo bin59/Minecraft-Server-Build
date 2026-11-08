@@ -17,7 +17,7 @@ $LocalPass   = "zbmlp01."
 
 # 需同步的数据库
 # 注意：云端库名大小写敏感(Plan大写)，本地lower_case_table_names=1大小写不敏感，故统一写 Plan
-$Databases   = @("coreprotect", "postracker", "host21k5c4", "Plan")
+$Databases   = @("coreprotect", "host21k5c4", "Plan")
 
 # MySQL 客户端路径
 $MysqlCli    = "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"

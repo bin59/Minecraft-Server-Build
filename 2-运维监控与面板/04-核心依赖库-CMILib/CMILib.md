@@ -2,8 +2,6 @@
 
 CMILib 是 CMI 系列插件的共享依赖库，提供 Hex 颜色解析、GUI 工具、皮肤 API、物品/NBT 处理等底层能力。本服未装 CMI 主插件，CMILib 由其他插件自动引入。
 
-**文件**: 内置于 `plugins/CMILib/` 目录
-
 ## 功能
 
 - 自定义 Hex 颜色解析

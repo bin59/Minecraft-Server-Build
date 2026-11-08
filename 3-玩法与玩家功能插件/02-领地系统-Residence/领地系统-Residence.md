@@ -1,18 +1,389 @@
-# 8. 领地系统 — Residence
+# 领地系统 — Residence
 
-Residence 是 Minecraft 中流行的领地保护插件，允许玩家创建私人领地并细粒度设置建造、破坏、容器、PVP 等权限，支持领地买卖、租赁与子区域。本文档汇总了圈地、传送、领地频道等常用命令，config.yml 与 flags.yml 的实际取值，并针对配置不生效给出旧领地缓存、权限组覆盖、子区域继承三层排查思路。供管理员管理领地权限与排查问题时使用。
+> 本文档合并自《Residence.md》（管理 / 配置参考）与《领地插件使用指南（玩家篇）》（新手教程），保留全部内容、合并重复章节。前半部分为玩家从零上手教程，后半部分为命令参考、配置与排错。
+
+Residence 是 Minecraft 中流行的领地保护插件，允许玩家创建私人领地并细粒度设置建造、破坏、容器、PVP 等权限，支持领地买卖、租赁与子区域。本文档汇总了圈地、传送、领地频道等常用命令，config.yml 与 flags.yml 的实际取值，并针对配置不生效给出旧领地缓存、权限组覆盖、子区域继承三层排查思路。供玩家圈地与管理员管理领地权限、排查问题使用。
 
 [Github Residence](https://github.com/Zrips/Residence)
 
 **文件**: 内置于 `plugins/Residence/` 目录
 
-## 功能说明
+## 一、玩家使用指南（从零开始）
 
-Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私人领地，在领地内设置各种权限（如禁止破坏、禁止 PVP、禁止移动等）。支持领地买卖、租赁、子区域管理。
+> 本指南基于 Residence 插件编写，帮助你在服务器中圈地、保护家园、管理权限。
 
-## 常用命令
+### 第一步：认识领地插件
 
-刷新配置文件：`/res reload [config(配置)/lang(语言)/groups(组)/flags(权限)]`
+领地插件可以让玩家自己圈出一块地，用来保护房子、箱子和农田。
+
+圈地之后：
+
+- 别人不能随便破坏你的建筑
+- 别人不能随便打开你的箱子
+- 你可以决定谁能进入、谁能建造
+- 你的家不再怕熊孩子
+
+### 第二步：准备圈地工具
+
+圈地前，你需要一把**圈地工具**。
+
+本服使用：**木锄**（默认）
+
+使用方法：
+
+| 操作 | 作用 |
+|---|---|
+| 左键方块 | 设置第一个点 |
+| 右键方块 | 设置第二个点 |
+
+这两个点会形成一个长方体区域，也就是你的领地范围。
+
+### 第三步：选择领地范围
+
+站在你想圈地的位置，按下面步骤操作：
+
+1. 拿着木锄
+2. 对准一个角落的方块，**左键点击**
+3. 走到对角线位置，对准另一个方块，**右键点击**
+4. 系统会显示你选择的区域大小
+
+你可以想象成：
+
+```
+A点
+┌──────────────┐
+│              │
+│   你的领地   │
+│              │
+└──────────────┘
+              B点
+```
+
+A 和 B 是长方体的两个对角点。
+
+#### 纵向扩展到天空和基岩
+
+如果你想领地从天空到基岩全部覆盖：
+
+```text
+/res select vert
+```
+
+### 第四步：创建领地
+
+选好区域后，输入创建指令：
+
+```text
+/res create 领地名
+```
+
+例如：
+
+```text
+/res create myhome
+```
+
+创建成功后，这块区域就会变成你的领地。
+
+注意：
+
+- 领地名不要和别人的重复
+- 建议用英文、数字或简单名称
+- 不要使用特殊符号
+
+### 第五步：查看领地信息
+
+站在领地内，输入：
+
+```text
+/res info
+```
+
+可以看到：
+
+- 领地名称
+- 领地主人
+- 领地大小
+- 当前权限设置
+- 领地成员列表
+
+如果想看自己有哪些领地，输入：
+
+```text
+/res list
+```
+
+### 第六步：设置领地权限
+
+创建领地后，你可以设置别人能做什么、不能做什么。
+
+权限只有两种状态：
+
+- `true`：开启
+- `false`：关闭
+
+常用写法：
+
+```text
+/res set myhome build true     # 允许建造
+/res set myhome pvp false      # 关闭玩家对战
+```
+
+> 完整旗帜（flag）列表与含义见本文「三、命令与旗帜参考 → 常用 Flags」。新手最常用的是 `build`（建造）、`destroy`（破坏）、`use`（门/按钮/工作台）、`container`（箱子/熔炉）、`pvp`、`move`（能否进入）、`tp`（能否传送）、`damage`（是否受伤）。
+
+### 第七步：给玩家单独设置权限
+
+如果你只想让某个朋友进入你的领地，可以使用：
+
+```text
+/res pset 领地名 玩家名 权限 true
+```
+
+例如：
+
+```text
+/res pset myhome Steve build true
+```
+
+表示给 `Steve` 在 `myhome` 领地里的建造权限。
+
+常用权限示例：
+
+```text
+/res pset myhome Steve build true
+/res pset myhome Steve destroy true
+/res pset myhome Steve use true
+/res pset myhome Steve container true
+```
+
+如果想取消权限：
+
+```text
+/res pset myhome Steve build false
+```
+
+### 第八步：给玩家管理员权限
+
+如果你想让信任的朋友帮你管理领地的权限设置，可以赋予 admin 权限：
+
+```text
+/res pset myhome Steve admin true
+```
+
+这样 Steve 就可以帮你：
+
+- 添加/移除领地成员
+- 修改领地权限
+- 设置传送点
+- 管理子领地
+
+如果想收回管理员权限：
+
+```text
+/res pset myhome Steve admin false
+```
+
+### 第九步：传送与退出
+
+传送到自己的领地：
+
+```text
+/res tp 领地名
+```
+
+设置当前站立位置为传送点：
+
+```text
+/res tpset
+```
+
+设置默认主领地（每次传送默认去这里）：
+
+```text
+/res setmain 领地名
+```
+
+如果你不小心卡在领地里，可以尝试：
+
+```text
+/res unstuck
+```
+
+### 第十步：删除领地
+
+如果不需要这个领地了，可以删除：
+
+```text
+/res remove 领地名
+```
+
+例如：
+
+```text
+/res remove myhome
+```
+
+注意：删除领地后，保护会消失，别人可能就可以破坏或进入。
+
+### 第十一步：子领地
+
+如果你在大领地里面想再划分一块小区域，可以创建子领地。
+
+步骤：
+
+1. 站在父领地内
+2. 用木锄选择新区域
+3. 输入：
+
+```text
+/res subzone 父领地名 子领地名
+```
+
+例如：
+
+```text
+/res subzone myhome shop
+```
+
+这样就在 `myhome` 里面创建了一个叫 `shop` 的子领地。
+
+#### 子领地隔离：大领地授权的人，子领地怎么单独 deny
+
+**现象**：大领地 `/res padd` 或 `/res pset` 给了某人建造/使用/容器权限，这个权限**默认延伸到所有子领地**。你在子领地里只想让自己能动、别人不能动，但子领地怎么设置都不生效——别人还是能在子领地里建造/开门/开箱。
+
+**原理**：Residence 权限是**叠加继承**，不是自动隔离。大领地 `build: allow` → 子领地没显式设置 = 继承 allow。子领地必须**显式反向声明** `false` 才能压过大领地的 allow，只在子领地设自己的权限没用。
+
+**解决**：在子领地里把那个人的权限显式 deny 掉：
+
+```text
+# 假设大领地叫 home，子领地叫 home.cave，朋友叫 bob
+/res pset home.cave bob build false
+/res pset home.cave bob destroy false
+/res pset home.cave bob use false
+/res pset home.cave bob container false
+/res pset home.cave bob move false      # 连进都进不来（私密房间）
+```
+
+**批量 deny 所有被大领地授权的人**（子领地默认谁都不能动，只再单独给自己 allow）：
+
+```text
+/res pset home.cave default build false
+/res pset home.cave default container false
+/res pset home.cave default move false
+```
+
+> **关键点**：子领地权限**不会**自动从大领地"隔离"出来，必须反向写 `false`。只在子领地 `/res pset home.cave 自己 build true` 是不够的，大领地给别人的 allow 仍然会穿透到子领地。
+
+### 第十二步：设置进入和离开提示
+
+你可以设置别人进入或离开领地时看到的提示。
+
+进入提示：
+
+```text
+/res message 领地名 enter 欢迎进入我的家
+```
+
+离开提示：
+
+```text
+/res message 领地名 leave 你已经离开我的家
+```
+
+例如：
+
+```text
+/res message myhome enter 欢迎来到 %player 的家
+```
+
+### 第十三步：扩展和缩小领地
+
+#### 一、矩形整体外扩（最常用）
+
+先站在**你要扩建的那块领地内**（用 `/res current` 确认站对地方），然后向外扩：
+
+```text
+/res expand 10            # 朝你当前面对的方向，把那一侧向外扩 10 格
+/res expand north 10      # 不想转身？直接指定方向（north/south/east/west/up/down）
+/res expand up 5          # 向上加高 5 格
+/res expand down 5        # 向下加深 5 格
+```
+
+- 缩小用 `/res contract 数量`（同样支持方向写法）。
+- 想整体平移不缩放：`/res move north 10` 之类。
+
+⚠️ 注意：`/res expand` 扩的是「你站的这块领地」。如果你手里还留着木锄选区（两点选区），它会去扩那个**选区**而不是领地，结果不会落到领地身上。扩建前先确认没有残留选区，或干脆用带方向的写法。
+
+#### 二、不规则 / 拼图式扩展（拐角、分块）
+
+如果新区域和原领地不是简单外扩一个矩形，可以加一块新区域：
+
+1. 拿木锄重新选好**新增的那块**区域（左键 A 点、右键 B 点）。
+2. `/res area add <领地名> <新区域名>` —— 把这块并进现有领地。
+
+#### 三、扩建要花钱（计费）
+
+扩建按**新增格数**扣南瓜币（Essentials 余额），单价取 `groups.yml` 的 `BuyCost`，**本服实际为每格 0.1 南瓜币**；垂直方向**没有免费层数**（`NoCostForYBlocks` 未配置，上下扩也按格计费）。
+
+举例：把 20×20 的领地各边外扩 2 格（变成 24×24，单层），新增约 176 格 → 扣约 17.6 南瓜币。
+
+- 余额不足时扩建会**直接失败**，不会半扩一半。
+- 提示：配置文件里那段注释写的是「手册 10 南瓜币/格、测试服 1 南瓜币/格」，但**实际生效值是 0.1**，注释已过期，以 `BuyCost` 实际值为准。
+
+#### 四、扩建前先确认两件事
+
+1. **限额**：`/res limits` 看自己还能圈多大（MaxX/MaxY/MaxZ 上限），扩之前量一下，别超了。
+2. **间距**：`config.yml` 里 `AntiGreef.RangeGaps: all-8`，领地之间必须留 **8 格空白缓冲**，扩太狠会顶到邻居而失败。
+
+#### 五、缩小领地
+
+```text
+/res contract 数量        # 朝你面对的方向收回；同样可加方向：/res contract north 10
+```
+
+### 第十四步：领地聊天
+
+如果你和领地成员想私下聊天，可以加入领地频道：
+
+```text
+/res rc join
+```
+
+然后在领地频道发消息：
+
+```text
+/res rc 大家快来我家吃饭
+```
+
+离开领地频道：
+
+```text
+/res rc leave
+```
+
+---
+
+## 二、基岩玩家注意事项
+
+本服支持基岩版玩家通过 Geyser/Floodgate 连接。
+
+**基岩玩家名带 `.` 前缀**（如 `.shangxin2179`）。
+
+当你给基岩玩家设置领地权限时，**必须手打全名（含点）**：
+
+```text
+/res pset myhome .shangxin2179 build true
+```
+
+否则会报"找不到玩家"。
+
+---
+
+## 三、命令与旗帜参考（管理员 / 进阶）
+
+### 刷新配置文件
+
+`/res reload [config(配置)/lang(语言)/groups(组)/flags(权限)]`
 
 ### 选区与创建
 
@@ -218,7 +589,9 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 | `/resadmin show <领地名>`              | 管理员显示任意领地边界                                          |
 | `/resadmin area`                       | 管理员查看选区区域信息                                          |
 
-## 领地银行（Residence Bank）
+---
+
+## 四、领地银行（Residence Bank）
 
 > **一句话结论**：领地银行是绑定到某个领地的「共享钱袋」，钱属于领地而非某个玩家，用于公会/团队公共基金、领地付租金/买地。
 > **本服状态**：经济系统（`EnableEconomy`）早已开启、圈地本来就扣钱，银行功能本身已可用；实际用起来只需确保领地 `bank` flag 已开启 + 玩家有对应权限。
@@ -278,7 +651,9 @@ Residence 是 Minecraft 最流行的领地保护插件，允许玩家创建私�
 
 若 `/res bank` 报错或无反应，多半是：① 该领地 `bank` flag 被设为 false（用上面命令开）；② 玩家无此领地 bank 权限；③ 经济插件（Vault / Essentials）未正常挂钩。把报错原文发我即可定位。
 
-## 关键配置 (`plugins/Residence/config.yml`)
+---
+
+## 五、关键配置 (`plugins/Residence/config.yml`)
 
 ```yaml
 Global:
@@ -322,7 +697,7 @@ Global:
   Pl3xMap:
     Use: true # Pl3xMap 地图支持启用
     ShowFlags: true # 显示旗帜信息
-  # 在线地图：本服采用 Dynmap（Residence 原生内置 DynMap 集成，已启用）
+  # 在线地图：本服采用 BlueMap（经 BlueMap Residence 桥接插件集成领地图层，已启用；DynMap 已停用，见 网页世界地图 文档）
 
   # 以下功能均已禁用:
   UseLeaseSystem: false # 租赁系统
@@ -371,7 +746,9 @@ Global:
 - **GUI 图标**：定义了在游戏内领地管理界面（GUI）中，每个权限标志对应的显示物品（如 `build` 对应砖块 `BRICKS`，`tnt` 对应 TNT 方块）。
 - **物品列表**：定义了一个名为 `DefaultList` 的物品黑名单，包含 `LAVA`（岩浆）、`WATER`（水）等，可用于限制特定物品的使用或放置。
 
-## 推荐区域配置
+---
+
+## 六、推荐区域配置
 
 ### 主城 = 安全区 + 活动区
 
@@ -455,7 +832,9 @@ Global:
 
 ```
 
-## 配置不生效时
+---
+
+## 七、配置不生效 / 排错与恢复
 
 修改默认配置后依然无效，说明问题可能不在“新领地”的生成规则上，而是**旧领地的权限残留**，或者是**更上层的权限组**在作祟。
 
@@ -505,32 +884,7 @@ Global:
 - 查看输出信息，确认当前所在的具体领地名称。
 - 有时候玩家是在”子区域”里，而父区域的权限设置不同。
 
-#### 子领地隔离：大领地授权的人，子领地怎么单独 deny
-
-**现象**：大领地 `/res padd` 或 `/res pset` 给了某人建造/使用/容器权限，这个权限**默认延伸到所有子领地**。你在子领地里只想让自己能动、别人不能动，但子领地怎么设置都不生效——别人还是能在子领地里建造/开门/开箱。
-
-**原理**：Residence 权限是**叠加继承**，不是自动隔离。大领地 `build: allow` → 子领地没显式设置 = 继承 allow。子领地必须**显式反向声明** `false` 才能压过大领地的 allow，只在子领地设自己的权限没用。
-
-**解决**：在子领地里把那个人的权限显式 deny 掉：
-
-```bash
-# 假设大领地叫 home，子领地叫 home.cave，朋友叫 bob
-/res pset home.cave bob build false
-/res pset home.cave bob destroy false
-/res pset home.cave bob use false
-/res pset home.cave bob container false
-/res pset home.cave bob move false      # 连进都进不来（私密房间）
-```
-
-**批量 deny 所有被大领地授权的人**（子领地默认谁都不能动，只再单独给自己 allow）：
-
-```bash
-/res pset home.cave default build false
-/res pset home.cave default container false
-/res pset home.cave default move false
-```
-
-> **关键点**：子领地权限**不会**自动从大领地”隔离”出来，必须反向写 `false`。只在子领地 `/res pset home.cave 自己 build true` 是不够的，大领地给别人的 allow 仍然会穿透到子领地。
+> 子领地权限继承/隔离的详细说明（大领地授权的人如何在子领地单独 deny）见本文「一、玩家使用指南 → 第十一步 子领地」。
 
 ### 💡 终极排查手段：开启调试模式
 
@@ -544,9 +898,7 @@ Global:
 
 **建议操作顺序**：先试第 1 步（新圈地测试），如果新地是好的，那就是旧数据问题，用 `resadmin setall` 解决最快。
 
----
-
-## Owner 把自己权限删了怎么办？
+### Owner 把自己权限删了怎么办？
 
 **现象**：玩家执行了 `/res pset 领地名 自己 admin false` 或 `/res pdel 领地名 自己`，结果领地还是他的（`/res list` 显示），但他自己不能建造、不能开门、不能管理权限。
 
@@ -566,3 +918,148 @@ Global:
 3. **删了重建**：`/res remove 领地名`，然后重新圈地创建
 
 **预防**：提醒玩家不要对自己用 `/res pset 领地名 你自己 权限 false`。
+
+---
+
+## 八、新手常用指令速查
+
+| 用途 | 指令 |
+|---|---|
+| 查看帮助 | `/res ?` |
+| 查看当前领地 | `/res info` |
+| 查看自己的领地 | `/res list` |
+| 创建领地 | `/res create 领地名` |
+| 删除领地 | `/res remove 领地名` |
+| 传送到领地 | `/res tp 领地名` |
+| 设置传送点 | `/res tpset` |
+| 设置默认主领地 | `/res setmain 领地名` |
+| 设置权限 | `/res set 领地名 权限 true/false` |
+| 给玩家权限 | `/res pset 领地名 玩家名 权限 true` |
+| 给玩家管理员 | `/res pset 领地名 玩家名 admin true` |
+| 创建子领地 | `/res subzone 父领地名 子领地名` |
+| 扩展领地 | `/res expand 数量`（详见第十三步，扩建按格扣费、可带方向） |
+| 缩小领地 | `/res contract 数量`（可带方向） |
+| 设置进入提示 | `/res message 领地名 enter 内容` |
+| 设置离开提示 | `/res message 领地名 leave 内容` |
+| 加入领地聊天 | `/res rc join` |
+
+---
+
+## 九、常见问题
+
+### 1. 为什么我圈不了地？
+
+可能原因：
+
+- 没有木锄（圈地工具）
+- 选区太小或太大
+- 领地数量达到上限
+- 没有创建领地权限
+- 服务器限制了某些世界
+
+可以先输入：
+
+```text
+/res select size
+```
+
+查看当前选区大小。
+
+---
+
+### 2. 为什么别人还能进我的领地？
+
+可能是因为 `move` 权限没有关闭。
+
+你可以输入：
+
+```text
+/res set myhome move false
+```
+
+但要注意，这样可能会影响你自己进出，需要根据服务器实际规则调整。
+
+---
+
+### 3. 为什么别人还能破坏我的方块？
+
+检查 `build` 和 `destroy` 权限：
+
+```text
+/res set myhome build false
+/res set myhome destroy false
+```
+
+如果别人有单独权限，还需要取消：
+
+```text
+/res pset myhome 玩家名 build false
+/res pset myhome 玩家名 destroy false
+```
+
+---
+
+### 4. 为什么我打不开箱子？
+
+可能是你没有 `container` 权限。
+
+如果你是领地主人，可以设置：
+
+```text
+/res set myhome container true
+```
+
+如果你想让朋友打开箱子：
+
+```text
+/res pset myhome 玩家名 container true
+```
+
+---
+
+### 5. 我把自己权限删了，现在没法管理领地怎么办？
+
+如果你不小心把自己的权限删了，导致自己都不能管理领地，可以找管理员帮忙：
+
+管理员会用 `/resadmin pset 领地名 你的名字 admin true` 给你恢复权限。
+
+详细原因、分层说明与三种恢复方法见本文「七、配置不生效 / 排错与恢复 → Owner 把自己权限删了怎么办？」（Residence 把"所有权"与"操作权限"分成两层，且没有"owner 不能改自己权限"的保护，所以对 owner 自己用 `/res pset ... 权限 false` 会把自己锁在门外）。
+
+---
+
+### 6. 子领地怎么设置都不生效？
+
+**问题**：大领地给了别人权限，子领地怎么 deny 都没用。
+
+**原因**：Residence 权限是**叠加继承**，不是自动隔离。大领地 `build: allow` → 子领地没显式设置 = 继承 allow。
+
+详细解决方法（在子领地显式反向写 `false`）见本文「一、玩家使用指南 → 第十一步 子领地」中的「子领地隔离」小节。
+
+---
+
+## 十、新手推荐流程 & 简单记忆版
+
+### 新手推荐流程
+
+1. 拿到木锄（圈地工具）
+2. 左键第一个点
+3. 右键第二个点
+4. 输入 `/res create 领地名`
+5. 输入 `/res info` 查看领地
+6. 设置 `build`、`destroy`、`container` 等权限
+7. 需要时给朋友单独权限
+8. 需要时给朋友 admin 管理员权限
+9. 使用 `/res tp 领地名` 传送回家
+
+### 简单记忆版
+
+```text
+左键点A
+右键点B
+/res create 领地名
+/res set 领地名 build false
+/res pset 领地名 玩家名 build true
+/res tp 领地名
+```
+
+掌握这几步，基本就能在服务器里安全建房、保护箱子、和朋友一起玩了。

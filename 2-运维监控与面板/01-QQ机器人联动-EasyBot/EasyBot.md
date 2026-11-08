@@ -2,8 +2,6 @@
 
 EasyBot 把 Minecraft 服务器与 QQ 群聊打通，通过 WebSocket 串联 **NapCat → EasyBot 主程序 → 插件**，实现群聊/游戏内聊天双向同步、群内执行命令（玩家可绑定 QQ 号）。本文给出插件端 config.yml、三层连接配置与跨机部署。
 
-**文件**: `plugins/EasyBot-2.3.1.jar`
-
 ## 功能
 
 - QQ 群与游戏内聊天**双向同步**

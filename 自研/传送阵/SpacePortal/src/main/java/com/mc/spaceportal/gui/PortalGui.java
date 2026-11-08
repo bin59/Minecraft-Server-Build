@@ -171,8 +171,10 @@ public class PortalGui {
         // 13：阵法信息
         List<String> info = new ArrayList<>();
         info.add(color("&7世界：&f" + portal.getWorldName()));
-        info.add(color("&7坐标：&f" + (int) portal.getX() + "," + (int) portal.getY()
-                + "," + (int) portal.getZ()));
+        if (plugin.isShowCoordinates()) {
+            info.add(color("&7坐标：&f" + (int) portal.getX() + "," + (int) portal.getY()
+                    + "," + (int) portal.getZ()));
+        }
         info.add(color("&7目的地："
                 + (portal.getDestName() == null ? "&8未连接" : "&a→ " + portal.getDestName())));
         info.add(color("&7归属：" + (portal.getOwner() == null ? "&7公共阵法"
@@ -234,8 +236,10 @@ public class PortalGui {
             boolean mine = player.getUniqueId().equals(portal.getOwner());
             boolean pub = portal.getOwner() == null;
             List<String> lore = new ArrayList<>();
-            lore.add(color("&7世界：&f" + portal.getWorldName()
-                    + " &7坐标：&f" + (int) portal.getX() + "," + (int) portal.getY() + "," + (int) portal.getZ()));
+            String coordLine = plugin.isShowCoordinates()
+                    ? " &7坐标：&f" + (int) portal.getX() + "," + (int) portal.getY() + "," + (int) portal.getZ()
+                    : "";
+            lore.add(color("&7世界：&f" + portal.getWorldName() + coordLine));
             String dest = portal.getDestName() == null ? "&8未连接" : "&a→ " + portal.getDestName();
             lore.add(color("&7目的地：" + dest));
             if (mine) {

@@ -2,7 +2,7 @@
 
 本页是南瓜生存服方块记录与回滚插件 CoreProtect CE 的说明文档，涵盖当前版本、关键配置、MySQL 数据库搭建步骤、常用查询与回滚命令，以及第三方网页查询面板 CoLWI 的部署与安全要求，供服主排查 grief 破坏、追回被盗物品和审计玩家行为时使用。
 
-**当前版本**: CoreProtect CE v24.0 | **MC 要求**: 1.16.5+
+**当前版本**: CoreProtect **26.3 自编译开发版**（`CoreProtect-CE-24.1.jar`，基于 paper-api 26.3.build.38-alpha 编译） | **MC 要求**: 1.16.5+
 
 **官方网站**: https://coreprotect.net | **GitHub**: https://github.com/PlayPro/CoreProtect
 

@@ -6,16 +6,16 @@
 
 | 项目     | 内容                                                         |
 | -------- | ------------------------------------------------------------ |
-| Jar      | `vexbot-paper-3.0.14paper-mc1.21.11.jar`                     |
-| 版本     | 3.0.14（Paper，MC 1.21.11）                                   |
+| Jar      | `vexbot-paper-3.1.0paper-mc26.3.jar`                     |
+| 版本     | 3.1.0（Paper，MC 26.3）                                      |
 | 主类     | `vexbot.paper.VexBotPaper`                                   |
 | 软依赖   | LuckPerms（可选，用于权限/分组）                             |
 | 数据目录 | `plugins/VexBot/`（首次启动自动生成，含 settings、kit 存档） |
 | 配置方式 | 游戏内 GUI 为主，`/vexbot settings <键> <值>` 为辅           |
 
-https://modrinth.com/plugin/vexbot?loader=paper&version=1.21.11
+https://modrinth.com/plugin/vexbot?loader=paper&version=26.3
 
-> 当前服务器部署版本：`vexbot-paper-3.0.14paper-mc1.21.11.jar`（2026-10 由 3.0.3 升级，适配 Leaf 1.21.11）。
+> 当前服务器部署版本：`vexbot-paper-3.1.0paper-mc26.3.jar`（VexBot 3.1.0，支持 MC 26.3）。
 
 ## 它会什么
 
@@ -73,7 +73,7 @@ https://modrinth.com/plugin/vexbot?loader=paper&version=1.21.11
 | 批量召唤 | `/vexbot mass_spawn` | 一次拉多个机器人 |
 | FFA 混战 | `/vexbot ffa` | 自动生成一批陪练机器人开混战 |
 
-> Paper 版 3.0.14 的精确子参数以游戏内 `/vexbot` 命令补全提示为准。
+> Paper 版 3.1.0 的精确子参数以游戏内 `/vexbot` 命令补全提示为准。
 
 ## Kit 系统
 

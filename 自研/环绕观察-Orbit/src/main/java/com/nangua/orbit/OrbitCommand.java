@@ -24,7 +24,7 @@ public final class OrbitCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         OrbitConfig config = plugin.getOrbitConfig();
         if (args.length == 0) {
-            sender.sendMessage("§e用法: /orbit <玩家> | /orbit stop | /orbit reload | /orbit tour <start|stop>");
+            sender.sendMessage("§e用法: /orbit <玩家> | /orbit stop | /orbit reload | /orbit tour <start|stop|status>");
             return true;
         }
 
@@ -56,17 +56,25 @@ public final class OrbitCommand implements CommandExecutor, TabCompleter {
                 return true;
             }
             if (args.length < 2) {
-                sender.sendMessage("§e用法: /orbit tour <start|stop>");
+                sender.sendMessage("§e用法: /orbit tour <start|stop|status>");
                 return true;
             }
-            if (args[1].equalsIgnoreCase("start")) {
-                plugin.getTourManager().startManual();
-                sender.sendMessage("§a自动巡视已开始");
-            } else if (args[1].equalsIgnoreCase("stop")) {
-                plugin.getTourManager().stopManual();
+            TourManager tour = plugin.getTourManager();
+            String action = args[1];
+            if (action.equalsIgnoreCase("start")) {
+                if (tour.isRunning()) {
+                    sender.sendMessage("§7自动巡视已在运行；用 /orbit tour status 查看进度");
+                } else {
+                    tour.startManual(sender instanceof Player p ? p : null);
+                    sender.sendMessage("§a自动巡视已开始（依次环绕全部在线玩家）");
+                }
+            } else if (action.equalsIgnoreCase("stop")) {
+                tour.stopManual();
                 sender.sendMessage("§a自动巡视已停止");
+            } else if (action.equalsIgnoreCase("status")) {
+                sender.sendMessage(tour.status());
             } else {
-                sender.sendMessage("§e用法: /orbit tour <start|stop>");
+                sender.sendMessage("§e用法: /orbit tour <start|stop|status>");
             }
             return true;
         }
@@ -115,6 +123,7 @@ public final class OrbitCommand implements CommandExecutor, TabCompleter {
         } else if (args.length == 2 && args[0].equalsIgnoreCase("tour")) {
             out.add("start");
             out.add("stop");
+            out.add("status");
         }
         String prefix = args[args.length - 1].toLowerCase(Locale.ROOT);
         out.removeIf(value -> !value.toLowerCase(Locale.ROOT).startsWith(prefix));

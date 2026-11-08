@@ -13,7 +13,7 @@ $trigger = New-ScheduledTaskTrigger -Daily -At "04:30"
 # 设置：失败重试 3 次，间隔 10 分钟；允许错过启动
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 10) -ExecutionTimeLimit (New-TimeSpan -Hours 6)
 
-Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -Description "每日 04:30 将云端 MariaDB(coreprotect/postracker/host21k5c4) 增量同步到本地 MySQL，本地只增不删。" -Force
+Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger -Settings $settings -Description "每日 04:30 将云端 MariaDB(coreprotect/host21k5c4) 增量同步到本地 MySQL，本地只增不删。" -Force
 
 Write-Output "计划任务 [$taskName] 注册完成：每天 04:30 执行"
 Get-ScheduledTask -TaskName $taskName | Select-Object TaskName, State, @{N='NextRun';E={$_ | Get-ScheduledTaskInfo | Select-Object -Expand NextRunTime}}
