@@ -67,13 +67,19 @@ show-coordinates: false
 effects-enabled: false
 
 # 关闭特效后，用「特殊物品」作为传送阵的可见标记
-# 插件在每个阵法中心上方生成一个 Item Display 展示实体：
-# 无碰撞、不可拾取、静态、不写存档，不产生任何粒子 / 音效 / 周期网络包
+# 插件在每个阵法中心上方生成一个静态展示实体：
+# 不可拾取、不写存档，不产生任何粒子 / 音效 / 周期网络包
 display-item:
   # 展示实体类型：
-  # ITEM_DISPLAY = 默认，Java 端最干净（无碰撞、不写存档），需 1.19.4+
-  # ARMOR_STAND  = 隐形 marker 盔甲架头顶戴物品，Geyser 全版本支持，基岩端也能看到
-  mode: ITEM_DISPLAY
+  # AUTO         = 默认。检测到 Geyser/Floodgate 时自动用 ITEM，纯 Java 服用 ITEM_DISPLAY
+  # ITEM         = 悬浮掉落物，Java / 基岩双端都可见（互通服推荐）
+  # ITEM_DISPLAY = 仅 Java 端可见：Geyser 没有该实体的基岩映射，基岩玩家看不到
+  # ARMOR_STAND  = 隐形 marker 盔甲架头顶戴物品（兼容模式）
+  mode: AUTO
+  # 互通服自动降级：即使服务器旧 config.yml 里写死 ITEM_DISPLAY，也强制改用 ITEM。
+  # saveDefaultConfig() 不会覆盖已有配置，靠这个开关保证换 jar 后基岩端直接生效。
+  # 设为 false 可强制保留 ITEM_DISPLAY（此时基岩玩家看不到标记）。
+  geyser-fallback: true
   # 是否显示物品标记（true = 用物品代替粒子法阵）
   enabled: true
   # 悬浮高度（格，相对阵法中心）

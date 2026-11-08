@@ -12,6 +12,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Display;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -54,6 +55,10 @@ public final class SpacePortalPlugin extends JavaPlugin {
     private String displayMaterial;
     private String displayItemName;
     private String displayMode;
+    /** 是否检测到 Geyser / Floodgate（互通服） */
+    private boolean geyserPresent;
+    /** 互通服是否把 ITEM_DISPLAY 自动降级为基岩可见的 ITEM 模式 */
+    private boolean geyserFallback;
 
     /** 游戏内指令修改的配置（存于 override.yml，优先级高于 config.yml） */
     private YamlConfiguration override;
@@ -88,7 +93,12 @@ public final class SpacePortalPlugin extends JavaPlugin {
 
         getLogger().info("空间传送阵已启用！已加载 " + portalManager.size()
                 + " 个传送阵；特效=" + (effectsEnabled ? "开" : "关")
-                + "，物品标记=" + (displayEnabled ? "开" : "关") + "。");
+                + "，物品标记=" + (displayEnabled ? "开" : "关")
+                + "（" + getDisplayMode() + "）。");
+        if (displayEnabled && geyserPresent && "ITEM".equals(getDisplayMode())) {
+            getLogger().info("检测到 Geyser/Floodgate：物品标记自动使用 ITEM 模式，"
+                    + "基岩玩家可正常看到（Item Display 没有基岩端实体映射）。");
+        }
     }
 
     /** 按当前配置启动（或重启）地面粒子特效任务；特效关闭时不启动任何定时任务 */
@@ -160,7 +170,9 @@ public final class SpacePortalPlugin extends JavaPlugin {
         displayHeight = getConfig().getDouble("display-item.height", 1.2);
         displayMaterial = getConfig().getString("display-item.material", "ECHO_SHARD");
         displayItemName = getConfig().getString("display-item.name", "&d✦ 空间传送阵");
-        displayMode = getConfig().getString("display-item.mode", "ITEM_DISPLAY");
+        displayMode = getConfig().getString("display-item.mode", "AUTO");
+        geyserFallback = getConfig().getBoolean("display-item.geyser-fallback", true);
+        geyserPresent = detectGeyser();
 
         // 静态开关放在特效入口，所有调用点统一生效（含 TeleportService 里的音效）
         EffectController.setEnabled(effectsEnabled);
@@ -307,9 +319,53 @@ public final class SpacePortalPlugin extends JavaPlugin {
         return displayItemName;
     }
 
-    /** 展示实体类型：ITEM_DISPLAY（默认）或 ARMOR_STAND（基岩兼容） */
+    /**
+     * 遍历已加载插件名判断是否运行在 Geyser / Floodgate 互通环境。
+     * 用名称包含匹配而非精确插件名，兼容 Geyser-Spigot / Geyser / floodgate 各种命名。
+     */
+    private boolean detectGeyser() {
+        for (Plugin p : getServer().getPluginManager().getPlugins()) {
+            String name = p.getName().toLowerCase(Locale.ROOT);
+            if (name.contains("geyser") || name.contains("floodgate")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 实际使用的展示实体类型：
+     * AUTO（默认，互通服用 ITEM / 纯 Java 服用 ITEM_DISPLAY）、
+     * ITEM_DISPLAY、ITEM（悬浮掉落物，Java + 基岩双端可见）、ARMOR_STAND。
+     *
+     * <p>Geyser 没有 ItemDisplay 的实体映射（只有 TextDisplayEntity），基岩端收不到
+     * Item Display 实体。因此互通服在 AUTO 或 ITEM_DISPLAY 下自动降级为 ITEM。</p>
+     *
+     * <p>这里做运行时兜底是必须的：{@code saveDefaultConfig()} 不会覆盖服务器上已有的
+     * config.yml，只改 jar 内默认配置对旧配置无效，基岩玩家会一直看不到标记。</p>
+     */
     public String getDisplayMode() {
-        return displayMode == null ? "ITEM_DISPLAY" : displayMode.trim().toUpperCase(Locale.ROOT);
+        String mode = getRawDisplayMode();
+        if ("AUTO".equals(mode)) {
+            return geyserPresent ? "ITEM" : "ITEM_DISPLAY";
+        }
+        if ("ITEM_DISPLAY".equals(mode) && geyserPresent && geyserFallback) {
+            return "ITEM";
+        }
+        return mode;
+    }
+
+    /** config.yml 里写的原始模式，供 /csz item 状态显示与排错 */
+    public String getRawDisplayMode() {
+        return displayMode == null ? "AUTO" : displayMode.trim().toUpperCase(Locale.ROOT);
+    }
+
+    public boolean isGeyserPresent() {
+        return geyserPresent;
+    }
+
+    public boolean isGeyserFallback() {
+        return geyserFallback;
     }
 
     /** 展示实体的朝向模式，配置值非法时回退 CENTER */

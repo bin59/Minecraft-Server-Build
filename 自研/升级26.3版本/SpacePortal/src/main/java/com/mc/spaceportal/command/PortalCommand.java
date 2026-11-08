@@ -396,7 +396,16 @@ public class PortalCommand implements CommandExecutor, TabCompleter {
                 sender.sendMessage(msg("&f/csz item give &7- 给自己发一份当前标记物品"));
                 sender.sendMessage(msg("&f/csz item reset &7- 恢复 config.yml 默认物品"));
                 sender.sendMessage(msg("&f/csz item refresh &7- 手动重建所有标记实体"));
-                sender.sendMessage(msg("&7展示实体类型：&f" + plugin.getDisplayMode()));
+                String rawMode = plugin.getRawDisplayMode();
+                String actualMode = plugin.getDisplayMode();
+                sender.sendMessage(msg("&7展示实体类型：&f" + actualMode
+                        + (rawMode.equals(actualMode) ? "" : " &8(配置 " + rawMode + " → 自动降级)")));
+                int markers = plugin.getDisplayManager().countMarkers();
+                int portals = plugin.getPortals().size();
+                sender.sendMessage(msg("&7标记实体：&f" + markers + " &7个 / 阵法 " + portals + " 个"
+                        + (markers == portals ? " &a(正常)" : " &c(异常，执行 /csz item refresh 去重)")));
+                sender.sendMessage(msg("&7互通环境：&f"
+                        + (plugin.isGeyserPresent() ? "已检测到 Geyser/Floodgate" : "未检测到")));
                 sender.sendMessage(msg("&7物品凭证模式：&f" + (plugin.isItemTriggerEnabled() ? "开启" : "关闭")));
                 sender.sendMessage(msg("&7粒子/音效特效：&f" + (plugin.isEffectsEnabled() ? "开启" : "关闭")));
             }
