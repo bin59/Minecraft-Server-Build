@@ -471,7 +471,7 @@
 
 | 分类目录                  | 说明                                                           | 代表分册                                                                                                                                                                    |
 | ------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充、协议库 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · 端口与网络架构 · Velocity 多服 · ProtocolLib                                                                             |
+| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充、协议库 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · ViaBackwards · 端口与网络架构 · Velocity 多服 · ProtocolLib                                                           |
 | **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动                      | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                                                                                           |
 | **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件                     | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · LeashablePlayers · ClickMobs |
 | **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                            | Plan · TAB · 炫彩多层称号 · DecentHolograms                                                                                                                                 |
@@ -507,7 +507,8 @@ Minecraft-Server-Build/
 │   ├── 06-Velocity 多服/            Velocity 多服.md
 │   ├── 07-服务器配置文件补充/        README.md
 │   ├── 08-服务器资源包-BGM/          部署与配置说明.md（BGM资源包源文件 / 循环BGM数据包）
-│   └── 09-协议库-ProtocolLib/       ProtocolLib.md
+│   ├── 09-协议库-ProtocolLib/       ProtocolLib.md
+│   └── 10-向下兼容-ViaBackwards/    README.md
 │
 ├── 2-运维监控与面板/
 │   ├── 01-QQ机器人联动-EasyBot/     EasyBot.md
@@ -584,5 +585,6 @@ Minecraft-Server-Build/
 
 ## 更新记录
 
+- **2026-11-09 更新**：新增 `1-服务端核心与网络层/10-向下兼容-ViaBackwards/README.md`（按实跑 `config.yml` 逐项说明，30 个配置键全覆盖，含官方组合表、命令权限与排错）；修正 `04-跨版本协议兼容-ViaVersion/ViaVersion.md` 中 ViaVersion / ViaBackwards 的方向与"未装 ViaBackwards"的过时表述；主索引目录树与分类表补入 10- 章节。
 - **2026-10-04 更新**：插件与玩法总览"自研"类目补齐 MoneyLedger、AdvZone、EntityCount、DragonManager、DailySell、PlanTop；目录树"自研/"段目录名与实际对齐（`南瓜邮箱/`→`南瓜邮箱-PumpkinMail/`、`基岩皮肤记录器/`→`基岩皮肤记录-BedrockSkinRecorder/`），并补入 `南瓜账本-MoneyLedger/`、`在线时间排行-PlanTop/`；文档更新日期改为 2026-10-04。
 - **关于"服务端目录 `C:\mc_serve\1.21.11-test`"**：该处保留为历史记录未改动；实际运行目录以部署机器为准，本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-1.21.11`（Leaf 1.21.11 生产运行目录备份）为运行服参照。｜升级到 Leaf 26.3 后，运行目录备份命名将相应更新为 `leaf-26.3`，本文档路径引用待升级完成后同步修正。

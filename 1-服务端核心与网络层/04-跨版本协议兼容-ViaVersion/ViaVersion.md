@@ -1,16 +1,18 @@
 # 4. 跨版本协议兼容 — ViaVersion
 
-本文档介绍跨版本协议兼容插件 ViaVersion 的功能与本服实际配置。本服运行 26.3，安装 ViaVersion 后允许使用较旧版本（约 1.8.x 至 1.21.x）的 Java 版客户端加入；本服仅装了 ViaVersion，未装 ViaBackwards 与 ViaRewind。文档列出了 config.yml 中的版本限制、数据包限速与各版本兼容修复项，以及常用命令，供管理员调整跨版本策略时参考。
+本文档介绍跨版本协议兼容插件 ViaVersion 的功能与本服实际配置。ViaVersion 让比服务端更新的客户端加入，并作为 Via 系列的基础协议层；本服同时安装 ViaBackwards 提供旧版客户端支持，未装 ViaRewind。文档列出了 config.yml 中的版本限制、数据包限速与协议修复项，以及常用命令，供管理员调整跨版本策略时参考。
 
 **文件**: `plugins/ViaVersion-5.12.2.jar`（见 plugins/ViaVersion/config.yml）
+
+**配套插件**: `plugins/ViaBackwards-5.12.2.jar`，见 `10-向下兼容-ViaBackwards/README.md`
 
 **官方网站**: https://viaversion.com | **文档**: https://docs.viaversion.com
 
 ## 功能说明
 
-ViaVersion 允许**低于服务器版本的 Minecraft 客户端**连接到服务器。本服运行 26.3（实际运行目录 1.21.11-test），安装了 ViaVersion 后，使用较旧版本（如 1.8.x ~ 1.21.x）的 Java 版客户端也能加入游戏。
+ViaVersion 让**比服务端更新的客户端**连入服务器，同时是 Via 系列的协议基础层，其它 Via 插件都硬依赖它。本服在 ViaVersion 之外还装了 **ViaBackwards**，由后者把可加入的客户端范围向下扩展到旧版 Java 客户端（低至 1.9）；基岩端则走 Geyser + Floodgate，与 Via 系列无关。
 
-> ⚠️ **注意**: 本服仅安装了 ViaVersion（允许低版本客户端加入），未安装 **ViaBackwards**（允许高版本客户端加入低版本服务器）和 **ViaRewind**（允许更旧的 1.7.x 客户端）。
+> ⚠️ **注意**: 本服安装的是 ViaVersion + ViaBackwards，**未装 ViaRewind**，因此 1.7.x / 1.8.x 客户端无法加入。方向别记反：**ViaVersion = 新客户端连旧服务端，ViaBackwards = 旧客户端连新服务端**。三者组合与配置说明见 `10-向下兼容-ViaBackwards/README.md`。
 
 ## 关键配置 (`plugins/ViaVersion/config.yml`)
 
