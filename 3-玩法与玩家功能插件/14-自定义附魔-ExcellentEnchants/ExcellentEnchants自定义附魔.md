@@ -8,12 +8,12 @@
 | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 最新版   | **5.4.3**（2026-06 更新）                                                                                                                                                   |
 | 语言     | **官方支持中文**（Spigot 页：All Translatable + Español, 中文, Polski；附魔名称 / 消息随语言显示）                                                                          |
-| 服务端   | **Paper ✔ / Spigot ✔ / Folia ❌**；服务端 Java 25                                                                                                                         |
+| 服务端   | **Paper ✔ / Spigot ✔ / Folia ❌**；服务端 Java 25                                                                                                                           |
 | 依赖     | **必须安装 NightCore**（同作者前置库，无玩家命令，后台支撑）                                                                                                                |
 | 下载     | [SpigotMC](https://www.spigotmc.org/resources/excellentenchants-%E2%AD%90-80-vanilla-like-enchantments.61693/) ｜ [Modrinth](https://modrinth.com/plugin/excellentenchants) |
 | 前置     | [NightCore (Modrinth)](https://modrinth.com/plugin/nightcore)                                                                                                               |
 | 官方站   | [nightexpressdev.com/excellentenchants](https://nightexpressdev.com/excellentenchants/)                                                                                     |
-| 中文文档 | [snowcutieowo.github.io/ExcellentEnchants](https://snowcutieowo.github.io/ExcellentEnchants/) |
+| 中文文档 | [snowcutieowo.github.io/ExcellentEnchants](https://snowcutieowo.github.io/ExcellentEnchants/)                                                                               |
 
 ## 安装
 
@@ -74,15 +74,15 @@ Java 玩家用物理铁砧完全正常，只有基岩玩家蹲物理铁砧附魔
 
 自研插件 `EnchantShop`（`plugins/EnchantShop.jar`，源码 `自研\附魔商店-EnchantShop\`），用箱子 GUI 绕过物理铁砧，基岩玩家也能稳附魔。
 
-| 项       | 说明                                                                                                                    |
-| -------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 命令     | `/eshop`                                                                                                                |
-| 入口     | 快捷菜单主菜单 slot 15「附魔商店」（附魔书图标，发微光）                                                                |
-| 用法     | 主手拿装备 → 点快捷菜单「附魔商店」→ 箱子菜单列出全部已启用自定义附魔，每个标注价格（经验等级）                          |
-| 扣费     | 读各附魔配置里的 `AnvilCost`，点击时 `giveExpLevels(-cost)` 扣等级，和铁砧手感一致                                     |
-| 施加     | 从运行时注册表取 `excellentenchants` 命名空间附魔，`meta.addEnchant()` 打在主手装备上                                    |
-| 防重     | 装备已有该附魔会提示，不重复扣经验                                                                                      |
-| 价格兜底 | 某附魔没配 `AnvilCost` 时用 `plugins/EnchantShop/config.yml` 的 `default-cost`（默认 3 级）                              |
+| 项       | 说明                                                                                            |
+| -------- | ----------------------------------------------------------------------------------------------- |
+| 命令     | `/eshop`                                                                                        |
+| 入口     | 快捷菜单主菜单 slot 15「附魔商店」（附魔书图标，发微光）                                        |
+| 用法     | 主手拿装备 → 点快捷菜单「附魔商店」→ 箱子菜单列出全部已启用自定义附魔，每个标注价格（经验等级） |
+| 扣费     | 读各附魔配置里的 `AnvilCost`，点击时 `giveExpLevels(-cost)` 扣等级，和铁砧手感一致              |
+| 施加     | 从运行时注册表取 `excellentenchants` 命名空间附魔，`meta.addEnchant()` 打在主手装备上           |
+| 防重     | 装备已有该附魔会提示，不重复扣经验                                                              |
+| 价格兜底 | 某附魔没配 `AnvilCost` 时用 `plugins/EnchantShop/config.yml` 的 `default-cost`（默认 3 级）     |
 
 ### 工作原理
 
