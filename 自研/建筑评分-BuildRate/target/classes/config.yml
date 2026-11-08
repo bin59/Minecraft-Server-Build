@@ -19,6 +19,12 @@ rewards:
   enabled: true
   # 结算时是否广播前 3 名
   announce: true
+  # 参与奖：所有提交过建筑的人，除前 exclude-top 名（他们拿名次奖）外，每人发一份南瓜币
+  # 南瓜币同样入南瓜邮箱 /mailbox 领取，并按活动名记入南瓜账本
+  participation:
+    enabled: false          # true 开启参与奖
+    amount: 50              # 参与奖南瓜币数额（自定义）
+    exclude-top: 5          # 前几名不发参与奖（这些名次由 ranks 决定奖励）
   ranks:
     "1":
       - { type: money, data: "500", desc: "第1名：500 南瓜币" }

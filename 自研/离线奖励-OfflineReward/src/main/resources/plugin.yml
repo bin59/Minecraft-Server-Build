@@ -1,7 +1,7 @@
 name: OfflineReward
 version: 1.0.0
 main: com.nangua.offlinereward.OfflineReward
-api-version: 1.21
+api-version: 26.3
 authors:
   - 南瓜服
 description: 离线奖励 - 按离线时长上线后在邮箱领取南瓜币（复用 PumpkinMail）

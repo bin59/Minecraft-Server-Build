@@ -1,7 +1,7 @@
 name: EnchantShop
 version: 1.0.0
 main: com.nangua.enchshop.EnchantShop
-api-version: "1.21"
+api-version: "26.3"
 depend: [ExcellentEnchants]
 commands:
   eshop:

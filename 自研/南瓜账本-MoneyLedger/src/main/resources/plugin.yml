@@ -1,7 +1,7 @@
 name: MoneyLedger
 version: 1.0.0
 main: com.nangua.moneyledger.MoneyLedger
-api-version: 1.21
+api-version: 26.3
 authors:
   - 南瓜服
 description: 南瓜账本 - 南瓜币变动分类流水（转账/买卖/拍卖/收购/税/任务/活动）

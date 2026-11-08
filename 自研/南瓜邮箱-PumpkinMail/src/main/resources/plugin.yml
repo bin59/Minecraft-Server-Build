@@ -1,7 +1,7 @@
 name: PumpkinMail
 version: 1.0.0
 main: com.nangua.pumpkinmail.PumpkinMail
-api-version: 1.21
+api-version: 26.3
 authors:
   - 南瓜服
 description: 南瓜邮箱 - 活动奖励一键批量发放与玩家领取系统（长期复用）

@@ -1,7 +1,7 @@
 name: BuildRate
 version: 1.0.0
 main: com.nangua.buildrate.BuildRate
-api-version: 1.21
+api-version: 26.3
 authors:
   - 南瓜
 description: 建筑评分 - 活动制多玩家打分评审（1~10 分，去最高最低分，公开可见，玩家可自主报名；结算自动按名次发南瓜币/邮箱奖励）
