@@ -8,10 +8,12 @@ prices:
   # 永久飞行价格（南瓜币）。永久只免扣时，仍受 zones 区域规则限制
   permanent: 100000
   # 每 1 分钟价格
-  per-minute: 20
-  # 单次最多购买分钟数（防止误输入把余额清空）
-  max-minutes-per-buy: 60
-  # 余额上限（分钟），购买时不允许超过
+  per-minute: 100
+  # 单次最多购买分钟数（防止误输入把余额清空）。仅普通玩家受限；
+  # 持有 pumpkinfly.admin 的管理员不受此上限约束，可随意购买。
+  # 当前 120 = 2 小时（玩家单次任何方式最多买 2 小时）。
+  max-minutes-per-buy: 120
+  # 余额上限（分钟），购买时不允许超过。管理员（pumpkinfly.admin）同样不受此约束。
   max-balance-minutes: 10080
   # 是否允许重复购买永久（false = 已永久时拒绝再扣款）
   allow-duplicate-permanent: false
@@ -152,8 +154,8 @@ messages:
   player-usage: '&7单人：&e/pfly player &6<玩家> <status|on|off|ban|unban|trial <时长>|cleartrial|give|take|setperm>'
   reloaded: '&a配置已重载，区域规则与价格立即生效。'
   economy-missing: '&c经济系统未就绪（Vault 未找到经济提供器），请联系管理员。'
-  buy-usage: '&7用法：&e/pfly buy &6<时长|perm>&7，每 1 分钟 &6{cost} &7南瓜币。'
-  invalid-number: '&c分钟数必须是 1 到 60 之间的整数。'
+  buy-usage: '&7用法：&e/pfly buy &6<时长|perm>&7，每 1 分钟 &6{cost} &7南瓜币。&8（玩家单次最多 120 分钟 / 2 小时）'
+  invalid-number: '&c分钟数必须是 1 到 120 之间的整数（玩家单次上限）。'
   invalid-duration: '&c时长格式错误：&e30m / 2h / 3d / 1d2h30m&c，或纯数字（按分钟）。'
   already-permanent: '&a你已经拥有永久飞行，无需重复购买。'
   balance-limit: '&c余额已达上限，先飞一会儿再来买吧。'

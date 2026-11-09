@@ -1,6 +1,6 @@
 # Free Minecraft Models（FMM）—— 自定义模型加载插件
 
-> **状态**：✅ 已安装启用 | **版本**：**2.14.2**（2026-11 实测，已支持 26.3）| **基岩链路**：FMM + **ResourcePackManager** + Geyser/Floodgate **已就绪**（RPM 已于 2026-11-10 确认安装）
+> **状态**：✅ 已安装启用 | **版本**：**2.14.2**（2026-11 实测，已支持 26.3）| **基岩链路**：FMM + **ResourcePackManager 2.4.12** + Geyser/Floodgate 链路已通（Java 端实测显示 ✅）；基岩端 2026-11-10 排查结论：**缺一次重启激活 Geyser 桥**，见 §4.4
 > **作者**：MagmaGuy（EliteMobs / BetterStructures / ResourcePackManager 同作者）| **协议**：GPL-3.0 | **定位**：服主提供模型库（家具 / 装饰 / 武器 / 宠物 / 伪装 / 活动道具），**Java 与基岩通吃**
 > 配套文档：[宠物系统 SimplePets](宠物系统simplepets.md)（FMM 宠物是第三方模型宠物，与 SimplePets 并存不冲突）、[经济系统](../经济系统/Vault.md)（南瓜币出口）
 
@@ -66,6 +66,27 @@ Java 与基岩玩家都看到模型（含动画 / 粒子）
 
 - `/fmm debug bedrock on` 开基岩显示诊断日志，`off` 关
 - 基岩看不到模型时排查顺序：① RPM 是否装且在跑 → ② `sendCustomModelsToBedrockClientsV2` 是否 true → ③ Geyser 是否把 RPM 的包推出去 → ④ `/fmm reload` 后基岩重进服刷新包
+
+### 4.4 基岩排错实测案例（2026-11-10，Java 显示 / 基岩不显示）
+
+**现象**：Java 端提示下载资源包、下载后模型正常显示；基岩端（Floodgate `.xxx` 玩家）看不到自定义模型。
+
+**诊断结论**（查 `logs/latest.log`）：链路本身没坏，是**缺一次重启 + 玩家进得太早**：
+
+| 证据（日志行） | 含义 |
+|---|---|
+| `[Geyser-Spigot] 已加载 0 个扩展` | 本次启动时 Geyser 未加载 RPM 扩展 |
+| `[ResourcePackManager] Geyser support updated. Restart your server to finish the update.` | RPM 在**运行中**才安装/更新 Geyser 桥（`extensions/ResourcePackManager.jar` + `custom_mappings/rspm_geyser_mappings.json`），**必须重启才生效** |
+| `[ResourcePackManager] Bedrock conversion complete: 127 mappings (15 unique models...)` | 基岩转换本身成功（产物：`plugins/ResourcePackManager/output/ResourcePackManager_Bedrock.zip`） |
+| `RSPM: 'xxx' joined before the resource pack is ready` | 玩家在包就绪前进服；Java 可中途补发，**基岩走 Geyser 通道，通道未激活就什么都没有** |
+
+**修复步骤**：
+1. **重启服务器一次**（RPM 官方指示；Geyser 的 custom_mappings 也只在启动时读取）。
+2. 重启后确认日志顺序：Geyser 扩展/桥加载 → `Bedrock conversion complete` 出现**早于**基岩玩家加入。
+3. 基岩玩家**退出重进**（包在加入时下发；`force-resource-packs: true` 会强制下载，不会弹拒绝）。
+4. 仍不显示再查：基岩客户端旧包缓存（客户端设置里清理）、Geyser `extensions/` 里的 jar 是否有效（RPM 会自修复，勿手动删）。
+
+**注意**：`/fmm reload` 只重新生成 Java 包和转换产物，**不会**让 Geyser 重读 mappings——改完模型想让基岩生效，稳妥做法是 `reload + 重启`。
 
 ## 5. 核心功能
 

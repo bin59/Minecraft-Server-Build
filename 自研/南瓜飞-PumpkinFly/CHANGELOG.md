@@ -213,3 +213,28 @@
 2. 停服替换 `PumpkinFly-1.0.0.jar`，**完整重启**（别用 /reload）。
 3. 基岩端无需任何额外设置：检测到 Floodgate/Geyser 即自动走 BossBar；若想强制 Java 也走 BossBar，把 `display.mode` 改成 `BOTH` 或 `BOSS_BAR` 后 `/pfly reload`。
 4. 仍显示 `[缺少消息: xxx]` 即表示配置未覆盖成功，检查 `plugins/PumpkinFly/config.yml` 是否真的被替换。
+
+---
+
+## 2026-11-10 · 1.0.0-r6 修订（价格 100/分钟 + 玩家单次封顶 2 小时）
+
+**需求**：飞行价格改为 1 分钟 100 南瓜币；玩家单次任何方式只能购买 2 小时（120 分钟），管理员可随意。
+
+### 修改
+
+| 文件 | 内容 |
+| --- | --- |
+| `config.yml` | `prices.per-minute` 20 → **100**；`prices.max-minutes-per-buy` 60 → **120**（=2 小时）；`buy-usage` / `invalid-number` 文案同步提示「玩家单次最多 120 分钟」 |
+| `FlyConfig.java` | 默认值同步：`perMinute` 默认 20→100，`maxMinutesPerBuy` 默认 60→120（仅在实跑配置缺键时回落，正常读配置） |
+| `FlyCommand.java` · `buy()` | 新增 `isAdmin = p.hasPermission("pumpkinfly.admin")`：**普通玩家**仍受 `max-minutes-per-buy`（120）与时长余额上限约束；**管理员**两条上限均跳过，可随意购买任意时长（含 >2h） |
+
+### 影响范围说明
+
+- 所有玩家购买入口（`/pfly buy`、QuickMenu 的 `pfly buy 1/5/30/perm` 按钮）统一经 `buy()`，天然受 2 小时上限约束；QuickMenu 现有按钮最长 30 分钟，不受影响。
+- 管理员自身执行 `/pfly buy` 也因持 `pumpkinfly.admin` 而免限；管理员给他人发放走 `/pfly player <名> give`，该路径本就无上限（属「发放」非「购买」）。
+- 永久飞行价（`permanent: 100000`）本次未动；余额上限 `max-balance-minutes: 10080`（7 天）保留为存储安全网，仅管理员免限。
+
+### 验证
+
+- `python build.py` rc=0：13 源 / 17 class / major 65 / 63881 字节；项目根与 `target/` 两份 jar 一致。
+- jar 内 `config.yml` 确认 `per-minute: 100` 与 `max-minutes-per-buy: 120`。

@@ -94,6 +94,10 @@ public final class BedrockFormRenderer {
             if (!plugin.getActionExecutor().hasItemPermission(player, item)) {
                 continue;
             }
+            if (!item.visibleToday()) {
+                // days 条件不满足：与 Java 端一致，今日不显示（每天轮换的任务菜单）
+                continue;
+            }
             visibleItems.add(item);
 
             String label = item.getButtonLabel();

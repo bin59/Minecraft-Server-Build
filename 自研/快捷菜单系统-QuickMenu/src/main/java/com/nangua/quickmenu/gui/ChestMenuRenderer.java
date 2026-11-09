@@ -125,9 +125,13 @@ public final class ChestMenuRenderer {
             }
         }
 
-        // 2. 放置有权限的菜单项
+        // 2. 放置有权限且今日可见的菜单项
+        //    （days 条件为空表示每天可见，见 MenuItem#visibleToday）
         for (MenuItem item : menu.getItems()) {
             if (!plugin.getActionExecutor().hasItemPermission(player, item)) {
+                continue;
+            }
+            if (!item.visibleToday()) {
                 continue;
             }
             int slot = item.getSlot();

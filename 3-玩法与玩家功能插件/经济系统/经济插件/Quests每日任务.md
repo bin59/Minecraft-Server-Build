@@ -85,7 +85,7 @@ quests:
 | `dailywoodcutter` | 每日 · 伐木工 | 砍橡木原木 16 | Break blocks | 40 |
 | `dailycook` | 每日 · 厨师 | 熔炉烧炼 16 个物品 | Smelt items | 40 |
 | `dailytamer` | 每日 · 驯养师 | 驯服动物 2 只 | Tame mobs | 50 |
-| `dailywalker` | 每日 · 远行者 | 步行累计 5000 格 | 距离类条件 | 40 |
+| `dailywalker` | 每日 · 远行者 | 放置火把 16 个 | Place blocks | 40 |
 | `dailyfarmer` | 每日 · 农夫 | 收获成熟小麦 16 | Break blocks（WHEAT） | 40 |
 
 全部任务 `redo-delay: 86400`，奖励 `money` 走 Vault。
@@ -197,6 +197,17 @@ quests:
 
 `dailywalker`（步行 5000 格）**无法 1:1 迁移**：Quests 5.3.2 的 102 个配置键中没有任何累计距离目标（`share-distance` 是多人共享参数、`reach-location-*` 是抵达坐标）。`quests.yml` 末尾附了两个可直接取消注释的原生替代（吃 8 面包 / 插 16 火把），启用后 Faucet 回到 **350 南瓜币/天**；要精确「今日步行距离」需注册 `custom-objectives` 或由自研插件暴露 PAPI 占位符再走 `conditions.yml`。
 
+### 每日限领网关（2026-11-10 新增）
+
+Quests Classic **没有「每天从 N 个每日任务里选领 M 个」的机制**，`max-quests: 0` 表示同时持有任务数不限，因此玩家可一次接走全部每日任务。为落实「8 选 5」：
+
+- 实跑 `quests.yml` 末尾已取消注释其一（插 16 火把），`name: '每日 · 远行者'`，作为第 8 个每日任务（日 faucet 上限回到 350/天，但实际每天仅可领 5 个）。
+- 新增自研插件 **DailyQuestPick**（`自研/每日任务限领-DailyQuestPick/`）：在玩家与 Quests 之间加网关，按自然日（服务器 0 点）计数，每天最多领 `daily-limit: 5` 个；「领了即占槽、完成/放弃不退槽」。
+  - 入口：`/dq take <id>`（菜单按钮）与直接 `/quests take <名称>`（经 `PlayerCommandPreprocessEvent` 拦截，绕过菜单也受限）。
+  - 数据：`plugins/DailyQuestPick/data/<uuid>.yml`（`last-date` + `claimed-today`）。
+  - 命令：`/dq`（查余量）、`/dq reset [玩家]`、`/dq reload`（均 `dailyquestpick.admin`）。
+- QuickMenu `quests-daily` 菜单 8 个按钮的 `actions` 由 `[player] quests take <名称>` 改为 `[player] dq take <id>`，由网关统一计数。
+
 配套把 `plugins/Quests/config.yml` 的 `language` 从 `en-US` 改为 `zh-CN`（jar 内 `lang/zh-CN/strings.yml` 与官方 `strings.yml` 同为 802 键，完整）。
 
-**验证记录**：SnakeYAML 2.6 严格解析通过、UTF-8 正常；全部 stage 键在 102 键白名单内且列表长度配对；12 个 Material + 2 个 EntityType 用 Leaf `leaf-api-26.3.build.18-alpha.jar` 的 `javap` 确认存在；生物名经 `BukkitMiscUtil.getProperMobType` 大小写不敏感匹配。生效方式 `/questadmin reload` 或重启，随后 `/quests list` 应列出 7 个任务，接一个完成后核对 Vault 余额与 24 小时冷却。
+**验证记录**：SnakeYAML 2.6 严格解析通过、UTF-8 正常；全部 stage 键在 102 键白名单内且列表长度配对；12 个 Material + 2 个 EntityType 用 Leaf `leaf-api-26.3.build.18-alpha.jar` 的 `javap` 确认存在；生物名经 `BukkitMiscUtil.getProperMobType` 大小写不敏感匹配。生效方式 `/questadmin reload` 或重启，随后 `/quests list` 应列出 8 个任务（每日经 **DailyQuestPick** 限领 5 个），接一个完成后核对 Vault 余额与 24 小时冷却。

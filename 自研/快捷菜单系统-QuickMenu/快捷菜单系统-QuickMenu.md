@@ -3,7 +3,7 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：按服务器实跑 `config.yml` 统计共 **32 套菜单 / 267 个菜单项**，
+> **菜单已整合本服全部插件**：按服务器实跑 `config.yml` 统计共 **32 套菜单 / 268 个菜单项**，
 > 其中主线 28 套（玩家线 16 套 + 管理线 12 套）、支线 4 套；管理入口靠权限门控，普通玩家看不到。
 > **2026-11-10 配置基线**：以服务器实跑 `plugins/QuickMenu/config.yml` 为底合并南瓜飞菜单，
 > 实跑独有内容零删除；服务器配置、项目源码、`target/classes`、项目根副本与 jar 内配置五处字节级一致。
@@ -286,7 +286,7 @@ actions:
 
 `config.yml` 已配好 **32 套菜单**（28 套主线 + 4 套支线），把本服所有插件的常用功能全部收进菜单。
 
-> 按 `config.yml` 的 `menus:` 实际统计是 **32 个菜单键 / 267 个菜单项**，42 处 `[menu]` 跳转、
+> 按 `config.yml` 的 `menus:` 实际统计是 **32 个菜单键 / 268 个菜单项**，42 处 `[menu]` 跳转、
 > 30 个 `back-menu` 全部有效。上表按 28 套主线列出，多出的 4 套是 `fishing`、`buildrate-admin`、
 > `admin-fishing` 与 `pumpkinfly-admin` 支线菜单。
 > 2026-11-10 起本配置以**服务器实跑 `plugins/QuickMenu/config.yml` 为基线**：完整保留实跑独有的
@@ -309,11 +309,11 @@ actions:
 | `voice`         | 语音聊天   | **Simple Voice Chat**                                                 | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                                                                 |
 | `guide`         | 新人指南   | —（说明书）                                                           | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                                                                         |
 | `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                                                                                                                                                     |
-| `quests-daily`  | 每日任务   | **Quests 5.3.2**                                                      | 7 个日常任务一键接取（挖矿 / 猎手 / 渔夫 / 伐木工 / 厨师 / 驯养师 / 农夫），奖励 40~50 南瓜币，24 小时冷却 |
+| `quests-daily`  | 每日任务   | **Quests 5.3.2** + **DailyQuestPick**                                | 8 个日常任务一键接取（挖矿 / 猎手 / 渔夫 / 伐木工 / 厨师 / 驯养师 / 农夫 / 远行者），经 **DailyQuestPick** 网关**每天最多领 5 个**，奖励 40~50 南瓜币，24 小时冷却 |
 | `guide-build`   | 领地建房   | **Residence**                                                         | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                                                                                                                                   |
 | `guide-move`    | 传送出行   | EssentialsX + SpacePortal                                             | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                                                                                                                                                    |
 | `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX                  | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                                                                                                                                           |
-| `pumpkinfly`    | 南瓜飞     | **PumpkinFly** + Vault + Residence                                    | 固定档位购买（1 / 5 / 30 分钟 + 永久）、领取限时体验奖励、状态查询、开关飞行、购买记录、飞行记录、界面显示；管理员可见「飞行管理」入口（slot 24）。共 11 个按钮，详见 `自研/南瓜飞-PumpkinFly/使用说明.md`                                               |
+| `pumpkinfly`    | 南瓜飞     | **PumpkinFly** + Vault + Residence                                    | 固定档位购买（1 / 5 / 30 分钟 + 永久，价格随 `prices.per-minute: 100` 计算）、领取限时体验奖励、状态查询、开关飞行、购买记录、飞行记录、界面显示；管理员可见「飞行管理」入口（slot 24）。共 11 个按钮，详见 `自研/南瓜飞-PumpkinFly/使用说明.md`                                               |
 
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah，slot 9）、玩家商店（/shop，slot 11）
@@ -333,7 +333,8 @@ actions:
 - 主菜单 `main.items.pumpkinfly` 占 **slot 28**（ELYTRA，`permission: pumpkinfly.use`，动作 `[menu] pumpkinfly`）；`menus.pumpkinfly` 是 size 27、`back-menu: main` 的子菜单，现共 **11 个按钮**
 - 新增 slot 20「领取体验奖励」（`[player] pfly claim`，`permission: pumpkinfly.use`）与 slot 24「飞行管理」（`[menu] pumpkinfly-admin`，`permission: pumpkinfly.admin`）
 - **管理支线** `menus.pumpkinfly-admin`：size 27、`back-menu: pumpkinfly`，12 个按钮，全部要求 `pumpkinfly.admin`。全局按钮走 `[player] pfly global ...`（总开关 / 免费飞行 / 30 分钟 / 2 小时 / 1 天全服体验 / 清除）；单人按钮走 `[player-selector] pfly player {target} ...`（发体验、禁用、解禁、查状态、设永久），点选在线玩家后 `{target}` 自动替换
-- 菜单**没有输入框**，所以购买与体验时长只能做成固定按钮（1 / 5 / 30 / perm、30m / 2h / 1d）；改 `PumpkinFly` 的价格或奖励时长时同步改按钮文案与命令参数
+- 菜单**没有输入框**，所以购买与体验时长只能做成固定按钮（1 / 5 / 30 / perm、30m / 2h / 1d）；改 `PumpkinFly` 的价格或奖励时长时同步改按钮文案与命令参数。当前 `prices.per-minute: 100`，故按钮显示「1 分钟 100 / 5 分钟 500 / 30 分钟 3000 / 永久 100000」（详见 `自研/南瓜飞-PumpkinFly/使用说明.md` 第六节）。
+- **「飞行界面显示」按钮（slot 23）动作是 `[player] pfly hud on`**（原 `toggle` 会被误关成 `false`，导致玩家点一下界面消失）；玩家仍可用 `/pfly hud off` 主动关闭。
 - **部署注意**：替换 jar 不会更新服务器上已有的 `plugins/QuickMenu/config.yml`。要么备份后删除该文件让插件按新默认重建，要么手动把 `claim` / `admin` 两个按钮与整段 `pumpkinfly-admin` 合并进去再 `/qm reload`
 - 管理员菜单 `admin-player` 里原有的 `[player] fly` 按钮**保留**，普通玩家走 `/pfly`，两者不冲突
 

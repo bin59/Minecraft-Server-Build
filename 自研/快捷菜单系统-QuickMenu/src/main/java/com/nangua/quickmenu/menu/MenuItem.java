@@ -3,6 +3,7 @@ package com.nangua.quickmenu.menu;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 单个菜单项。
@@ -24,6 +25,16 @@ public final class MenuItem {
     private boolean glowing = false;
     private String permission = "";
     private List<Action> actions = new ArrayList<>();
+
+    /**
+     * 仅在指定星期几显示（用于"每日轮换"类菜单）。
+     *
+     * <p>每项为一个星期名：支持完整名（MONDAY）与三字缩写（MON），大小写不敏感；
+     * 空列表或未配置表示每天可见。取当前服务器本地日期判断，
+     * 跨天时下一次打开菜单即生效（界面每次打开都重新构建）。
+     * 特殊值 ALL / * 表示每天可见。
+     */
+    private List<String> days = new ArrayList<>();
 
     /**
      * 基岩端按钮文本。为空时回退使用 displayName（去除颜色码），
@@ -85,6 +96,41 @@ public final class MenuItem {
 
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+
+    public List<String> getDays() {
+        return days;
+    }
+
+    public void setDays(List<String> days) {
+        this.days = days == null ? new ArrayList<>() : days;
+    }
+
+    /**
+     * 今天（服务器本地时区）该菜单项是否可见。
+     *
+     * <p>days 为空或含 ALL / * 时恒可见；否则按 DayOfWeek 完整名或
+     * 三字缩写匹配，例如 {@code [MON, WED, FRI]} 表示周一/三/五显示。
+     */
+    public boolean visibleToday() {
+        if (days == null || days.isEmpty()) {
+            return true;
+        }
+        String full = java.time.LocalDate.now().getDayOfWeek().name();        // 如 MONDAY
+        String shortName = full.substring(0, 3);                              // 如 MON
+        for (String d : days) {
+            if (d == null) {
+                continue;
+            }
+            String t = d.trim().toUpperCase(Locale.ROOT);
+            if (t.isEmpty() || t.equals("ALL") || t.equals("*")) {
+                return true;
+            }
+            if (t.equals(full) || t.equals(shortName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<Action> getActions() {

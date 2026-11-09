@@ -93,8 +93,8 @@ public final class FlyConfig {
         org.bukkit.configuration.file.FileConfiguration c = plugin.getConfig();
 
         permanentPrice = c.getDouble("prices.permanent", 100000D);
-        perMinute = c.getDouble("prices.per-minute", 20D);
-        maxMinutesPerBuy = c.getInt("prices.max-minutes-per-buy", 60);
+        perMinute = c.getDouble("prices.per-minute", 100D);
+        maxMinutesPerBuy = c.getInt("prices.max-minutes-per-buy", 120);
         maxBalanceMinutes = c.getInt("prices.max-balance-minutes", 10080);
         allowDuplicatePermanent = c.getBoolean("prices.allow-duplicate-permanent", false);
 

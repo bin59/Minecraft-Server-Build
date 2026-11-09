@@ -65,6 +65,8 @@ public final class FlyCommand implements TabExecutor {
             return true;
         }
         Player p = (Player) sender;
+        // 管理员（pumpkinfly.admin）不受单次购买时长上限与余额上限约束，可随意购买
+        boolean isAdmin = p.hasPermission("pumpkinfly.admin");
         if (!p.hasPermission("pumpkinfly.buy")) {
             p.sendMessage(plugin.config().msg("no-permission"));
             return true;
@@ -86,7 +88,8 @@ public final class FlyCommand implements TabExecutor {
                 return true;
             }
             minutes = (seconds + 59L) / 60L;
-            if (minutes < 1L || minutes > plugin.config().maxMinutesPerBuy) {
+            // 普通玩家单次最多 maxMinutesPerBuy 分钟；管理员不受此上限约束
+            if (minutes < 1L || (!isAdmin && minutes > plugin.config().maxMinutesPerBuy)) {
                 p.sendMessage(plugin.config().msg("invalid-number"));
                 return true;
             }
@@ -97,7 +100,8 @@ public final class FlyCommand implements TabExecutor {
             p.sendMessage(plugin.config().msg("already-permanent"));
             return true;
         }
-        if (!perm && d.remainingSeconds + minutes * 60L > (long) plugin.config().maxBalanceMinutes * 60L) {
+        // 余额上限（分钟）：普通玩家受限，管理员不受约束
+        if (!isAdmin && !perm && d.remainingSeconds + minutes * 60L > (long) plugin.config().maxBalanceMinutes * 60L) {
             p.sendMessage(plugin.config().msg("balance-limit"));
             return true;
         }

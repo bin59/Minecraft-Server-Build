@@ -186,6 +186,7 @@ public final class ConfigLoader {
         item.setLore(section.getStringList("lore"));
         item.setGlowing(section.getBoolean("glowing", false));
         item.setPermission(section.getString("permission", ""));
+        item.setDays(section.getStringList("days"));
         item.setButtonLabel(section.getString("button-label", ""));
 
         int slot = section.getInt("slot", -1);
