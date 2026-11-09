@@ -16,14 +16,12 @@
       <systemPath>${project.basedir}/../lib/leaf-api-26.3.build.13-alpha.jar</systemPath>
     </dependency>
     <!--
-      EssentialsX API（外部依赖）。
-      TODO: 替换为与 Leaf 26.3 兼容的 EssentialsX 版本。
-      下方 systemPath 指向本机验证用 jar，仅用于本地编译；
-      正式构建请改用 EssentialsX 官方 Maven 仓库坐标。
+      EssentialsX API（外部依赖，softdepend）：运行时由服务器上的 EssentialsX 提供。
+      systemPath 指向 自研/lib/EssentialsX.jar，仅用于编译期解析类型。
     -->
     <dependency>
-      <groupId>net.essentialsx</groupId><artifactId>EssentialsX</artifactId><version>2.21.0</version><scope>provided</scope>
-      <systemPath>F:/game/pc/MC/开服/Minecraft-Server-Build/自研/南瓜账本-MoneyLedger/lib/EssentialsX.jar</systemPath>
+      <groupId>net.essentialsx</groupId><artifactId>EssentialsX</artifactId><version>2.22.1</version><scope>provided</scope>
+      <systemPath>${project.basedir}/../lib/EssentialsX.jar</systemPath>
     </dependency>
     <!--
       SQLite JDBC（运行时需提供：服务器放置或插件自带 lib）。

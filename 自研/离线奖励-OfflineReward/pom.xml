@@ -28,8 +28,8 @@
     </dependency>
     <!-- 南瓜邮箱 PumpkinMail（softdepend）：OfflineReward 直接调用其 storage()/Reward/Storage API。
          运行时由 PumpkinMail 插件提供（provided）。
-         TODO: 此处引用的是旧版（1.21.11）PumpkinMail.jar 仅用于编译；
-               上线前需替换为与 Leaf 26.3 兼容的 PumpkinMail 构建（同目录 PumpkinMail 模块产出）。 -->
+         此处引用 自研/lib/PumpkinMail.jar，仅用于编译期解析类型；
+         运行时由服务器上的 PumpkinMail 插件提供（provided）。 -->
     <dependency>
       <groupId>com.nangua</groupId>
       <artifactId>PumpkinMail</artifactId>

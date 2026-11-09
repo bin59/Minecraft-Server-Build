@@ -31,7 +31,7 @@
           运行期依赖 ExcellentEnchants（plugin.yml 中 depend）。
           该插件仅以 Bukkit API 读取 ExcellentEnchants 的磁盘配置文件，
           编译期不需其 API，故此处不引入编译依赖。
-          如需在编译期校验（例如改用其 API），请启用下方依赖并替换为 26.3 兼容版本：
+          如需在编译期校验（例如改用其 API），启用下方依赖并填入对应版本：
         -->
         <!--
         <dependency>

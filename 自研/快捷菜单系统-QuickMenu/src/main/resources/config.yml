@@ -453,6 +453,21 @@ menus:
           - '[close]'
           - '[player] br open'
 
+      # ---------- 南瓜飞行（PumpkinFly 自研） ----------
+      # 固定档位购买，QuickMenu 没有输入框，分钟数只能做成固定按钮
+      pumpkinfly:
+        material: ELYTRA
+        display-name: '&b&l南瓜飞行'
+        lore:
+          - '&710 万南瓜币买永久，或按分钟买时长'
+          - '&7只在自己的领地 / 主城 zhucheng 内可飞'
+          - '&7仅飞行中扣秒，站着不扣；离开区域自动安全落地'
+          - '&8点击查看余额与购买档位'
+        slot: 28
+        permission: pumpkinfly.use
+        actions:
+          - '[menu] pumpkinfly'
+
   # ==================== 传送子菜单 ====================
   teleport:
     title: '&b&l传送功能'
@@ -761,6 +776,110 @@ menus:
         actions:
           - '[close]'
           - '[player] ds'
+
+  # ==================== 南瓜飞行子菜单（PumpkinFly 自研） ====================
+  # QuickMenu 无输入框，购买档位必须写成固定按钮；改价格时请同步改这里按钮文案。
+  # size 27 时右下角 slot 26 由 back-menu 自动占用，不要放物品。
+  pumpkinfly:
+    title: '&6&l南瓜飞行'
+    bedrock-content: '&7选择购买档位或查看余额'
+    size: 27
+    back-menu: main
+    filler:
+      material: LIGHT_BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      status:
+        material: CLOCK
+        display-name: '&e&l飞行状态'
+        lore:
+          - '&7查看永久标记、剩余时长、当前区域'
+          - '&7累计购买 / 已飞时长、计时口径'
+        slot: 4
+        permission: pumpkinfly.use
+        actions:
+          - '[close]'
+          - '[player] pfly status'
+
+      toggle:
+        material: FEATHER
+        display-name: '&b&l开启 / 关闭飞行'
+        lore:
+          - '&7有凭证且在允许区域时切换飞行能力'
+          - '&7开飞后双击空格起飞'
+        slot: 10
+        permission: pumpkinfly.use
+        actions:
+          - '[close]'
+          - '[player] pfly toggle'
+
+      buy1:
+        material: GOLD_NUGGET
+        display-name: '&a&l1 分钟 &8| &620 南瓜币'
+        lore:
+          - '&7时长累加到余额，仅飞行中扣秒'
+        slot: 12
+        permission: pumpkinfly.buy
+        actions:
+          - '[close]'
+          - '[player] pfly buy 1'
+
+      buy5:
+        material: GOLD_INGOT
+        display-name: '&a&l5 分钟 &8| &6100 南瓜币'
+        lore:
+          - '&7最常用档位'
+        slot: 13
+        permission: pumpkinfly.buy
+        actions:
+          - '[close]'
+          - '[player] pfly buy 5'
+
+      buy30:
+        material: GOLD_BLOCK
+        display-name: '&a&l30 分钟 &8| &6600 南瓜币'
+        lore:
+          - '&7建造 / 装修时一次买够'
+        slot: 14
+        permission: pumpkinfly.buy
+        actions:
+          - '[close]'
+          - '[player] pfly buy 30'
+
+      buyperm:
+        material: NETHER_STAR
+        display-name: '&5&l永久飞行 &8| &6100000 南瓜币'
+        lore:
+          - '&7一次买断，不再扣时长'
+          - '&c仍然只能在自己的领地 / 主城内飞'
+        slot: 16
+        permission: pumpkinfly.buy
+        actions:
+          - '[close]'
+          - '[player] pfly buy perm'
+
+      records:
+        material: BOOK
+        display-name: '&6&l购买记录'
+        lore:
+          - '&7最近 10 条购买 / 管理员发放记录'
+        slot: 21
+        permission: pumpkinfly.records
+        actions:
+          - '[close]'
+          - '[player] pfly records buy'
+
+      sessions:
+        material: WRITABLE_BOOK
+        display-name: '&6&l飞行记录'
+        lore:
+          - '&7最近 10 次起飞时间、时长与结束原因'
+        slot: 22
+        permission: pumpkinfly.records
+        actions:
+          - '[close]'
+          - '[player] pfly records session'
 
   # ==================== 工具包子菜单 ====================
   kit:

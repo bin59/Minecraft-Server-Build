@@ -3,7 +3,7 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：27 套菜单 / 215 个菜单项，分**玩家线**（15 套）
+> **菜单已整合本服全部插件**：28 套主线菜单 / 224 个菜单项，分**玩家线**（16 套）
 > 与**管理线**（12 套），管理入口靠权限门控，普通玩家看不到。
 
 插件 jar：`dist/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
@@ -76,25 +76,24 @@ if (api.isFloodgatePlayer(uuid)) {
 ## 2. 目录结构
 
 ```
-自研/快捷菜单系统/
-├── 快捷菜单系统-QuickMenu.md        ← 本文档
-├── build.ps1                        ← 一键构建脚本（无需 Maven）
-├── dist/
-│   └── QuickMenu-1.0.0.jar          ← ★ 部署用成品，复制这个
-├── plugin-src/
-│   ├── pom.xml                      ← 可选：Maven / IDE 用
-│   └── src/main/
-│       ├── java/com/nangua/quickmenu/
-│       │   ├── QuickMenuPlugin.java     主类，装配与 Floodgate 探测
-│       │   ├── command/QuickMenuCommand.java  /qm 命令与 Tab 补全
-│       │   ├── config/                  YAML → 内存对象（启动时一次）
-│       │   ├── gui/                    Java 箱子渲染 / 基岩表单渲染 / 界面持有者
-│       │   ├── listener/               物品右键 / 进服发放 / 防丢弃 / 点击处理
-│       │   └── menu/                   两端分发决策中枢 / 动作执行 / 菜单与动作模型
-│       └── resources/
-│           ├── plugin.yml              插件描述（命令与权限）
-│           └── config.yml              ★ 菜单配置（27 套：玩家 15 + 管理 12）
-└── _build/                            构建中间目录
+自研/快捷菜单系统-QuickMenu/
+├── 快捷菜单系统-QuickMenu.md              ← 本文档
+├── 快捷菜单系统-QuickMenu-与通用菜单对比.md
+├── pom.xml                                ← 可选：Maven / IDE 用
+├── src/main/
+│   ├── java/com/nangua/quickmenu/
+│   │   ├── QuickMenuPlugin.java           主类，装配与 Floodgate 探测
+│   │   ├── command/QuickMenuCommand.java /qm 命令与 Tab 补全
+│   │   ├── config/                        YAML → 内存对象（启动时一次）
+│   │   ├── gui/                           Java 箱子渲染 / 基岩表单渲染 / 界面持有者
+│   │   ├── listener/                     物品右键 / 进服发放 / 防丢弃 / 点击处理
+│   │   └── menu/                         两端分发决策中枢 / 动作执行 / 菜单与动作模型
+│   └── resources/
+│       ├── plugin.yml                    插件描述（命令与权限）
+│       └── config.yml                    ★ 菜单配置（28 套主线：玩家 16 + 管理 12）
+└── target/
+    ├── QuickMenu-1.0.0.jar                ← ★ 部署用成品，复制这个
+    └── classes/                           构建中间产物
 ```
 
 ---
@@ -105,15 +104,15 @@ if (api.isFloodgatePlayer(uuid)) {
 
 | 项目       | 要求               | 本服                          |
 | ---------- | ------------------ | ----------------------------- |
-| 服务端核心 | Paper 或其分支     | ✅ Leaf 1.21.11（Paper 分支） |
-| Java       | 21+                | ✅ 已装 JDK 21                |
-| Minecraft  | 1.21.x             | ✅ 1.21.11                    |
+| 服务端核心 | Paper 或其分支     | ✅ Leaf 26.3（Paper 分支）    |
+| Java       | 21+（核心需 25）   | ✅ JDK 25                     |
+| Minecraft  | 26.3               | ✅ 26.3                       |
 | Floodgate  | 基岩端原生表单必需 | 已装（见互通层章节）          |
 
 ### 3.2 部署步骤
 
 ```
-1. 复制 dist\QuickMenu-1.0.0.jar  →  服务器 plugins\ 目录
+1. 复制 target\QuickMenu-1.0.0.jar  →  服务器 plugins\ 目录
 2. 重启服务器
 3. 首次启动自动生成 plugins\QuickMenu\config.yml
 4. 按需修改配置，然后 /qm reload 热重载（无需重启）
@@ -274,15 +273,19 @@ actions:
 
 ---
 
-## 5. 菜单结构总览（27 套，玩家 / 管理双线）
+## 5. 菜单结构总览（28 套，玩家 / 管理双线）
 
-`config.yml` 已配好 **27 套菜单**，把本服所有插件的常用功能全部收进菜单。
+`config.yml` 已配好 **28 套主线菜单**，把本服所有插件的常用功能全部收进菜单。
 
-### 5.1 玩家菜单（15 套）
+> 按 `config.yml` 的 `menus:` 实际统计是 **30 个菜单键 / 240 个菜单项**，比上表多出的
+> `fishing`、`buildrate-admin`、`admin-fishing` 等是后续追加的支线菜单，本节表格按主线列出。
+> 2026-11-09 新增 `pumpkinfly`（主菜单 slot 28 入口 + 8 个按钮）后，主线口径由 27/15 变为 28/16。
+
+### 5.1 玩家菜单（16 套）
 
 | 菜单 id         | 名称       | 对接插件                                                              | 主要内容                                                                                                                                                                                                            |
 | --------------- | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `main`          | 主菜单     | —                                                                     | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达；含**南瓜邮箱**（`/mailbox`，slot 30，第 4 行）领活动奖励 |
+| `main`          | 主菜单     | —                                                                     | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达；含**南瓜邮箱**（`/mailbox`，slot 30，第 4 行）领活动奖励；含**南瓜飞行**（slot 28，打开 `pumpkinfly` 子菜单） |
 | `teleport`      | 传送功能   | EssentialsX + BPS                                                     | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                        |
 | `warps`         | 传送点     | EssentialsX                                                           | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                    |
 | `residence`     | 我的领地   | **Residence**                                                         | 传送/查看**自己**的领地（点选式 `[residence-selector]`，无需手敲领地名）、建/删领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                        |
@@ -296,6 +299,7 @@ actions:
 | `guide-build`   | 领地建房   | **Residence**                                                         | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                                                                                |
 | `guide-move`    | 传送出行   | EssentialsX + SpacePortal                                             | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                                                                                                 |
 | `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX                  | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                                                                                        |
+| `pumpkinfly`    | 南瓜飞行   | **PumpkinFly** + Vault + Residence                                     | 固定档位购买（1 / 5 / 30 分钟 + 永久）、状态查询、开关飞行、购买记录、飞行记录。详见 `自研/南瓜飞行-PumpkinFly/使用说明.md`                                                                                        |
 
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah，slot 9）、玩家商店（/shop，slot 11）
@@ -305,6 +309,13 @@ actions:
 
 - 主菜单 `main` 与 `economy` 经济中心各有一个「每日收购」按钮（均占 **slot 19**，动作 `[player] ds`），配置见 config.yml 模板中 `daily-sell:` 条目
 - **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时，替换 jar 不会更新它——需手动把 `daily-sell:` 两段插入到对应菜单（主菜单 slot 19、经济中心 slot 19），再 `/qm reload` 生效
+
+**南瓜飞行入口**（配合 PumpkinFly 插件，详见 `自研/南瓜飞行-PumpkinFly/使用说明.md`）：
+
+- 主菜单 `main.items.pumpkinfly` 占 **slot 28**（ELYTRA，`permission: pumpkinfly.use`，动作 `[menu] pumpkinfly`）；`menus.pumpkinfly` 是 size 27、`back-menu: main` 的子菜单，8 个按钮固定档位
+- 菜单**没有输入框**，所以购买分钟数只能做成固定按钮（1 / 5 / 30 / perm）；改 `PumpkinFly` 的价格时同步改按钮 `display-name` 里的数字
+- **部署注意**：替换 jar 不会更新服务器上已有的 `plugins/QuickMenu/config.yml`。要么备份后删除该文件让插件按新默认重建，要么手动把上述两段配置合并进去再 `/qm reload`
+- 管理员菜单 `admin-player` 里原有的 `[player] fly` 按钮**保留**，普通玩家走 `/pfly`，两者不冲突
 
 层级：玩家线所有二级菜单的 `back-menu` 均为 `main`（`warps` 为三级菜单，`back-menu: teleport`），返回按钮固定在右下角（`size-1` 槽位）。`guide` 系列为三级结构：`main` → `guide` → 四个分册，分册的 `back-menu` 均为 `guide`。
 
@@ -614,18 +625,18 @@ powershell -ExecutionPolicy Bypass -File build.ps1 -SkipDeps
 
 ### 6.3 用 IDE 改代码
 
-`plugin-src/pom.xml` 已配好，用 IntelliJ IDEA 导入该目录即可。依赖全部 `scope=provided`，
+`pom.xml` 已配好，用 IntelliJ IDEA 导入该目录即可。依赖全部 `scope=provided`，
 不会被打进 jar 造成类冲突。
 
-### 6.4 依赖版本已锁定，勿随意升级
+### 6.4 依赖版本已锁定，勿随意更换
 
 | 依赖          | 锁定版本              | 原因                           |
 | ------------- | --------------------- | ------------------------------ |
-| spigot-api    | 1.21.11-R0.1-SNAPSHOT | 对应 Leaf 1.21.11 核心         |
+| leaf-api      | 26.3.build.13-alpha   | 对应 Leaf 26.3 核心            |
 | floodgate api | 2.2.5-SNAPSHOT        | Floodgate 当前 API             |
 | **cumulus**   | **1.1.2**             | ⚠️ **不可换成 2.0.0-SNAPSHOT** |
 
-> Floodgate 2.2.5 依赖 cumulus **1.1.2**；2.0.0-SNAPSHOT 缺少旧版 `FormBuilder`
+> Floodgate 2.2.5 依赖 cumulus **1.1.2**；2.0.0-SNAPSHOT 缺少旧路径 `FormBuilder`
 > 路径，会导致 `FloodgatePlayer.sendForm()` 重载决议失败、编译报错。
 
 ---

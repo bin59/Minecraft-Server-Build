@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.nangua</groupId>
+  <artifactId>pumpkinfly</artifactId>
+  <version>1.0.0</version>
+  <packaging>jar</packaging>
+
+  <properties>
+    <maven.compiler.release>21</maven.compiler.release>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <!--
+    全部依赖以 system scope 指向本插件 lib/ 下的实跑 jar，离线即可编译。
+    lib/ 内四个 jar 均取自 26.3 生产服备份，仅编译期使用，不打包进产物。
+  -->
+  <dependencies>
+    <dependency>
+      <groupId>cn.dreeam.leaf</groupId>
+      <artifactId>leaf-api</artifactId>
+      <version>26.3.build.13-alpha</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/leaf-api-26.3.build.13-alpha.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.milkbowl</groupId>
+      <artifactId>Vault</artifactId>
+      <version>1.7.3</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/Vault.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>com.bekvon.bukkit</groupId>
+      <artifactId>Residence</artifactId>
+      <version>6.0.4.2</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/Residence6.0.4.2.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>net.ess3</groupId>
+      <artifactId>EssentialsX</artifactId>
+      <version>2.22.1</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/EssentialsX-2.22.1-dev+28-f8724e2.jar</systemPath>
+    </dependency>
+    <!-- systemPath 依赖不带传递依赖，显式补齐 leaf-api 引用的 Adventure / annotations -->
+    <dependency>
+      <groupId>net.kyori</groupId>
+      <artifactId>adventure-api</artifactId>
+      <version>5.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>23.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>PumpkinFly-1.0.0</finalName>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>

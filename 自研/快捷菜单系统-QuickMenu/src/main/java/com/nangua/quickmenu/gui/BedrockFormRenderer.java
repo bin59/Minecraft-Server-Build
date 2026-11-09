@@ -30,12 +30,12 @@ import java.util.List;
  * 会显示为乱码字符。因此按钮文本统一使用 {@link ActionExecutor#stripColor} 去除颜色码。
  * 表单标题与正文则保留 § 形式（基岩客户端支持标题颜色）。
  *
- * <p><b>26.3 适配 TODO</b>：本类使用的 Geyser cumulus（{@code org.geysermc.cumulus.form.SimpleForm}）
- * 与 Floodgate（{@code org.geysermc.floodgate.api.*}）API，当前按 1.21.11 版 jar 校验，
- * 且仅能确认包名/类名布局一致（cumulus 旧路径 {@code form.SimpleForm} 仍存在于 Geyser jar）。
- * 26.3 版 Geyser/Floodgate 尚未参与编译验证（其 jar 为 Java 25 字节码，本环境仅 JDK 21，无法读取）。
- * 若 26.3 版 cumulus/Floodgate 出现包名或方法签名调整，请依报错修正本类调用；
- * 若无法确认，保留原调用并待 26.3 Geyser/Floodgate 真机实测。
+ * <p><b>依赖说明</b>：本类使用的 Geyser cumulus（{@code org.geysermc.cumulus.form.SimpleForm}）
+ * 与 Floodgate（{@code org.geysermc.floodgate.api.*}）API，按当前实跑 jar 校验包名与类名
+ * （cumulus 路径 {@code form.SimpleForm} 存在于 Geyser jar），二者均由服务器在运行时提供。
+ * Geyser / Floodgate 以 systemPath 形式参与编译，不打进插件 jar。
+ * 若后续 cumulus/Floodgate 调整包名或方法签名，按编译报错修正本类调用即可；
+ * 未安装 Floodgate 时本类不会被触碰，全部玩家走箱子界面。
  */
 public final class BedrockFormRenderer {
 

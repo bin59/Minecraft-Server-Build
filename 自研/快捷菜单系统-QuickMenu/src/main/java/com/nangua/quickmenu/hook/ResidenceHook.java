@@ -18,11 +18,11 @@ import java.util.Map;
  */
 public final class ResidenceHook {
 
-    // 26.3 适配 TODO：Residence 反射目标为 com.bekvon.bukkit.residence.api.ResidenceApi。
-    // 当前仅以 1.21.11 版 Residence jar（Java 8 字节码，JDK 21 可读）确认接口签名，
-    // 26.3 版 Residence 尚未真机验证。本类已用反射 + 多签名兼容（getOwnedByPlayer 的
+    // Residence 反射目标为 com.bekvon.bukkit.residence.api.ResidenceApi。
+    // 接口签名以当前实跑 Residence jar 校验（Java 8 字节码，JDK 21 可读），
+    // 本类已用反射 + 多签名兼容（getOwnedByPlayer 的
     // (Player) 与 (Player, boolean) 两种重载、isOwner/isMember/getOwner 兜底），
-    // 若 26.3 版 Residence 变更了 API 类名或方法名，需依 Residence 26.3 实测修正反射路径。
+    // 若后续 Residence 调整了 API 类名或方法名，按报错修正反射路径即可。
 
     private static volatile Boolean available = null;
 

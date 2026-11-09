@@ -161,9 +161,10 @@
 | 死亡信息         | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题，扣费已关闭）                                             |
 | 宠物             | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                                            |
 | 摸头互动         | PatPat（CurseForge / Modrinth）           | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用                                     |
+| NPC 系统         | FancyNpcs（Modrinth）                     | 数据包 NPC：向导 / 交互动作 / 皮肤与装备，本地已备 jar、实跑服待部署                        |
 | 玩家骑乘         | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                                             |
 | 语音             | Simple Voice Chat                         | 近距离语音聊天                                                                             |
-| 菜单（自研）     | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 15 套 + 管理线 12 套，含新人指南、南瓜邮箱入口）            |
+| 菜单（自研）     | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 16 套 + 管理线 12 套，含新人指南、南瓜邮箱、南瓜飞行入口）    |
 | 邮箱（自研）     | PumpkinMail                               | 南瓜邮箱：活动奖励一键批量发放（管理）与玩家领取（`/mailbox`）                             |
 | 皮肤记录（自研） | BedrockSkinRecorder                       | 基岩玩家上线自动固化 Xbox 皮肤纹理为 PNG 到服务器磁盘（离线可拉取）                        |
 | 传送阵（自研）   | SpacePortal                               | 地面法阵长途传送（本服特色）                                                               |
@@ -172,6 +173,7 @@
 | 末影龙（自研）   | DragonManager                             | 末影龙定时重生与破坏保护                                                                   |
 | 每日收购（自研） | DailySell                                 | 每日随机收购指定物品，玩家可出售换币                                                       |
 | 在线排行（自研） | PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                                             |
+| 飞行（自研）     | PumpkinFly                                | 10 万买永久 / 20 币一分钟，仅飞行中扣秒，限自己领地与主城，离开区域安全落地（`/pfly`）       |
 | 基岩 GUI         | BedrockPlayerSupport                      | 基岩玩家免敲指令的表单界面                                                                 |
 | 数据展示         | Plan / TAB                                | 玩家行为分析、炫彩称号、坐标轨迹                                                           |
 | 运维             | OPanel / spark / MCSM / EasyBot           | Web 面板、性能分析、进程管理、QQ 联动                                                      |
@@ -539,7 +541,8 @@ Minecraft-Server-Build/
 │   ├── 15-坐下插件-GSit/            GSit.md
 │   ├── 16-拴绳牵玩家-LeashablePlayers/  LeashablePlayers.md
 │   ├── 17-点击收纳生物-ClickMobs/   ClickMobs.md
-│   └── 摸摸头-PatPat/                README.md（PatPat 插件完整说明）
+│   ├── 摸摸头-PatPat/                README.md（PatPat 插件完整说明）
+│   └── FancyNpcs/                     README.md（FancyNpcs 完整说明 + 皮肤贴图素材）
 │
 ├── 4-玩家信息与数据展示/
 │   ├── 01-玩家信息收集与展示.md
@@ -568,25 +571,31 @@ Minecraft-Server-Build/
 │   ├── 云数据库备份到本地/          增量备份技术文档 + sync/verify/register 脚本
 │   └── 数据转换/                    使用文档.md
 │
-└── 自研/                            # 自研插件：文档 + 源码 + 构建产物
-    ├── AdvZone/                     AdvZone.md（区域强制冒险模式）
-    ├── 传送阵/                      SpacePortal 空间传送阵（文档 + 源码 + jar）
-    ├── 南瓜账本-MoneyLedger/        MoneyLedger（文档 + 源码，南瓜币流水分类记账，已部署）
-    ├── 南瓜邮箱-PumpkinMail/        PumpkinMail（文档 + 源码 + jar，活动奖励发放/领取，已部署）
-    ├── 在线时间排行-PlanTop/        PlanTop（文档 + 源码 + jar，基于 Plan 的在线时间排行）
-    ├── 基岩皮肤记录-BedrockSkinRecorder/  BedrockSkinRecorder（文档 + 源码 + jar，基岩皮肤上线固化）
-    ├── 快捷菜单系统/                QuickMenu（主文档 + 与通用菜单对比）
-    ├── 末影龙重生与破坏保护/        DragonManager（文档 + 源码 + jar）
-    ├── 每日随机收购/                DailySell（文档 + 源码 + jar）
-    ├── 综合RPG框架/                 rpg_framework 开发过程总结
-    └── 自定义模型物品/              模型物品资源包 + 方案与部署
+└── 自研/                            # 自研插件：文档 + 源码 + 构建产物（见 自研/README.md）
+    ├── README.md                    自研插件总览（清单 / 构建 / 部署）
+    ├── lib/                         共享编译依赖 jar
+    ├── 传送阵/                      SpacePortal 使用说明 + 项目分析
+    ├── 传送阵-SpacePortal/          SpacePortal 源码 + jar
+    ├── 南瓜账本-MoneyLedger/        MoneyLedger（南瓜币流水分类记账）
+    ├── 南瓜邮箱-PumpkinMail/        PumpkinMail（活动奖励发放/领取）
+    ├── 南瓜飞行-PumpkinFly/          PumpkinFly（付费限时/永久飞行，含 build.py）
+    ├── 在线时间排行-PlanTop/        PlanTop（基于 Plan 的在线时间排行）
+    ├── 建筑评分-BuildRate/          BuildRate（建筑评分）
+    ├── 快捷菜单系统-QuickMenu/      QuickMenu（主文档 + 与通用菜单对比）
+    ├── 每日随机收购-DailySell/      DailySell（每日随机收购）
+    ├── 离线奖励-OfflineReward/      OfflineReward（离线奖励）
+    ├── 附魔商店-EnchantShop/        EnchantShop（附魔商店）
+    └── disabled/                    停用项目
 ```
 
 ---
 
 ## 更新记录
 
+- **2026-11-09 更新**：补写 `3-玩法与玩家功能插件/FancyNpcs/README.md`（0 字节 → 完整说明）：按本地 `FancyNpcs-2.12.1+382.jar` 反查 `config.yml` 20 个键及默认值、`languages/default.yml` 命令语法、jar 注解中的完整权限节点与 12 种动作类型，附安装、皮肤、ClearLag++ 联动与排错；出处为用户给出的 Modrinth 插件页与官方文档。主索引总览表与目录树同步。
+- **2026-11-09 更新**：`自研/` 统一为单套 26.3 源码结构：自研总览文档重写为 `自研/README.md`（插件清单 / 构建 / 部署），新建 `自研/lib/` 共享编译依赖；清理 SpacePortal、QuickMenu、PumpkinFly 文档与 pom 中的双版本表述、旧版本号与失效路径，主索引目录树与运行服参照路径同步。
+- **2026-11-09 更新**：新增自研插件 `自研/南瓜飞行-PumpkinFly/`（完整源码、`build.py` 离线编译脚本、`使用说明.md`、`CHANGELOG.md`、`PumpkinFly-1.0.0.jar`）：`/pfly` 独立命令 + Vault 扣款 + 仅飞行中扣秒 + 四种可配置飞行区域模式 + 本地 YAML 三文件存储（余额 / 购买记录 / 每次起飞会话）+ Essentials 飞行门禁 + 安全落地；QuickMenu 主菜单 slot 28 加「南瓜飞行」入口并新增 `pumpkinfly` 子菜单（8 个固定档位按钮），其 `config.yml`、`target/classes/config.yml` 与 `target/QuickMenu-1.0.0.jar` 已同步，QuickMenu 主文档菜单数由 27 套 / 15 套更新为 28 套 / 16 套；主索引总览表与目录树同步。
 - **2026-11-09 更新**：新增 `3-玩法与玩家功能插件/摸摸头-PatPat/README.md`（按实跑 `config.json` 逐项说明，含 CurseForge 插件页出处、完整命令树与权限节点、名单文件格式、常见问题）；修正 `06-PatPat摸头/PatPat摸头.md` 中配置文件名（`config.yml`→`config.json`）、名单文件名、`api` 字段用途、`patpat.pat` 权限语义与命令表缺项；主索引总览表与目录树同步。
 - **2026-11-09 更新**：新增 `1-服务端核心与网络层/10-向下兼容-ViaBackwards/README.md`（按实跑 `config.yml` 逐项说明，30 个配置键全覆盖，含官方组合表、命令权限与排错）；修正 `04-跨版本协议兼容-ViaVersion/ViaVersion.md` 中 ViaVersion / ViaBackwards 的方向与"未装 ViaBackwards"的过时表述；主索引目录树与分类表补入 10- 章节。
 - **2026-10-04 更新**：插件与玩法总览"自研"类目补齐 MoneyLedger、AdvZone、EntityCount、DragonManager、DailySell、PlanTop；目录树"自研/"段目录名与实际对齐（`南瓜邮箱/`→`南瓜邮箱-PumpkinMail/`、`基岩皮肤记录器/`→`基岩皮肤记录-BedrockSkinRecorder/`），并补入 `南瓜账本-MoneyLedger/`、`在线时间排行-PlanTop/`；文档更新日期改为 2026-10-04。
-- **关于"服务端目录 `C:\mc_serve\1.21.11-test`"**：该处保留为历史记录未改动；实际运行目录以部署机器为准，本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-1.21.11`（Leaf 1.21.11 生产运行目录备份）为运行服参照。｜升级到 Leaf 26.3 后，运行目录备份命名将相应更新为 `leaf-26.3`，本文档路径引用待升级完成后同步修正。
+- **关于"服务端目录 `C:\mc_serve\1.21.11-test`"**：该处仅作历史记录保留；实际运行目录以部署机器为准，本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-26.3` 为运行服参照。

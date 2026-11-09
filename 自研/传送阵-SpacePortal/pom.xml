@@ -31,7 +31,7 @@
           Adventure API：Leaf 26.3 内置 Adventure 5.x（消息/动作栏 Component 来自此库）。
           由于上面的 leaf-api 以 systemPath 引入，Maven 不会自动解析其传递依赖，
           因此这里需显式声明 adventure-api（provided，运行时由服务端提供）。
-          TODO: 确认 Leaf 26.3 对应的 adventure-api 精确版本号后，去掉本注释并填入 <version>。
+          下方示例仅说明写法；实际生效的是紧随其后显式声明的 adventure-api 依赖。
         -->
         <!--
         <dependency>

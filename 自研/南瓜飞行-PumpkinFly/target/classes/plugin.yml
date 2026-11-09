@@ -1,0 +1,40 @@
+name: PumpkinFly
+version: 1.0.0
+main: com.nangua.pumpkinfly.PumpkinFlyPlugin
+api-version: '26.3'
+author: nangua
+description: 南瓜飞行 - 可购买永久/限时飞行，按飞行时长扣秒，飞行区域由领地与主城规则控制
+depend: [Vault]
+softdepend: [Residence, Essentials, QuickMenu, PlaceholderAPI]
+
+commands:
+  pfly:
+    description: 南瓜飞行主命令
+    usage: /pfly <buy|on|off|toggle|status|records|give|take|setperm|reload>
+    aliases: [pumpkinfly, pf]
+
+permissions:
+  pumpkinfly.use:
+    description: 允许使用 /pfly 查看状态与开关飞行
+    default: true
+  pumpkinfly.buy:
+    description: 允许用南瓜币购买飞行时长 / 永久飞行
+    default: true
+  pumpkinfly.records:
+    description: 允许查看自己的购买与飞行记录
+    default: true
+  pumpkinfly.admin:
+    description: 允许 give/take/setperm/reload 与查看他人状态、记录
+    default: op
+  pumpkinfly.bypass:
+    description: 绕过区域、余额与 Essentials 门禁（管理员调试用）
+    default: op
+  pumpkinfly.*:
+    description: 全部权限
+    default: op
+    children:
+      pumpkinfly.use: true
+      pumpkinfly.buy: true
+      pumpkinfly.records: true
+      pumpkinfly.admin: true
+      pumpkinfly.bypass: true
