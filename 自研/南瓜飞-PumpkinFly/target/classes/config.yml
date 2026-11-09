@@ -1,0 +1,215 @@
+# ============================================================
+# PumpkinFly 南瓜飞 - 主配置
+# 替换 jar 后重启生效；本文件已存在时不会被覆盖，新增键在代码里有默认值。
+# ============================================================
+
+# ---------- 价格 ----------
+prices:
+  # 永久飞行价格（南瓜币）。永久只免扣时，仍受 zones 区域规则限制
+  permanent: 100000
+  # 每 1 分钟价格
+  per-minute: 20
+  # 单次最多购买分钟数（防止误输入把余额清空）
+  max-minutes-per-buy: 60
+  # 余额上限（分钟），购买时不允许超过
+  max-balance-minutes: 10080
+  # 是否允许重复购买永久（false = 已永久时拒绝再扣款）
+  allow-duplicate-permanent: false
+
+# ---------- 计时 ----------
+timing:
+  # FLYING_ONLY = 仅在真正飞行中（isFlying）扣秒，站着/跑步/离线都不扣（本服采用）
+  # REAL_TIME   = 购买后按现实时间倒计时，离线也走
+  mode: FLYING_ONLY
+  # 主循环间隔（秒），一般保持 1
+  tick-seconds: 1
+  # 余额剩多少秒时提醒（仅限时飞行）
+  warn-seconds: [60, 30, 10]
+  # 是否对永久飞行也记录会话与开启时间
+  track-permanent-sessions: true
+
+# ---------- 允许飞行的区域（核心） ----------
+zones:
+  # 判定模式：
+  #   OWN_AND_MAIN   自己的领地 + main-residences 列出的主城领地（默认，推荐）
+  #   ALL_RESIDENCES 任意 Residence 领地内均可飞（含他人领地）
+  #   WHITELIST      仅 residence-whitelist 列出的领地 + 可选野外世界
+  #   EVERYWHERE     不限制区域（仍要求有有效凭证）
+  mode: OWN_AND_MAIN
+
+  # 主城领地名称（Residence 领地名，本服实为 zhucheng）
+  main-residences: [zhucheng]
+
+  # OWN_AND_MAIN 模式下的细分开关
+  allow-own-residences: true # 玩家自己拥有的领地
+  allow-trusted-residences: false # 玩家被信任的他人领地
+  allow-other-residences: false # 其它任意领地
+
+  # 野外（不在任何领地内）
+  allow-wilderness: false
+  wilderness-worlds: [] # 单独放行某些世界的野外，例如 [world]
+
+  # 领地名单（WHITELIST 用；黑名单对所有模式生效）
+  residence-whitelist: []
+  residence-blacklist: []
+
+  # 世界过滤：world-whitelist 非空时只允许列出的世界；blacklist 优先
+  world-whitelist: []
+  world-blacklist: [world_nether, world_the_end]
+
+  # Residence 未安装时的兜底：true=全部按野外规则处理，false=视为允许
+  when-residence-missing: WILDERNESS
+
+# ---------- 安全与边界 ----------
+safety:
+  # 关闭飞行时向下寻找落脚点，避免半空摔死
+  safe-land: true
+  search-depth: 32
+  # 关飞后多少秒内免疫摔落伤害
+  no-fall-damage-seconds: 5
+  # 换世界 / 换游戏模式时立即结束会话并重新判定
+  disable-on-world-change: true
+  disable-on-gamemode-change: true
+  # 离开允许区域时发送提示（每秒判定，内部有节流）
+  notify-on-leave-zone: true
+
+# ---------- 本地数据存储 ----------
+storage:
+  # 定时落盘间隔（秒）；购买、给与、退出、关服会立即落盘
+  save-interval-seconds: 60
+  # 每个记录文件最多保留多少条，超出裁剪最旧的
+  max-records-per-file: 5000
+  record-purchases: true
+  record-sessions: true
+  # 玩家昵称是否随登录更新
+  update-name-on-join: true
+
+# ---------- 与其它插件协作 ----------
+integration:
+  # 监听 Essentials FlyStatusChangeEvent，堵住 /fly、/efly、/essentials:fly 绕过区域限制
+  block-essentials-fly: true
+  # 是否在启动时提示检查 Essentials 的 send-fly-enable-on-join / world-change-fly-reset
+  warn-essentials-auto-fly: true
+
+# ---------- 全局飞行管理（/pfly global 运行时状态存 data/global.yml） ----------
+global:
+  # 全服总开关。false = 所有人强制落地且无法起飞（优先级最高）
+  # 注意：这里只是 global.yml 不存在时的初值；之后以 /pfly global on|off 的结果为准
+  enabled: true
+  # 全服免费飞行：所有人无需凭证即可飞（仍受 zones 区域规则限制）
+  free-fly: false
+
+# ---------- 限时体验奖励（按现实时间到期，离线也走，不扣时长余额） ----------
+rewards:
+  # 首次进服自动赠送的体验时长，留空 / 0 = 关闭。例：30m、2h、1d、1d2h30m
+  join-trial: ''
+  # true = 每个 UUID 只送一次（存 players.yml 的 join-trial-given）
+  join-trial-once: true
+  # /pfly claim 与快捷菜单「领取体验奖励」按钮发放的时长，留空 / 0 = 关闭
+  claim-trial: 30m
+  # ONCE = 每人只能领一次；DAILY = 每天可领一次；ALWAYS = 每次点击都发（叠加到期时间）
+  claim-mode: ONCE
+  # 单次发放上限（天），防止管理员误输入把到期时间顶到几十年后
+  max-trial-days: 30
+
+# ---------- 飞行界面显示（不用打 /pfly status 就能看状态） ----------
+display:
+  # ACTION_BAR = 快捷栏上方文字（默认）；BOSS_BAR = 顶部血条；BOTH = 两个都显示；OFF = 关闭
+  # 基岩版 / Geyser 玩家若 ActionBar 看不到，改成 BOTH 或 BOSS_BAR
+  mode: ACTION_BAR
+  # ENABLED = 有凭证且在允许区域就显示（含「已开飞、等待双击空格」态）
+  # FLYING  = 只有真正在飞行时才显示
+  show-when: ENABLED
+  # 刷新间隔（秒），一般保持 1；ActionBar 需要持续重发否则会淡出
+  update-seconds: 1
+  # 剩余时间少于此秒数时，剩余数字标红、BossBar 变红
+  warn-seconds: 60
+  # BossBar 颜色 / 样式（限时飞行临期自动变红，永久飞行显示蓝色）
+  bar-color: GREEN
+  bar-style: SOLID
+  # 是否允许模板里的 {bar} 显示 10 格文本进度条
+  show-progress-bar: true
+
+  # 模板占位符：{remaining} 剩余时长（永久显示「永久」，体验显示「体验 x 小时」）
+  #             {session} 本次已飞  {total} 累计已飞  {state} 飞行中/待起飞
+  #             {zone} 当前区域  {source} 凭证来源  {bar} 10 格进度条
+  action-bar-flying: '&a&l[飞行中] &8| &7剩余 &e{remaining} &8| &7本次 &e{session} &8| &7累计 &e{total} &8| {bar}'
+  action-bar-idle: '&e&l[飞行可用] &8| &7{source} &8| &7剩余 &e{remaining} &8| &7区域 &e{zone} &8| &e双击空格起飞'
+  boss-bar-title: '&6南瓜飞 &8| &f{state} &8| &7剩余 &e{remaining} &8| &7本次 &e{session}'
+
+# ---------- 消息 ----------
+# 占位符：{player} {minutes} {seconds} {remaining} {cost} {balance} {zone} {reason} {count}
+#         {duration} {expire} {by} {value} {mode} {label} {type} {state} {source}
+messages:
+  prefix: '&8[&6南瓜飞&8] &r'
+  no-permission: '&c你没有权限使用这个命令。'
+  player-only: '&c该命令只能由玩家执行。'
+  usage: '&7常用：&e/pfly buy &6<时长|perm>&7、&e/pfly claim&7、&e/pfly status&7、&e/pfly toggle&7、&e/pfly hud &6<on|off>'
+  usage-reward: '&7时长格式：&e30m &72h &63d &71d2h30m&7，纯数字按分钟；体验奖励按现实时间到期、不扣余额。'
+  admin-usage: '&7管理：&e/pfly give|take|setperm &6<玩家> <时长|perm|true|false>&7、&e/pfly records <玩家>&7、&e/pfly reload'
+  global-usage: '&7全局：&e/pfly global &6<on|off|toggle|status>&7、&e/pfly global free <on|off|toggle>&7、&e/pfly global trial <时长|clear>'
+  trial-usage: '&7体验：&e/pfly trial &6<玩家|online|all> <时长|clear|status>&7（all = 所有已有账户，含离线）'
+  player-usage: '&7单人：&e/pfly player &6<玩家> <status|on|off|ban|unban|trial <时长>|cleartrial|give|take|setperm>'
+  reloaded: '&a配置已重载，区域规则与价格立即生效。'
+  economy-missing: '&c经济系统未就绪（Vault 未找到经济提供器），请联系管理员。'
+  buy-usage: '&7用法：&e/pfly buy &6<时长|perm>&7，每 1 分钟 &6{cost} &7南瓜币。'
+  invalid-number: '&c分钟数必须是 1 到 60 之间的整数。'
+  invalid-duration: '&c时长格式错误：&e30m / 2h / 3d / 1d2h30m&c，或纯数字（按分钟）。'
+  already-permanent: '&a你已经拥有永久飞行，无需重复购买。'
+  balance-limit: '&c余额已达上限，先飞一会儿再来买吧。'
+  not-enough: '&c南瓜币不足：需要 &6{cost}&c，当前只有 &6{balance}&c。'
+  withdraw-failed: '&c扣款失败，本次购买已取消，请联系管理员。'
+  buy-time: '&a购买成功：&6{minutes} &a分钟 &8(&6{cost} &a南瓜币) &7| 当前剩余 &e{remaining}'
+  buy-perm: '&a已获得 &6永久飞行&a！&7仍然只能在允许的区域内飞行。'
+  give-time: '&a已给 &6{player} &a发放 &6{minutes} &a分钟飞行，其剩余 &e{remaining}'
+  give-perm: '&a已给 &6{player} &a发放永久飞行。'
+  take: '&a已扣除 &6{player} &a的 &6{minutes} &a分钟，剩余 &e{remaining}'
+  setperm: '&a已把 &6{player} &a的永久飞行设为 &6{value}'
+  player-not-found: '&c找不到该玩家（需要有过游戏记录的在线或离线玩家）。'
+  status-title: '&6&l南瓜飞 &8> &f{player}'
+  status-line: '&7{label}：&f{value}'
+
+  # 限时体验奖励
+  claim-ok: '&a已领取 &6{duration} &a限时体验奖励 &8({mode})&7，期间飞行不扣余额。'
+  claim-used: '&e这个奖励已经领过了 &8({mode})&e，请等管理员发放或下次可领时间。'
+  claim-disabled: '&e当前没有开放体验奖励领取，请联系管理员。'
+  trial-grant: '&a获得限时体验 &6{duration}&a，当前剩余 &e{remaining}&a，到期 &7{expire}'
+  trial-expired: '&e限时体验已到期，&7已恢复按自己的飞行凭证判定。'
+  trial-clear: '&e你的限时体验已被管理员清除。'
+  trial-cleared: '&a已清除 &6{count} &a个玩家的限时体验。'
+  trial-grant-admin: '&a已给 &6{player} &a发放 &6{duration} &a限时体验 &8(共 {count} 人)'
+  trial-info: '&6{player} &a的限时体验剩余 &e{remaining}&a，到期 &7{expire}&a，发放人 &6{by}'
+  trial-none: '&6{player} &7当前没有有效的限时体验。'
+  trial-batch-info: '&7范围内共 &6{count} &7个账户；逐个发放用 &e/pfly trial online <时长> &7或 &e/pfly trial all <时长>'
+
+  # 全局 / 单人管理
+  global-status-title: '&6&l全服飞行管理'
+  global-on: '&a全服飞行已开启，&7玩家按自己的凭证与区域规则恢复飞行。'
+  global-off: '&c全服飞行已关闭，所有玩家已安全落地。'
+  global-free-on: '&a管理员已开启全服免费飞行，&7现在无需凭证也能在允许区域飞行。'
+  global-free-off: '&e管理员已关闭全服免费飞行，&7恢复按个人凭证判定。'
+  global-trial: '&a全服限时体验 &6{duration}&a 生效，剩余 &e{remaining}&a，到期 &7{expire}'
+  global-trial-clear: '&a已清除全服限时体验。'
+  banned: '&c管理员已禁用你的飞行，已安全落地。'
+  player-set: '&a已把 &6{player} &a的飞行开关设为 &6{value}'
+  player-banned: '&c已禁用 &6{player} &c的飞行（不论其凭证），&7可用 &e/pfly player <玩家> unban &7解除。'
+  player-unbanned: '&a已解除 &6{player} &a的飞行禁用。'
+
+  # 状态 / 开关
+  on: '&a飞行已开启，&7双击空格起飞；离开允许区域会自动安全落地。'
+  off: '&e飞行已手动关闭，可用 &6/pfly on &e重新开启。'
+  already-on: '&7飞行已经是开启状态。'
+  already-off: '&7飞行已经是关闭状态。'
+  hud-on: '&a飞行界面显示已开启，&7飞行时会在屏幕上显示状态与剩余时长。'
+  hud-off: '&e飞行界面显示已关闭，&7可随时用 &6/pfly hud on &e重新开启。'
+  no-pass: '&c你还没有飞行凭证。&7用 &e/pfly buy 5 &7、&e/pfly claim &7或快捷菜单领取。'
+  left-zone: '&e离开了可飞行区域，已安全落地。'
+  expired: '&e飞行时长已用完，已安全落地。'
+  warn: '&e飞行剩余 &6{seconds} &e秒，记得续费。'
+  fly-blocked: '&c这里不能飞行，或你没有有效凭证。&7飞行区域：{zone}'
+  zone-ok: '&7当前区域：&a允许飞行&8（{zone}）'
+  zone-deny: '&7当前区域：&c禁止飞行&8（{zone}）'
+  records-empty: '&7暂无记录。'
+  records-title: '&6&l{type}记录 &8> &f{player} &8(最近 {count} 条)'
+  records-buy: '&8[&7{time}&8] &6{type} &7{player} &f{detail} &8| 花费 {cost} &8| 余额 {balance}'
+  records-session: '&8[&7{time}&8] &f{player} &7飞行 {seconds} 秒 &8| 结束：{reason}'

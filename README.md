@@ -28,7 +28,6 @@
     - [🎁 工具包（Kit）](#-工具包kit)
     - [🎨 皮肤](#-皮肤)
     - [💬 聊天与社交](#-聊天与社交)
-    - [🎙️ 语音聊天（Simple Voice Chat）](#️-语音聊天simple-voice-chat)
     - [📱 基岩版玩家专属（免打命令）](#-基岩版玩家专属免打命令)
     - [🏅 不同身份能用什么（速览）](#-不同身份能用什么速览)
     - [❓ 常见问题](#-常见问题)
@@ -51,7 +50,7 @@
 | **双端互通**     | Java 版与基岩版（手机 / Win10 / Xbox / Switch / PS）同服游玩 |
 | **低门槛入服**   | 外置登录（Yggdrasil）+ Floodgate，基岩版玩家免正版验证       |
 | **跨版本兼容**   | ViaVersion 允许 1.8 ~ 最新的客户端直连                       |
-| **群服互通**     | QQ 群 ↔ 游戏内聊天双向同步（EasyBot + NapCat）               |
+| **群服互通**     | QQ 群 ↔ 游戏内聊天双向同步（EasyBot + NapCat，jar 当前停用） |
 | **可视化运维**   | OPanel Web 面板 + spark 性能分析 + MCSM 进程管理             |
 | **长期存档安全** | Residence 领地保护 + CoreProtect 方块审计与回滚              |
 
@@ -66,25 +65,24 @@
 
 ## 二、服务器速览
 
-| 项目            | 值                                   |
-| --------------- | ------------------------------------ |
-| 服务器名称      | 南瓜国际服                           |
-| MOTD            | `§e南瓜§f国际服`                     |
-| 服务端核心      | Leaf `26.3`（Paper 分支）            |
-| Minecraft 版本  | Java 26.3                            |
-| 运行模式        | 单端（可扩展为多服 Velocity 网络）   |
-| 正版验证        | `online-mode=true`（经外置登录代理） |
-| Java 版端口     | **55551**（TCP）                     |
-| 基岩版端口      | **55551**（UDP，跟随 Java 端口）     |
-| Web 面板端口    | **25555**（TCP，建议仅内网）         |
-| 语音 UDP 端口   | **24454**（UDP）                     |
-| 最大玩家数      | 50                                   |
-| 默认游戏模式    | 生存（survival）                     |
-| 难度            | 简单（easy）                         |
-| 视距 / 模拟距离 | 12 / 4 区块                          |
-| 启动内存        | 初始 1GB / 最大 4GB                  |
-| 服务端目录      | `C:\mc_serve\1.21.11-test`           |
-| 文档更新日期    | 2026-10-04                           |
+| 项目            | 值                                                      |
+| --------------- | ------------------------------------------------------- |
+| 服务器名称      | 南瓜国际服                                              |
+| MOTD            | `§e南瓜§f国际服`                                        |
+| 服务端核心      | Leaf `26.3`（Paper 分支）                               |
+| Minecraft 版本  | Java 26.3                                               |
+| 运行模式        | 单端（可扩展为多服 Velocity 网络）                      |
+| 正版验证        | `online-mode=true`（经外置登录代理）                    |
+| Java 版端口     | **55551**（TCP）                                        |
+| 基岩版端口      | **55551**（UDP，跟随 Java 端口）                        |
+| Web 面板端口    | **25555**（TCP，建议仅内网）                            |
+| 最大玩家数      | 50                                                      |
+| 默认游戏模式    | 生存（survival）                                        |
+| 难度            | 简单（easy）                                            |
+| 视距 / 模拟距离 | 12 / 4 区块                                             |
+| 启动内存        | 见 start.bat 的 `-Xms` / `-Xmx`（最大 12G）             |
+| 服务端目录      | `F:\game\pc\MC\开服\服务器数据备份\leaf-26.3\leaf-26.3` |
+| 文档更新日期    | 2026-11-09                                              |
 
 ---
 
@@ -111,8 +109,8 @@
    ┌────────▼────────┐
    │  插件层（玩法）   │  Residence · CoreProtect · LuckPerms · Vault
    │                  │  SkinsRestorer · EssentialsX · SimplePets
-   │                  │  DecentHolograms · CustomDeathMessages
-   │                  │  DeluxeMenus · QuickMenu(自研) · SpacePortal(自研)
+   │                  │  FancyNpcs · CustomDeathMessages · BlueMap
+   │                  │  QuickMenu(自研) · SpacePortal(自研) · MythicMobs
    └────────┬────────┘
             │
    ┌────────▼────────┐
@@ -131,13 +129,13 @@
 
 ## 四、网络与端口总表
 
-| 端口    | 协议 | 用途                                                         | 暴露建议           |
-| ------- | ---- | ------------------------------------------------------------ | ------------------ |
-| 55551   | TCP  | Java 版玩家连接                                              | 公网               |
-| 55551   | UDP  | 基岩版玩家连接（Geyser，`clone-remote-port` 跟随 Java 端口） | 公网               |
-| 24454   | UDP  | Simple Voice Chat 语音                                       | 公网（或内网穿透） |
-| 25555   | TCP  | OPanel Web 管理面板                                          | 仅内网 / 反代      |
-| 8080/80 | TCP  | Caddy / Web 反代（可选）                                     | 公网（HTTPS）      |
+| 端口    | 协议 | 用途                                                         | 暴露建议      |
+| ------- | ---- | ------------------------------------------------------------ | ------------- |
+| 55551   | TCP  | Java 版玩家连接                                              | 公网          |
+| 55551   | UDP  | 基岩版玩家连接（Geyser，`clone-remote-port` 跟随 Java 端口） | 公网          |
+| 8100    | TCP  | BlueMap 内置网页地图（webserver.conf port）                  | 仅内网 / 反代 |
+| 25555   | TCP  | OPanel Web 管理面板                                          | 仅内网 / 反代 |
+| 8080/80 | TCP  | Caddy / Web 反代（可选）                                     | 公网（HTTPS） |
 
 > 同机部署时各端口互不冲突；跨机部署（如 Geyser 与核心分离、EasyBot 独立机器）请参见「端口与网络架构总览」分册。
 
@@ -157,27 +155,34 @@
 | 方块审计         | CoreProtect                               | 记录 / 查询 / 回滚（SQLite 可转 MySQL）                                                    |
 | 皮肤             | SkinsRestorer                             | 外置登录下皮肤加载                                                                         |
 | 指令整合         | EssentialsX                               | 传送 / 经济 / 管理 150+ 命令                                                               |
-| 全息             | DecentHolograms                           | 浮动文字 / 物品 / 头颅 / 动画                                                              |
 | 死亡信息         | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题，扣费已关闭）                                             |
 | 宠物             | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                                            |
 | 摸头互动         | PatPat（CurseForge / Modrinth）           | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用                                     |
-| NPC 系统         | FancyNpcs（Modrinth）                     | 数据包 NPC：向导 / 交互动作 / 皮肤与装备，本地已备 jar、实跑服待部署                        |
+| NPC 系统         | FancyNpcs 2.12.1（Modrinth）              | 数据包 NPC：向导 / 交互动作 / 皮肤与装备，已部署 `FancyNpcs-2.12.1+382.jar`                |
+| 小游戏           | BedWars 0.2.44                            | 起床战争竞技场（22:33 重新加入实跑 `plugins/`）                                            |
 | 玩家骑乘         | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                                             |
-| 语音             | Simple Voice Chat                         | 近距离语音聊天                                                                             |
-| 菜单（自研）     | QuickMenu                                 | 整合全部插件的快捷菜单（玩家线 16 套 + 管理线 12 套，含新人指南、南瓜邮箱、南瓜飞行入口）    |
+| 网页地图         | BlueMap 5.29                              | 3D 网页地图，本地 `http://127.0.0.1:8100/`                                                 |
+| 季节 / 怪物      | EzSeasons 2.1.2 · MythicMobs 5.14.0       | 季节更替、自定义怪物与技能                                                                 |
+| 附魔 / 模型      | ExcellentEnchants · FreeMinecraftModels   | 额外附魔、自定义模型物品                                                                   |
+| 玩法扩展         | EvenMoreFish · GSit · ClickMobs           | 钓鱼、坐下、点击收纳生物、玩家头颅掉落                                                     |
+| 实体清理         | ClearLag++ 2.0.0                          | 掉落物清理、每区块实体上限、TPS/MSPT 监控                                                  |
+| 世界编辑         | WorldEdit 7.4.6                           | 选区、复制、schematic                                                                      |
+| PVP 机器人       | VexBot 3.1.0                              | 智能 PVP 机器人与战斗风格                                                                  |
+| 任务 / 税收      | Quests 5.3.2 · EzTax 2.0.0                | 每日任务、周持有税                                                                         |
+| 菜单（自研）     | QuickMenu                                 | 整合全部插件的快捷菜单（32 套菜单 / 267 个菜单项，以服务器实跑配置为基线，含新人指南、每日任务、南瓜飞入口与管理面板） |
 | 邮箱（自研）     | PumpkinMail                               | 南瓜邮箱：活动奖励一键批量发放（管理）与玩家领取（`/mailbox`）                             |
-| 皮肤记录（自研） | BedrockSkinRecorder                       | 基岩玩家上线自动固化 Xbox 皮肤纹理为 PNG 到服务器磁盘（离线可拉取）                        |
 | 传送阵（自研）   | SpacePortal                               | 地面法阵长途传送（本服特色）                                                               |
 | 账本（自研）     | MoneyLedger                               | 南瓜账本：南瓜币每笔变动按类别自动记账（转账/买卖/拍卖/收购/税/任务/活动），可查可导出 CSV |
-| 区域冒险（自研） | AdvZone                                   | 指定区域强制冒险模式，保护建筑与地形                                                       |
-| 末影龙（自研）   | DragonManager                             | 末影龙定时重生与破坏保护                                                                   |
-| 每日收购（自研） | DailySell                                 | 每日随机收购指定物品，玩家可出售换币                                                       |
+| 每日收购（自研） | DailySell                                 | 物品池 110 种；每天抽 8 种候选、每人自选 5 种出售换币（`/ds choose`，基岩端按序号），800 币/日封顶 |
 | 在线排行（自研） | PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                                             |
-| 飞行（自研）     | PumpkinFly                                | 10 万买永久 / 20 币一分钟，仅飞行中扣秒，限自己领地与主城，离开区域安全落地（`/pfly`）       |
+| 飞行（自研）     | PumpkinFly                                | 10 万买永久 / 20 币一分钟，仅飞行中扣秒，限自己领地与主城；限时体验奖励（天/时/分）、全服与单人飞行管理、快捷菜单领取与管理面板（`/pfly`） |
 | 基岩 GUI         | BedrockPlayerSupport                      | 基岩玩家免敲指令的表单界面                                                                 |
 | 数据展示         | Plan / TAB                                | 玩家行为分析、炫彩称号、坐标轨迹                                                           |
 | 运维             | OPanel / spark / MCSM / EasyBot           | Web 面板、性能分析、进程管理、QQ 联动                                                      |
-| 依赖库           | CMILib / ProtocolLib / bStats             | 多插件共享底层库、协议库、匿名统计                                                         |
+| 依赖库           | CMILib / nightcore / ProtocolLib / bStats | 多插件共享底层库、协议库、匿名统计                                                         |
+
+> 注：`plugins/EasyBot-2.4.0.jar.bak` 为已停用备份，数据目录保留；恢复 QQ 联动需去掉 `.bak` 后缀并重启。
+> 自研 PumpkinFly 源码与 jar 在 `自研/南瓜飞-PumpkinFly/`；实跑 `plugins/` 中已有同版 `PumpkinFly-1.0.0.jar`（与项目 jar 字节一致）。升级时停服替换 jar 并完整重启，不要用 `/reload`。
 
 ---
 
@@ -333,22 +338,6 @@
 
 > 📌 **QQ 群绑定**：目前服务器**未开启**游戏内绑定（绑定功能已关闭），群服消息同步由管理统一配置，无需玩家操作。
 
-### 🎙️ 语音聊天（Simple Voice Chat）
-
-需要先在客户端安装 Simple Voice Chat 模组（版本需与服务器一致）。
-
-| 按键        | 作用                                         |
-| ----------- | -------------------------------------------- |
-| `Caps Lock` | **按住说话**（默认按键说话模式）             |
-| `V`         | 打开语音设置界面（调音量、麦克风、语音距离） |
-| `G`         | 群组语音（无视距离，全图可听）               |
-| `M`         | 静音麦克风                                   |
-| `N`         | 开关语音聊天                                 |
-| `H`         | 隐藏语音图标                                 |
-
-> 📱 基岩版玩家需要配合网页端使用语音，详情看服务器公告或找管理。
-> 🔧 听不到 / 说不了：检查模组是否安装且版本匹配 → 检查音频设备选择 → 服务器 UDP 端口 24454 需放行。
-
 ### 📱 基岩版玩家专属（免打命令）
 
 | 命令       | 作用                                          |
@@ -432,11 +421,10 @@
 | 方块回滚     | CoreProtect：`/co lookup <条件>` · `/co rollback <条件>`                              |
 | 查看离线背包 | OpenInv：`/inv see <玩家>` · `/enderchest see <玩家>`                                 |
 | 性能分析     | spark：`/spark profiler start` · `/spark tps`                                         |
-| 区块预生成   | chunky：`/chunky start` · `/chunky stop`                                              |
-| QQ 联动      | EasyBot 三层架构，跨机部署需配置 NapCat 转发                                          |
+| QQ 联动      | EasyBot 三层架构（jar 当前为 .bak 停用），跨机部署需配置 NapCat 转发                  |
 | Web 管理     | OPanel（accessKey 鉴权，建议反代 + 仅内网）                                           |
 | 进程管理     | MCSM 控制面板（Windows 部署、分布式节点、导入已有目录）                               |
-| 数据迁移     | UserOverUUID：离线 UUID ↔ 在线 UUID 玩家数据迁移                                      |
+| 数据迁移     | UuidMigrate：离线 UUID ↔ 在线 UUID 玩家数据迁移                                       |
 | 多服网络     | Velocity 代理（见多服分册与 12 步迁移 Checklist）                                     |
 
 ---
@@ -448,11 +436,10 @@
 | 基岩版连不上       | 检查 55551 UDP 放行；基岩客户端地址填 `<IP>:55551`；Geyser `clone-remote-port` 与 Floodgate key.pem 一致 |
 | 老版本客户端连不上 | 确认 ViaVersion 已加载且版本支持                                                                         |
 | 外置登录失败       | 检查 YggdrasilOfficialProxy 与 authlib-injector 注入是否生效                                             |
-| 语音没声音         | 模组版本匹配 + 音频设备选择 + 24454 UDP 放行                                                             |
-| TPS 低 / 卡顿      | spark 采样；chunky 预生成世界；检查 region 体积（MCA Selector 瘦身）                                     |
+| TPS 低 / 卡顿      | spark 采样；检查 region 体积（MCA Selector 瘦身）与实体数量                                              |
 | 内存占用高         | 见「服务器内存相关」分册；调整启动内存参数                                                               |
-| 玩家数据错乱       | UserOverUUID 迁移；检查 UUID 一致性                                                                      |
-| 投影/打印机作弊    | AntiLitematica 检测与阻断（见禁用影响平衡分册）                                                          |
+| 玩家数据错乱       | UuidMigrate 迁移；检查 UUID 一致性                                                                       |
+| 投影/打印机作弊    | 见「禁用影响平衡的插件功能」分册（方案记录；本服当前未部署检测插件）                                     |
 
 ---
 
@@ -471,14 +458,14 @@
 
 本仓库文档按**功能域**归入 6 个分类目录，详细配置与深度教程见各分册：
 
-| 分类目录                  | 说明                                                           | 代表分册                                                                                                                                                                    |
-| ------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充、协议库 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · ViaBackwards · 端口与网络架构 · Velocity 多服 · ProtocolLib                                                           |
-| **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动                      | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                                                                                           |
-| **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件                     | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · DeluxeMenus · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · LeashablePlayers · ClickMobs |
-| **4-玩家信息与数据展示/** | 行为分析、TAB、称号、全息、坐标轨迹                            | Plan · TAB · 炫彩多层称号 · DecentHolograms                                                                                                                                 |
-| **5-服务器管理/**         | 权限、回滚、区块优化、管理命令、数据迁移                       | LuckPerms · CoreProtect · WorldEdit · OpenInv · chunky · BedrockPlayerSupport · UserOverUUID                                                                                |
-| **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                          | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · AntiLitematica                                                                                                     |
+| 分类目录                  | 说明                                                           | 代表分册                                                                                                                                                                                          |
+| ------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1-服务端核心与网络层/** | 内核、外置登录、跨端互通、跨版本、代理与网络、配置补充、协议库 | Leaf · Yggdrasil · Geyser/Floodgate · ViaVersion · ViaBackwards · 端口与网络架构 · Velocity 多服 · ProtocolLib                                                                                    |
+| **2-运维监控与面板/**     | 性能、统计、依赖库、Web/进程面板、QQ 联动                      | EasyBot · OPanel · spark · CMILib · bStats · MCSM                                                                                                                                                 |
+| **3-玩法与玩家功能插件/** | 经济、领地、皮肤、玩家模型、附魔等玩法插件                     | Vault · Residence · SkinsRestorer · EssentialsX · SimplePets · FancyNpcs · 自定义死亡信息 · FreeMinecraftModels · ExcellentEnchants · GSit · ClickMobs · PatPat · EvenMoreFish · VexBot · BedWars |
+| **4-玩家信息与数据展示/** | 行为分析、TAB、称号、占位符、坐标轨迹                          | Plan · TAB · 炫彩多层称号 · PlaceholderAPI · PlanTop                                                                                                                                              |
+| **5-服务器管理/**         | 权限、回滚、实体清理、管理命令、数据迁移                       | LuckPerms · CoreProtect · WorldEdit · OpenInv · ClearLag++ · BedrockPlayerSupport · UuidMigrate                                                                                                   |
+| **6-工具与常见问题约束/** | 待选插件、FAQ、禁用项                                          | 常见问题排查 · 服务器内存 · region 瘦身 · MCA Selector · 禁用影响平衡方案                                                                                                                         |
 
 > 完整目录与逐篇链接见仓库根目录 `README.md`（南瓜生存服主索引）。
 
@@ -493,109 +480,133 @@
 
 ```
 Minecraft-Server-Build/
-├── README.md                       # 本文档：总导航
-├── TODO/                           # 待办事项与待选插件
-│   ├── TODO.md                     # 待办事项
-│   └── 各种插件插件（待选）/        # 待选插件清单
-│       └── 各种插件（待选）.md
-├── 下次更新26.2版本.md              # 版本升级规划
+├── README.md                          # 本文档：总导航
+├── 服务器优化记录.md
+├── TODO/                              # 待办、待选插件与历史规划
+│   ├── TODO.md
+│   ├── 各种插件（待选）.md
+│   ├── 下次更新26.2版本.md             # 历史升级规划（已升级到 26.3）
+│   └── 刀剑神域.md
+├── 《服务器长期玩法规划》/
+│   ├── README.md
+│   └── 插件方案对比.md
 │
 ├── 1-服务端核心与网络层/
-│   ├── 01-服务器核心-Leaf/          Leaf服务端核心.md
-│   ├── 02-外置登录代理-YggdrasilOfficialProxy/   YggdrasilOfficialProxy.md
-│   ├── 03-Java-Bedrock互通层-Geyser-Floodgate/   01-Geyser / 02-Floodgate / 03-基岩皮肤排查 / README
-│   ├── 04-跨版本协议兼容-ViaVersion/  ViaVersion.md
-│   ├── 05-端口与网络架构总览/        README.md
-│   ├── 06-Velocity 多服/            Velocity 多服.md
-│   ├── 07-服务器配置文件补充/        README.md
-│   ├── 08-服务器资源包-BGM/          部署与配置说明.md（BGM资源包源文件 / 循环BGM数据包）
-│   ├── 09-协议库-ProtocolLib/       ProtocolLib.md
-│   └── 10-向下兼容-ViaBackwards/    README.md
+│   ├── 服务器核心-Leaf/             Leaf服务端核心.md
+│   ├── 外置登录代理-YggdrasilOfficialProxy/   YggdrasilOfficialProxy.md
+│   ├── Java-Bedrock互通层-Geyser-Floodgate/   01-Geyser / 02-Floodgate / 03-皮肤排查 / README / NetherNet迁移准备
+│   ├── 跨版本协议兼容-ViaVersion/   ViaVersion.md
+│   ├── 端口与网络架构总览/         README.md
+│   ├── 服务器配置文件补充/         README.md（plugins 目录与配置文件清单）
+│   ├── 服务器资源包-BGM/           部署与配置说明.md + BGM资源包源文件 / 循环BGM数据包
+│   ├── 协议库-ProtocolLib/         ProtocolLib.md
+│   ├── 向下兼容-ViaBackwards/      README.md
+│   └── 多服Velocity +Multiverse/      多服Velocity +Multiverse.md（可选扩展方案）
 │
 ├── 2-运维监控与面板/
-│   ├── 01-QQ机器人联动-EasyBot/     EasyBot.md
-│   ├── 02-Web管理面板-OPanel/       OPanel.md
-│   ├── 03-性能分析-spark/           spark.md
-│   ├── 04-核心依赖库-CMILib/        CMILib.md
-│   ├── 05-统计系统-bStats/          bStats.md
-│   └── 06-MCSM控制面板/             MCSM控制面板.md
+│   ├── QQ机器人联动-EasyBot/       EasyBot.md（jar 当前为 .bak 停用）
+│   ├── Web管理面板-OPanel/         OPanel.md
+│   ├── 性能分析-spark/             spark.md
+│   ├── 核心依赖库-CMILib/          CMILib.md
+│   ├── 统计系统-bStats/            bStats.md
+│   └── MCSM控制面板/               MCSM控制面板.md / 链接到已有文件夹.md
 │
 ├── 3-玩法与玩家功能插件/
-│   ├── 01-经济系统-Vault/
-│   │   ├── Vault.md
-│   │   ├── 经济插件/                AuctionHouse拍卖行 / EconomyShop玩家商店 / EzTax周持有税 / Quests每日任务
-│   │   └── 南瓜生存服经济体系探索/   经济系统设计手册 / 落地实施 / 扣费点清单
-│   ├── 02-领地系统-Residence/       Residence.md + 领地插件使用指南（配置文件/）
-│   ├── 03-皮肤管理-SkinsRestorer（禁用）/   SkinsRestorer.md
-│   ├── 04-网页世界地图/             BlueMap / Dynmap / 地图选择
-│   ├── 05-Simple Voice Chat/        Simple Voice Chat.md
-│   ├── 06-PatPat摸头/               PatPat摸头.md + patpat.webp
-│   ├── 07-EssentialsX多功能指令整合/ EssentialsX（功能说明与完整配置）.md
-│   ├── 08-自定义死亡信息/           自定义死亡信息customdeathmessages.md
-│   ├── 09-宠物系统/                 SimplePets / 宠物对比 / Vault经济联动
-│   ├── 10-DeluxeMenus高级GUI菜单/   DeluxeMenus高级GUI菜单.md
-│   ├── 11-RideOnHead玩家骑乘/       RideOnHead玩家骑乘.md
-│   ├── 12-自定义玩家模型/  Free Minecraft Models.md
-│   ├── 13-玩家独立战利品/           LootrInstancer.md
-│   ├── 14-自定义附魔-ExcellentEnchants/  ExcellentEnchants自定义附魔.md
-│   ├── 15-坐下插件-GSit/            GSit.md
-│   ├── 16-拴绳牵玩家-LeashablePlayers/  LeashablePlayers.md
-│   ├── 17-点击收纳生物-ClickMobs/   ClickMobs.md
-│   ├── 摸摸头-PatPat/                README.md（PatPat 插件完整说明）
-│   └── FancyNpcs/                     README.md（FancyNpcs 完整说明 + 皮肤贴图素材）
+│   ├── 经济系统/                   Vault.md + 经济插件/ + 南瓜生存服经济体系探索/ + 工具/
+│   ├── 领地系统-Residence/         领地系统-Residence.md + 配置文件/
+│   ├── 皮肤管理-SkinsRestorer/     SkinsRestorer.md
+│   ├── 网页世界地图/               BlueMap.md
+│   ├── EssentialsX多功能指令整合/  EssentialsX多功能指令整合（功能说明与完整配置）.md
+│   ├── 自定义死亡信息/             自定义死亡信息customdeathmessages.md
+│   ├── 宠物系统/                   宠物系统simplepets.md / SimplePets-Vault-Addon经济联动.md / 汉化配置/
+│   ├── RideOnHead玩家骑乘/         RideOnHead玩家骑乘.md
+│   ├── 自定义模型Free Minecraft Models/  Free Minecraft Models.md
+│   ├── 自定义附魔-ExcellentEnchants/     ExcellentEnchants自定义附魔.md
+│   ├── 坐下插件-GSit/              GSit.md
+│   ├── 点击收纳生物-ClickMobs/    ClickMobs.md
+│   ├── 玩家头颅掉落-PlayerHeadDrops/     PlayerHeadDrops.md
+│   ├── pvp机器人/                  VexBot-智能pvp机器人.md + 官方文档汉化/
+│   ├── EvenMoreFish-更多鱼/        README.md
+│   ├── FancyNpcs/                     README.md（FancyNpcs 完整说明 + 皮肤贴图素材）
+│   ├── 摸摸头-PatPat/                 README.md（PatPat 完整说明 + patpat.webp）
+│   └── 尖叫起床-BedWars/              README.md + 官方文档汉化/（12 篇）
 │
 ├── 4-玩家信息与数据展示/
 │   ├── 01-玩家信息收集与展示.md
-│   ├── 02-plan-服务器、玩家数据分析工具/  01-Plan使用文档.md
+│   ├── plan-服务器、玩家数据分析工具/   01-Plan使用文档.md
 │   ├── 03-TAB信息展示.md
 │   ├── 04-PlaceholderAPI占位符.md
 │   ├── 05-LuckPerms炫彩称号.md
 │   ├── 07-在线时间排行榜（PlanTop）.md
-│   └── 08-DecentHolograms全息插件/  DecentHolograms全息插件.md
+│   ├── 09-头顶名牌显示在线时长.md
+│   └── 已有称号.md
 │
 ├── 5-服务器管理/
-│   ├── 01-权限管理系统-LuckPerms/   LuckPerms / 权限组设计方案 / 权限节点速查
-│   ├── 02-常用管理命令速查/         README.md
-│   ├── 03-方块记录与回滚-CoreProtect/  CoreProtect / 一些操作（数据库过大 / 网页端面板部署）
-│   ├── 04-离线背包查看-OpenInv/     OpenInv.md
-│   ├── 05-chunky区块加载优化/       chunky区块加载优化.md
-│   ├── 06-BedrockPlayerSupport基岩版GUI表单界面/  BedrockPlayerSupport基岩版GUI表单界面.md
-│   ├── 07-创世神WorldEdit/          创世神WorldEdit.md
-│   └── 08-玩家数据迁移-UserOverUUID/  UserOverUUID-玩家数据管迁移.md
-│   └── 反作弊（开了一会问题太多，已关闭）/  NovaAC / 反作弊部署与配置指南
+│   ├── 权限管理系统-LuckPerms/    LuckPerms.md / 权限组设计方案.md / 权限节点速查.md
+│   ├── 常用管理命令速查/          README.md
+│   ├── 方块记录与回滚-CoreProtect/ CoreProtect.md / 一些操作.md / 数据库过大 / 网页端面板部署
+│   ├── 离线背包查看-OpenInv/      OpenInv.md
+│   ├── BedrockPlayerSupport基岩版GUI表单界面/  BedrockPlayerSupport基岩版GUI表单界面.md
+│   ├── 创世神WorldEdit/           创世神WorldEdit.md
+│   ├── 玩家数据迁移-UuidMigrate/  UuidMigrate-玩家数据迁移.md
+│   └── ClearLag++-清理与优化/     README.md
 │
 ├── 6-工具与常见问题约束/
-│   ├── 01-服务器优化/               Plan、CoreProtect 性能优化
-│   ├── 02-常见问题/                 常见问题排查 / UUID踩坑 / 发消息闪退（服务器内存相关）
-│   ├── 03-禁用影响平衡的插件功能/    AntiLitematica（1.禁用影响平衡的插件功能.md）
-│   ├── 云数据库备份到本地/          增量备份技术文档 + sync/verify/register 脚本
-│   └── 数据转换/                    使用文档.md
+│   ├── 服务器优化/                性能优化 / RCON加固 / 1.md
+│   ├── 常见问题/                  常见问题排查 / UUID踩坑 / 发消息闪退 / 服务器内存相关
+│   ├── 禁用影响平衡的插件功能/    1.禁用影响平衡的插件功能.md + AntiLitematica 资料（历史方案）
+│   ├── 云数据库备份到本地/           增量备份技术文档 + logs/
+│   └── 数据转换/                     使用文档.md
 │
-└── 自研/                            # 自研插件：文档 + 源码 + 构建产物（见 自研/README.md）
-    ├── README.md                    自研插件总览（清单 / 构建 / 部署）
-    ├── lib/                         共享编译依赖 jar
-    ├── 传送阵/                      SpacePortal 使用说明 + 项目分析
-    ├── 传送阵-SpacePortal/          SpacePortal 源码 + jar
-    ├── 南瓜账本-MoneyLedger/        MoneyLedger（南瓜币流水分类记账）
-    ├── 南瓜邮箱-PumpkinMail/        PumpkinMail（活动奖励发放/领取）
-    ├── 南瓜飞行-PumpkinFly/          PumpkinFly（付费限时/永久飞行，含 build.py）
-    ├── 在线时间排行-PlanTop/        PlanTop（基于 Plan 的在线时间排行）
-    ├── 建筑评分-BuildRate/          BuildRate（建筑评分）
-    ├── 快捷菜单系统-QuickMenu/      QuickMenu（主文档 + 与通用菜单对比）
-    ├── 每日随机收购-DailySell/      DailySell（每日随机收购）
-    ├── 离线奖励-OfflineReward/      OfflineReward（离线奖励）
-    ├── 附魔商店-EnchantShop/        EnchantShop（附魔商店）
-    └── disabled/                    停用项目
+└── 自研/                             # 自研插件：文档 + 源码 + 构建产物（见 自研/README.md）
+    ├── README.md                     自研插件总览（清单 / 构建 / 部署）
+    ├── lib/                          共享编译依赖 jar
+    ├── 传送阵/                       SpacePortal 使用说明 + 项目分析
+    ├── 传送阵-SpacePortal/           SpacePortal 源码 + jar
+    ├── 南瓜账本-MoneyLedger/         MoneyLedger
+    ├── 南瓜邮箱-PumpkinMail/         PumpkinMail
+    ├── 南瓜飞-PumpkinFly/          PumpkinFly（付费限时/永久飞行，含 build.py）
+    ├── 在线时间排行-PlanTop/         PlanTop
+    ├── 建筑评分-BuildRate/           BuildRate
+    ├── 快捷菜单系统-QuickMenu/       QuickMenu（主文档 + 与通用菜单对比）
+    ├── 每日随机收购-DailySell/       DailySell（使用说明 + config.yml）
+    ├── 离线奖励-OfflineReward/       OfflineReward
+    ├── 附魔商店-EnchantShop/         EnchantShop
+    └── disabled/                     停用项目
 ```
+
+> 目录树按 2026-11-09 实际存在的目录重列；已移除插件的文档归档在 `.workbuddy/backup_文档对齐_20261109/removed/`。
 
 ---
 
 ## 更新记录
 
+- **2026-11-10 更新**：三个自研插件查缺补漏与排错。PumpkinFly 实跑 `config.yml` 补齐 `global` /
+  `rewards` / `display` 三段与 29 条消息键（原缺键会让新命令回显「[缺少消息]」），QuickMenu 实跑 jar
+  对齐项目版 77310 字节，归档 PumpkinFly 项目根下不参与编译的旧源码副本；配置文件补充清单补入
+  `PumpkinFly-1.0.0.jar`（51 → 52 个 jar）。DailySell 修复「重选自选清单可绕过 800 币/日收益上限」
+  （收益改按玩家 + 日期独立累计 `__earned`）、GUI 背包误触与误卖、界面引用泄漏、`/ds reroll` 后
+  旧选择 / 旧界面不一致，并新增 `自研/每日随机收购-DailySell/使用说明.md`。仅本地静态校验，未在实跑服运行。
+- **2026-11-10 更新**：DailySell 回收种类扩充与「8 种选 5 种」玩法：物品池 48 → 110 种
+  （新增作物/食物、肉类、矿物、原木、怪物掉落、花草、羊毛等 62 种，修正 26.3 无效键
+  `NETHER_QUARTZ` → `QUARTZ`），补齐全 110 种 GUI 中文名；今日候选 4 → 8 种，新增
+  `choices-per-day: 5`，每位玩家自选 5 种才能出售，选择按日期存 `data.yml` 的 `choices` 段，
+  Java 端有自选 GUI、基岩端用 `/ds choose <1-8>`；`max-per-item` 100 → 60 保证 8 种清单在
+  800 币预算内稳定生成。重编译 jar（3 个 class / major 65），实跑与项目配置、`plugin.yml`
+  全部字节一致；110 个 Material 经 Leaf 26.3 API 校验有效，SnakeYAML 解析通过。
+- **2026-11-10 更新**：QuickMenu `config.yml` 改以服务器实跑配置为基线重新合并南瓜飞菜单：保留实跑独有的
+  `quests-daily` 每日任务菜单、`admin` 面板 `postracker` 按钮与每日任务文案，新增 `main.items.pumpkinfly`
+  （slot 28）、`pumpkinfly`（11 按钮）、`pumpkinfly-admin`（12 按钮）。实跑配置、项目源码、
+  `target/classes`、项目根副本与 jar 内配置五处字节级一致（统一 LF）；SnakeYAML 校验 32 菜单 / 267 菜单项、
+  42 处跳转 0 失效；`使用说明.md`、`CHANGELOG.md`、QuickMenu 主文档与自研总览同步。
+- **2026-11-09 更新**：南瓜飞 PumpkinFly 新增限时体验奖励（按天/小时/分钟发放，现实时间到期、体验期不扣余额）、全服与单人飞行管理（`/pfly global` / `trial` / `player` / `claim`）、`data/global.yml` 运行时状态、HUD 凭证来源显示；QuickMenu `pumpkinfly` 菜单扩为 11 按钮并新增 `pumpkinfly-admin` 管理子菜单 12 按钮（`[player-selector]` 单人管理）。两个 jar 重新编译同步：PumpkinFly 13 源文件 / 17 class / 63248 字节，QuickMenu 31 菜单 / 256 菜单项，三处配置字节级一致；`使用说明.md`、`CHANGELOG.md`、`自研/README.md`、QuickMenu 主文档同步。
+- **2026-11-09 更新**：南瓜飞 PumpkinFly 修订「已飞时长恒为 0 秒」——累计已飞改为全模式统计、落地即写会话；新增飞行界面显示（ActionBar / BossBar 实时显示飞行状态与剩余时长）、`display` 配置段、`/pfly hud` 与 QuickMenu 开关按钮；jar 重新编译为 48172 字节。
+- **2026-11-09 更新**：去掉所有子文件夹的两位数字编号前缀（如 `01-服务器核心-Leaf/` → `服务器核心-Leaf/`），顶层 `1-`~`6-` 章节目录保持不变；共 54 个子目录改名，含 BedWars 官方汉化的 12 个分类目录。全库文档中的明文路径、目录树、链接（含百分号编码链接）与链接显示名同步更新；文件名中的编号前缀按要求保留。同时修正旧目录别名 `01-经济系统-Vault`、父目录编号笔误、相对层级错误及 BedWars 汉化内部链接等共 29 条失效引用。
+- **2026-11-09 更新**：全库按 26.3 实跑 `plugins/` 的 51 个 jar 做插件对齐。删除/归档已移除插件的独立文档（DeluxeMenus、DecentHolograms、Chunky、AuctionHousePlus、旧 PatPat 摸头文档、`.remove.bak`）；合并 PatPat 重复目录、把 `UserOverUUID` 目录改名为 `UuidMigrate`；主索引总览表 / 端口表 / 架构图 / 运维表 / 故障排查 / 导航表 / 目录树全部重写为实际目录与实跑插件；配置文件补充的插件清单表替换为 26.3 实跑清单；权限速查、经济、地图、PAPI、PlanTop、ProtocolLib、BGM、QuickMenu 等分册清理已删插件的"在用"表述。核对期间（22:33）`BedWars-0.2.44.jar` 重新加入实跑 `plugins/`，其 13 篇文档已还原并计入清单。
 - **2026-11-09 更新**：补写 `3-玩法与玩家功能插件/FancyNpcs/README.md`（0 字节 → 完整说明）：按本地 `FancyNpcs-2.12.1+382.jar` 反查 `config.yml` 20 个键及默认值、`languages/default.yml` 命令语法、jar 注解中的完整权限节点与 12 种动作类型，附安装、皮肤、ClearLag++ 联动与排错；出处为用户给出的 Modrinth 插件页与官方文档。主索引总览表与目录树同步。
 - **2026-11-09 更新**：`自研/` 统一为单套 26.3 源码结构：自研总览文档重写为 `自研/README.md`（插件清单 / 构建 / 部署），新建 `自研/lib/` 共享编译依赖；清理 SpacePortal、QuickMenu、PumpkinFly 文档与 pom 中的双版本表述、旧版本号与失效路径，主索引目录树与运行服参照路径同步。
-- **2026-11-09 更新**：新增自研插件 `自研/南瓜飞行-PumpkinFly/`（完整源码、`build.py` 离线编译脚本、`使用说明.md`、`CHANGELOG.md`、`PumpkinFly-1.0.0.jar`）：`/pfly` 独立命令 + Vault 扣款 + 仅飞行中扣秒 + 四种可配置飞行区域模式 + 本地 YAML 三文件存储（余额 / 购买记录 / 每次起飞会话）+ Essentials 飞行门禁 + 安全落地；QuickMenu 主菜单 slot 28 加「南瓜飞行」入口并新增 `pumpkinfly` 子菜单（8 个固定档位按钮），其 `config.yml`、`target/classes/config.yml` 与 `target/QuickMenu-1.0.0.jar` 已同步，QuickMenu 主文档菜单数由 27 套 / 15 套更新为 28 套 / 16 套；主索引总览表与目录树同步。
+- **2026-11-09 更新**：新增自研插件 `自研/南瓜飞-PumpkinFly/`（完整源码、`build.py` 离线编译脚本、`使用说明.md`、`CHANGELOG.md`、`PumpkinFly-1.0.0.jar`）：`/pfly` 独立命令 + Vault 扣款 + 仅飞行中扣秒 + 四种可配置飞行区域模式 + 本地 YAML 三文件存储（余额 / 购买记录 / 每次起飞会话）+ Essentials 飞行门禁 + 安全落地；QuickMenu 主菜单 slot 28 加「南瓜飞」入口并新增 `pumpkinfly` 子菜单（8 个固定档位按钮），其 `config.yml`、`target/classes/config.yml` 与 `target/QuickMenu-1.0.0.jar` 已同步，QuickMenu 主文档菜单数由 27 套 / 15 套更新为 28 套 / 16 套；主索引总览表与目录树同步。
 - **2026-11-09 更新**：新增 `3-玩法与玩家功能插件/摸摸头-PatPat/README.md`（按实跑 `config.json` 逐项说明，含 CurseForge 插件页出处、完整命令树与权限节点、名单文件格式、常见问题）；修正 `06-PatPat摸头/PatPat摸头.md` 中配置文件名（`config.yml`→`config.json`）、名单文件名、`api` 字段用途、`patpat.pat` 权限语义与命令表缺项；主索引总览表与目录树同步。
 - **2026-11-09 更新**：新增 `1-服务端核心与网络层/10-向下兼容-ViaBackwards/README.md`（按实跑 `config.yml` 逐项说明，30 个配置键全覆盖，含官方组合表、命令权限与排错）；修正 `04-跨版本协议兼容-ViaVersion/ViaVersion.md` 中 ViaVersion / ViaBackwards 的方向与"未装 ViaBackwards"的过时表述；主索引目录树与分类表补入 10- 章节。
 - **2026-10-04 更新**：插件与玩法总览"自研"类目补齐 MoneyLedger、AdvZone、EntityCount、DragonManager、DailySell、PlanTop；目录树"自研/"段目录名与实际对齐（`南瓜邮箱/`→`南瓜邮箱-PumpkinMail/`、`基岩皮肤记录器/`→`基岩皮肤记录-BedrockSkinRecorder/`），并补入 `南瓜账本-MoneyLedger/`、`在线时间排行-PlanTop/`；文档更新日期改为 2026-10-04。
-- **关于"服务端目录 `C:\mc_serve\1.21.11-test`"**：该处仅作历史记录保留；实际运行目录以部署机器为准，本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-26.3` 为运行服参照。
+- **运行服参照**：本仓库文档统一以 `F:\game\pc\MC\开服\服务器数据备份\leaf-26.3\leaf-26.3` 为运行服目录；旧的 `C:\mc_serve\1.21.11-test` 路径已全部移除。

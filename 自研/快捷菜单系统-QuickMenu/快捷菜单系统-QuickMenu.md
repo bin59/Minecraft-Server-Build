@@ -3,12 +3,16 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：28 套主线菜单 / 224 个菜单项，分**玩家线**（16 套）
-> 与**管理线**（12 套），管理入口靠权限门控，普通玩家看不到。
+> **菜单已整合本服全部插件**：按服务器实跑 `config.yml` 统计共 **32 套菜单 / 267 个菜单项**，
+> 其中主线 28 套（玩家线 16 套 + 管理线 12 套）、支线 4 套；管理入口靠权限门控，普通玩家看不到。
+> **2026-11-10 配置基线**：以服务器实跑 `plugins/QuickMenu/config.yml` 为底合并南瓜飞菜单，
+> 实跑独有内容零删除；服务器配置、项目源码、`target/classes`、项目根副本与 jar 内配置五处字节级一致。
 
-插件 jar：`dist/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
+插件 jar：`target/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
 
 > 相关文档：`快捷菜单系统-QuickMenu-与通用菜单对比.md`（为什么不用 DeluxeMenus 等通用插件、不可替代点与边界）
+>
+> ⚠️ **2026-11-09 状态**：配置中仍保留 `voice`（Simple Voice Chat）与 `admin-world` 里的 Chunky 区块预生成按钮，但这两个插件**已不在 26.3 实跑 `plugins/` 清单**，对应按钮当前无效。本表按实跑 `config.yml` 如实列出，待下一版清理菜单后同步删除。
 
 **插件与菜单的对应关系**（本菜单已覆盖的后端）：
 
@@ -79,6 +83,7 @@ if (api.isFloodgatePlayer(uuid)) {
 自研/快捷菜单系统-QuickMenu/
 ├── 快捷菜单系统-QuickMenu.md              ← 本文档
 ├── 快捷菜单系统-QuickMenu-与通用菜单对比.md
+├── config.yml                             ← ★ 服务器实跑配置基线副本（五处字节一致）
 ├── pom.xml                                ← 可选：Maven / IDE 用
 ├── src/main/
 │   ├── java/com/nangua/quickmenu/
@@ -90,7 +95,7 @@ if (api.isFloodgatePlayer(uuid)) {
 │   │   └── menu/                         两端分发决策中枢 / 动作执行 / 菜单与动作模型
 │   └── resources/
 │       ├── plugin.yml                    插件描述（命令与权限）
-│       └── config.yml                    ★ 菜单配置（28 套主线：玩家 16 + 管理 12）
+│       └── config.yml                    ★ 菜单配置（32 套：28 主线 + 4 支线，实跑基线）
 └── target/
     ├── QuickMenu-1.0.0.jar                ← ★ 部署用成品，复制这个
     └── classes/                           构建中间产物
@@ -102,12 +107,12 @@ if (api.isFloodgatePlayer(uuid)) {
 
 ### 3.1 环境要求
 
-| 项目       | 要求               | 本服                          |
-| ---------- | ------------------ | ----------------------------- |
-| 服务端核心 | Paper 或其分支     | ✅ Leaf 26.3（Paper 分支）    |
-| Java       | 21+（核心需 25）   | ✅ JDK 25                     |
-| Minecraft  | 26.3               | ✅ 26.3                       |
-| Floodgate  | 基岩端原生表单必需 | 已装（见互通层章节）          |
+| 项目       | 要求               | 本服                       |
+| ---------- | ------------------ | -------------------------- |
+| 服务端核心 | Paper 或其分支     | ✅ Leaf 26.3（Paper 分支） |
+| Java       | 21+（核心需 25）   | ✅ JDK 25                  |
+| Minecraft  | 26.3               | ✅ 26.3                    |
+| Floodgate  | 基岩端原生表单必需 | 已装（见互通层章节）       |
 
 ### 3.2 部署步骤
 
@@ -117,6 +122,10 @@ if (api.isFloodgatePlayer(uuid)) {
 3. 首次启动自动生成 plugins\QuickMenu\config.yml
 4. 按需修改配置，然后 /qm reload 热重载（无需重启）
 ```
+
+> 已有服务器上替换 jar **不会覆盖** `config.yml`。本项目根 `config.yml`、
+> `src/main/resources/config.yml`、`target/classes/config.yml` 与 jar 内配置字节一致，
+> 直接用其中任意一份覆盖服务器配置（先备份），再 `/qm reload` 即可。
 
 > **未装 Floodgate 也能正常启动**：只在确认 Floodgate 可用后才触碰 Cumulus 相关类，
 > 纯 Java 服务器自动跳过基岩端渲染，全部玩家走箱子界面。
@@ -273,48 +282,59 @@ actions:
 
 ---
 
-## 5. 菜单结构总览（28 套，玩家 / 管理双线）
+## 5. 菜单结构总览（32 套：28 主线 + 4 支线）
 
-`config.yml` 已配好 **28 套主线菜单**，把本服所有插件的常用功能全部收进菜单。
+`config.yml` 已配好 **32 套菜单**（28 套主线 + 4 套支线），把本服所有插件的常用功能全部收进菜单。
 
-> 按 `config.yml` 的 `menus:` 实际统计是 **30 个菜单键 / 240 个菜单项**，比上表多出的
-> `fishing`、`buildrate-admin`、`admin-fishing` 等是后续追加的支线菜单，本节表格按主线列出。
-> 2026-11-09 新增 `pumpkinfly`（主菜单 slot 28 入口 + 8 个按钮）后，主线口径由 27/15 变为 28/16。
+> 按 `config.yml` 的 `menus:` 实际统计是 **32 个菜单键 / 267 个菜单项**，42 处 `[menu]` 跳转、
+> 30 个 `back-menu` 全部有效。上表按 28 套主线列出，多出的 4 套是 `fishing`、`buildrate-admin`、
+> `admin-fishing` 与 `pumpkinfly-admin` 支线菜单。
+> 2026-11-10 起本配置以**服务器实跑 `plugins/QuickMenu/config.yml` 为基线**：完整保留实跑独有的
+> `quests-daily` 每日任务菜单、`admin` 面板 `postracker` 按钮与每日任务文案，只增量合入
+> `main.items.pumpkinfly`（slot 28）、`pumpkinfly`（11 按钮）与 `pumpkinfly-admin`（12 按钮）。
+> 五处 `config.yml` 字节级一致，统一 LF 行尾。
 
 ### 5.1 玩家菜单（16 套）
 
-| 菜单 id         | 名称       | 对接插件                                                              | 主要内容                                                                                                                                                                                                            |
-| --------------- | ---------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `main`          | 主菜单     | —                                                                     | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达；含**南瓜邮箱**（`/mailbox`，slot 30，第 4 行）领活动奖励；含**南瓜飞行**（slot 28，打开 `pumpkinfly` 子菜单） |
-| `teleport`      | 传送功能   | EssentialsX + BPS                                                     | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                        |
-| `warps`         | 传送点     | EssentialsX                                                           | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                    |
-| `residence`     | 我的领地   | **Residence**                                                         | 传送/查看**自己**的领地（点选式 `[residence-selector]`，无需手敲领地名）、建/删领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                        |
-| `economy`       | 经济中心   | EssentialsX + Vault                                                   | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                   |
-| `kit`           | 工具包     | EssentialsX                                                           | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次）                                                                                                                              |
-| `social`        | 社交设置   | EssentialsX + **EasyBot**                                             | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                             |
-| `info`          | 服务器信息 | EssentialsX                                                           | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                            |
-| `voice`         | 语音聊天   | **Simple Voice Chat**                                                 | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                              |
-| `guide`         | 新人指南   | —（说明书）                                                           | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                      |
-| `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                                                                                                  |
-| `guide-build`   | 领地建房   | **Residence**                                                         | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                                                                                |
-| `guide-move`    | 传送出行   | EssentialsX + SpacePortal                                             | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                                                                                                 |
-| `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX                  | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                                                                                        |
-| `pumpkinfly`    | 南瓜飞行   | **PumpkinFly** + Vault + Residence                                     | 固定档位购买（1 / 5 / 30 分钟 + 永久）、状态查询、开关飞行、购买记录、飞行记录。详见 `自研/南瓜飞行-PumpkinFly/使用说明.md`                                                                                        |
+| 菜单 id         | 名称       | 对接插件                                                              | 主要内容                                                                                                                                                                                                                                                               |
+| --------------- | ---------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `main`          | 主菜单     | —                                                                     | 一级入口，功能项 + 管理面板入口。含**宠物系统**（`/pet gui`）与**传送阵**（`/csz gui`）直达项；含拍卖行 / 玩家商店 / 每日任务 / **每日收购**（`/ds`）直达；含**南瓜邮箱**（`/mailbox`，slot 30，第 4 行）领活动奖励；含**南瓜飞**（slot 28，打开 `pumpkinfly` 子菜单） |
+| `teleport`      | 传送功能   | EssentialsX + BPS                                                     | 公共传送点（warps 子菜单）、申请传送、拉人、回主城、附近玩家                                                                                                                                                                                                           |
+| `warps`         | 传送点     | EssentialsX                                                           | 公共传送点子菜单（当前：主城）。经 /setwarp 新增传送点后需在 config.yml 同步添加                                                                                                                                                                                       |
+| `residence`     | 我的领地   | **Residence**                                                         | 传送/查看**自己**的领地（点选式 `[residence-selector]`，无需手敲领地名）、建/删领地、设置传送点、flag 开关、玩家授权、子领地、进出提示、帮助                                                                                                                           |
+| `economy`       | 经济中心   | EssentialsX + Vault                                                   | 余额（/balance）、财富榜（/baltop）、转账（/pay）、周持有税查询（/eztax stats）、**每日收购（/ds）**。拍卖行/玩家商店入口在主菜单首屏，不在此菜单                                                                                                                      |
+| `kit`           | 工具包     | EssentialsX                                                           | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次）                                                                                                                                                                                 |
+| `social`        | 社交设置   | EssentialsX + **EasyBot**                                             | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                                                                |
+| `info`          | 服务器信息 | EssentialsX                                                           | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                                                                               |
+| `voice`         | 语音聊天   | **Simple Voice Chat**                                                 | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                                                                 |
+| `guide`         | 新人指南   | —（说明书）                                                           | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                                                                         |
+| `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                                                                                                                                                     |
+| `quests-daily`  | 每日任务   | **Quests 5.3.2**                                                      | 7 个日常任务一键接取（挖矿 / 猎手 / 渔夫 / 伐木工 / 厨师 / 驯养师 / 农夫），奖励 40~50 南瓜币，24 小时冷却 |
+| `guide-build`   | 领地建房   | **Residence**                                                         | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                                                                                                                                   |
+| `guide-move`    | 传送出行   | EssentialsX + SpacePortal                                             | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                                                                                                                                                    |
+| `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX                  | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                                                                                                                                           |
+| `pumpkinfly`    | 南瓜飞     | **PumpkinFly** + Vault + Residence                                    | 固定档位购买（1 / 5 / 30 分钟 + 永久）、领取限时体验奖励、状态查询、开关飞行、购买记录、飞行记录、界面显示；管理员可见「飞行管理」入口（slot 24）。共 11 个按钮，详见 `自研/南瓜飞-PumpkinFly/使用说明.md`                                               |
 
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah，slot 9）、玩家商店（/shop，slot 11）
 > 在主菜单首屏直达，不放在 `economy` 经济中心子菜单。
 
-**每日收购入口**（配合 DailySell 插件，详见 `自研/每日随机收购/每日随机收购-DailySell.md`）：
+**每日收购入口**（配合 DailySell 插件，配置见 `自研/每日随机收购-DailySell/config.yml`）：
+
+> 每日从 110 种物品池抽 8 种作为全服候选，每位玩家用 `/ds choose <1-8>` 自选 5 种后才能出售；
+> Java 端点 `/ds` 会先打开自选界面，基岩端用序号命令。选择按日期保存，跨天需重选。
+> 管理员 `/ds reroll` 重抽会换掉候选物品，当天所有玩家的选择会被清空、已打开的界面会被关闭，需重新自选。
 
 - 主菜单 `main` 与 `economy` 经济中心各有一个「每日收购」按钮（均占 **slot 19**，动作 `[player] ds`），配置见 config.yml 模板中 `daily-sell:` 条目
-- **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时，替换 jar 不会更新它——需手动把 `daily-sell:` 两段插入到对应菜单（主菜单 slot 19、经济中心 slot 19），再 `/qm reload` 生效
+- **部署注意**：当前实跑 `plugins/QuickMenu/config.yml` 已包含上述 `daily-sell:` 按钮（主菜单 slot 19、经济中心 slot 19、管理面板 `ds-reroll` / `ds-reload`），项目源码 / `target/classes` / 项目根副本 / 两个 jar 内配置五处字节一致；`saveDefaultConfig()` 不会覆盖已有配置，从更旧版本升级时仍需手动覆盖服务器配置（先备份）再 `/qm reload`
 
-**南瓜飞行入口**（配合 PumpkinFly 插件，详见 `自研/南瓜飞行-PumpkinFly/使用说明.md`）：
+**南瓜飞入口**（配合 PumpkinFly 插件，详见 `自研/南瓜飞-PumpkinFly/使用说明.md`）：
 
-- 主菜单 `main.items.pumpkinfly` 占 **slot 28**（ELYTRA，`permission: pumpkinfly.use`，动作 `[menu] pumpkinfly`）；`menus.pumpkinfly` 是 size 27、`back-menu: main` 的子菜单，8 个按钮固定档位
-- 菜单**没有输入框**，所以购买分钟数只能做成固定按钮（1 / 5 / 30 / perm）；改 `PumpkinFly` 的价格时同步改按钮 `display-name` 里的数字
-- **部署注意**：替换 jar 不会更新服务器上已有的 `plugins/QuickMenu/config.yml`。要么备份后删除该文件让插件按新默认重建，要么手动把上述两段配置合并进去再 `/qm reload`
+- 主菜单 `main.items.pumpkinfly` 占 **slot 28**（ELYTRA，`permission: pumpkinfly.use`，动作 `[menu] pumpkinfly`）；`menus.pumpkinfly` 是 size 27、`back-menu: main` 的子菜单，现共 **11 个按钮**
+- 新增 slot 20「领取体验奖励」（`[player] pfly claim`，`permission: pumpkinfly.use`）与 slot 24「飞行管理」（`[menu] pumpkinfly-admin`，`permission: pumpkinfly.admin`）
+- **管理支线** `menus.pumpkinfly-admin`：size 27、`back-menu: pumpkinfly`，12 个按钮，全部要求 `pumpkinfly.admin`。全局按钮走 `[player] pfly global ...`（总开关 / 免费飞行 / 30 分钟 / 2 小时 / 1 天全服体验 / 清除）；单人按钮走 `[player-selector] pfly player {target} ...`（发体验、禁用、解禁、查状态、设永久），点选在线玩家后 `{target}` 自动替换
+- 菜单**没有输入框**，所以购买与体验时长只能做成固定按钮（1 / 5 / 30 / perm、30m / 2h / 1d）；改 `PumpkinFly` 的价格或奖励时长时同步改按钮文案与命令参数
+- **部署注意**：替换 jar 不会更新服务器上已有的 `plugins/QuickMenu/config.yml`。要么备份后删除该文件让插件按新默认重建，要么手动把 `claim` / `admin` 两个按钮与整段 `pumpkinfly-admin` 合并进去再 `/qm reload`
 - 管理员菜单 `admin-player` 里原有的 `[player] fly` 按钮**保留**，普通玩家走 `/pfly`，两者不冲突
 
 层级：玩家线所有二级菜单的 `back-menu` 均为 `main`（`warps` 为三级菜单，`back-menu: teleport`），返回按钮固定在右下角（`size-1` 槽位）。`guide` 系列为三级结构：`main` → `guide` → 四个分册，分册的 `back-menu` 均为 `guide`。
@@ -352,7 +372,7 @@ actions:
 ### 5.2 管理菜单（12 套）
 
 | 菜单 id               | 名称         | 对接插件                                                     | 主要内容                                                                                                                                                                                                 |
-| --------------------- | ------------ | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| --------------------- | ------------ | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `admin`               | 管理面板     | —                                                            | 一级入口，10 个分类 + 返回玩家菜单；含**南瓜邮箱管理**（slot 18，`/mailbox admin` 发放面板，权限 `pumpkinmail.admin`）、**离线奖励管理**（slot 25，`/offlinereward reload`，权限 `offlinereward.admin`） |
 | `admin-player`        | 玩家管理     | **OpenInv** + EssentialsX                                    | 看背包、传送/拉人、切模式、治疗、飞行、无敌、喂食、隐身、清背包、查信息、修复、发物品                                                                                                                    |
 | `gamemode`            | 切换游戏模式 | EssentialsX                                                  | `admin-player` 的子菜单：生存/创造/冒险/旁观四种模式，选模式后再从在线列表选玩家执行                                                                                                                     |
@@ -364,8 +384,10 @@ actions:
 | `admin-server`        | 服务器监控   | **spark** + **Geyser** + **ViaVersion** + **EasyBot**        | TPS、健康报告、延迟、性能采样、堆内存、Geyser 重载/诊断/统计、版本分布、机器人重载、插件列表                                                                                                             |
 | `admin-perm`          | 权限管理     | **LuckPerms**                                                | 网页编辑器、同步、重载、权限树、信息、查玩家权限、实时追踪                                                                                                                                               |
 | `admin-qm`            | 菜单管理     | QuickMenu 自身                                               | 重载配置、菜单列表、客户端诊断、发放触发物品                                                                                                                                                             |
-| `admin-economy`       | 经济管理     | EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell | 财富榜、查余额（选人）、发钱/扣钱/设余额（指引）、拍卖行管理、系统商店管理、税务统计、每日收购重生成/重载                                                                                                |     |
+| `admin-economy`       | 经济管理     | EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell | 财富榜、查余额（选人）、发钱/扣钱/设余额（指引）、拍卖行管理、系统商店管理、税务统计、每日收购重生成/重载                                                                                                |
 | `admin-offlinereward` | 离线奖励管理 | **OfflineReward**                                            | 位于 `admin` 菜单内（非独立菜单），点击重载配置；查询时间戳 `/offlinereward check 玩家名`                                                                                                                |
+
+> **南瓜飞管理支线**：`pumpkinfly-admin` 不挂在 `admin` 面板下，而是从玩家菜单 `pumpkinfly` 的 slot 24 进入（`back-menu: pumpkinfly`），因此未计入上表 12 套主线管理菜单。它需要 `pumpkinfly.admin` 权限，详见 5.1 的南瓜飞入口说明与 `自研/南瓜飞-PumpkinFly/使用说明.md` 第六节。
 
 层级：`admin` 的二级菜单共 10 个（`back-menu` 均为 `admin`），`admin-player` 另有三级子菜单 `gamemode`（选模式）；`admin` 的 `back-menu` 为 `main`，
 管理员可在两条线之间自由往返。
@@ -384,7 +406,7 @@ actions:
 | `ahadmin`   | 拍卖行管理（删单/查记录）    | `/ahadmin`            | `auction.admin`             |
 | `shopadmin` | 系统商店管理（加物品/定价）  | `/shop admin`         | `economyshop.admin`         |
 | `eztax`     | 税务统计                     | `/eztax stats`        | `eztax.stats`               |
-| `ds-reroll` | 每日收购·重新生成今日清单    | `/ds reroll`          | `dailysell.admin`           |
+| `ds-reroll` | 每日收购·重抽（当天需重选）  | `/ds reroll`          | `dailysell.admin`           |
 | `ds-reload` | 每日收购·重载配置            | `/ds reload`          | `dailysell.admin`           |
 
 > **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时替换 jar 不会更新它——需手动插入以下两段（段一进 `admin` 菜单，段二追加到 `menus:` 末尾），再 `/qm reload` 生效。完整 YAML 亦可解压 jar 内嵌 config.yml 复制 `admin-economy` 相关段。
@@ -630,11 +652,11 @@ powershell -ExecutionPolicy Bypass -File build.ps1 -SkipDeps
 
 ### 6.4 依赖版本已锁定，勿随意更换
 
-| 依赖          | 锁定版本              | 原因                           |
-| ------------- | --------------------- | ------------------------------ |
-| leaf-api      | 26.3.build.13-alpha   | 对应 Leaf 26.3 核心            |
-| floodgate api | 2.2.5-SNAPSHOT        | Floodgate 当前 API             |
-| **cumulus**   | **1.1.2**             | ⚠️ **不可换成 2.0.0-SNAPSHOT** |
+| 依赖          | 锁定版本            | 原因                           |
+| ------------- | ------------------- | ------------------------------ |
+| leaf-api      | 26.3.build.13-alpha | 对应 Leaf 26.3 核心            |
+| floodgate api | 2.2.5-SNAPSHOT      | Floodgate 当前 API             |
+| **cumulus**   | **1.1.2**           | ⚠️ **不可换成 2.0.0-SNAPSHOT** |
 
 > Floodgate 2.2.5 依赖 cumulus **1.1.2**；2.0.0-SNAPSHOT 缺少旧路径 `FormBuilder`
 > 路径，会导致 `FloodgatePlayer.sendForm()` 重载决议失败、编译报错。

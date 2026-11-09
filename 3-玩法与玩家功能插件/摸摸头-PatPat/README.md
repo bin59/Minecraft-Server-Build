@@ -162,9 +162,9 @@ lp group admin permission set patpat.command.list.set true
 - **防刷屏**：`rateLimit.enabled: true`，默认上限 20、每秒补 1 个 token；嫌太闹可以把 `tokenLimit` 调小或把 `tokenInterval` 拉长。管理账号给 `patpat.ratelimit.bypass`。
 - **处理骚扰**：把玩家塞进黑名单（`listMode: BLACKLIST` + `/patpat list add <玩家>`），比临时收权限更精准。
 - **`api` 不是「必须开」**：纯玩服关掉不影响摸头；只有接入了调用 PatPat API 的自研插件时才需要保持 `true`。
-- **与 ClickMobs 共存**：两者都用 Shift + 右键，但 PatPat 要求**空手**，ClickMobs 收纳不要求空手。因此手持物品时触发收纳、空手时触发摸头，天然分流；详见 `../17-点击收纳生物-ClickMobs/ClickMobs.md`。
+- **与 ClickMobs 共存**：两者都用 Shift + 右键，但 PatPat 要求**空手**，ClickMobs 收纳不要求空手。因此手持物品时触发收纳、空手时触发摸头，天然分流；详见 `../点击收纳生物-ClickMobs/ClickMobs.md`。
 - **语言**：jar 内置 130+ 语言文件（含 `zh_CN.json`），管理命令的提示是中文的。
-- **效果截图**：`../06-PatPat摸头/patpat.webp`。
+- **效果截图**：`patpat.webp`（同目录）。
 
 ## 七、常见问题
 

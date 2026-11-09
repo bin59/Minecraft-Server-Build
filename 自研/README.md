@@ -8,18 +8,18 @@
 
 ## 一、插件清单
 
-| 目录 | 产物 jar | 功能 | 运行时依赖 | 说明文档 |
-|---|---|---|---|---|
-| `传送阵-SpacePortal/` | `SpacePortal-1.0.0.jar` | 空间传送阵：建阵 / 双向连接 / 踩阵充能传送 / GUI / 随行宠物 | Geyser + Floodgate（互通服） | `传送阵/空间传送阵使用说明.md`、`传送阵/SpacePortal 空间传送阵 — 项目分析.md` |
-| `南瓜账本-MoneyLedger/` | `MoneyLedger-1.0.0.jar` | 南瓜币每笔变动按类别自动记账，可查、可导出 CSV | EssentialsX / Vault | — |
-| `南瓜邮箱-PumpkinMail/` | `PumpkinMail-1.0.0.jar` | 活动奖励批量发放与玩家领取（`/mailbox`） | SQLite（随 jar 打入） | — |
-| `南瓜飞行-PumpkinFly/` | `PumpkinFly-1.0.0.jar` | 付费 / 限时 / 永久飞行，仅飞行中扣秒，限自己领地与主城 | Vault、Residence、EssentialsX | `使用说明.md`、`CHANGELOG.md` |
-| `在线时间排行-PlanTop/` | `PlanTop-1.0.0.jar` | 基于 Plan 数据的在线时间排行榜 | PlaceholderAPI、Plan MySQL | `PlanTop.md` |
-| `建筑评分-BuildRate/` | `BuildRate-1.0.0.jar` | 建筑评分与榜单 | PumpkinMail | `使用说明.md` |
-| `快捷菜单系统-QuickMenu/` | `QuickMenu-1.0.0.jar` | 玩家线 16 套 + 管理线 12 套菜单，Java 箱子 GUI / 基岩原生 Form 双轨 | Geyser、Floodgate、Residence（软依赖） | `快捷菜单系统-QuickMenu.md`、`快捷菜单系统-QuickMenu-与通用菜单对比.md` |
-| `每日随机收购-DailySell/` | `DailySell-1.2.1.jar` | 每日随机收购指定物品，玩家出售换币 | Vault | — |
-| `离线奖励-OfflineReward/` | `OfflineReward-1.0.0.jar` | 按离线时长发放奖励 | PumpkinMail | — |
-| `附魔商店-EnchantShop/` | `EnchantShop-1.0.0.jar` | 读取 ExcellentEnchants 配置，用经验等级购买附魔 | ExcellentEnchants（只读其配置） | `使用说明.md` |
+| 目录                      | 产物 jar                  | 功能                                                                | 运行时依赖                             | 说明文档                                                                      |
+| ------------------------- | ------------------------- | ------------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------- |
+| `传送阵-SpacePortal/`     | `SpacePortal-1.0.0.jar`   | 空间传送阵：建阵 / 双向连接 / 踩阵充能传送 / GUI / 随行宠物         | Geyser + Floodgate（互通服）           | `传送阵/空间传送阵使用说明.md`、`传送阵/SpacePortal 空间传送阵 — 项目分析.md` |
+| `南瓜账本-MoneyLedger/`   | `MoneyLedger-1.0.0.jar`   | 南瓜币每笔变动按类别自动记账，可查、可导出 CSV                      | EssentialsX / Vault                    | —                                                                             |
+| `南瓜邮箱-PumpkinMail/`   | `PumpkinMail-1.0.0.jar`   | 活动奖励批量发放与玩家领取（`/mailbox`）                            | SQLite（随 jar 打入）                  | —                                                                             |
+| `南瓜飞-PumpkinFly/`      | `PumpkinFly-1.0.0.jar`    | 付费 / 限时 / 永久飞行，仅飞行中扣秒，限自己领地与主城；限时体验奖励（天/时/分）、全局与单人飞行管理 | Vault、Residence、EssentialsX          | `使用说明.md`、`CHANGELOG.md`                                                 |
+| `在线时间排行-PlanTop/`   | `PlanTop-1.0.0.jar`       | 基于 Plan 数据的在线时间排行榜                                      | PlaceholderAPI、Plan MySQL             | `PlanTop.md`                                                                  |
+| `建筑评分-BuildRate/`     | `BuildRate-1.0.0.jar`     | 建筑评分与榜单                                                      | PumpkinMail                            | `使用说明.md`                                                                 |
+| `快捷菜单系统-QuickMenu/` | `QuickMenu-1.0.0.jar`     | 32 套菜单 / 267 个菜单项（以服务器实跑配置为基线，含南瓜飞入口与管理面板），Java 箱子 GUI / 基岩原生 Form 双轨 | Geyser、Floodgate、Residence（软依赖） | `config.yml`（实跑基线副本）、`快捷菜单系统-QuickMenu.md`、`快捷菜单系统-QuickMenu-与通用菜单对比.md` |
+| `每日随机收购-DailySell/` | `DailySell-1.2.1.jar`     | 物品池 110 种；今日 8 种候选、每人自选 5 种出售（选择按日期持久化），GUI + `/ds choose` 双端可用 | Vault | `使用说明.md`、`config.yml`（实跑基线副本） |
+| `离线奖励-OfflineReward/` | `OfflineReward-1.0.0.jar` | 按离线时长发放奖励                                                  | PumpkinMail                            | —                                                                             |
+| `附魔商店-EnchantShop/`   | `EnchantShop-1.0.0.jar`   | 读取 ExcellentEnchants 配置，用经验等级购买附魔                     | ExcellentEnchants（只读其配置）        | `使用说明.md`                                                                 |
 
 `disabled/` 存放已停用的项目，不参与部署；`传送阵/` 是 SpacePortal 的文档目录（源码在 `传送阵-SpacePortal/`）。
 
@@ -71,13 +71,14 @@ javac --release 21 -encoding UTF-8 -d out -cp "<leaf-api>;<外置依赖>;<advent
 
 ## 五、命令与文档速查
 
-| 插件 | 主命令 | 详细文档 |
-|---|---|---|
-| SpacePortal | `/csz`（`gui` / `create` / `link2way` / `item` / `reload` …） | `传送阵/空间传送阵使用说明.md` |
-| PumpkinFly | `/pfly`（`buy` / `on` / `off` / `status` / `records` / `give` / `take` / `setperm` / `reload`） | `南瓜飞行-PumpkinFly/使用说明.md` |
-| QuickMenu | `/qm`（`open` / `reload` / `give` …） | `快捷菜单系统-QuickMenu/快捷菜单系统-QuickMenu.md` |
-| PumpkinMail | `/mailbox` | 见插件目录源码 |
-| 其余 | 见各自 `plugin.yml` 与使用文档 | 见上表 |
+| 插件        | 主命令                                                                                          | 详细文档                                           |
+| ----------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| SpacePortal | `/csz`（`gui` / `create` / `link2way` / `item` / `reload` …）                                   | `传送阵/空间传送阵使用说明.md`                     |
+| PumpkinFly  | `/pfly`（`buy` / `claim` / `trial` / `global` / `player` / `hud` / `status` / `records` / `give` / `take` / `setperm` / `reload`；时长支持 `30m` / `2h` / `3d`） | `南瓜飞-PumpkinFly/使用说明.md`                    |
+| QuickMenu   | `/qm`（`open` / `reload` / `give` …）                                                           | `快捷菜单系统-QuickMenu/快捷菜单系统-QuickMenu.md` |
+| DailySell  | `/ds`（`choose` / `today` / `sell` / `sellall` / `reload` / `reroll`）                            | `每日随机收购-DailySell/使用说明.md`                |
+| PumpkinMail | `/mailbox`                                                                                      | 见插件目录源码                                     |
+| 其余        | 见各自 `plugin.yml` 与使用文档                                                                  | 见上表                                             |
 
 ---
 
@@ -85,4 +86,4 @@ javac --release 21 -encoding UTF-8 -d out -cp "<leaf-api>;<外置依赖>;<advent
 
 - 全部插件只使用 Bukkit / Paper API 与公开插件 API，无 NMS 反射；`Class.forName` 仅用于 SQLite 驱动与插件间软依赖探测。
 - 软依赖未安装时，相关功能会自动跳过，不影响插件启动。
-- 数据均落在 `plugins/<插件>/`：SpacePortal 用 `portals.yml` + `override.yml`，PumpkinFly 用 `data/{players,purchases,sessions}.yml`，QuickMenu 用 `config.yml`。
+- 数据均落在 `plugins/<插件>/`：SpacePortal 用 `portals.yml` + `override.yml`，PumpkinFly 用 `data/{players,purchases,sessions,global}.yml`（`global.yml` 存全服飞行开关与全服体验），QuickMenu 用 `config.yml`，DailySell 用 `daily.yml`（今日清单）+ `data.yml`（已售数量 / `__earned` 收益累计 / `choices` 自选记录）。

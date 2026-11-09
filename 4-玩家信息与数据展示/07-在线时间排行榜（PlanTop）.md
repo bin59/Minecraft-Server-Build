@@ -1,4 +1,6 @@
-# 在线时间排行榜（PlanTop 自研插件 + DecentHolograms）
+# 在线时间排行榜（PlanTop 自研插件）
+
+> ⚠️ **2026-11-09 状态**：本文下半部分的 `/dh` 全息创建流程基于 **DecentHolograms**，该插件已从 26.3 实跑 `plugins/` 移除，命令与文件已不适用，仅作历史操作记录。**PlanTop 插件与 `%ptop_*` 占位符仍然有效**，当前可改用 TAB / 计分板 / QuickMenu 展示排行榜。
 
 主城全息显示全服玩家**总在线时间 Top 30**（3 页 × 10 名），右键/左键点击全息翻页。数据源 = **Plan 数据库**——历史在线时间**全部保留**，不会重新计时。
 
@@ -22,7 +24,7 @@ PlayTime 插件从**安装那一刻**才开始计时，此前玩家的在线时�
 
 验证注册：`/papi parse me %ptop_1_name%` 返回玩家名；`/papi parse me %ptop_updated%` 返回时间即正常。
 
-## 创建全息（命令方式，DecentHolograms 2.10.2）
+## 创建全息（历史方案：DecentHolograms 2.10.2，本服已移除）
 
 > ⚠️ **不要手写 yml**：2.10.1 文件缺字段（`location`/`actions`）会在 `/dh reload` 报 NPE、全息图全部消失；用命令创建最稳。`location` 必须是 **4 段** `<world>:<x>:<y>:<z>`（无 yaw/pitch，朝向由 `facing` 控制），逗号格式或 6 段都会解析成 null。命令内容**不要加单引号**（DH 不是 shell，`'` 会原样显示）。
 >

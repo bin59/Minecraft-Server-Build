@@ -7,7 +7,7 @@
 # 修改后执行 /qm reload 即时生效，无需重启服务器
 #
 # ============================================================
-# 菜单总览（27 套，分「玩家」与「管理」两条线）
+# 菜单总览（32 套，分「玩家」与「管理」两条线）
 # ============================================================
 #
 # 【玩家线】所有人可见，default-menu 指向 main
@@ -23,9 +23,11 @@
 #   voice         语音聊天     Simple Voice Chat
 #   guide         新人指南     游戏内说明书（main → guide → 分册）
 #   guide-economy 怎么赚钱     DailySell / Quests / EconomyShop / AuctionHouse / EzTax
+#   quests-daily  每日任务      Quests 5.3.2（7 个任务一键接取）
 #   guide-build   领地建房     Residence
 #   guide-move    传送出行     EssentialsX + SpacePortal
 #   guide-play    玩法大全     SimplePets / RideOnHead / SkinsRestorer / SVC / PatPat
+#   pumpkinfly    南瓜飞       PumpkinFly（领取体验 / 购买 / 状态 / 界面显示）
 #
 # 【管理线】入口在 main 菜单，靠 permission: quickmenu.admin 门控，
 #           普通玩家看不到、也点不到；管理员也可直接 /qm open admin
@@ -41,6 +43,8 @@
 #   admin-perm      权限管理     LuckPerms
 #   admin-qm        菜单管理     QuickMenu 自身
 #   admin-economy   经济管理     EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell
+#   pumpkinfly-admin 飞行管理  PumpkinFly（全服开关 / 体验 / 单人管理）
+#   ※ 另有 3 个功能子菜单：buildrate-admin / fishing / admin-fishing（不在两条主线内）
 #
 # ============================================================
 # 重要：为什么大量菜单项是「文字指引」而不是直接执行
@@ -327,17 +331,17 @@ menus:
         actions:
           - '[menu] social'
 
-      # ---------- 每日任务 ----------
+      # ---------- 每日任务（Quests 5.3.2） ----------
       quests:
         material: BOOK
         display-name: '&b&l每日任务'
         lore:
-          - '&7挖矿、打怪、钓鱼赚南瓜币'
-          - '&8点击打开任务界面'
+          - '&7挖矿、打怪、钓鱼、砍树、熔炼、驯服、收获'
+          - '&7共 7 个任务，每个奖励 40~50 南瓜币'
+          - '&8点击查看并一键接取'
         slot: 18
         actions:
-          - '[close]'
-          - '[player] quests'
+          - '[menu] quests-daily'
 
       # ---------- 每日收购 ----------
       daily-sell:
@@ -453,11 +457,11 @@ menus:
           - '[close]'
           - '[player] br open'
 
-      # ---------- 南瓜飞行（PumpkinFly 自研） ----------
+      # ---------- 南瓜飞（PumpkinFly 自研） ----------
       # 固定档位购买，QuickMenu 没有输入框，分钟数只能做成固定按钮
       pumpkinfly:
         material: ELYTRA
-        display-name: '&b&l南瓜飞行'
+        display-name: '&b&l南瓜飞'
         lore:
           - '&710 万南瓜币买永久，或按分钟买时长'
           - '&7只在自己的领地 / 主城 zhucheng 内可飞'
@@ -777,11 +781,11 @@ menus:
           - '[close]'
           - '[player] ds'
 
-  # ==================== 南瓜飞行子菜单（PumpkinFly 自研） ====================
+  # ==================== 南瓜飞子菜单（PumpkinFly 自研） ====================
   # QuickMenu 无输入框，购买档位必须写成固定按钮；改价格时请同步改这里按钮文案。
   # size 27 时右下角 slot 26 由 back-menu 自动占用，不要放物品。
   pumpkinfly:
-    title: '&6&l南瓜飞行'
+    title: '&6&l南瓜飞'
     bedrock-content: '&7选择购买档位或查看余额'
     size: 27
     back-menu: main
@@ -880,6 +884,184 @@ menus:
         actions:
           - '[close]'
           - '[player] pfly records session'
+
+      hud:
+        material: SPYGLASS
+        display-name: '&d&l飞行界面显示'
+        lore:
+          - '&7开关屏幕上的飞行状态 / 剩余时长'
+          - '&7开飞后自动显示，不用打 /pfly status'
+        slot: 23
+        permission: pumpkinfly.use
+        actions:
+          - '[close]'
+          - '[player] pfly hud on'
+
+
+      claim:
+        material: GOLDEN_APPLE
+        display-name: '&a&l领取体验奖励'
+        lore:
+          - '&7领取限时飞行体验，体验期间不扣时长余额'
+          - '&7按现实时间到期，离线也计时'
+          - '&8时长在 PumpkinFly 的 rewards.claim-trial 设置'
+        slot: 20
+        permission: pumpkinfly.use
+        actions:
+          - '[close]'
+          - '[player] pfly claim'
+
+      admin:
+        material: COMMAND_BLOCK
+        display-name: '&c&l飞行管理 &8(管理员)'
+        lore:
+          - '&7全服开关 / 全服免费飞行 / 全服限时体验'
+          - '&7选玩家后可单独发体验、禁用、查状态'
+        slot: 24
+        permission: pumpkinfly.admin
+        actions:
+          - '[menu] pumpkinfly-admin'
+
+  # ==================== 南瓜飞管理子菜单（管理员） ====================
+  # [player-selector] 列出在线玩家，{target} 自动替换为点选的玩家名（Java/基岩两端都支持）
+  # 全局按钮以玩家身份执行，需要 pumpkinfly.admin 权限；基岩端看不到 ActionBar 时不影响命令
+  pumpkinfly-admin:
+    title: '&c&l南瓜飞 · 飞行管理'
+    bedrock-content: '&7选择全局操作，或先选玩家再执行单人管理'
+    size: 27
+    back-menu: pumpkinfly
+    filler:
+      material: RED_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      status:
+        material: CLOCK
+        display-name: '&e&l查看全服状态'
+        lore:
+          - '&7总开关、免费飞行、全服体验剩余与到期时间'
+        slot: 4
+        permission: pumpkinfly.admin
+        actions:
+          - '[close]'
+          - '[player] pfly global status'
+
+      switch:
+        material: LEVER
+        display-name: '&6&l全服开关 &8(开/关)'
+        lore:
+          - '&7关闭后所有人立即安全落地且无法起飞'
+          - '&c活动结束后记得再点一次恢复'
+        slot: 10
+        permission: pumpkinfly.admin
+        actions:
+          - '[close]'
+          - '[player] pfly global toggle'
+
+      free:
+        material: ELYTRA
+        display-name: '&b&l全服免费飞行 &8(开/关)'
+        lore:
+          - '&7开启后所有人无需凭证，仍受区域规则限制'
+        slot: 12
+        permission: pumpkinfly.admin
+        actions:
+          - '[close]'
+          - '[player] pfly global free toggle'
+
+      trial30m:
+        material: GOLD_NUGGET
+        display-name: '&a&l全服体验 30 分钟'
+        lore:
+          - '&7含之后上线的玩家，按现实时间到期'
+        slot: 13
+        permission: pumpkinfly.admin
+        actions:
+          - '[close]'
+          - '[player] pfly global trial 30m'
+
+      trial2h:
+        material: GOLD_INGOT
+        display-name: '&a&l全服体验 2 小时'
+        lore:
+          - '&7叠加到期时间，不会覆盖已有体验'
+        slot: 14
+        permission: pumpkinfly.admin
+        actions:
+          - '[close]'
+          - '[player] pfly global trial 2h'
+
+      trial1d:
+        material: GOLD_BLOCK
+        display-name: '&a&l全服体验 1 天'
+        lore:
+          - '&7适合周末活动，离线玩家上线后同样生效'
+        slot: 16
+        permission: pumpkinfly.admin
+        actions:
+          - '[close]'
+          - '[player] pfly global trial 1d'
+
+      trialclear:
+        material: BARRIER
+        display-name: '&c&l清除全服体验'
+        lore:
+          - '&7立即结束全服限时体验，恢复按个人凭证判定'
+        slot: 19
+        permission: pumpkinfly.admin
+        actions:
+          - '[close]'
+          - '[player] pfly global trial clear'
+
+      playertrial:
+        material: PLAYER_HEAD
+        display-name: '&a&l给指定玩家 1 小时体验'
+        lore:
+          - '&8点击后选择在线玩家，自动执行单人发放'
+        slot: 20
+        permission: pumpkinfly.admin
+        actions:
+          - '[player-selector] pfly player {target} trial 1h'
+
+      playerban:
+        material: IRON_AXE
+        display-name: '&c&l禁用指定玩家飞行'
+        lore:
+          - '&8不论其是否有凭证，立即安全落地'
+        slot: 21
+        permission: pumpkinfly.admin
+        actions:
+          - '[player-selector] pfly player {target} ban'
+
+      playerunban:
+        material: MILK_BUCKET
+        display-name: '&a&l解除指定玩家禁用'
+        lore:
+          - '&8恢复按其凭证与区域规则判定'
+        slot: 22
+        permission: pumpkinfly.admin
+        actions:
+          - '[player-selector] pfly player {target} unban'
+
+      playerstatus:
+        material: BOOK
+        display-name: '&e&l查看指定玩家状态'
+        lore:
+          - '&8凭证来源、体验剩余、余额、已飞时长'
+        slot: 23
+        permission: pumpkinfly.admin
+        actions:
+          - '[player-selector] pfly player {target} status'
+
+      playerperm:
+        material: NETHER_STAR
+        display-name: '&5&l给指定玩家永久飞行'
+        lore:
+          - '&8点击后选择在线玩家，直接写入永久标记'
+        slot: 25
+        permission: pumpkinfly.admin
+        actions:
+          - '[player-selector] pfly player {target} setperm true'
 
   # ==================== 工具包子菜单 ====================
   kit:
@@ -1202,7 +1384,7 @@ menus:
           - '[message] &e======== 常用指令速查 ========'
           - '[message] &6/warp 主城 &7回主城 &6/tpa <玩家> &7申请传送 &6/tpaccept &7接受'
           - '[message] &6/res create <名> &7圈领地 &6/balance &7余额 &6/pay <玩家> <金额> &7转账'
-          - '[message] &6/quests &7每日任务 &6/ds &7每日收购'
+          - '[message] &6/quests list &7任务列表 &6/quests take <任务名> &7接取 &6/ds &7收购'
           - '[message] &6/skins &7皮肤 &6/pet gui &7宠物 &6/pat <玩家> &7摸头'
 
       rules:
@@ -1231,12 +1413,11 @@ menus:
         material: BOOK
         display-name: '&b&l每日任务'
         lore:
-          - '&7挖矿、打怪、钓鱼完成目标赚南瓜币'
-          - '&8点击打开任务界面'
+          - '&7完成 7 种日常目标，每个赚 40~50 南瓜币'
+          - '&8点击查看并一键接取'
         slot: 10
         actions:
-          - '[close]'
-          - '[player] quests'
+          - '[menu] quests-daily'
 
       daily-sell:
         material: EMERALD_BLOCK
@@ -1308,6 +1489,146 @@ menus:
         actions:
           - '[close]'
           - '[player] eztax stats'
+
+  # ==================== 每日任务（Quests 5.3.2） ====================
+  # 任务定义见 plugins/Quests/storage/quests.yml（7 个，redo-delay: 86400 秒）
+  # 注意：5.3.2 的 /quests take 只按任务「显示名」匹配，不认任务 ID，
+  #       所以下面用显示名里的唯一关键词；无参数 /quests 只发帮助，不打开 GUI。
+  # 匹配规则（BukkitQuestsPlugin.getQuest 字节码）：精确 equalsIgnoreCase →
+  #       startsWith → contains → stripColor 精确，四轮都失败才发 questNotFound。
+  # 任务名已改为无空格连写（每日挖矿人），手动输入 /quests take 每日挖矿人 亦可。
+  # 若点击后提示「找不到该任务。」：多半是 Quests 里根本没加载这 7 个任务，
+  #       先在游戏内 /quests list 核对，再看启动日志是否「Loaded 7 Quest(s)」；
+  #       只有 4 个说明服务器读的仍是 jar 内默认示例，需上传 quests.yml 并重启。
+  quests-daily:
+    title: '&b&l每日任务'
+    bedrock-content: '&7点一下直接接取。每个任务完成后冷却 24 小时，奖励 40~50 南瓜币。'
+    size: 27
+    back-menu: main
+    filler:
+      material: BLUE_STAINED_GLASS_PANE
+      name: '&8'
+
+    items:
+      dailyminer:
+        material: IRON_ORE
+        display-name: '&b&l每日 · 挖矿人'
+        lore:
+          - '&7挖 8 个铁矿 + 8 个深板岩铁矿'
+          - '&6奖励 50 南瓜币'
+          - '&8点击直接接取'
+        slot: 10
+        actions:
+          - '[close]'
+          - '[player] quests take 挖矿人'
+
+      dailyhunter:
+        material: ZOMBIE_HEAD
+        display-name: '&c&l每日 · 猎手'
+        lore:
+          - '&7击杀 10 只僵尸'
+          - '&6奖励 50 南瓜币'
+          - '&8点击直接接取'
+        slot: 11
+        actions:
+          - '[close]'
+          - '[player] quests take 猎手'
+
+      dailyfisher:
+        material: FISHING_ROD
+        display-name: '&9&l每日 · 渔夫'
+        lore:
+          - '&7钓上 5 条鱼'
+          - '&6奖励 40 南瓜币'
+          - '&8点击直接接取'
+        slot: 12
+        actions:
+          - '[close]'
+          - '[player] quests take 渔夫'
+
+      dailywoodcutter:
+        material: OAK_LOG
+        display-name: '&a&l每日 · 伐木工'
+        lore:
+          - '&7砍 16 个橡木原木'
+          - '&6奖励 40 南瓜币'
+          - '&8点击直接接取'
+        slot: 13
+        actions:
+          - '[close]'
+          - '[player] quests take 伐木工'
+
+      dailycook:
+        material: FURNACE
+        display-name: '&e&l每日 · 厨师'
+        lore:
+          - '&7从熔炉取出 16 个铁锭'
+          - '&6奖励 40 南瓜币'
+          - '&8点击直接接取'
+        slot: 14
+        actions:
+          - '[close]'
+          - '[player] quests take 厨师'
+
+      dailytamer:
+        material: BONE
+        display-name: '&d&l每日 · 驯养师'
+        lore:
+          - '&7驯服 2 只狼'
+          - '&6奖励 50 南瓜币'
+          - '&8点击直接接取'
+        slot: 15
+        actions:
+          - '[close]'
+          - '[player] quests take 驯养师'
+
+      dailyfarmer:
+        material: WHEAT
+        display-name: '&a&l每日 · 农夫'
+        lore:
+          - '&7收获 16 个小麦'
+          - '&6奖励 40 南瓜币'
+          - '&8点击直接接取'
+        slot: 16
+        actions:
+          - '[close]'
+          - '[player] quests take 农夫'
+
+      quest-list:
+        material: BOOK
+        display-name: '&a&l查看可接任务'
+        lore:
+          - '&7列出当前全部可接取的任务'
+          - '&8点击执行 /quests list'
+        slot: 19
+        actions:
+          - '[close]'
+          - '[player] quests list'
+
+      quest-stats:
+        material: WRITABLE_BOOK
+        display-name: '&e&l我的任务统计'
+        lore:
+          - '&7查看任务完成统计'
+          - '&8点击执行 /quests stats'
+        slot: 20
+        actions:
+          - '[close]'
+          - '[player] quests stats'
+
+      quest-help:
+        material: PAPER
+        display-name: '&7&l任务说明'
+        lore:
+          - '&7每个任务完成后需等 24 小时才能再接'
+          - '&7奖励通过 Vault 自动发放到余额'
+          - '&7当前 7 个任务，合计 310 南瓜币/天'
+          - '&8若提示「找不到该任务」，输入 /quests list 核对'
+        slot: 22
+        actions:
+          - '[message] &7每日任务：完成后冷却 24 小时，奖励经 Vault 发放'
+          - '[message] &7主菜单 → 每日任务，点任务名即可一键接取'
+          - '[message] &7点不动时输入 &f/quests list&7，看不到中文任务名就是任务未加载，联系管理员'
 
   # ==================== 分册：领地建房 ====================
   guide-build:
@@ -1712,6 +2033,19 @@ menus:
         actions:
           - '[close]'
           - '[player] mailbox admin'
+
+      postracker:
+        material: FILLED_MAP
+        display-name: '&6&l玩家位置记录'
+        lore:
+          - '&7查询玩家历史位置轨迹'
+          - '&e用法：/pos radius:10 time:1h'
+        slot: 21
+        permission: quickmenu.admin
+        actions:
+          - '[close]'
+          - '[message] &7查询玩家位置：&e/pos radius:10 time:1h'
+          - '[message] &7指定玩家：&e/pos radius:10 time:1h name:玩家名'
 
       backmain:
         material: NETHER_STAR

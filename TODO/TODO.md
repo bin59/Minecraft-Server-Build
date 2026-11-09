@@ -1,13 +1,10 @@
 # 服务器待办 TODO
 
-> 维护中事项清单，做完一条勾一条。日期：2026-09-21
+> 维护中事项清单，做完一条勾一条。日期：2026-09-21（2026-11-09 按 26.3 实跑插件复核）
 
 ## 💰 经济 / 排行榜
 
-- [ ] **财富榜上线验证**：进服执行 `/dh reload` → `/papi parse me %vault_eco_balance_top_1_player%` 验证占位符 → `/ess reload`
-  - 全息文件已建：`plugins/DecentHolograms/holograms/baltop.yml`（Top10，每秒刷新）
-  - baltop 缓存已改 60 秒
-  - 调整全息位置：站到目标点 `/dh move baltop`
+- [x] ~~财富榜上线验证~~：**方案作废**——DecentHolograms 已从 26.3 实跑服移除，`/dh` 命令与 `plugins/DecentHolograms/holograms/baltop.yml` 均不再适用；改用 TAB / 计分板 + `%vault_eco_balance_top_*%` 占位符重新落地，另立待办。
 - [ ] **死亡提示**：定 CustomDeathMessages 关哪几项（公屏播报 / 死者消息 / 音效粒子 / 重生消息），并确认"死亡税扣 5 块"是否保留
 
 ## 💬 聊天触发
@@ -19,7 +16,7 @@
 
 ## 🎮 玩法插件
 
-- [ ] **BGM 资源包**：补 OGG 音乐文件 + HTTPS 托管 URL，配置 `server.properties` 后上线（骨架已建在 `1-服务端核心与网络层/08-服务器资源包-BGM/`）
+- [ ] **BGM 资源包**：补 OGG 音乐文件 + HTTPS 托管 URL，配置 `server.properties` 后上线（骨架已建在 `1-服务端核心与网络层/服务器资源包-BGM/`）
 
 ## 死亡信息
 
@@ -33,17 +30,16 @@
 - [x] **RCON 密码加固**：已把 `server.properties` 里 `rcon.password` 由弱口令 `test_55551` 换为强随机密码（下次启动生效，密码仅存于 server.properties，勿写入文档）
 - [x] **网页上传皮肤 → 应用游戏**：已改由云服务器自行实现连接方案（`skin_upload_rcon_backend.py` 脚本方案作废并已删除）；SkinsRestorer `/skin` 命令与 RCON 均已可用
 - [ ] **Geyser 基岩断连**：`PacketErrorEvent` NoClassDefFoundError 为 2.11.3-SNAPSHOT 开发版自身 bug，建议换官方稳定版 release
-- [ ] **nightcore 皮肤 URL 校验**：Leaf 1.21.11 只允许 `textures.minecraft.net`，第三方皮肤站触发报错；方案：Leaf `texture-url-whitelist` 加 `littleskin.cn`（见外置登录文档常见问题）
-- [ ] **RSLB 正版/外置共存（随 26.2 升级使用）**：正版玩家**免绑定 LittleSkin** 的方案——MultiLogin 的 Paper 单服二次开发，Netty 层无感拦截，内置 LittleSkin 服务配置，玩家无需装任何东西
+- [ ] **nightcore 皮肤 URL 校验**：Leaf 26.3 只允许 `textures.minecraft.net`，第三方皮肤站触发报错；方案：Leaf `texture-url-whitelist` 加 `littleskin.cn`（见外置登录文档常见问题）
+- [ ] **RSLB 正版/外置共存（26.3 环境已具备）**：正版玩家**免绑定 LittleSkin** 的方案——MultiLogin 的 Paper 单服二次开发，Netty 层无感拦截，内置 LittleSkin 服务配置，玩家无需装任何东西
   - 下载：https://github.com/Rain-Serenity/RSLB/releases ｜ 介绍：https://klpbbs.com/thread-173808-1-1.html
-  - **硬性要求：Minecraft 26.2/26.3 + Java 25+**（当前 Leaf 1.21.11 + Java 21 不满足）
+  - **硬性要求：Minecraft 26.2/26.3 + Java 25+**（本服 Leaf 26.3 + Java 25 已满足）
   - 必配项：`online-mode=true`、`enforce-secure-profile=false`
-  - 前置：先完成 26.2 升级（见 `下次更新26.2版本.md`）
   - 备选路线：上 Velocity 代理 + MultiLogin（当前架构可用但改动大）
 
 ## 后续
 
-后面可以有限时飞行 → 已实现：自研 PumpkinFly（10 万买永久 / 20 币 1 分钟，仅飞行中扣秒，限自己领地与主城，见 `自研/南瓜飞行-PumpkinFly/使用说明.md`）
+后面可以有限时飞行 → 已实现：自研 PumpkinFly（10 万买永久 / 20 币 1 分钟，仅飞行中扣秒，限自己领地与主城，见 `自研/南瓜飞-PumpkinFly/使用说明.md`）
 
 积分、活动、在线时长等等，可以累积长不过期
 
@@ -52,8 +48,6 @@
 ## 插件
 
 1.自定义玩家模型
-
-4.ImageFrame 图片展示会不会卡？
 
 ##
 

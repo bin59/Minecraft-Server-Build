@@ -2,13 +2,13 @@
 
 > **一句话**：基于**数据包（packet）**的轻量 NPC 插件。NPC 只存在于插件内存与客户端画面里，不注册成服务端实体，服务器不用为它跑 AI、碰撞、寻路和区块加载，因此大量 NPC 也几乎不占主线程。
 >
-> **本地 jar**：`所需文件/插件/3-玩法与玩家功能插件/FancyNpcs/FancyNpcs-2.12.1+382.jar`（7.3 MB，版本 `2.12.1+382`）
+> **实跑 jar**：`服务器数据备份/leaf-26.3/leaf-26.3/plugins/FancyNpcs-2.12.1+382.jar`（7.3 MB，版本 `2.12.1+382`）
 >
 > **数据目录**：`plugins/FancyNpcs/`
 >
 > **项目主页**：https://modrinth.com/plugin/fancynpcs ｜ **官方文档**：https://fancyinnovations.com/docs/minecraft-plugins/fancynpcs ｜ **源码**：https://github.com/FancyMcPlugins/FancyNpcs ｜ **许可**：MIT
 >
-> **部署状态**：实跑服 `plugins/` 目前没有该 jar，也没有 `plugins/FancyNpcs/` 数据目录。下文的配置键与默认值取自本地 jar 内的 `FancyNpcsConfigImpl` 与内置语言文件，命令与权限取自 jar 内注解 + 官方命令参考；首次启动后才会生成 `config.yml`。
+> **部署状态**：jar 已在实跑 `plugins/` 中（2026-11-09 核对）。尚未重启生成数据目录，`plugins/FancyNpcs/` 与 `config.yml` 会在首次启动后出现。下文配置键与默认值取自 jar 内 `FancyNpcsConfigImpl` 与内置语言文件，命令与权限取自 jar 注解 + 官方命令参考。
 
 ---
 
@@ -279,7 +279,7 @@ max-npcs:
 
 ## 九、运维要点与插件联动
 
-- **ClearLag++**：本服清理插件对 FancyNpcs **免疫**（NPC 不受实体清理影响），见 `5-服务器管理/09-ClearLag++-清理与优化/README.md` 第七节。因为 NPC 不是真实实体，不要把它加进清理白名单/排除表，也不需要。
+- **ClearLag++**：本服清理插件对 FancyNpcs **免疫**（NPC 不受实体清理影响），见 `5-服务器管理/ClearLag++-清理与优化/README.md` 第七节。因为 NPC 不是真实实体，不要把它加进清理白名单/排除表，也不需要。
 - **Geyser / Floodgate**：NPC 是 Java 版数据包实体，基岩端能否完整显示（尤其 Item Display、发光颜色、实体属性）需互通服真机确认；出现「Java 端看得到、基岩端看不到」优先排查 Geyser 的实体映射，而不是视距或配置。
 - **PlaceholderAPI**：装了之后显示名、消息动作可用 `%player_name%` 等变量；`MiniPlaceholders` 同理。`PlotSquared` 与 `player-npcs` 特性标志联动（限建在自己的地皮、按 `max-npcs` 限制数量）。
 - **保存与备份**：改动只存在内存里，靠 `enable_autosave`（默认 15 分钟）或 `/fancynpcs save` 落盘。备份服务器时把整个 `plugins/FancyNpcs/` 一起带走；恢复前先停服，避免自动保存覆盖。

@@ -3,11 +3,11 @@ version: 1.2.1
 main: com.hh.dailysell.DailySell
 api-version: 26.3
 softdepend: [Vault]
-description: 每日随机收购 - 每天随机 N 种物品、每种额度随机、单价当日浮动，每人每日总收益封顶防刷（27格GUI多页 + 命令）
+description: 每日随机收购 - 每天 8 种候选、每人自选 5 种出售，单价当日浮动、额度随机，每人每日总收益封顶防刷（GUI + 命令）
 commands:
   ds:
     description: 每日随机收购（/ds 打开收购界面）
-    usage: /ds [gui|sell|sellall|today|reload|reroll]
+    usage: "/ds [gui|choose <1-8|clear>|sell|sellall|today|reload|reroll]"
     permission: dailysell.use
 permissions:
   dailysell.use:

@@ -1,17 +1,24 @@
-# DailySell 每日随机收购配置
-# 每天零点从 pool 随机抽 items-per-day 种物品，作为"今日收购清单"：
+# DailySell 每日随机收购配置（8 种选 5 种）
+# 每天零点从 pool 随机抽 items-per-day 种物品，作为全服共享的"今日候选清单"：
 #   - 每种当天额度随机 [min-per-item, max-per-item] 个（每人当天最多卖这么多个）
 #   - 每种单价 = 基础价 × 当日随机浮动系数（price-float-min ~ price-float-max），取整
-#   - 生成时保证 4 种合计（单价×额度）不超过 daily-budget（默认 800），超了自动缩减额度
+#   - 生成时保证 8 种合计（单价×额度）不超过 daily-budget（默认 800），超了自动缩减额度
+# 每位玩家用 /ds choose 从今日 8 种里自选 5 种，只有选中的 5 种可以出售；
+# 选择按日期存在 data.yml 的 choices 段，重登 / 重启不变，跨天自动失效需重选。
 # 玩家 /ds sell（卖1个）/ /ds sellall（卖满额度）获得南瓜币；每人每天每种额度上限 + 总收益上限 = 防刷。
-# 重载: /ds reload（不重抽）| /ds reroll（重新生成今日清单）
+# 重载: /ds reload（不重抽）| /ds reroll（重新生成今日清单）| /ds choose <序号|clear>
 
-# 每天随机几种
-items-per-day: 4
+# 每天随机几种（今日候选清单，全服共享）
+items-per-day: 8
+
+# 每人每天从今日清单里自选几种作为自己的可卖清单
+# 基岩端用 /ds choose <1-8> 按序号选择，Java 端还可直接点选择界面
+choices-per-day: 5
 
 # 每种每日额度随机范围（个）
+# 8 种清单时额度会自动分摊；60 个/种可保证 800 币预算内稳定生成
 min-per-item: 10
-max-per-item: 100
+max-per-item: 60
 
 # 当日单价浮动系数（基础价 × [min, max]）
 price-float-min: 0.6
@@ -23,7 +30,8 @@ daily-budget: 800
 # 生成/跨天时是否全服广播今日清单
 broadcast: true
 
-# 物品池：Material 名（不区分大小写）: 基础收购价（南瓜币）
+# 物品池（110 种）：Material 名（不区分大小写）: 基础收购价（南瓜币）
+# 按类别分组；新增种类基础价 1~20 币，daily-budget 800 币不变，6 种额度自动分摊
 # 当日实价 = 基础价 × 随机浮动系数，管理员可按服务器经济状况调价
 pool:
   WHEAT: 2
@@ -68,9 +76,87 @@ pool:
   EGG: 2
   INK_SAC: 2
   GLOW_INK_SAC: 3
-  NETHER_QUARTZ: 3
+  QUARTZ: 3
   AMETHYST_SHARD: 2
   BONE_MEAL: 1
   HONEYCOMB: 3
   GLOWSTONE_DUST: 3
   OBSIDIAN: 5
+
+  # ---------- 农作物与食物 ----------
+  BEETROOT: 2
+  WHEAT_SEEDS: 1
+  MELON: 3
+  GOLDEN_CARROT: 6
+  BAKED_POTATO: 3
+  CAKE: 8
+  COOKIE: 2
+  PUMPKIN_PIE: 4
+  GOLDEN_APPLE: 20
+  GLISTERING_MELON_SLICE: 5
+  HONEY_BOTTLE: 4
+  GLOW_BERRIES: 3
+
+  # ---------- 肉类与鱼 ----------
+  BEEF: 2
+  COOKED_BEEF: 4
+  PORKCHOP: 2
+  COOKED_PORKCHOP: 4
+  COOKED_CHICKEN: 3
+  COD: 2
+  SALMON: 3
+  COOKED_SALMON: 4
+
+  # ---------- 矿物与建材 ----------
+  RAW_COPPER: 2
+  IRON_NUGGET: 1
+  GOLD_NUGGET: 2
+  FLINT: 1
+  CLAY_BALL: 1
+  BRICK: 2
+  NETHERITE_SCRAP: 20
+  SOUL_SAND: 1
+  MAGMA_BLOCK: 2
+  BASALT: 1
+  TUFF: 1
+  SAND: 1
+  GRAVEL: 1
+
+  # ---------- 原木 ----------
+  ACACIA_LOG: 2
+  DARK_OAK_LOG: 2
+  MANGROVE_LOG: 2
+  CHERRY_LOG: 2
+  CRIMSON_STEM: 2
+  WARPED_STEM: 2
+
+  # ---------- 怪物掉落与海洋 ----------
+  GHAST_TEAR: 15
+  MAGMA_CREAM: 6
+  SHULKER_SHELL: 18
+  PHANTOM_MEMBRANE: 8
+  TURTLE_SCUTE: 5
+  ARMADILLO_SCUTE: 5
+  RABBIT_FOOT: 8
+  NAUTILUS_SHELL: 12
+  PRISMARINE_CRYSTALS: 5
+  SPONGE: 8
+
+  # ---------- 花草 ----------
+  DANDELION: 1
+  POPPY: 1
+  BLUE_ORCHID: 1
+  CORNFLOWER: 2
+  SUNFLOWER: 2
+  TORCHFLOWER: 2
+
+  # ---------- 羊毛 ----------
+  WHITE_WOOL: 3
+  BLACK_WOOL: 3
+  RED_WOOL: 3
+  BLUE_WOOL: 3
+
+  # ---------- 杂项 ----------
+  CHARCOAL: 3
+  PAPER: 1
+  NAME_TAG: 5

@@ -391,13 +391,13 @@ Vault 只是 API，真正的经济实现要选**支持跨服**的：
 | Vault / EssentialsX | ❌ | ✅ | 经济切共享后端 |
 | Residence / CoreProtect | ❌ | ✅ | 按需切 MySQL |
 | SkinsRestorer | ❌ | ✅ | 后端装，共 MySQL |
-| Simple Voice Chat | ❌ | ✅ | 见 §8.7 |
+| Simple Voice Chat | ❌ | ✅ | 见 §8.7（本服 26.3 未部署，历史方案） |
 | EasyBot | ❌ | ✅（主服） | 见 §8.6 |
 | QuickMenu（26 章） | ❌ | ✅ | 见 §8.5 |
 | BedrockPlayerSupport | ❌ | ✅ | 见 §8.5 |
 | spark | ❌ | ✅（各服自用） | 代理端也可装 spark-velocity 看代理负载 |
 | ViaVersion | ❌ | ✅ | 后端必须有；代理端也可装以提前协商版本 |
-| OpenInv / OPanel / Chunky / WorldEdit | ❌ | ✅ | 单服自用，无需代理 |
+| OpenInv / OPanel / WorldEdit | ❌ | ✅ | 单服自用，无需代理（Chunky 本服未部署） |
 
 ### 8.5 BedrockPlayerSupport / QuickMenu 与基岩玩家识别
 
@@ -493,13 +493,13 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 
 | 章节 | 关系 |
 |---|---|
-| [01 服务器核心-Leaf](../1-服务端核心与网络层/01-服务器核心-Leaf/) | Leaf 改造为 Velocity 的后端子服 |
-| [02 外置登录代理](../1-服务端核心与网络层/02-外置登录代理-YggdrasilOfficialProxy/) | 全端加载 Yggdrasil agent，Velocity 承担认证 |
-| [03 Java-Bedrock互通层-Geyser-Floodgate](../1-服务端核心与网络层/03-Java-Bedrock互通层-Geyser-Floodgate/) | Geyser+Floodgate 迁到代理端，后端按需装 floodgate |
-| [01 权限管理-LuckPerms](../../5-服务器管理/01-权限管理系统-LuckPerms/) | LuckPerms 切 MySQL 实现跨服权限同步 |
-| [17 端口与网络架构总览](../1-服务端核心与网络层/05-端口与网络架构总览/README.md) | 端口表需按本章重规划（对外仅 Velocity+Geyser） |
-| [26 快捷菜单系统](../../自研/快捷菜单系统/快捷菜单系统-QuickMenu.md) | 后端需装 floodgate-bukkit 才能继续按客户端分流 |
-| [Multiverse 多世界](./Velocity 多服.md) | 见 §13：单服加资源世界 / 每个后端子服内部再用 Multiverse 管多世界 |
+| [服务器核心-Leaf](../服务器核心-Leaf/) | Leaf 改造为 Velocity 的后端子服 |
+| [外置登录代理](../外置登录代理-YggdrasilOfficialProxy/) | 全端加载 Yggdrasil agent，Velocity 承担认证 |
+| [Java-Bedrock互通层-Geyser-Floodgate](../Java-Bedrock互通层-Geyser-Floodgate/) | Geyser+Floodgate 迁到代理端，后端按需装 floodgate |
+| [权限管理-LuckPerms](../../5-服务器管理/权限管理系统-LuckPerms/) | LuckPerms 切 MySQL 实现跨服权限同步 |
+| [端口与网络架构总览](../端口与网络架构总览/README.md) | 端口表需按本章重规划（对外仅 Velocity+Geyser） |
+| [快捷菜单系统](../../自研/快捷菜单系统-QuickMenu/快捷菜单系统-QuickMenu.md) | 后端需装 floodgate-bukkit 才能继续按客户端分流 |
+| Multiverse 多世界 | 见 §13：单服加资源世界 / 每个后端子服内部再用 Multiverse 管多世界 |
 
 > **演进路线图**（对齐 README §15）：单服 → 本章 Velocity → 多子服分区 →
 > 共享 MySQL 数据层。本章是"单服 → 网络"的桥。

@@ -1,6 +1,6 @@
 # PlanTop 在线时间排行插件（自研）
 
-从 **Plan 数据库**读取玩家总在线时间，注册 PAPI 占位符供 DecentHolograms 等展示 Top 30 排行榜。历史在线时间全部保留（读 Plan 的 `plan_sessions` 聚合），不重新计时。
+从 **Plan 数据库**读取玩家总在线时间，注册 PAPI 占位符供 TAB / 计分板 / QuickMenu 等展示 Top 30 排行榜。历史在线时间全部保留（读 Plan 的 `plan_sessions` 聚合），不重新计时。
 
 ## 为什么自研
 

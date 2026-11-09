@@ -6,12 +6,15 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -29,16 +32,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * DailySell - 每日随机收购（v1.2.1，27 格美化 GUI + 多页）
- * 每天零点从物品池随机抽 N 种物品：
- *   - 每种当天额度随机 [min-per-item, max-per-item] 个（每人当天最多卖这么多个）
- *   - 每种单价 = 基础价 × 当日随机浮动系数（取整）
- *   - 生成时保证 4 种合计（单价×额度）≤ daily-budget（默认 800），超了自动缩减额度
- * 玩家：
- *   - /ds（或 /ds gui）打开 GUI：左键卖 1 个、Shift+左键卖满额度、支持多页
- *   - /ds sell（卖1个）/ /ds sellall（卖满额度）命令方式
- *   - /ds today 查看清单
+ * DailySell - 每日随机收购（8 种选 5 种，27 格 GUI + 命令）
+ * 每天零点从物品池随机抽 8 种，作为全服共享的今日候选清单；
+ *   - 每种当天额度随机 [min-per-item, max-per-item] 个，单价 = 基础价 × 浮动系数
+ *   - 生成时保证 8 种合计（单价×额度）≤ daily-budget（默认 800），超了自动缩减额度
+ *   - 每位玩家从中自选 5 种，只有选中的能卖；选择按日期存 data.yml 的 choices 段
+ * 玩家：/ds 打开界面（未选满先来自选界面）/ /ds choose <序号> / /ds today / /ds sell / /ds sellall
  * 防刷：每人每天每种额度上限 + 每人每日总收益上限（daily-budget）。
+ * 收益按「玩家+日期」独立累计（players.<uuid>.<date>.__earned），与自选清单解耦，
+ * 因此 /ds choose clear 重选、/ds reroll 重抽都不会重置已赚金额。
  */
 public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
 
@@ -57,6 +59,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
     private static final int KEEP_DAYS = 7;
 
     private int itemsPerDay;
+    private int choicesPerDay;
     private int minPerItem;
     private int maxPerItem;
     private double priceFloatMin;
@@ -75,8 +78,9 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
     private final List<Entry> today = new ArrayList<>();
     private String todayDate = "";
 
-    // 打开的 GUI（玩家 UUID -> 打开的收购界面）与页码
+    // 打开的 GUI（玩家 UUID -> 打开的界面）与页码
     private final Map<UUID, Inventory> guis = new HashMap<>();
+    private final Map<UUID, Inventory> chooseGuis = new HashMap<>();
     private final Map<UUID, Integer> guiPages = new HashMap<>();
     private static final int PER_PAGE = 14;
 
@@ -97,10 +101,40 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         ZH.put("BLAZE_ROD", "烈焰棒"); ZH.put("ENDER_PEARL", "末影珍珠"); ZH.put("NETHER_WART", "地狱疣");
         ZH.put("PRISMARINE_SHARD", "海晶碎片"); ZH.put("FEATHER", "羽毛"); ZH.put("LEATHER", "皮革");
         ZH.put("EGG", "鸡蛋"); ZH.put("INK_SAC", "墨囊"); ZH.put("GLOW_INK_SAC", "荧光墨囊");
-        ZH.put("NETHER_QUARTZ", "下界石英"); ZH.put("AMETHYST_SHARD", "紫水晶碎片");
+        ZH.put("QUARTZ", "下界石英"); ZH.put("AMETHYST_SHARD", "紫水晶碎片");
         ZH.put("BONE_MEAL", "骨粉"); ZH.put("HONEYCOMB", "蜜脾"); ZH.put("GLOWSTONE_DUST", "萤石粉");
         ZH.put("OBSIDIAN", "黑曜石"); ZH.put("SHULKER_SHELL", "潜影壳");
         ZH.put("NETHER_STAR", "凋灵之星"); ZH.put("DRAGON_HEAD", "龙首"); ZH.put("ELYTRA", "鞘翅");
+        // ---- 农作物与食物 ----
+        ZH.put("BEETROOT", "甜菜根"); ZH.put("WHEAT_SEEDS", "小麦种子"); ZH.put("MELON", "西瓜");
+        ZH.put("GOLDEN_CARROT", "金胡萝卜"); ZH.put("BAKED_POTATO", "烤马铃薯"); ZH.put("CAKE", "蛋糕");
+        ZH.put("COOKIE", "曲奇"); ZH.put("PUMPKIN_PIE", "南瓜派"); ZH.put("GOLDEN_APPLE", "金苹果");
+        ZH.put("GLISTERING_MELON_SLICE", "闪烁的西瓜片"); ZH.put("HONEY_BOTTLE", "蜂蜜瓶"); ZH.put("GLOW_BERRIES", "发光浆果");
+        // ---- 肉类与鱼 ----
+        ZH.put("BEEF", "生牛肉"); ZH.put("COOKED_BEEF", "牛排"); ZH.put("PORKCHOP", "生猪排");
+        ZH.put("COOKED_PORKCHOP", "熟猪排"); ZH.put("COOKED_CHICKEN", "熟鸡肉"); ZH.put("COD", "生鳕鱼");
+        ZH.put("SALMON", "生鲑鱼"); ZH.put("COOKED_SALMON", "熟鲑鱼");
+        // ---- 矿物与建材 ----
+        ZH.put("RAW_COPPER", "粗铜"); ZH.put("IRON_NUGGET", "铁粒"); ZH.put("GOLD_NUGGET", "金粒");
+        ZH.put("FLINT", "燧石"); ZH.put("CLAY_BALL", "黏土球"); ZH.put("BRICK", "红砖");
+        ZH.put("NETHERITE_SCRAP", "下界合金碎片"); ZH.put("SOUL_SAND", "灵魂沙"); ZH.put("MAGMA_BLOCK", "岩浆块");
+        ZH.put("BASALT", "玄武岩"); ZH.put("TUFF", "凝灰岩"); ZH.put("SAND", "沙子");
+        ZH.put("GRAVEL", "砂砾");
+        // ---- 原木 ----
+        ZH.put("ACACIA_LOG", "金合欢原木"); ZH.put("DARK_OAK_LOG", "深色橡木原木"); ZH.put("MANGROVE_LOG", "红树林原木");
+        ZH.put("CHERRY_LOG", "樱花原木"); ZH.put("CRIMSON_STEM", "绯红菌柄"); ZH.put("WARPED_STEM", "诡异菌柄");
+        // ---- 怪物掉落与海洋 ----
+        ZH.put("GHAST_TEAR", "恶魂之泪"); ZH.put("MAGMA_CREAM", "岩浆膏"); ZH.put("PHANTOM_MEMBRANE", "幻翼膜");
+        ZH.put("TURTLE_SCUTE", "海龟鳞甲"); ZH.put("ARMADILLO_SCUTE", "犰狳鳞甲"); ZH.put("RABBIT_FOOT", "兔子脚");
+        ZH.put("NAUTILUS_SHELL", "鹦鹉螺壳"); ZH.put("PRISMARINE_CRYSTALS", "海晶砂粒"); ZH.put("SPONGE", "海绵");
+        // ---- 花草 ----
+        ZH.put("DANDELION", "蒲公英"); ZH.put("POPPY", "虞美人"); ZH.put("BLUE_ORCHID", "兰花");
+        ZH.put("CORNFLOWER", "矢车菊"); ZH.put("SUNFLOWER", "向日葵"); ZH.put("TORCHFLOWER", "火把花");
+        // ---- 羊毛 ----
+        ZH.put("WHITE_WOOL", "白色羊毛"); ZH.put("BLACK_WOOL", "黑色羊毛"); ZH.put("RED_WOOL", "红色羊毛");
+        ZH.put("BLUE_WOOL", "蓝色羊毛");
+        // ---- 杂项 ----
+        ZH.put("CHARCOAL", "木炭"); ZH.put("PAPER", "纸"); ZH.put("NAME_TAG", "命名牌");
     }
 
     private static String zh(Material m) {
@@ -148,9 +182,10 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
     }
 
     private void loadParams() {
-        itemsPerDay = cfg.getInt("items-per-day", 4);
+        itemsPerDay = cfg.getInt("items-per-day", 8);
+        choicesPerDay = Math.max(1, Math.min(cfg.getInt("choices-per-day", 5), itemsPerDay));
         minPerItem = cfg.getInt("min-per-item", 10);
-        maxPerItem = cfg.getInt("max-per-item", 100);
+        maxPerItem = cfg.getInt("max-per-item", 60);
         priceFloatMin = cfg.getDouble("price-float-min", 0.6);
         priceFloatMax = cfg.getDouble("price-float-max", 1.4);
         dailyBudget = cfg.getDouble("daily-budget", 800);
@@ -181,6 +216,18 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         today.addAll(rolled);
         todayDate = now;
         daily.set("date", now);
+        if (force) {
+            // 手动重抽会换掉候选物品：清空当天自选记录，并关掉玩家手上过期的界面
+            clearChoicesForToday();
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                Inventory top = p.getOpenInventory().getTopInventory();
+                if (top == guis.get(p.getUniqueId()) || top == chooseGuis.get(p.getUniqueId())) {
+                    p.closeInventory();
+                    p.sendMessage("§e今日收购清单已重新生成，请重新打开 §a/ds §e并自选 "
+                            + choiceLimit() + " 种");
+                }
+            }
+        }
         daily.set("items", today.stream()
                 .map(e -> e.mat.name() + ":" + e.price + ":" + e.quota)
                 .collect(Collectors.toList()));
@@ -196,20 +243,34 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
             LocalDate today = LocalDate.parse(todayStr);
             Set<String> keep = new HashSet<>();
             for (int i = 0; i < KEEP_DAYS; i++) keep.add(today.minusDays(i).toString());
-            if (!data.isConfigurationSection("players")) return;
-            for (String uuid : data.getConfigurationSection("players").getKeys(false)) {
-                String uRoot = "players." + uuid;
-                if (!data.isConfigurationSection(uRoot)) continue;
-                for (String dateStr : new ArrayList<>(data.getConfigurationSection(uRoot).getKeys(false))) {
-                    if (!keep.contains(dateStr)) {
-                        data.set(uRoot + "." + dateStr, null);
-                    }
-                }
-            }
+            cleanDateBranch("players", keep);
+            cleanDateBranch("choices", keep);
             saveData();
         } catch (Throwable t) {
             getLogger().warning("清理旧日期数据失败: " + t.getMessage());
         }
+    }
+
+    /** 清理某一根段（players / choices）下 7 天前的日期键。 */
+    private void cleanDateBranch(String root, Set<String> keep) {
+        if (!data.isConfigurationSection(root)) return;
+        for (String uuid : data.getConfigurationSection(root).getKeys(false)) {
+            String uRoot = root + "." + uuid;
+            if (!data.isConfigurationSection(uRoot)) continue;
+            for (String dateStr : new ArrayList<>(data.getConfigurationSection(uRoot).getKeys(false))) {
+                if (!keep.contains(dateStr)) data.set(uRoot + "." + dateStr, null);
+            }
+        }
+    }
+
+    /** 重抽当天清单时清掉所有玩家「今天」的自选记录（保留其它日期以便审计）。 */
+    private void clearChoicesForToday() {
+        ConfigurationSection root = data.getConfigurationSection("choices");
+        if (root == null) return;
+        for (String uuid : root.getKeys(false)) {
+            data.set("choices." + uuid + "." + todayDate, null);
+        }
+        markDirty();
     }
 
     /** 从 daily.yml 恢复当天已生成的清单（重启不刷新物品与额度） */
@@ -271,7 +332,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
 
     private void broadcastToday() {
         StringBuilder sb = new StringBuilder();
-        sb.append("§6✦ 今日收购（每人每种额度随机，总价上限 §e")
+        sb.append("§6✦ 今日收购候选 " + today.size() + " 种（自选 " + choiceLimit() + " 种出售，总价上限 §e")
           .append(fmt(dailyBudget)).append("§6 币）: ");
         for (int i = 0; i < today.size(); i++) {
             Entry e = today.get(i);
@@ -279,7 +340,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
             sb.append("§e").append(zh(e.mat)).append("§7(").append(fmt(e.price)).append("币/个, 限")
               .append(e.quota).append("个)");
         }
-        sb.append("  §a/ds §7打开收购界面");
+        sb.append("  §a/ds §7打开界面自选，基岩端用 §e/ds choose <1-" + today.size() + "§7>");
         Bukkit.broadcastMessage(sb.toString());
     }
 
@@ -290,6 +351,64 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
 
     // ---------- 数据 ----------
 
+    // ---------- 自选清单（choices.<uuid>.<日期>，与 players 平级，避免被日期清理误删） ----------
+
+    private String choicesKey(Player p) {
+        return "choices." + p.getUniqueId() + "." + todayDate;
+    }
+
+    /** 玩家当天已选中的 Material 名；只保留仍在今日清单里的项（reroll 后自动失效）。 */
+    private List<String> choices(Player p) {
+        List<String> out = new ArrayList<>();
+        for (String s : data.getStringList(choicesKey(p))) {
+            for (Entry e : today) {
+                if (e.mat.name().equals(s) && !out.contains(s)) { out.add(s); break; }
+            }
+        }
+        return out;
+    }
+
+    private int choiceLimit() {
+        return Math.min(choicesPerDay, today.size());
+    }
+
+    private boolean hasChosen(Player p) {
+        return choices(p).size() >= choiceLimit();
+    }
+
+    /** 玩家自己选中的今日条目（保持今日清单顺序）。 */
+    private List<Entry> myEntries(Player p) {
+        List<String> chosen = choices(p);
+        List<Entry> list = new ArrayList<>();
+        for (Entry e : today) if (chosen.contains(e.mat.name())) list.add(e);
+        return list;
+    }
+
+    private void saveChoices(Player p, List<String> list) {
+        data.set(choicesKey(p), list);
+        markDirty();
+    }
+
+    /** 切换第 n 种（1 起）的选中状态；返回给玩家的提示文本。 */
+    private String toggleChoice(Player p, int n) {
+        if (today.isEmpty()) return "§c今日收购清单未生成";
+        if (n < 1 || n > today.size()) return "§c序号需在 1~" + today.size() + " 之间，先看 §a/ds today";
+        Entry e = today.get(n - 1);
+        List<String> list = choices(p);
+        String key = e.mat.name();
+        if (list.contains(key)) {
+            list.remove(key);
+            saveChoices(p, list);
+            return "§e已取消选择 §f" + zh(e.mat) + "§7（已选 " + list.size() + "/" + choiceLimit() + "）";
+        }
+        if (list.size() >= choiceLimit()) {
+            return "§c最多只能选 " + choiceLimit() + " 种，先取消一种（§a/ds choose <序号>§c）";
+        }
+        list.add(key);
+        saveChoices(p, list);
+        return "§a已选择 §f" + zh(e.mat) + "§7（已选 " + list.size() + "/" + choiceLimit() + "）";
+    }
+
     private String soldKey(Player p, Material m) {
         return "players." + p.getUniqueId() + "." + todayDate + "." + m.name();
     }
@@ -298,18 +417,46 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         return data.getInt(soldKey(p, m), 0);
     }
 
-    private Entry findEntry(Material m) {
-        for (Entry e : today) if (e.mat == m) return e;
+    private Entry findEntry(Player p, Material m) {
+        for (Entry e : myEntries(p)) if (e.mat == m) return e;
         return null;
     }
 
-    /** 玩家当天已获总收益 */
+    /** 当天收益累计键：与自选清单解耦，重选清单不会重置每日收益上限。 */
+    private String earnedKey(Player p) {
+        return "players." + p.getUniqueId() + "." + todayDate + ".__earned";
+    }
+
+    /**
+     * 玩家当天已获总收益。优先读累计字段；旧 data.yml 没有该字段时按当天
+     * 「全部已售物品」回放，而不是只看当前选中的 5 种，避免 /ds choose clear
+     * 重选后把已赚金额算丢、从而绕过 daily-budget。
+     */
     private double earnedToday(Player p) {
-        double sum = 0;
-        for (Entry e : today) {
-            sum += soldCount(p, e.mat) * e.price;
+        if (data.isSet(earnedKey(p))) return data.getDouble(earnedKey(p), 0D);
+        ConfigurationSection sec = data.getConfigurationSection(
+                "players." + p.getUniqueId() + "." + todayDate);
+        if (sec == null) return 0D;
+        double sum = 0D;
+        for (String mat : sec.getKeys(false)) {
+            if (mat.startsWith("__")) continue;
+            int n = sec.getInt(mat, 0);
+            if (n <= 0) continue;
+            for (Entry e : today) {
+                if (e.mat.name().equals(mat)) { sum += n * e.price; break; }
+            }
         }
         return sum;
+    }
+
+    /** 出售成功后同时写已售数量与累计收益。 */
+    private void recordSale(Player p, Material mat, int newSold, double income) {
+        // 必须在写新数量之前结算：旧 data.yml 没有 __earned 时 earnedToday() 会回放
+        // 全部已售数量，若先写数量会把本次收益重复计入。
+        double earned = earnedToday(p) + income;
+        data.set(soldKey(p, mat), newSold);
+        data.set(earnedKey(p), earned);
+        markDirty();
     }
 
     private void saveData() {
@@ -343,8 +490,83 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         return it;
     }
 
+    // ---------- 自选界面（Java 箱子 GUI；基岩端用 /ds choose <序号>） ----------
+
+    private void openChooseGui(Player p) {
+        Inventory inv = Bukkit.createInventory(null, 27, "§6✦ 每日收购 · 自选 " + choiceLimit() + " 种");
+        refreshChooseGui(p, inv);
+        chooseGuis.put(p.getUniqueId(), inv);
+        p.openInventory(inv);
+    }
+
+    private void refreshChooseGui(Player p, Inventory inv) {
+        inv.clear();
+        ItemStack bg = glass(Material.BLACK_STAINED_GLASS_PANE, null);
+        ItemStack bar = glass(Material.GRAY_STAINED_GLASS_PANE, null);
+        for (int i = 0; i < 27; i++) inv.setItem(i, bg);
+        for (int i = 18; i < 27; i++) inv.setItem(i, bar);
+
+        List<String> chosen = choices(p);
+        int shown = Math.min(today.size(), 8);
+        for (int i = 0; i < shown; i++) {
+            Entry e = today.get(i);
+            boolean sel = chosen.contains(e.mat.name());
+            ItemStack icon = new ItemStack(e.mat, 1);
+            ItemMeta meta = icon.getItemMeta();
+            meta.setDisplayName((sel ? "§a✔ " : "§7") + zh(e.mat) + " §8[" + (i + 1) + "]");
+            List<String> lore = new ArrayList<>();
+            lore.add("§7单价 §a" + fmt(e.price) + " §7币/个 · 额度 §e" + e.quota + " §7个");
+            lore.add(sel ? "§a✔ 已选择（点击取消）" : "§7✘ 未选择（点击选中）");
+            lore.add("§8也可输入 /ds choose " + (i + 1));
+            meta.setLore(lore);
+            if (sel) {
+                meta.addEnchant(org.bukkit.enchantments.Enchantment.UNBREAKING, 1, true);
+                meta.addItemFlags(org.bukkit.inventory.ItemFlag.HIDE_ENCHANTS);
+            }
+            icon.setItemMeta(meta);
+            inv.setItem(10 + i, icon);
+        }
+
+        ItemStack info = new ItemStack(Material.GOLD_NUGGET);
+        ItemMeta im = info.getItemMeta();
+        im.setDisplayName("§6✦ 今日自选 " + chosen.size() + " / " + choiceLimit());
+        im.setLore(Arrays.asList(
+                "§7从今日 " + today.size() + " 种候选里选 " + choiceLimit() + " 种出售",
+                "§7选择按日期保存，重登 / 重启不变，跨天需重选",
+                "§7已卖额度不会因为重选而重置"));
+        info.setItemMeta(im);
+        inv.setItem(22, info);
+
+        boolean full = chosen.size() >= choiceLimit();
+        ItemStack ok = new ItemStack(full ? Material.EMERALD_BLOCK : Material.BARRIER);
+        ItemMeta om = ok.getItemMeta();
+        om.setDisplayName(full ? "§a✔ 确认选择并打开收购界面"
+                : "§c还需选择 " + (choiceLimit() - chosen.size()) + " 种");
+        ok.setItemMeta(om);
+        inv.setItem(24, ok);
+
+        ItemStack clear = new ItemStack(Material.BUCKET);
+        ItemMeta cm = clear.getItemMeta();
+        cm.setDisplayName("§e清空重选");
+        cm.setLore(Arrays.asList("§7已卖出的额度不会重置"));
+        clear.setItemMeta(cm);
+        inv.setItem(18, clear);
+
+        ItemStack help = new ItemStack(Material.PAPER);
+        ItemMeta hm = help.getItemMeta();
+        hm.setDisplayName("§7❓ 玩法说明");
+        hm.setLore(Arrays.asList(
+                "§7今日候选全服共享 " + today.size() + " 种",
+                "§7每人自选 " + choiceLimit() + " 种作为自己的可卖清单",
+                "§7基岩端用 §a/ds choose <1-" + today.size() + ">§7 按序号选择",
+                "§7选好后 §a/ds §7或手持物品 §a/ds sell"));
+        help.setItemMeta(hm);
+        inv.setItem(26, help);
+    }
+
     private void openGui(Player p) {
         if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
+        if (!hasChosen(p)) { openChooseGui(p); return; }
         guiPages.put(p.getUniqueId(), 1);
         Inventory inv = Bukkit.createInventory(null, 27, "§6✦ 每日收购 · 今日");
         refreshGui(p, inv);
@@ -354,8 +576,9 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
 
     private void refreshGui(Player p, Inventory inv) {
         inv.clear();
+        List<Entry> my = myEntries(p);
         int page = Math.max(1, guiPages.getOrDefault(p.getUniqueId(), 1));
-        int totalPages = Math.max(1, (int) Math.ceil(today.size() / (double) PER_PAGE));
+        int totalPages = Math.max(1, (int) Math.ceil(my.size() / (double) PER_PAGE));
         if (page > totalPages) page = totalPages;
         guiPages.put(p.getUniqueId(), page);
 
@@ -369,8 +592,8 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         int start = (page - 1) * PER_PAGE;
         for (int i = 0; i < PER_PAGE; i++) {
             int idx = start + i;
-            if (idx < today.size()) {
-                inv.setItem(i, buildIcon(p, today.get(idx)));
+            if (idx < my.size()) {
+                inv.setItem(i, buildIcon(p, my.get(idx)));
             } else {
                 inv.setItem(i, bg.clone());
             }
@@ -382,7 +605,8 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         im.setDisplayName("§6✦ 今日收益");
         im.setLore(Arrays.asList(
                 "§7已获: §a" + fmt(earnedToday(p)) + "§7 / §e" + fmt(dailyBudget) + "§7 南瓜币",
-                "§7额度用完或达上限即收摊"));
+                "§7额度用完或达上限即收摊",
+                "§7今日自选 " + my.size() + "/" + choiceLimit() + " 种"));
         info.setItemMeta(im);
         inv.setItem(22, info);
 
@@ -447,10 +671,62 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         return icon;
     }
 
+    /** 关闭界面后释放 Inventory 引用，避免长期在线的服务器常驻内存。 */
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e) {
+        if (!(e.getPlayer() instanceof Player)) return;
+        UUID uuid = e.getPlayer().getUniqueId();
+        Inventory top = e.getView().getTopInventory();
+        if (top != null && top == chooseGuis.get(uuid)) chooseGuis.remove(uuid);
+        if (top != null && top == guis.get(uuid)) {
+            guis.remove(uuid);
+            guiPages.remove(uuid);
+        }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        chooseGuis.remove(uuid);
+        guis.remove(uuid);
+        guiPages.remove(uuid);
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
         if (!(e.getWhoClicked() instanceof Player)) return;
+        // 只接管插件 GUI 顶栏：玩家背包/快捷栏点击一律放行，
+        // 避免整理背包被取消、或点到背包里的物品误触发选择/出售。
+        if (e.getRawSlot() >= e.getInventory().getSize()) return;
         Player p = (Player) e.getWhoClicked();
+        Inventory chooser = chooseGuis.get(p.getUniqueId());
+        if (chooser != null && e.getInventory() == chooser) {
+            e.setCancelled(true);
+            ItemStack picked = e.getCurrentItem();
+            if (picked == null || picked.getType() == Material.AIR) return;
+            int cs = e.getSlot();
+            if (cs >= 10 && cs < 10 + Math.min(today.size(), 8)) {
+                p.sendMessage(toggleChoice(p, cs - 9));
+                refreshChooseGui(p, chooser);
+                p.playSound(p.getLocation(), "ui.button.click", 0.6f, 1.2f);
+                return;
+            }
+            if (cs == 18) {
+                saveChoices(p, new ArrayList<>());
+                refreshChooseGui(p, chooser);
+                p.sendMessage("§e已清空今日选择");
+                return;
+            }
+            if (cs == 24) {
+                if (!hasChosen(p)) {
+                    p.sendMessage("§c还需选择 " + (choiceLimit() - choices(p).size()) + " 种");
+                    return;
+                }
+                chooseGuis.remove(p.getUniqueId());
+                Bukkit.getScheduler().runTask(this, () -> { p.closeInventory(); openGui(p); });
+            }
+            return;
+        }
         Inventory inv = guis.get(p.getUniqueId());
         if (inv == null || e.getInventory() != inv) return;
         e.setCancelled(true);
@@ -471,7 +747,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
             return;
         }
 
-        Entry entry = findEntry(cur.getType());
+        Entry entry = findEntry(p, cur.getType());
         if (entry == null) return;
         if (e.isShiftClick()) {
             sellFromGui(p, entry, inv, 0);
@@ -514,8 +790,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         }
         removeItems(p, entry.mat, amt);
         econ.depositPlayer(p, entry.price * amt);
-        data.set(soldKey(p, entry.mat), sold + amt);
-        markDirty();
+        recordSale(p, entry.mat, sold + amt, entry.price * amt);
         p.sendMessage("§a已出售 §e" + zh(entry.mat) + "§a ×" + amt + "，获得 §e"
                 + fmt(entry.price * amt) + "§a 南瓜币（额度剩 §e" + (entry.quota - sold - amt) + "§a 个）");
         p.playSound(p.getLocation(), "entity.experience_orb.pickup", 0.6f, 1.4f);
@@ -551,7 +826,8 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         String sub = args.length > 0 ? args[0].toLowerCase() : "gui";
-        if (!(sender instanceof Player) && !sub.equals("reload") && !sub.equals("reroll")) {
+        if (!(sender instanceof Player) && !sub.equals("reload") && !sub.equals("reroll")
+                && !sub.equals("today")) {
             sender.sendMessage("此命令需在游戏内执行");
             return true;
         }
@@ -569,6 +845,10 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
             case "today":
                 showToday(sender);
                 break;
+            case "choose":
+            case "pick":
+                chooseCommand(sender, args);
+                break;
             case "reload":
                 if (sender.hasPermission("dailysell.admin")) {
                     reloadConfig();
@@ -584,22 +864,59 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
                 } else sender.sendMessage(ChatColor.RED + "没有权限");
                 break;
             default:
-                sender.sendMessage("§6用法: §e/ds §7打开收购界面 §7|§e /ds sell §7|§e sellall §7|§e today §7|§e reload §7|§e reroll");
+                sender.sendMessage("§6用法: §e/ds §7打开界面/自选 §7|§e /ds choose <1-" + today.size() + "|clear> §7|§e /ds sell §7|§e sellall §7|§e today §7|§e reload §7|§e reroll");
                 break;
         }
         return true;
     }
 
+    private void chooseCommand(CommandSender sender, String[] args) {
+        if (!(sender instanceof Player)) { sender.sendMessage("此命令需在游戏内执行"); return; }
+        Player p = (Player) sender;
+        if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
+        if (args.length < 2) {
+            if (hasChosen(p)) {
+                p.sendMessage("§a你今天已选好 " + choiceLimit() + " 种，正在打开收购界面");
+                openGui(p);
+            } else {
+                openChooseGui(p);
+            }
+            return;
+        }
+        if (args[1].equalsIgnoreCase("clear")) {
+            saveChoices(p, new ArrayList<>());
+            p.sendMessage("§e已清空今日选择，可重新挑选（已卖额度不会重置）");
+            Inventory chooser = chooseGuis.get(p.getUniqueId());
+            if (chooser != null) refreshChooseGui(p, chooser);
+            return;
+        }
+        int n;
+        try {
+            n = Integer.parseInt(args[1]);
+        } catch (NumberFormatException ex) {
+            p.sendMessage("§c用法：§e/ds choose <1-" + today.size() + "§c|§eclear>");
+            return;
+        }
+        p.sendMessage(toggleChoice(p, n));
+        Inventory chooser = chooseGuis.get(p.getUniqueId());
+        if (chooser != null) refreshChooseGui(p, chooser);
+        if (hasChosen(p)) p.sendMessage("§a已选满，输入 §e/ds §a打开收购界面开始出售");
+    }
+
     private void sellHand(Player p) {
         if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
+        if (!hasChosen(p)) {
+            p.sendMessage("§c还没选好今天的 " + choiceLimit() + " 种收购物品，先 §a/ds choose §c或 §a/ds choose <序号>");
+            return;
+        }
         ItemStack hand = p.getInventory().getItemInMainHand();
         if (hand == null || hand.getType() == Material.AIR) {
             p.sendMessage("§c请手持要出售的物品（输入 §a/ds §7打开收购界面）");
             return;
         }
-        Entry entry = findEntry(hand.getType());
+        Entry entry = findEntry(p, hand.getType());
         if (entry == null) {
-            p.sendMessage("§c「" + zh(hand.getType()) + "」不是今日收购物品，清单见 §a/ds §7或 §a/ds today");
+            p.sendMessage("§c「" + zh(hand.getType()) + "」不在你今天选中的 " + choiceLimit() + " 种里，清单见 §a/ds today");
             return;
         }
         int sold = soldCount(p, entry.mat);
@@ -617,22 +934,25 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         }
         removeItems(p, entry.mat, 1);
         econ.depositPlayer(p, entry.price);
-        data.set(soldKey(p, entry.mat), sold + 1);
-        markDirty();
+        recordSale(p, entry.mat, sold + 1, entry.price);
         p.sendMessage("§a已出售 §e" + zh(entry.mat) + "§a ×1，获得 §e" + fmt(entry.price)
                 + "§a 南瓜币（额度剩 §e" + (entry.quota - sold - 1) + "§a 个）");
     }
 
     private void sellAll(Player p) {
         if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
+        if (!hasChosen(p)) {
+            p.sendMessage("§c还没选好今天的 " + choiceLimit() + " 种收购物品，先 §a/ds choose §c或 §a/ds choose <序号>");
+            return;
+        }
         ItemStack hand = p.getInventory().getItemInMainHand();
         if (hand == null || hand.getType() == Material.AIR) {
             p.sendMessage("§c请手持要出售的物品");
             return;
         }
-        Entry entry = findEntry(hand.getType());
+        Entry entry = findEntry(p, hand.getType());
         if (entry == null) {
-            p.sendMessage("§c「" + zh(hand.getType()) + "」不是今日收购物品");
+            p.sendMessage("§c「" + zh(hand.getType()) + "」不在你今天选中的 " + choiceLimit() + " 种里");
             return;
         }
         int sold = soldCount(p, entry.mat);
@@ -650,28 +970,38 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         int amount = Math.min(hand.getAmount(), Math.min(remainQuota, budgetAllow));
         removeItems(p, entry.mat, amount);
         econ.depositPlayer(p, entry.price * amount);
-        data.set(soldKey(p, entry.mat), sold + amount);
-        markDirty();
+        recordSale(p, entry.mat, sold + amount, entry.price * amount);
         p.sendMessage("§a已出售 §e" + zh(entry.mat) + "§a ×" + amount + "，获得 §e"
                 + fmt(entry.price * amount) + "§a 南瓜币（额度剩 §e" + (entry.quota - sold - amount) + "§a 个）");
     }
 
     private void showToday(CommandSender sender) {
         if (today.isEmpty()) { sender.sendMessage("§c今日收购清单未生成"); return; }
-        sender.sendMessage("§6======== 今日收购清单 ========");
+        List<String> chosen = sender instanceof Player ? choices((Player) sender) : new ArrayList<>();
+        sender.sendMessage("§6======== 今日候选 " + today.size() + " 种 · 自选 " + choiceLimit() + " 种 ========");
         double total = 0;
-        for (Entry e : today) {
+        for (int i = 0; i < today.size(); i++) {
+            Entry e = today.get(i);
+            boolean sel = chosen.contains(e.mat.name());
             String extra = "";
             if (sender instanceof Player) {
                 int sold = soldCount((Player) sender, e.mat);
                 extra = " §7(我已卖 " + sold + "/" + e.quota + ")";
             }
-            sender.sendMessage("§e" + zh(e.mat) + " §7×1 → §a" + fmt(e.price) + "§7 币"
-                    + "§7 额度" + e.quota + "个" + extra);
+            sender.sendMessage("§7[" + (i + 1) + "] " + (sel ? "§a✔ " : "§7  ")
+                    + "§e" + zh(e.mat) + " §7→ §a" + fmt(e.price) + "§7 币/个"
+                    + " §7额度" + e.quota + "个" + extra);
             total += e.price * e.quota;
         }
-        sender.sendMessage("§7清单总价上限: §a" + fmt(dailyBudget) + "§7 币（本次清单合计 " + fmt(total) + " 币）");
-        sender.sendMessage("§7出售: §a/ds §7打开收购界面，或手持物品 §a/ds sell §7(卖1个) / §a/ds sellall §7(卖满额度)");
+        sender.sendMessage("§7清单总价上限: §a" + fmt(dailyBudget) + "§7 币（本次候选合计 " + fmt(total) + " 币）");
+        if (sender instanceof Player) {
+            sender.sendMessage("§7今日已赚 §a" + fmt(earnedToday((Player) sender))
+                    + "§7/§a" + fmt(dailyBudget) + " §7币（重选清单不会重置）");
+            sender.sendMessage("§7已选 §a" + chosen.size() + "§7/§a" + choiceLimit()
+                    + " §7| §e/ds choose <1-" + today.size() + "> §7选/取消，§e/ds choose clear §7清空");
+            if (!hasChosen((Player) sender)) sender.sendMessage("§c还没选满，选好才能出售");
+        }
+        sender.sendMessage("§7出售: §a/ds §7打开界面，或手持物品 §a/ds sell §7(卖1个) / §a/ds sellall §7(卖满额度)");
     }
 
     private boolean setupEconomy() {
