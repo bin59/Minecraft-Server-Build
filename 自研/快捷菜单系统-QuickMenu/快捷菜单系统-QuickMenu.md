@@ -729,10 +729,10 @@ lp group default permission set economyshop.use true
 lp group default permission set economyshop.sell true
 lp group default permission set economyshop.chestshop.create true
 lp group default permission set economyshop.chestshop.use true
-lp group default permission set quests.command.start true
-lp group default permission set quests.command.track true
-lp group default permission set quests.command.cancel true
-lp group default permission set quests.command.quest true
+# Quests 5.3.2（PikaMug）：玩家节点 quests.quest/.list/.take/.quit 等 plugin.yml 默认 true，
+# default 组无需授权；仅需给管理员 quests.admin.*（op）。
+# 旧 1.21.11 服 LMBishop 3.16.1 的 quests.command.start/track/cancel/quest 已弃用，勿再授予。
+# 任务轮换由本菜单 quests-daily 的 days: 条件控制（14 任务 / 每天 6 个 / 250~260 币）。
 lp group default permission set eztax.stats true
 
 # ---- EssentialsX：工具包与物品 ----
