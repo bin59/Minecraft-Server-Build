@@ -210,7 +210,6 @@ public final class FlyCommand implements TabExecutor {
             if (d.trialActive(now)) {
                 sender.sendMessage(plugin.config().msg("trial-info", "player", name,
                         "remaining", TimeUtil.format(d.trialRemainingSeconds(now)),
-                        "expire", TimeUtil.clock(d.trialExpireAt),
                         "by", d.trialGrantedBy));
             } else {
                 sender.sendMessage(plugin.config().msg("trial-none", "player", name));
@@ -643,8 +642,7 @@ public final class FlyCommand implements TabExecutor {
         long effective = plugin.fly().effectiveRemainingSeconds(d, now);
         line(sender, "剩余时长", effective < 0L ? "不消耗" : duration(Math.max(0L, effective)));
         line(sender, "限时体验", d.trialActive(now)
-                ? "&a" + duration(d.trialRemainingSeconds(now)) + " &8(到期 "
-                + TimeUtil.clock(d.trialExpireAt) + "，发放人 " + d.trialGrantedBy + ")"
+                ? "&a" + duration(d.trialRemainingSeconds(now)) + " &8(飞行时消耗，发放人 " + d.trialGrantedBy + ")"
                 : "&7无");
         line(sender, "全服状态", (g.enabled ? "&a开启" : "&c已关闭")
                 + (g.freeFly ? " &8| &a免费飞行" : "")

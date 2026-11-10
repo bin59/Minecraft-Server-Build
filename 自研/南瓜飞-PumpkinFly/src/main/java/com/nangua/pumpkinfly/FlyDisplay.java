@@ -90,7 +90,9 @@ public final class FlyDisplay {
                 bar.addPlayer(p);
                 bars.put(uuid, bar);
             }
-            bar.setTitle(FlyConfig.color(render(c.displayBossTitle, vars)));
+            // 基岩端（Geyser）BossBar 长标题会与进度条重叠，改用精简短标题
+            String titleTpl = bedrock ? c.displayBossTitleBedrock : c.displayBossTitle;
+            bar.setTitle(FlyConfig.color(render(titleTpl, vars)));
             bar.setColor(warn ? BarColor.RED
                     : (rem < 0L ? BarColor.BLUE : parseColor(c.displayBarColor)));
             bar.setProgress(progress(d, now, rem));

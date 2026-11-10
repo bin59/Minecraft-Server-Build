@@ -1,0 +1,36 @@
+# ============================================================
+#  离线奖励 OfflineReward 配置
+#  按离线时长，下次上线在邮箱领取南瓜币（复用 PumpkinMail）
+# ============================================================
+
+reward:
+  coins-per-hour: 15        # 每离线 1 小时奖励的南瓜币数
+  min-hours: 1              # 离线不足该小时数不发
+  max-hours-per-day: 24     # 单次最多计入的离线小时（防长时间不上线刷爆）
+  max-reward: 0             # 单次奖励总封顶（0 = 不封顶）
+  cooldown-hours: 0         # 两次发放最小间隔（小时，0 = 不限），防反复上下线刷
+  floor-minutes: true       # true = 不足整小时的分钟舍去；false = 按精确小数计
+
+# 拥有该权限节点的玩家不上线发放（仅用于豁免测试号/特殊情况账号）
+# 注意：管理员默认【照常领取】——op 只会自动拿到 offlinereward.admin，
+# 不会拿到本权限，所以管理组的离线奖励照发不误。
+# 若确实不想让某个管理员拿，单独给他加 offlinereward.exempt 即可。
+exempt-permission: offlinereward.exempt
+
+# 上线发放后是否发一条聊天提示（南瓜邮箱另有 ActionBar 待领提示）
+announce: true
+
+# 数据文件（plugins/OfflineReward/ 下）
+db: offline.db
+
+# ============================================================
+#  在线奖励：玩家在线期间定期结算，发南瓜币到南瓜邮箱
+#  单价高于离线奖励，以鼓励玩家在线游玩（拉开「在线 vs 离线」差距）
+# ============================================================
+online-reward:
+  enabled: true
+  coins-per-hour: 25        # 在线每 1 小时奖励的南瓜币数（高于离线 15，拉开差距鼓励在线）
+  min-minutes: 5            # 单个结算段最少在线分钟（不足不发）
+  interval-minutes: 5       # 定时结算间隔（分钟）；在线时长按整段取整发放
+  max-per-day: 0            # 每日在线奖励封顶（0 = 不封顶）
+  floor-minutes: true       # true = 按 interval-minutes 整段取整

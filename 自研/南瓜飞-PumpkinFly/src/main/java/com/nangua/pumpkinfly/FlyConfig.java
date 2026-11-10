@@ -77,6 +77,8 @@ public final class FlyConfig {
     public String displayActionFlying;
     public String displayActionIdle;
     public String displayBossTitle;
+    /** 基岩端（Geyser）BossBar 专用短标题：长标题在基岩端会与进度条重叠，故去掉「本次/累计」等次要字段 */
+    public String displayBossTitleBedrock;
     public String displayBarColor;
     public String displayBarStyle;
     public boolean displayProgressBar;
@@ -157,6 +159,9 @@ public final class FlyConfig {
                 "&e&l[飞行可用] &8| &7剩余 &e{remaining} &8| &e双击空格起飞");
         displayBossTitle = c.getString("display.boss-bar-title",
                 "&6南瓜飞 &8| &f{state} &8| &7剩余 &e{remaining} &8| &7本次 &e{session}");
+        // 基岩端 BossBar 长标题会与进度条重叠，用精简短标题（只保留 状态 + 剩余）
+        displayBossTitleBedrock = c.getString("display.boss-bar-title-bedrock",
+                "&6南瓜飞 &8| &f{state} &8| &7剩余 &e{remaining}");
         displayBarColor = c.getString("display.bar-color", "GREEN").trim().toUpperCase(Locale.ROOT);
         displayBarStyle = c.getString("display.bar-style", "SOLID").trim().toUpperCase(Locale.ROOT);
         displayProgressBar = c.getBoolean("display.show-progress-bar", true);

@@ -101,7 +101,7 @@ global:
   # 全服免费飞行：所有人无需凭证即可飞（仍受 zones 区域规则限制）
   free-fly: false
 
-# ---------- 限时体验奖励（按现实时间到期，离线也走，不扣时长余额） ----------
+# ---------- 限时体验奖励（飞行时消耗，不飞不流逝，离线也不消耗） ----------
 rewards:
   # 首次进服自动赠送的体验时长，留空 / 0 = 关闭。例：30m、2h、1d、1d2h30m
   join-trial: ''
@@ -147,7 +147,7 @@ messages:
   no-permission: '&c你没有权限使用这个命令。'
   player-only: '&c该命令只能由玩家执行。'
   usage: '&7常用：&e/pfly buy &6<时长|perm>&7、&e/pfly claim&7、&e/pfly status&7、&e/pfly toggle&7、&e/pfly hud &6<on|off>'
-  usage-reward: '&7时长格式：&e30m &72h &63d &71d2h30m&7，纯数字按分钟；体验奖励按现实时间到期、不扣余额。'
+  usage-reward: '&7时长格式：&e30m &72h &63d &71d2h30m&7，纯数字按分钟；体验奖励飞行时消耗、不飞不流逝。'
   admin-usage: '&7管理：&e/pfly give|take|setperm &6<玩家> <时长|perm|true|false>&7、&e/pfly records <玩家>&7、&e/pfly reload'
   global-usage: '&7全局：&e/pfly global &6<on|off|toggle|status>&7、&e/pfly global free <on|off|toggle>&7、&e/pfly global trial <时长|clear>'
   trial-usage: '&7体验：&e/pfly trial &6<玩家|online|all> <时长|clear|status>&7（all = 所有已有账户，含离线）'
@@ -175,7 +175,7 @@ messages:
   claim-ok: '&a已领取 &6{duration} &a限时体验奖励 &8({mode})&7，期间飞行不扣余额。'
   claim-used: '&e这个奖励已经领过了 &8({mode})&e，请等管理员发放或下次可领时间。'
   claim-disabled: '&e当前没有开放体验奖励领取，请联系管理员。'
-  trial-grant: '&a获得限时体验 &6{duration}&a，当前剩余 &e{remaining}&a，到期 &7{expire}'
+  trial-grant: '&a获得限时体验 &6{duration}&a，当前剩余 &e{remaining}&a（飞行时消耗）'
   trial-expired: '&e限时体验已到期，&7已恢复按自己的飞行凭证判定。'
   trial-clear: '&e你的限时体验已被管理员清除。'
   trial-cleared: '&a已清除 &6{count} &a个玩家的限时体验。'

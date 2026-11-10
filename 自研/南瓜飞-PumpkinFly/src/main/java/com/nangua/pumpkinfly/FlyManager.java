@@ -81,17 +81,6 @@ public final class FlyManager {
 
             PlayerData d = plugin.data().get(uuid, p.getName());
 
-            // 个人限时体验按现实时间到期，离线也走；到期后如有余额会自动接着用
-            if (d.trialExpireAt > 0L && now >= d.trialExpireAt) {
-                d.trialExpireAt = 0L;
-                d.trialTotalSeconds = 0L;
-                d.trialGrantedAt = "";
-                d.trialGrantedBy = "";
-                plugin.data().markDirty();
-                p.sendMessage(plugin.config().msg("trial-expired"));
-                warned.remove(uuid);
-            }
-
             boolean consume = consumesBalance(d, now);
 
             // REAL_TIME：按现实时间同步剩余秒数，离线也走；体验/免费期间冻结到期时间
@@ -125,11 +114,29 @@ public final class FlyManager {
                     d.lastActive = PlayerData.now();
                     plugin.data().markDirty();
 
-                    if (consume && !plugin.config().isRealTime()) {
+                    // 优先消耗「体验秒数池」（飞才扣）；体验用完且仍有余额则接余额，否则停飞
+                    if (d.trialActive(now)) {
+                        d.trialRemaining -= step;
+                        if (d.trialRemaining <= 0L) {
+                            d.trialRemaining = 0L;
+                            d.trialTotalSeconds = 0L;
+                            d.trialExpireAt = 0L;
+                            d.trialGrantedAt = "";
+                            d.trialGrantedBy = "";
+                            plugin.data().markDirty();
+                            p.sendMessage(plugin.config().msg("trial-expired"));
+                            warned.remove(uuid);
+                            if (!d.permanent && d.remainingSeconds <= 0L) {
+                                disableFlight(p, "expired", true);
+                                continue;
+                            }
+                        }
+                    } else if (consume && !plugin.config().isRealTime()) {
                         d.remainingSeconds -= step;
                     }
+
                     long left = effectiveRemainingSeconds(d, now);
-                    if (consume && left <= 0L) {
+                    if (left <= 0L) {
                         d.remainingSeconds = 0L;
                         disableFlight(p, "expired", true);
                         continue;
@@ -150,8 +157,8 @@ public final class FlyManager {
                 }
             }
             // 界面显示只看「是否有有效飞行凭证」，不卡区域、也不卡是否在飞：
-            // 这样玩家在地面 / 暂时离开飞行区时也能看到体验 / 余额倒计时，不会出现「不飞时体验也暂停」的错觉
-            // （体验本身按现实时间戳到期、离线也走，本就一直在倒计时）。
+            // 这样玩家在地面 / 暂时离开飞行区时也能看到体验剩余，方便了解还有多少可飞时间
+            // （体验为「飞行秒数池」，不飞不流逝、离线也不消耗，只有真正飞行时才扣减）。
             boolean showHud = d.hudEnabled && !d.manualOff && hasFlightPass(p, d, now);
             display.update(p, d, showHud, flying, zone.label, currentSessionSeconds(uuid), now);
         }
@@ -206,7 +213,7 @@ public final class FlyManager {
         GlobalState g = plugin.global();
         if (d.permanent || g.freeFly) return -1L;
         if (g.trialActive(now)) return g.trialRemainingSeconds(now);
-        if (d.trialActive(now)) return d.trialRemainingSeconds(now);
+        if (d.trialActive(now)) return d.trialRemaining;
         return d.remainingSeconds;
     }
 
@@ -268,8 +275,10 @@ public final class FlyManager {
         if (seconds <= 0L) return;
         long now = System.currentTimeMillis();
         PlayerData d = plugin.data().get(uuid, name);
-        d.trialExpireAt = Math.max(now, d.trialExpireAt) + seconds * 1000L;
-        d.trialTotalSeconds = (d.trialExpireAt - now + 999L) / 1000L;
+        // 体验改为「飞行秒数池」：飞才扣，不飞不流逝（叠加发放）
+        d.trialRemaining += seconds;
+        d.trialTotalSeconds += seconds;
+        d.trialExpireAt = 0L;
         d.trialGrantedAt = PlayerData.now();
         d.trialGrantedBy = operator;
         d.lastActive = PlayerData.now();
@@ -279,8 +288,7 @@ public final class FlyManager {
         if (online != null && online.isOnline()) {
             online.sendMessage(plugin.config().msg("trial-grant",
                     "duration", TimeUtil.format(seconds),
-                    "remaining", TimeUtil.format(d.trialRemainingSeconds(now)),
-                    "expire", TimeUtil.clock(d.trialExpireAt)));
+                    "remaining", TimeUtil.format(d.trialRemainingSeconds(now))));
             checkNow(online, false);
         }
         if (saveNow) plugin.data().save();
@@ -315,6 +323,7 @@ public final class FlyManager {
         PlayerData d = plugin.data().get(uuid, name);
         d.trialExpireAt = 0L;
         d.trialTotalSeconds = 0L;
+        d.trialRemaining = 0L;
         d.trialGrantedAt = "";
         d.trialGrantedBy = "";
         plugin.data().markDirty();

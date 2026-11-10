@@ -3,7 +3,7 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：按服务器实跑 `config.yml` 统计共 **32 套菜单 / 268 个菜单项**，
+> **菜单已整合本服全部插件**：按服务器实跑 `config.yml` 统计共 **32 套菜单 / 274 个菜单项**，
 > 其中主线 28 套（玩家线 16 套 + 管理线 12 套）、支线 4 套；管理入口靠权限门控，普通玩家看不到。
 > **2026-11-10 配置基线**：以服务器实跑 `plugins/QuickMenu/config.yml` 为底合并南瓜飞菜单，
 > 实跑独有内容零删除；服务器配置、项目源码、`target/classes`、项目根副本与 jar 内配置五处字节级一致。
@@ -195,6 +195,9 @@ menus:
         slot: 11 # 箱子格子序号，从 0 开始（仅 Java 箱子用）
         glowing: true # 是否发光（无附魔副作用）
         permission: '' # 需要的权限，留空=所有人可见
+        days: [MON, WED, FRI] # 仅这些星期几显示（2026-11-10 新增）；留空=每天可见。
+                              # 支持 MON/WED/... 三字缩写或 MONDAY 完整名；跨天后
+                              # 重新打开菜单即生效。两端（箱子/基岩表单）同步过滤。
         button-label: '' # 基岩按钮文本，留空=自动用 display-name 去色
         actions: # 点击后执行的动作
           - '[menu] home'
@@ -286,7 +289,7 @@ actions:
 
 `config.yml` 已配好 **32 套菜单**（28 套主线 + 4 套支线），把本服所有插件的常用功能全部收进菜单。
 
-> 按 `config.yml` 的 `menus:` 实际统计是 **32 个菜单键 / 268 个菜单项**，42 处 `[menu]` 跳转、
+> 按 `config.yml` 的 `menus:` 实际统计是 **32 个菜单键 / 274 个菜单项**，42 处 `[menu]` 跳转、
 > 30 个 `back-menu` 全部有效。上表按 28 套主线列出，多出的 4 套是 `fishing`、`buildrate-admin`、
 > `admin-fishing` 与 `pumpkinfly-admin` 支线菜单。
 > 2026-11-10 起本配置以**服务器实跑 `plugins/QuickMenu/config.yml` 为基线**：完整保留实跑独有的
@@ -309,7 +312,7 @@ actions:
 | `voice`         | 语音聊天   | **Simple Voice Chat**                                                 | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                                                                 |
 | `guide`         | 新人指南   | —（说明书）                                                           | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                                                                         |
 | `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                                                                                                                                                     |
-| `quests-daily`  | 每日任务   | **Quests 5.3.2** + **DailyQuestPick**                                | 8 个日常任务一键接取（挖矿 / 猎手 / 渔夫 / 伐木工 / 厨师 / 驯养师 / 农夫 / 远行者），经 **DailyQuestPick** 网关**每天最多领 5 个**，奖励 40~50 南瓜币，24 小时冷却 |
+| `quests-daily`  | 每日任务   | **Quests 5.3.2**                                                       | **14 个日常任务按星期轮换**（挖矿 / 猎手 / 渔夫 / 伐木工 / 厨师 / 驯养师 / 农夫 / 远行者 / 采石匠 / 讨伐者 / 牧羊人 / 挤奶工 / 工匠 / 附魔师），每个任务一周出现 3 天，**每天恰好 6 个可选、天天换一批**（`days:` 条件过滤），按钮直连 `/quests take`，奖励 40~50 南瓜币、全天约 250~260，24 小时冷却。弃用了原 DailyQuestPick 限领网关方案 |
 | `guide-build`   | 领地建房   | **Residence**                                                         | 创建领地、传送到领地、设置传送点、邀请玩家、权限开关、子领地、打开领地菜单、卡住脱身                                                                                                                                                                                   |
 | `guide-move`    | 传送出行   | EssentialsX + SpacePortal                                             | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                                                                                                                                                    |
 | `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX                  | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                                                                                                                                           |
@@ -321,8 +324,8 @@ actions:
 
 **每日收购入口**（配合 DailySell 插件，配置见 `自研/每日随机收购-DailySell/config.yml`）：
 
-> 每日从 110 种物品池抽 8 种作为全服候选，每位玩家用 `/ds choose <1-8>` 自选 5 种后才能出售；
-> Java 端点 `/ds` 会先打开自选界面，基岩端用序号命令。选择按日期保存，跨天需重选。
+> 每日从 110 种物品池抽 8 种作为全服候选，每位玩家自选 5 种后才能出售；
+> Java 端点 `/ds` 打开箱子自选界面，**基岩端（DailySell 1.2.2 起）点 `/ds` 直接弹原生表单**（开关自选 + 逐项一键出售，无需打字）。选择按日期保存，跨天需重选。
 > 管理员 `/ds reroll` 重抽会换掉候选物品，当天所有玩家的选择会被清空、已打开的界面会被关闭，需重新自选。
 
 - 主菜单 `main` 与 `economy` 经济中心各有一个「每日收购」按钮（均占 **slot 19**，动作 `[player] ds`），配置见 config.yml 模板中 `daily-sell:` 条目
@@ -535,7 +538,7 @@ admin-economy:
       material: EMERALD_BLOCK
       display-name: '&a每日收购·重新生成'
       lore:
-        - '&7重新随机今日 4 种收购物品'
+        - '&7重新随机今日 8 种候选（玩家需重选）'
       slot: 19
       permission: dailysell.admin
       actions:

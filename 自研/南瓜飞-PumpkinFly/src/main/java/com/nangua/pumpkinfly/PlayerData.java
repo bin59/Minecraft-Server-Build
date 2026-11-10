@@ -26,8 +26,10 @@ public final class PlayerData {
     // ---------- 限时体验奖励 ----------
     /** 个人限时体验到期时间戳（毫秒），按现实时间走，离线也消耗。 */
     public long trialExpireAt = 0L;
-    /** 当前体验周期总时长（秒），供 HUD 进度条使用。 */
+    /** 当前体验周期总时长（秒），供 HUD 进度条分母使用。 */
     public long trialTotalSeconds = 0L;
+    /** 体验剩余秒数池：仅在真正飞行时扣减（飞才扣），不飞不消耗、离线也不流逝。 */
+    public long trialRemaining = 0L;
     public String trialGrantedAt = "";
     public String trialGrantedBy = "";
     /** /pfly claim 领取日期（ONCE 模式只要非空即视为已领；DAILY 模式按日期比对）。 */
@@ -41,11 +43,11 @@ public final class PlayerData {
     public String lastActive = "";
 
     public boolean trialActive(long now) {
-        return trialExpireAt > now;
+        return trialRemaining > 0L;
     }
 
     public long trialRemainingSeconds(long now) {
-        return trialActive(now) ? Math.max(0L, (trialExpireAt - now + 999L) / 1000L) : 0L;
+        return Math.max(0L, trialRemaining);
     }
 
     /** 个人凭证（不含全局状态）：永久 > 限时体验 > 余额；被封禁一律 false。 */
@@ -79,6 +81,17 @@ public final class PlayerData {
         hudEnabled = s.getBoolean("hud-enabled", true);
         trialExpireAt = s.getLong("trial-expire-at", 0L);
         trialTotalSeconds = s.getLong("trial-total-seconds", 0L);
+        trialRemaining = s.getLong("trial-remaining", 0L);
+        // 兼容旧版：旧数据用「现实时间戳 trial-expire-at」倒计时；迁移为「飞行秒数池」
+        // （飞才扣、不飞不流逝），避免旧玩家已领体验却因不飞而白白流失。
+        if (trialRemaining <= 0L && trialExpireAt > 0L) {
+            long left = (trialExpireAt - System.currentTimeMillis() + 999L) / 1000L;
+            if (left > 0L) {
+                trialRemaining = left;
+                if (trialTotalSeconds < left) trialTotalSeconds = left;
+            }
+            trialExpireAt = 0L;
+        }
         trialGrantedAt = s.getString("trial-granted-at", "");
         trialGrantedBy = s.getString("trial-granted-by", "");
         claimDate = s.getString("claim-date", "");
@@ -99,6 +112,7 @@ public final class PlayerData {
         s.set("hud-enabled", hudEnabled);
         s.set("trial-expire-at", trialExpireAt);
         s.set("trial-total-seconds", trialTotalSeconds);
+        s.set("trial-remaining", trialRemaining);
         s.set("trial-granted-at", trialGrantedAt);
         s.set("trial-granted-by", trialGrantedBy);
         s.set("claim-date", claimDate);

@@ -233,7 +233,7 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `ClearLag-2.0.0-VER-1.18-26.3.jar` | ClearLag++ 实体清理与性能优化 | `ClearLag/` |
 | `ClickMobs-paper-1.3.1.jar` | 点击收纳生物 | `ClickMobs/` |
 | `CoreProtect-CE-24.1.jar` | 方块记录与回滚 | `CoreProtect/` |
-| `DailySell-1.2.1.jar` | 自研·每日随机收购 | `DailySell/` |
+| `DailySell-1.2.3.jar` | 自研·每日随机收购（8 选 5，单人每日上限 900 币） | `DailySell/` |
 | `EconomyShop-1.1.6.jar` | 玩家商店 | `EconomyShop/` |
 | `EnchantShop-1.0.0.jar` | 自研·附魔商店 | `EnchantShop/` |
 | `EssentialsX-2.22.1-dev+28-f8724e2.jar` | 基础指令整合与南瓜币经济 | `Essentials/`（config.yml/userdata/warps/） |
@@ -248,7 +248,7 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `LuckPerms-Bukkit-5.5.91.jar` | 权限管理 | `LuckPerms/`（config.yml + libs/） |
 | `MoneyLedger-1.0.0.jar` | 自研·南瓜账本 | `MoneyLedger/` |
 | `MythicMobs-5.14.0.jar` | 自定义怪物与技能 | `MythicMobs/` |
-| `OfflineReward-1.0.0.jar` | 自研·离线奖励 | `OfflineReward/` |
+| `OfflineReward-1.1.0.jar` | 自研·在线离线奖励（离线 15 币/小时 + 在线 25 币/小时，在线高于离线） | `OfflineReward/` |
 | `OpenInv.jar` | 离线背包查看 | `OpenInv/` |
 | `PlaceholderAPI-2.12.3.jar` | 占位符 API | `PlaceholderAPI/`（expansions/） |
 | `Plan-5.9-dev-build-3786.jar` | 玩家/服务器数据分析 | `Plan/`（database.db/libraries/） |

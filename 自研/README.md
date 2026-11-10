@@ -17,8 +17,8 @@
 | `在线时间排行-PlanTop/`   | `PlanTop-1.0.0.jar`       | 基于 Plan 数据的在线时间排行榜                                      | PlaceholderAPI、Plan MySQL             | `PlanTop.md`                                                                  |
 | `建筑评分-BuildRate/`     | `BuildRate-1.0.0.jar`     | 建筑评分与榜单                                                      | PumpkinMail                            | `使用说明.md`                                                                 |
 | `快捷菜单系统-QuickMenu/` | `QuickMenu-1.0.0.jar`     | 32 套菜单 / 267 个菜单项（以服务器实跑配置为基线，含南瓜飞入口与管理面板），Java 箱子 GUI / 基岩原生 Form 双轨 | Geyser、Floodgate、Residence（软依赖） | `config.yml`（实跑基线副本）、`快捷菜单系统-QuickMenu.md`、`快捷菜单系统-QuickMenu-与通用菜单对比.md` |
-| `每日随机收购-DailySell/` | `DailySell-1.2.1.jar`     | 物品池 110 种；今日 8 种候选、每人自选 5 种出售（选择按日期持久化），GUI + `/ds choose` 双端可用 | Vault | `使用说明.md`、`config.yml`（实跑基线副本） |
-| `离线奖励-OfflineReward/` | `OfflineReward-1.0.0.jar` | 按离线时长发放奖励                                                  | PumpkinMail                            | —                                                                             |
+| `每日随机收购-DailySell/` | `DailySell-1.2.3.jar`     | 物品池 110 种；今日 8 种候选、每人自选 5 种出售（选择按日期持久化），单人每日收益上限 900 币，Java 箱子 GUI / 基岩原生表单（免打字）双端可用 | Vault、Floodgate（软依赖） | `使用说明.md`、`config.yml`（实跑基线副本）、`build.py` |
+| `在线离线奖励-OfflineReward/` | `OfflineReward-1.1.0.jar` | 离线 15 币/小时 + 在线 25 币/小时（在线高于离线，鼓励在线），上线/在线定期结算到南瓜邮箱（PumpkinMail） | PumpkinMail                            | —                                                                             |
 | `附魔商店-EnchantShop/`   | `EnchantShop-1.0.0.jar`   | 读取 ExcellentEnchants 配置，用经验等级购买附魔                     | ExcellentEnchants（只读其配置）        | `使用说明.md`                                                                 |
 
 `disabled/` 存放已停用的项目，不参与部署；`传送阵/` 是 SpacePortal 的文档目录（源码在 `传送阵-SpacePortal/`）。

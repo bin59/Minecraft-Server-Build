@@ -23,7 +23,7 @@
 #   voice         语音聊天     Simple Voice Chat
 #   guide         新人指南     游戏内说明书（main → guide → 分册）
 #   guide-economy 怎么赚钱     DailySell / Quests / EconomyShop / AuctionHouse / EzTax
-#   quests-daily  每日任务      Quests 5.3.2（8 个任务一键接取、每天限领 5 个）
+#   quests-daily  每日任务      Quests 5.3.2（14 任务按星期轮换，每天 6 个一键接取）
 #   guide-build   领地建房     Residence
 #   guide-move    传送出行     EssentialsX + SpacePortal
 #   guide-play    玩法大全     SimplePets / RideOnHead / SkinsRestorer / SVC / PatPat
@@ -337,7 +337,7 @@ menus:
         display-name: '&b&l每日任务'
         lore:
           - '&7挖矿、打怪、钓鱼、砍树、熔炼、驯服、收获'
-          - '&7共 8 个任务，每个奖励 40~50 南瓜币'
+          - '&7每天 6 个任务轮换，奖励 40~50 南瓜币'
           - '&8点击查看并一键接取'
         slot: 18
         actions:
@@ -773,13 +773,13 @@ menus:
         material: PAPER
         display-name: '&a每日收购'
         lore:
-          - '&7查看今日 4 种收购物品与单价'
-          - '&7出售收购物品赚南瓜币'
-          - '&8点击打开收购界面'
+        - '&7每天 8 种候选自选 5 种高价收购'
+        - '&7把收购物品卖给系统赚南瓜币'
+        - '&8点击打开收购界面'
         slot: 19
         actions:
-          - '[close]'
-          - '[player] ds'
+        - '[close]'
+        - '[player] ds'
 
   # ==================== 南瓜飞子菜单（PumpkinFly 自研） ====================
   # QuickMenu 无输入框，购买档位必须写成固定按钮；改价格时请同步改这里按钮文案。
@@ -1413,7 +1413,7 @@ menus:
         material: BOOK
         display-name: '&b&l每日任务'
         lore:
-          - '&7完成 8 种日常目标，每个赚 40~50 南瓜币'
+          - '&7每天 6 个轮换任务，每个赚 40~50 南瓜币'
           - '&8点击查看并一键接取'
         slot: 10
         actions:
@@ -1423,13 +1423,13 @@ menus:
         material: EMERALD_BLOCK
         display-name: '&a&l每日收购'
         lore:
-          - '&7每天随机 4 种物品高价收购'
-          - '&7把收购物品卖给系统赚南瓜币'
-          - '&8点击打开收购界面'
+        - '&7每天 8 种候选自选 5 种高价收购'
+        - '&7把收购物品卖给系统赚南瓜币'
+        - '&8点击打开收购界面'
         slot: 11
         actions:
-          - '[close]'
-          - '[player] ds'
+        - '[close]'
+        - '[player] ds'
 
       shop:
         material: CHEST_MINECART
@@ -1490,28 +1490,18 @@ menus:
           - '[close]'
           - '[player] eztax stats'
 
-  # ==================== 每日任务（Quests 5.3.2） ====================
-  # 任务定义见 plugins/Quests/storage/quests.yml（8 个，redo-delay: 86400 秒；每天经 DailyQuestPick 限领 5 个）
-  # 注意：5.3.2 的 /quests take 只按任务「显示名」匹配，不认任务 ID，
-  #       所以下面用显示名里的唯一关键词；无参数 /quests 只发帮助，不打开 GUI。
-  # 匹配规则（BukkitQuestsPlugin.getQuest 字节码）：精确 equalsIgnoreCase →
-  #       startsWith → contains → stripColor 精确，四轮都失败才发 questNotFound。
-  # 任务名已改为无空格连写（每日挖矿人），手动输入 /quests take 每日挖矿人 亦可。
-  # 若点击后提示「找不到该任务。」：多半是 Quests 里根本没加载这 7 个任务，
-  #       先在游戏内 /quests list 核对，再看启动日志是否「Loaded 7 Quest(s)」；
-  #       只有 4 个说明服务器读的仍是 jar 内默认示例，需上传 quests.yml 并重启。
   # ==================== 每日任务（每天轮换） ====================
   # 机制（2026-11-10 重做，弃用 DailyQuestPick 限领插件）：
   #   - Quests 定义 14 个每日任务（plugins/Quests/storage/quests.yml）；
   #   - 每个任务固定出现在一周中的 3 天（items.<id>.days），
-  #     每天恰好 6 个可选、相邻两天零重叠、全天合计 260 南瓜币；
+  #     每天恰好 6 个可选、相邻两天零重叠、全天 Faucet 约 250~260 南瓜币；
   #   - days 由 QuickMenu 按服务器本地日期过滤，Java 箱子界面与
   #     基岩原生表单同步生效；跨天后重新打开菜单即更新（无需 reload）。
   #   - 按钮直接执行 Quests 原生命令 /quests take <显示名>，无任何中间插件。
   #     /quests list 会列出全部 14 个任务（含当日不可见的），属预期，不算绕过。
   quests-daily:
     title: '&b&l每日任务'
-    bedrock-content: '&7今天这 6 个每日任务可选，明天换一批。每个完成后冷却 24 小时，全天合计 260 南瓜币。'
+    bedrock-content: '&7今天这 6 个每日任务可选，明天换一批。每个完成后冷却 24 小时，全天合计约 250~260 南瓜币。'
     size: 27
     back-menu: main
     filler:
@@ -1547,11 +1537,11 @@ menus:
         lore:
           - '&7每天 6 个任务可选，天天换一批'
           - '&7每个任务完成后需等 24 小时才能再接'
-          - '&7奖励经 Vault 自动发放，全天合计 260 南瓜币'
+          - '&7奖励经 Vault 自动发放，全天合计约 250~260 南瓜币'
           - '&8若提示「找不到该任务」，输入 /quests list 核对'
         slot: 5
         actions:
-          - '[message] &7每日任务：每天 6 个可选，天天换一批；完成后冷却 24 小时，奖励经 Vault 发放'
+          - '[message] &7每日任务：每天 6 个可选，天天换一批；完成后冷却 24 小时，全天约 250~260 南瓜币'
           - '[message] &7主菜单 → 每日任务，点任务图标即可一键接取'
           - '[message] &7点不动时输入 &f/quests list&7，看不到中文任务名就是任务未加载，联系管理员'
 
@@ -3411,7 +3401,7 @@ menus:
         material: EMERALD_BLOCK
         display-name: '&a每日收购·重新生成'
         lore:
-          - '&7重新随机今日 4 种收购物品'
+          - '&7重新随机今日 8 种候选（玩家需重选）'
           - '&7旧清单作废'
         slot: 19
         permission: dailysell.admin

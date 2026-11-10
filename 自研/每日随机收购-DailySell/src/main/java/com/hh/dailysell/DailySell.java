@@ -25,6 +25,13 @@ import org.bukkit.scheduler.BukkitTask;
 
 import net.milkbowl.vault.economy.Economy;
 
+import org.geysermc.cumulus.form.CustomForm;
+import org.geysermc.cumulus.form.SimpleForm;
+import org.geysermc.cumulus.response.CustomFormResponse;
+import org.geysermc.cumulus.response.SimpleFormResponse;
+import org.geysermc.floodgate.api.FloodgateApi;
+import org.geysermc.floodgate.api.player.FloodgatePlayer;
+
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -35,7 +42,7 @@ import java.util.stream.Collectors;
  * DailySell - 每日随机收购（8 种选 5 种，27 格 GUI + 命令）
  * 每天零点从物品池随机抽 8 种，作为全服共享的今日候选清单；
  *   - 每种当天额度随机 [min-per-item, max-per-item] 个，单价 = 基础价 × 浮动系数
- *   - 生成时保证 8 种合计（单价×额度）≤ daily-budget（默认 800），超了自动缩减额度
+ *   - 生成时保证 8 种合计（单价×额度）≤ daily-budget（默认 900），超了自动缩减额度
  *   - 每位玩家从中自选 5 种，只有选中的能卖；选择按日期存 data.yml 的 choices 段
  * 玩家：/ds 打开界面（未选满先来自选界面）/ /ds choose <序号> / /ds today / /ds sell / /ds sellall
  * 防刷：每人每天每种额度上限 + 每人每日总收益上限（daily-budget）。
@@ -66,6 +73,9 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
     private double priceFloatMax;
     private double dailyBudget;
     private boolean broadcast;
+    // Floodgate 是否可用（基岩原生表单）。通过 Class.forName 探测，
+    // 未装 Floodgate 时恒为 false，基岩玩家回退箱子 GUI（与 Java 端一致）。
+    private boolean floodgateAvailable = false;
     private final LinkedHashMap<String, Double> pool = new LinkedHashMap<>();
 
     // 今日清单条目
@@ -166,9 +176,17 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
             }
         }.runTaskTimer(this, 1200L, 1200L);
 
+        try {
+            Class.forName("org.geysermc.floodgate.api.FloodgateApi");
+            floodgateAvailable = true;
+        } catch (ClassNotFoundException ex) {
+            floodgateAvailable = false;
+        }
+
         getServer().getPluginManager().registerEvents(this, this);
         getCommand("ds").setExecutor(this);
-        getLogger().info("DailySell v" + getDescription().getVersion() + " 已启用（GUI + 命令）");
+        getLogger().info("DailySell v" + getDescription().getVersion() + " 已启用（GUI + 命令"
+                + (floodgateAvailable ? " + 基岩原生表单" : "") + "）");
     }
 
     @Override
@@ -188,7 +206,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         maxPerItem = cfg.getInt("max-per-item", 60);
         priceFloatMin = cfg.getDouble("price-float-min", 0.6);
         priceFloatMax = cfg.getDouble("price-float-max", 1.4);
-        dailyBudget = cfg.getDouble("daily-budget", 800);
+        dailyBudget = cfg.getDouble("daily-budget", 900);
         broadcast = cfg.getBoolean("broadcast", true);
         pool.clear();
         if (cfg.contains("pool") && cfg.getConfigurationSection("pool") != null) {
@@ -198,15 +216,36 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         }
     }
 
-    /** 日期变化时重新生成今日清单；同一天重启时恢复已保存清单（不刷新物品与额度） */
+    /**
+     * 日期变化时重新生成今日清单；同一天重启时恢复已保存清单（不刷新物品与额度）。
+     * 升级兼容：旧版本每天固定 N 种且无需选择，现版本 items-per-day 更大（默认 8）。
+     * 若保存的清单数量明显少于当前配置（旧版小清单残留，例如仍是 4 种），且今天尚未
+     * 自动升级过，则自动重抽为本日新清单——避免玩家部署新版本后当天仍看到旧的少数量
+     * 且“没有选择余地”。autoUpgraded 标记按天写入 daily.yml，防止定时任务反复重抽。
+     */
     private void rollIfNeeded(boolean force) {
         String now = LocalDate.now().toString();
         String stored = daily.getString("date", "");
         boolean hasList = daily.isSet("items") && !daily.getStringList("items").isEmpty();
+
+        // 同一天且有已保存清单：先恢复（保持当天稳定，不随意重抽）
         if (!force && now.equals(stored) && hasList) {
             loadTodayFromFile();
-            return;
         }
+
+        // 是否需要（重新）生成今日清单：
+        //   1) 跨天 / 无清单 / 手动 reroll → 强制新生成；
+        //   2) 升级兼容：已存清单数量 < 当前 items-per-day（旧版小清单残留），
+        //      且今天尚未自动升级过 → 自动重抽，无需管理员手动 /ds reroll。
+        String upgraded = daily.getString("autoUpgraded", "");
+        boolean needRoll = force
+                || !now.equals(stored)
+                || !hasList
+                || (today.size() > 0 && today.size() < itemsPerDay
+                    && !now.equals(upgraded) && itemsPerDay <= pool.size());
+
+        if (!needRoll) return;
+
         List<Entry> rolled = roll();
         if (rolled == null) {
             getLogger().warning("物品池为空或不足，无法生成今日清单");
@@ -216,6 +255,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         today.addAll(rolled);
         todayDate = now;
         daily.set("date", now);
+        daily.set("autoUpgraded", now);
         if (force) {
             // 手动重抽会换掉候选物品：清空当天自选记录，并关掉玩家手上过期的界面
             clearChoicesForToday();
@@ -340,7 +380,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
             sb.append("§e").append(zh(e.mat)).append("§7(").append(fmt(e.price)).append("币/个, 限")
               .append(e.quota).append("个)");
         }
-        sb.append("  §a/ds §7打开界面自选，基岩端用 §e/ds choose <1-" + today.size() + "§7>");
+        sb.append("  §a/ds §7打开界面自选（基岩端自动弹出表单，无需打字）");
         Bukkit.broadcastMessage(sb.toString());
     }
 
@@ -490,7 +530,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         return it;
     }
 
-    // ---------- 自选界面（Java 箱子 GUI；基岩端用 /ds choose <序号>） ----------
+    // ---------- 自选界面（Java 箱子 GUI；基岩端走原生表单，见 openBedrockChoose） ----------
 
     private void openChooseGui(Player p) {
         Inventory inv = Bukkit.createInventory(null, 27, "§6✦ 每日收购 · 自选 " + choiceLimit() + " 种");
@@ -558,7 +598,7 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         hm.setLore(Arrays.asList(
                 "§7今日候选全服共享 " + today.size() + " 种",
                 "§7每人自选 " + choiceLimit() + " 种作为自己的可卖清单",
-                "§7基岩端用 §a/ds choose <1-" + today.size() + ">§7 按序号选择",
+                "§7基岩端用 §a/ds §7自动弹表单选择（也可 /ds choose <序号>）",
                 "§7选好后 §a/ds §7或手持物品 §a/ds sell"));
         help.setItemMeta(hm);
         inv.setItem(26, help);
@@ -566,6 +606,15 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
 
     private void openGui(Player p) {
         if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
+        // 基岩玩家走原生表单（Geyser 箱子 GUI 不可靠，且触屏点格子体验差）
+        if (isBedrock(p)) {
+            if (hasChosen(p)) {
+                openBedrockSell(p);
+            } else {
+                openBedrockChoose(p);
+            }
+            return;
+        }
         if (!hasChosen(p)) { openChooseGui(p); return; }
         guiPages.put(p.getUniqueId(), 1);
         Inventory inv = Bukkit.createInventory(null, 27, "§6✦ 每日收购 · 今日");
@@ -821,6 +870,162 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         }
     }
 
+    // ---------- 基岩端原生表单（Floodgate / Cumulus） ----------
+    // Geyser 的箱子 GUI 不可靠（拖出物品 / 高亮异常 / 触屏只能左键），
+    // 基岩玩家 /ds 直接发原生表单：未选满 → CustomForm 开关自选；
+    // 选满 → SimpleForm 逐项一键出售（把背包该物品卖到额度/预算上限）。
+    // 注意：Cumulus 回调在 Netty 网络线程触发，所有 Bukkit 操作必须
+    // 通过 Bukkit.getScheduler().runTask 切回主线程，否则会崩服。
+
+    /** 判断玩家是否基岩版（Floodgate 认证）。未装 Floodgate 恒 false。 */
+    private boolean isBedrock(Player p) {
+        if (!floodgateAvailable) return false;
+        try {
+            return FloodgateApi.getInstance().isFloodgatePlayer(p.getUniqueId());
+        } catch (NoClassDefFoundError | ExceptionInInitializerError | IllegalStateException ex) {
+            return false;
+        }
+    }
+
+    private boolean sendForm(Player p, SimpleForm.Builder builder) {
+        try {
+            FloodgateApi api = FloodgateApi.getInstance();
+            FloodgatePlayer fp = api.getPlayer(p.getUniqueId());
+            if (fp == null) return false;
+            return fp.sendForm(builder);
+        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
+            return false;
+        }
+    }
+
+    private boolean sendForm(Player p, CustomForm.Builder builder) {
+        try {
+            FloodgateApi api = FloodgateApi.getInstance();
+            FloodgatePlayer fp = api.getPlayer(p.getUniqueId());
+            if (fp == null) return false;
+            return fp.sendForm(builder);
+        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
+            return false;
+        }
+    }
+
+    /** 基岩端自选表单：每种候选一个开关，提交时必须恰好打开 choiceLimit 个。 */
+    private void openBedrockChoose(Player p) {
+        if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
+        final int limit = choiceLimit();
+        // 快照：回调在 Netty 线程触发，避免零点重抽瞬间读取被修改的 today 列表
+        final List<Entry> snapshot = new ArrayList<>(today);
+        List<String> chosen = choices(p);
+        CustomForm.Builder b = CustomForm.builder()
+                .title("每日收购 · 自选 " + limit + " 种");
+        b.label("今日候选 " + snapshot.size() + " 种（全服共享）。打开恰好 "
+                + limit + " 个开关后点提交。已选 " + chosen.size() + "/" + limit
+                + "，选择按日期保存，已卖额度不会因重选重置。");
+        final int n = snapshot.size();
+        for (int i = 0; i < n; i++) {
+            Entry e = snapshot.get(i);
+            int sold = soldCount(p, e.mat);
+            boolean def = chosen.contains(e.mat.name());
+            String text = zh(e.mat) + "：" + fmt(e.price) + " 币/个 · 额度 " + e.quota
+                    + (sold > 0 ? "（已卖 " + sold + "）" : "");
+            b.toggle(text, def);
+        }
+        b.validResultHandler((CustomFormResponse resp) -> {
+            List<String> picked = new ArrayList<>();
+            for (int i = 0; i < n; i++) {
+                try {
+                    if (resp.getToggle(i)) picked.add(snapshot.get(i).mat.name());
+                } catch (RuntimeException ignored) {
+                    // 响应结构与表单不一致时跳过该项
+                }
+            }
+            // Netty 线程 → 主线程
+            Bukkit.getScheduler().runTask(this, () -> {
+                if (!p.isOnline()) return;
+                if (picked.size() != limit) {
+                    p.sendMessage("§c需恰好选择 " + limit + " 种，当前 "
+                            + picked.size() + " 种，已重新打开表单请重选");
+                    openBedrockChoose(p);
+                    return;
+                }
+                saveChoices(p, picked);
+                p.sendMessage("§a已选好今日 " + limit + " 种收购物品");
+                p.playSound(p.getLocation(), "entity.experience_orb.pickup", 0.6f, 1.4f);
+                openBedrockSell(p);
+            });
+        });
+        if (!sendForm(p, b)) {
+            // 表单发送失败（理论仅在 Floodgate 异常时发生）：兜底回箱子 GUI
+            openChooseGui(p);
+        }
+    }
+
+    /** 基岩端出售表单：每种选中物品一个按钮，点击把背包里该物品卖到额度/预算上限。 */
+    private void openBedrockSell(Player p) {
+        final List<Entry> my = myEntries(p);
+        if (my.isEmpty()) { openBedrockChoose(p); return; }
+        double earned = earnedToday(p);
+        SimpleForm.Builder b = SimpleForm.builder()
+                .title("每日收购 · 出售");
+        b.content("今日已赚 " + fmt(earned) + " / " + fmt(dailyBudget) + " 南瓜币\n"
+                + "点击物品：把背包里该物品卖到额度/预算上限");
+        final int cnt = my.size();
+        for (Entry e : my) {
+            int sold = soldCount(p, e.mat);
+            int remain = Math.max(0, e.quota - sold);
+            String label = remain > 0
+                    ? zh(e.mat) + " · 剩 " + remain + "/" + e.quota + " · " + fmt(e.price) + " 币/个"
+                    : zh(e.mat) + " · 今日额度已用完";
+            b.button(label);
+        }
+        b.button("重新自选（已赚金额与已卖额度不变）");
+        b.validResultHandler((SimpleFormResponse resp) -> {
+            int idx = resp.clickedButtonId();
+            // Netty 线程 → 主线程
+            Bukkit.getScheduler().runTask(this, () -> {
+                if (!p.isOnline()) return;
+                if (idx >= 0 && idx < cnt) {
+                    bedrockSell(p, my.get(idx));
+                    if (p.isOnline()) openBedrockSell(p); // 刷新表单继续卖
+                } else if (idx == cnt) {
+                    saveChoices(p, new ArrayList<>());
+                    p.sendMessage("§e已清空今日选择（已卖额度与已赚金额不变）");
+                    openBedrockChoose(p);
+                }
+            });
+        });
+        sendForm(p, b);
+    }
+
+    /** 基岩表单出售：整个背包统计该物品，卖到「剩余额度 / 剩余预算 / 持有量」的最小值。 */
+    private void bedrockSell(Player p, Entry entry) {
+        int sold = soldCount(p, entry.mat);
+        int remainQuota = entry.quota - sold;
+        if (remainQuota <= 0) {
+            p.sendMessage("§c今日「" + zh(entry.mat) + "」额度已用完");
+            p.playSound(p.getLocation(), "entity.villager.no", 0.6f, 1.0f);
+            return;
+        }
+        double budgetLeft = dailyBudget - earnedToday(p);
+        int budgetAllow = budgetLeft >= entry.price ? (int) Math.floor(budgetLeft / entry.price) : 0;
+        if (budgetAllow <= 0) {
+            p.sendMessage("§c今日收购总收益已达上限（" + fmt(dailyBudget) + " 币）");
+            p.playSound(p.getLocation(), "entity.villager.no", 0.6f, 1.0f);
+            return;
+        }
+        int amt = Math.min(Math.min(remainQuota, budgetAllow), countHeld(p, entry.mat));
+        if (amt <= 0) {
+            p.sendMessage("§c背包里没有「" + zh(entry.mat) + "」可出售");
+            return;
+        }
+        removeItems(p, entry.mat, amt);
+        econ.depositPlayer(p, entry.price * amt);
+        recordSale(p, entry.mat, sold + amt, entry.price * amt);
+        p.sendMessage("§a已出售 §e" + zh(entry.mat) + "§a ×" + amt + "，获得 §e"
+                + fmt(entry.price * amt) + "§a 南瓜币（额度剩 §e" + (entry.quota - sold - amt) + "§a 个）");
+        p.playSound(p.getLocation(), "entity.experience_orb.pickup", 0.6f, 1.4f);
+    }
+
     // ---------- 命令 ----------
 
     @Override
@@ -875,6 +1080,12 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         Player p = (Player) sender;
         if (today.isEmpty()) { p.sendMessage("§c今日收购清单未生成"); return; }
         if (args.length < 2) {
+            if (isBedrock(p)) {
+                // 基岩端统一走原生表单（与 /ds 相同入口）
+                if (hasChosen(p)) openBedrockSell(p);
+                else openBedrockChoose(p);
+                return;
+            }
             if (hasChosen(p)) {
                 p.sendMessage("§a你今天已选好 " + choiceLimit() + " 种，正在打开收购界面");
                 openGui(p);

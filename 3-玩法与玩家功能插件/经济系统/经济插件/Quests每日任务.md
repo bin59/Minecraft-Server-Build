@@ -18,7 +18,7 @@ Quests 是本服每日任务插件，作为经济体系的**合规 Faucet（水�
 
 ## 功能定位
 
-- **合规 Faucet**：8 个每日任务合计 **350 南瓜币/天**（50+50+40+40+40+50+40+40），计入周 Faucet 统计。
+- **合规 Faucet**：**14 个每日任务按星期轮换**，每天放出其中 6 个（相邻两天零重叠），**全天合计约 250~260 南瓜币**（周一~周四、周六 260；周五、周日 250），计入周 Faucet 统计。
 - **防刷设计**：`redo-delay` 控制单个任务的重复冷却（**单位：秒**），`86400` 即 24 小时。注意是「完成后计时」的冷却，不是每日 0 点统一重置。单位已由 Quests 5.3.2 字节码核实：`getInt(redo-delay) * 1000 → Planner.setCooldown(ms)`，与 `System.currentTimeMillis()` 相减。
 - **分类展示**：任务在 `quests.yml` 中按 ID 组织，`/quests list` 列出可接任务。
 - **配比约束**：若系统发放占比过高（Faucet ÷ 玩家总收入 ≥ 50%），优先降低任务额度。
@@ -75,33 +75,48 @@ quests:
 - `redo-delay` 与 `requirements`、`rewards` 同级；`ask-message` / `finish-message` 用 MiniMessage 颜色标签。
 - 中文文本用单引号包裹，避免 YAML 把 `<` `:` 当作语法。
 
-### 本服每日任务清单
+### 本服每日任务清单（14 个，按星期轮换）
 
-| 任务 ID | 名称 | 条件 | 条件类型（编辑器） | 奖励 |
-|---|---|---|---|---|
-| `dailyminer` | 每日 · 挖矿人 | 铁矿石 8 + 深板岩铁矿石 8 | Break blocks | 50 |
-| `dailyhunter` | 每日 · 猎手 | 击杀僵尸 10 | Kill mobs | 50 |
-| `dailyfisher` | 每日 · 渔夫 | 钓鱼 5 条 | Catch fish | 40 |
-| `dailywoodcutter` | 每日 · 伐木工 | 砍橡木原木 16 | Break blocks | 40 |
-| `dailycook` | 每日 · 厨师 | 熔炉烧炼 16 个物品 | Smelt items | 40 |
-| `dailytamer` | 每日 · 驯养师 | 驯服动物 2 只 | Tame mobs | 50 |
-| `dailywalker` | 每日 · 远行者 | 放置火把 16 个 | Place blocks | 40 |
-| `dailyfarmer` | 每日 · 农夫 | 收获成熟小麦 16 | Break blocks（WHEAT） | 40 |
+每个任务固定出现在一周中的 3 天（快捷菜单 `days:` 条件），**每天恰好 6 个可选、相邻两天零重叠**：
 
-全部任务 `redo-delay: 86400`，奖励 `money` 走 Vault。
+| 任务 ID | 名称 | 条件 | 条件类型（编辑器） | 奖励 | 出现日 |
+|---|---|---|---|---|---|
+| `dailyminer` | 每日挖矿人 | 铁矿石 8 + 深板岩铁矿石 8 | Break blocks | 50 | 一/三/五 |
+| `dailyhunter` | 每日猎手 | 击杀僵尸 10 | Kill mobs | 50 | 二/四/六 |
+| `dailyfisher` | 每日渔夫 | 钓鱼 5 条 | Catch fish | 40 | 三/五/日 |
+| `dailywoodcutter` | 每日伐木工 | 砍橡木原木 16 | Break blocks | 40 | 四/六/一 |
+| `dailycook` | 每日厨师 | 熔炉取出铁锭 16 | Smelt items | 40 | 五/日/二 |
+| `dailytamer` | 每日驯养师 | 驯服狼 2 只 | Tame mobs | 50 | 六/一/三 |
+| `dailyfarmer` | 每日农夫 | 收获小麦 16 | Break blocks（WHEAT） | 40 | 日/二/四 |
+| `dailywalker` | 每日远行者 | 放置火把 16 | Place blocks | 40 | 一/三/五 |
+| `dailyquarrier` | 每日采石匠 | 挖石头 16 + 深板岩 16 | Break blocks | 40 | 二/四/六 |
+| `dailywarrior` | 每日讨伐者 | 击杀骷髅 10 | Kill mobs | 40 | 三/五/日 |
+| `dailyshepherd` | 每日牧羊人 | 剪白色绵羊 5 只 | Shear sheep | 40 | 四/六/一 |
+| `dailymilker` | 每日挤奶工 | 挤奶 3 头 | Milk cows | 40 | 五/日/二 |
+| `dailycraftsman` | 每日工匠 | 制作箱子 4 个 | Craft items | 40 | 六/一/三 |
+| `dailyenchanter` | 每日附魔师 | 附魔铁剑 2 把 | Enchant items | 50 | 日/二/四 |
 
-> `dailywalker` 的步行距离在 Quests Classic 中用 **Conditions + PlaceholderAPI 距离占位符**实现（`conditions.yml`），而不是独立的 stage 键；配置时以游戏内编辑器 `/questadmin` 的可用类型为准。
+全部任务 `redo-delay: 86400`，奖励 `money` 走 Vault。每日组合：周一（挖矿/驯养/伐木/远行/牧羊/工匠）、周二（猎手/厨师/农夫/采石/挤奶/附魔）、周三（渔夫/挖矿/驯养/远行/讨伐/工匠）、周四（伐木/牧羊/猎手/采石/农夫/附魔）、周五（厨师/挤奶/渔夫/讨伐/挖矿/远行）、周六（驯养/工匠/伐木/牧羊/猎手/采石）、周日（农夫/附魔/厨师/挤奶/渔夫/讨伐）。
+
+> 原版 `dailywalker`（步行 5000 格）在 Quests Classic 中无累计距离目标，现为「放置火把」替代（见上表）；要精确步行距离需 Conditions + PlaceholderAPI 占位符走 `conditions.yml`。
 
 ### 已验证的 stage 键
 
-| 键 | 用途 | 示例 |
-|---|---|---|
-| `break-block-names` / `break-block-amounts` / `break-block-durability` | 破坏指定方块 | `IRON_ORE` + 数量 |
-| `mobs-to-kill` / `mob-amounts` | 击杀生物 | `Zombie` / `10` |
-| `fish-to-catch` | 钓鱼数量 | `5` |
-| `death-event` / `start-event` / `finish-event` | 绑定 `actions.yml` 中的事件动作 | `DeathFail` |
+以下键名全部经 `BukkitQuestYamlStorage` 字节码（javap）实测确认读取方式：
 
-编辑器内另有 Smelt items / Tame mobs / Place blocks / Shear sheep / Milk cows / Brew potions / Enchant items / Consume items / Damage blocks 等类型，对应键名以编辑器生成的 YAML 为准。
+| 键 | 读取方式 | 用途 | 示例 |
+|---|---|---|---|
+| `break-block-names` / `break-block-amounts` / `break-block-durability` | 字符串/整数/整数列表 | 破坏指定方块 | `IRON_ORE` + 数量 |
+| `place-block-names` / `place-block-amounts` / `place-block-durability` | 同上 | 放置指定方块 | `TORCH` + `16` |
+| `mobs-to-kill` / `mob-amounts` | 生物名/整数列表 | 击杀生物 | `Zombie` / `10` |
+| `mobs-to-tame` / `mob-tame-amounts` | 生物名/整数列表 | 驯服生物 | `Wolf` / `2` |
+| `fish-to-catch` | 整数 | 钓鱼数量 | `5` |
+| `items-to-smelt` / `items-to-craft` / `items-to-enchant` / `items-to-consume` | **ItemStack 列表**（`==: org.bukkit.inventory.ItemStack` + `type` + `amount`） | 熔炼取出 / 合成 / 附魔 / 食用 | `IRON_INGOT` x16 |
+| `cows-to-milk` | **纯整数**（getInt，非列表） | 挤奶头数 | `3` |
+| `sheep-to-shear` / `sheep-amounts` | **颜色字符串列表**（DyeColor 名）/ 整数列表 | 剪指定颜色绵羊 | `WHITE` / `5` |
+| `death-event` / `start-event` / `finish-event` | 字符串 | 绑定 `actions.yml` 中的事件动作 | `DeathFail` |
+
+编辑器内另有 Brew potions（`items-to-brew`，同为 ItemStack 列表）/ Damage blocks / Use blocks（`use-block-*`）/ Cut blocks（`cut-block-*`）等类型可用。
 
 ### 奖励类型
 
@@ -118,7 +133,8 @@ quests:
 | 键 | 值 | 说明 |
 |---|---|---|
 | `allow-command-questing` | `true` | 允许用命令接取/完成任务 |
-| `confirm-accept` / `confirm-abandon` | `true` | 接取 / 放弃需二次确认 |
+| `confirm-accept` | `false` | **2026-11-10 关闭**：QuickMenu 按钮点一下直接接任务，不再要求聊天栏打字二次确认 |
+| `confirm-abandon` | `true` | 放弃任务仍需二次确认（防误点） |
 | `generate-files-on-join` | `true` | 玩家进服时生成 `data/<UUID>.yml` |
 | `give-journal-item` | `false` | 不给任务日志物品 |
 | `language` | `en-US` | 语言包；可切 `zh-TW` |
@@ -160,7 +176,7 @@ quests:
 
 ## 与经济体系的关系
 
-- **Faucet 项**：8 个任务合计 350 南瓜币/天，计入周 Faucet 统计。
+- **Faucet 项**：14 个任务按星期轮换，每天 6 个可选、全天约 250~260 南瓜币，计入周 Faucet 统计。
 - **防刷**：`redo-delay: 86400` + `prevent-exploit: true`，避免同日重复领奖。
 - **账本统一**：`rewards.money` 经 Vault 写入 EssentialsX 单账本，与全服经济、南瓜币明细一致。
 - **监控**：`/questadmin stats` 查看完成次数；配合 `/tax stats` 观察 Faucet/Sink 配比。
@@ -197,17 +213,20 @@ quests:
 
 `dailywalker`（步行 5000 格）**无法 1:1 迁移**：Quests 5.3.2 的 102 个配置键中没有任何累计距离目标（`share-distance` 是多人共享参数、`reach-location-*` 是抵达坐标）。`quests.yml` 末尾附了两个可直接取消注释的原生替代（吃 8 面包 / 插 16 火把），启用后 Faucet 回到 **350 南瓜币/天**；要精确「今日步行距离」需注册 `custom-objectives` 或由自研插件暴露 PAPI 占位符再走 `conditions.yml`。
 
-### 每日限领网关（2026-11-10 新增）
+### 每日轮换（2026-11-10 重做，弃用 DailyQuestPick）
 
-Quests Classic **没有「每天从 N 个每日任务里选领 M 个」的机制**，`max-quests: 0` 表示同时持有任务数不限，因此玩家可一次接走全部每日任务。为落实「8 选 5」：
+Quests Classic **没有「每天从 N 个任务里选领 M 个」的原生机制**（`max-quests: 0` 只是同时持有数不限）。最初为此做了自研限领网关插件 DailyQuestPick（`/dq take` + 拦截 `/quests take`），当晚即弃用并删除——改为**任务本身按星期轮换**，不需要任何中间插件：
 
-- 实跑 `quests.yml` 末尾已取消注释其一（插 16 火把），`name: '每日 · 远行者'`，作为第 8 个每日任务（日 faucet 上限回到 350/天，但实际每天仅可领 5 个）。
-- 新增自研插件 **DailyQuestPick**（`自研/每日任务限领-DailyQuestPick/`）：在玩家与 Quests 之间加网关，按自然日（服务器 0 点）计数，每天最多领 `daily-limit: 5` 个；「领了即占槽、完成/放弃不退槽」。
-  - 入口：`/dq take <id>`（菜单按钮）与直接 `/quests take <名称>`（经 `PlayerCommandPreprocessEvent` 拦截，绕过菜单也受限）。
-  - 数据：`plugins/DailyQuestPick/data/<uuid>.yml`（`last-date` + `claimed-today`）。
-  - 命令：`/dq`（查余量）、`/dq reset [玩家]`、`/dq reload`（均 `dailyquestpick.admin`）。
-- QuickMenu `quests-daily` 菜单 8 个按钮的 `actions` 由 `[player] quests take <名称>` 改为 `[player] dq take <id>`，由网关统一计数。
+- `quests.yml` 扩到 **14 个任务**（上表），全部 `redo-delay: 86400`。
+- **轮换由 QuickMenu 实现**（`自研/快捷菜单系统-QuickMenu/`）：菜单项新增 `days:` 星期条件（如 `days: [MON, WED, FRI]`），按服务器本地日期在 Java 箱子界面与基岩原生表单**同步过滤**，跨天后重新打开菜单即更新，无需 reload。
+- 快捷菜单 `quests-daily` 的按钮直连 Quests 原生命令 `/quests take <显示名>`（连写名如 `每日挖矿人`），不再经过任何网关。
+- 每个任务一周出现 3 天：**每天恰好 6 个可选、相邻两天零重叠、全天 Faucet 约 250~260**（周五/周日 250，其余 260——数学上 14×3 配对结构无法做到每天严格相等，除非改动已实跑确立的原任务奖励，故保留 10 币星期级微差）。
+- **边界说明**：`/quests list` 会列出全部 14 个任务，`/quests take <名>` 在任务「不在当日轮换」时也能接取——这是 Quests 原生行为，菜单轮换只控制展示入口，属预期而非漏洞；日常玩家经菜单领取即受轮换约束。
 
-配套把 `plugins/Quests/config.yml` 的 `language` 从 `en-US` 改为 `zh-CN`（jar 内 `lang/zh-CN/strings.yml` 与官方 `strings.yml` 同为 802 键，完整）。
+配置要点：
 
-**验证记录**：SnakeYAML 2.6 严格解析通过、UTF-8 正常；全部 stage 键在 102 键白名单内且列表长度配对；12 个 Material + 2 个 EntityType 用 Leaf `leaf-api-26.3.build.18-alpha.jar` 的 `javap` 确认存在；生物名经 `BukkitMiscUtil.getProperMobType` 大小写不敏感匹配。生效方式 `/questadmin reload` 或重启，随后 `/quests list` 应列出 8 个任务（每日经 **DailyQuestPick** 限领 5 个），接一个完成后核对 Vault 余额与 24 小时冷却。
+- `plugins/Quests/config.yml` 的 `max-quests` 保持 `0`（只约束同时持有数，与轮换无关）。
+- 任务名保持**无空格连写**（`/quests take` 只允许 1 个任务名参数）。
+- 要调整某任务的出现日：改 QuickMenu `config.yml` 里 `quests-daily.items.<任务ID>.days`（保持「同日可见任务槽位不冲突、每天 6 个」的约束），`/qm reload` 生效；任务目标/奖励改 `quests.yml` 后 `/questadmin reload`。
+
+**验证记录**（SnakeYAML 2.2 Java 校验器，`/.workbuddy/quest_validate/`）：`quests.yml` 14 个任务全部通过（名称唯一 / redo-delay 86400 / stage 键在 102 键白名单 / 列表长度配对）；三份 QuickMenu `config.yml` 通过（14 个 `days:` 按钮 / 每天恰好 6 个可见 / 无槽位冲突 / 相邻日零重叠 / 奖励合计 250~260）。生效方式 `/questadmin reload` + `/qm reload`（或重启），随后 `/quests list` 应列出 **14 个任务**，菜单每天显示 6 个且与上表出现日一致。
