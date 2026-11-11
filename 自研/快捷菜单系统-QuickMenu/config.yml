@@ -2153,19 +2153,19 @@ menus:
         actions:
           - '[menu] buildrate-admin'
 
-      # ---------- 离线奖励管理（OfflineReward 自研） ----------
+      # ---------- 在线离线奖励管理（OfflineReward 自研） ----------
       admin-offlinereward:
         material: CLOCK
-        display-name: '&a&l离线奖励管理'
+        display-name: '&a&l在线离线奖励管理'
         lore:
-          - '&7点击重载离线奖励配置'
-          - '&7查询玩家最后发放时间戳'
+          - '&7点击重载在线/离线奖励配置'
+          - '&7查询玩家在线奖励阶段进度'
         slot: 25
         permission: offlinereward.admin
         actions:
           - '[close]'
           - '[player] offlinereward reload'
-          - '[message] &7查询玩家时间戳：&e/offlinereward check 玩家名'
+          - '[message] &7查询在线奖励进度：&e/offlinereward check 玩家名'
 
   # ==================== 玩家管理 ====================
   admin-player:

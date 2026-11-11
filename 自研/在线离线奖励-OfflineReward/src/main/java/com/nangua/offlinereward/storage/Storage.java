@@ -11,7 +11,10 @@ import java.util.UUID;
 
 /**
  * SQLite 存储层。offline.db，表 players(player_uuid, last_logout, last_reward,
- * last_login, online_reward_today, online_date)。
+ * last_login, online_reward_today, online_date, next_online_settle, online_cycle_index,
+ * online_minutes_today)。
+ * 1.1.3 新增 online_minutes_today（今日累计在线毫秒，阶段发放用）；旧库自动 ALTER 兼容。
+ * online_cycle_index 在阶段模式下复用为「已发放阶段数」。
  * 单服使用；每次退出写一次、上线读一次，量级极小。
  */
 public class Storage {
@@ -28,8 +31,9 @@ public class Storage {
                     last_logout INTEGER DEFAULT 0,
                     last_reward INTEGER DEFAULT 0
                 )""");
-            // 在线奖励新增列（旧库无这些列，忽略"已存在"异常）
-            for (String col : new String[]{"last_login", "online_reward_today", "online_date"}) {
+            // 新增列（旧库无这些列，忽略"已存在"异常）
+            for (String col : new String[]{"last_login", "online_reward_today", "online_date",
+                    "next_online_settle", "online_cycle_index", "online_minutes_today"}) {
                 try {
                     st.executeUpdate("ALTER TABLE players ADD COLUMN " + col + " INTEGER DEFAULT 0");
                 } catch (SQLException ignored) { /* 列已存在 */ }
@@ -62,6 +66,21 @@ public class Storage {
         return getLong(uuid, "online_date");
     }
 
+    /** 下次在线奖励结算时间戳（毫秒），循环模式用；0 = 未起算 / 已下线。 */
+    public synchronized long getNextOnlineSettle(UUID uuid) {
+        return getLong(uuid, "next_online_settle");
+    }
+
+    /** 循环段下标 / 阶段模式下「已发放阶段数」（从 0 开始）。 */
+    public synchronized int getOnlineCycleIndex(UUID uuid) {
+        return (int) getLong(uuid, "online_cycle_index");
+    }
+
+    /** 1.1.3：今日累计在线毫秒（不含当前正在计时的在线段）。 */
+    public synchronized long getOnlineMinutesToday(UUID uuid) {
+        return getLong(uuid, "online_minutes_today");
+    }
+
     public synchronized void setLastLogout(UUID uuid, long millis) {
         upsert(uuid, "last_logout", millis);
     }
@@ -80,6 +99,19 @@ public class Storage {
 
     public synchronized void setOnlineDate(UUID uuid, long v) {
         upsert(uuid, "online_date", v);
+    }
+
+    public synchronized void setNextOnlineSettle(UUID uuid, long millis) {
+        upsert(uuid, "next_online_settle", millis);
+    }
+
+    public synchronized void setOnlineCycleIndex(UUID uuid, int v) {
+        upsert(uuid, "online_cycle_index", v);
+    }
+
+    /** 1.1.3：设置今日累计在线毫秒。 */
+    public synchronized void setOnlineMinutesToday(UUID uuid, long millis) {
+        upsert(uuid, "online_minutes_today", millis);
     }
 
     private long getLong(UUID uuid, String col) {

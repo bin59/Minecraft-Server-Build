@@ -1,4 +1,27 @@
-# 南瓜账本 MoneyLedger 配置
+# 南瓜账本 MoneyLedger 1.1.0 配置
+# 数据文件：ledger.db（SQLite）；权威补充源：../Essentials/trade.log
 
 # 查询默认返回条数
 query-limit: 30
+
+# 命令上下文有效期（秒）：/eco give、/pay 等命令触发的余额变动，
+# 会把「执行者: 命令」写进 source；超过该时长未触发变动就丢弃，避免串到下一笔。
+command-context-ttl-seconds: 5
+
+# trade.log 幂等回填：补齐事件链路漏掉的余额变动
+#  - enabled: 启动时跑一次 + 之后按 interval-minutes 周期性跑
+#  - 去重键 = 玩家 + 秒 + 金额 + 变动后余额，重复运行不会重复插记录
+#  - 进度保存在 ledger.db 的 backfill_state 表；/moneyledger backfill full 可全量重扫
+#  - 补记记录 category=BACKFILL、origin=BACKFILL、source=Essentials/trade.log，不臆测触发插件
+backfill:
+  enabled: true
+  interval-minutes: 15
+  # 只补该日期（含）之后的变动，格式 YYYY-MM-DD；留空 = 连账本启用前的历史也一起补齐
+  min-date: ""
+
+# 说明（1.1.0 起固定行为，无需配置）：
+#  * 每笔余额变动在事件线程内同步落盘（WAL + synchronous=NORMAL），不再用内存队列，崩溃不丢记录；
+#  * 写库失败会追加到 ledger-failed.log，下次启动自动重放；
+#  * 金额同时保存 BigDecimal 精确文本（old_exact / new_exact / delta_exact）；
+#  * 所有子命令需要 moneyledger.admin；
+#  * /moneyledger verify 与 trade.log 按日对账并输出字段体检报告。

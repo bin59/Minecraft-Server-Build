@@ -10,7 +10,7 @@
     （Namespaced 在 adventure-key，BaseComponent 在 bungeecord-chat）
   - ~/.m2 sqlite-jdbc（打进最终 jar，自包含运行）
 
-产物：OfflineReward-1.1.0.jar（含 sqlite-jdbc，自包含）。
+产物：OfflineReward-1.1.3.jar（含 sqlite-jdbc，自包含）。
 """
 import glob
 import os
@@ -23,7 +23,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src", "main", "java")
 RES = os.path.join(ROOT, "src", "main", "resources")
 CLASSES = os.path.join(ROOT, "target", "classes")
-OUT_JAR = os.path.join(ROOT, "OfflineReward-1.1.0.jar")
+OUT_JAR = os.path.join(ROOT, "OfflineReward-1.1.3.jar")
 
 SHARED_LIB = os.path.normpath(os.path.join(ROOT, "..", "lib"))
 M2 = os.path.join(os.path.expanduser("~"), ".m2", "repository")
@@ -107,10 +107,11 @@ def main():
             z.extract(n, CLASSES)
     print("sqlite-jdbc 已并入 classes")
 
-    # 删除旧 jar 与可能残留的 MANIFEST
-    old = os.path.join(ROOT, "OfflineReward-1.0.0.jar")
-    if os.path.exists(old):
-        os.remove(old)
+    # 删除旧版本 jar 与可能残留的 MANIFEST
+    for v in ("1.0.0", "1.1.0", "1.1.1", "1.1.2"):
+        old = os.path.join(ROOT, "OfflineReward-%s.jar" % v)
+        if os.path.exists(old):
+            os.remove(old)
     mf = os.path.join(CLASSES, "META-INF", "MANIFEST.MF")
     if os.path.exists(mf):
         os.remove(mf)

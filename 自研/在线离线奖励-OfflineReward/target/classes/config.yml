@@ -1,6 +1,6 @@
 # ============================================================
-#  离线奖励 OfflineReward 配置
-#  按离线时长，下次上线在邮箱领取南瓜币（复用 PumpkinMail）
+#  离线奖励 / 在线奖励 OfflineReward 配置
+#  按离线/在线时长，发南瓜币到南瓜邮箱（PumpkinMail）
 # ============================================================
 
 reward:
@@ -11,26 +11,56 @@ reward:
   cooldown-hours: 0         # 两次发放最小间隔（小时，0 = 不限），防反复上下线刷
   floor-minutes: true       # true = 不足整小时的分钟舍去；false = 按精确小数计
 
-# 拥有该权限节点的玩家不上线发放（仅用于豁免测试号/特殊情况账号）
-# 注意：管理员默认【照常领取】——op 只会自动拿到 offlinereward.admin，
-# 不会拿到本权限，所以管理组的离线奖励照发不误。
-# 若确实不想让某个管理员拿，单独给他加 offlinereward.exempt 即可。
+# 显式把该权限设为 true 的玩家不发放（仅用于豁免测试号/特殊情况账号）。
+# 1.1.1 起：豁免只认「显式赋权」的精确节点，admin 组的 '*' 通配不再误伤，
+# 管理员（含 OP）默认【照常领取】离线 + 在线奖励。
+# 若要豁免：lp user/group <名字> permission set offlinereward.exempt true
 exempt-permission: offlinereward.exempt
 
-# 上线发放后是否发一条聊天提示（南瓜邮箱另有 ActionBar 待领提示）
+# 发放后是否发一条聊天提示（南瓜邮箱另有 ActionBar 待领提示）
 announce: true
 
 # 数据文件（plugins/OfflineReward/ 下）
 db: offline.db
 
 # ============================================================
-#  在线奖励：玩家在线期间定期结算，发南瓜币到南瓜邮箱
-#  单价高于离线奖励，以鼓励玩家在线游玩（拉开「在线 vs 离线」差距）
+#  在线奖励：阶段发放（1.1.3 起，替代「全天按小时无限发」）
+#  阶段间隔：5 分 → 10 分 → 15 分 → 之后都是 30 分
+#  累计时间点：5 / 15 / 30 / 60 / 90 / 120 / 150 / 180 分（= 3 小时）
+#  奖励一次比一次多，全天【最多就 300 币】：8 档合计恰好 300，
+#  再用 max-per-day: 300 做一道硬封顶；领满 8 档当天「毕业」，不再发放。
+#  本档合计 10+15+20+25+30+40+60+100 = 300 币/天（3 小时发完）。
 # ============================================================
 online-reward:
   enabled: true
-  coins-per-hour: 25        # 在线每 1 小时奖励的南瓜币数（高于离线 15，拉开差距鼓励在线）
-  min-minutes: 5            # 单个结算段最少在线分钟（不足不发）
-  interval-minutes: 5       # 定时结算间隔（分钟）；在线时长按整段取整发放
-  max-per-day: 0            # 每日在线奖励封顶（0 = 不封顶）
-  floor-minutes: true       # true = 按 interval-minutes 整段取整
+  mode: stages             # stages = 阶段发放（默认） | cycle = 循环间隔发放（1.1.2 行为，可一键回退）
+  # 阶段表：今日累计在线达到 minutes 分钟 → 发 coins 币；逐档发放，最后一档后当天毕业。
+  # 金额、档数、时间点全部在这里配置；改完 /offlinereward reload 即生效，无需重新编译。
+  # 想改「一次比一次多」的幅度或毕业时长，直接改下面的 coins / minutes 即可；
+  # 改金额时别让合计超过 300，否则末档会被 max-per-day 截断。
+  # 分次上线可累计时长（当日内），跨天自动重置。
+  stages:
+    - minutes: 5           # 第 1 档：间隔 5 分
+      coins: 10
+    - minutes: 15          # 第 2 档：再 10 分
+      coins: 15
+    - minutes: 30          # 第 3 档：再 15 分
+      coins: 20
+    - minutes: 60          # 第 4 档起：每 30 分一档
+      coins: 25
+    - minutes: 90
+      coins: 30
+    - minutes: 120
+      coins: 40
+    - minutes: 150
+      coins: 60
+    - minutes: 180         # 第 8 档：累计 3 小时 → 当天毕业
+      coins: 100
+  max-per-day: 300         # 硬封顶：全天在线奖励最多 300 币（阶段表合计也是 300）
+
+  # —— 以下仅 mode: cycle 时生效（保留 1.1.2 行为，随时可切回）——
+  coins-per-hour: 25       # 循环模式单价
+  cycle-minutes: [10, 20, 30]
+  min-minutes: 5
+  interval-minutes: 5
+  floor-minutes: true      # 1.1.1 起弃用，保留仅为兼容旧配置

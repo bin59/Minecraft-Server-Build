@@ -24,7 +24,7 @@
     - [🌀 空间传送阵（本服特色）](#-空间传送阵本服特色)
     - [🏠 领地系统（保护你的家）](#-领地系统保护你的家)
     - [💰 经济](#-经济)
-      - [🪙 每日获取南瓜币的途径（汇总）](#-每日获取南瓜币的途径汇总)
+      - [🪙 每日获取南瓜币的途径](#-每日获取南瓜币的途径)
     - [🎃 南瓜邮箱（活动奖励）](#-南瓜邮箱活动奖励)
     - [🎁 工具包（Kit）](#-工具包kit)
     - [🎨 皮肤](#-皮肤)
@@ -138,44 +138,44 @@
 
 ## 五、插件与玩法总览
 
-| 分类                  | 插件 / 组件                               | 作用                                                                                                                                       |
-| --------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| 服务端核心            | Leaf 26.3                                 | 高性能服务端内核                                                                                                                           |
-| 外置登录              | YggdrasilOfficialProxy + authlib-injector | 外置登录、皮肤认证                                                                                                                         |
-| 跨端互通              | Geyser-Spigot + Floodgate                 | Java/基岩同服；基岩免正版                                                                                                                  |
-| 跨版本                | ViaVersion                                | 1.8 ~ 最新客户端直连                                                                                                                       |
-| 权限                  | LuckPerms                                 | 分组、继承、上下文权限管理                                                                                                                 |
-| 经济                  | Vault + EconomyShop/AuctionHouse          | 统一经济 API、商店、拍卖行                                                                                                                 |
-| 领地                  | Residence                                 | 圈地、Flags 权限、子区域                                                                                                                   |
-| 方块审计              | CoreProtect                               | 记录 / 查询 / 回滚（SQLite 可转 MySQL）                                                                                                    |
-| 皮肤                  | SkinsRestorer                             | 外置登录下皮肤加载                                                                                                                         |
-| 指令整合              | EssentialsX                               | 传送 / 经济 / 管理 150+ 命令                                                                                                               |
-| 死亡信息              | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题，扣费已关闭）                                                                                             |
-| 宠物                  | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                                                                                            |
-| 摸头互动              | PatPat（CurseForge / Modrinth）           | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用                                                                                     |
-| NPC 系统              | FancyNpcs 2.12.1（Modrinth）              | 数据包 NPC：向导 / 交互动作 / 皮肤与装备，已部署 `FancyNpcs-2.12.1+382.jar`                                                                |
-| 小游戏                | BedWars 0.2.44                            | 起床战争竞技场（22:33 重新加入实跑 `plugins/`）                                                                                            |
-| 玩家骑乘              | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                                                                                             |
-| 网页地图              | BlueMap 5.29                              | 3D 网页地图，本地 `http://127.0.0.1:8100/`                                                                                                 |
-| 季节 / 怪物           | EzSeasons 2.1.2 · MythicMobs 5.14.0       | 季节更替、自定义怪物与技能                                                                                                                 |
-| 附魔 / 模型           | ExcellentEnchants · FreeMinecraftModels   | 额外附魔、自定义模型物品                                                                                                                   |
-| 玩法扩展              | EvenMoreFish · GSit · ClickMobs           | 钓鱼、坐下、点击收纳生物、玩家头颅掉落                                                                                                     |
-| 实体清理              | ClearLag++ 2.0.0                          | 掉落物清理、每区块实体上限、TPS/MSPT 监控                                                                                                  |
-| 世界编辑              | WorldEdit 7.4.6                           | 选区、复制、schematic                                                                                                                      |
-| PVP 机器人            | VexBot 3.1.0                              | 智能 PVP 机器人与战斗风格                                                                                                                  |
-| 任务 / 税收           | Quests 5.3.2 · EzTax 2.0.0                | 每日任务、周持有税                                                                                                                         |
-| 菜单（自研）          | QuickMenu                                 | 整合全部插件的快捷菜单（32 套菜单 / 267 个菜单项，以服务器实跑配置为基线，含新人指南、每日任务、南瓜飞入口与管理面板）                     |
-| 邮箱（自研）          | PumpkinMail                               | 南瓜邮箱：活动奖励一键批量发放（管理）与玩家领取（`/mailbox`）                                                                             |
-| 传送阵（自研）        | SpacePortal                               | 地面法阵长途传送（本服特色）                                                                                                               |
-| 账本（自研）          | MoneyLedger                               | 南瓜账本：南瓜币每笔变动按类别自动记账（转账/买卖/拍卖/收购/税/任务/活动），可查可导出 CSV                                                 |
-| 每日收购（自研）      | DailySell                                 | 物品池 110 种；每天抽 8 种候选、每人自选 5 种出售换币（`/ds choose`，基岩端按序号），**900 币/日封顶（单人每日收益上限）**                 |
-| 在线排行（自研）      | PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                                                                                             |
-| 飞行（自研）          | PumpkinFly                                | 10 万买永久 / 20 币一分钟，仅飞行中扣秒，限自己领地与主城；限时体验奖励（天/时/分）、全服与单人飞行管理、快捷菜单领取与管理面板（`/pfly`） |
-| 在线离线奖励（自研） | OfflineReward                             | 离线 15 币/小时 + 在线 25 币/小时（在线高于离线，鼓励在线），上线/在线定期结算到南瓜邮箱（PumpkinMail）                                    |
-| 基岩 GUI              | BedrockPlayerSupport                      | 基岩玩家免敲指令的表单界面                                                                                                                 |
-| 数据展示              | Plan / TAB                                | 玩家行为分析、炫彩称号、坐标轨迹                                                                                                           |
-| 运维                  | OPanel / spark / MCSM / EasyBot           | Web 面板、性能分析、进程管理、QQ 联动                                                                                                      |
-| 依赖库                | CMILib / nightcore / ProtocolLib / bStats | 多插件共享底层库、协议库、匿名统计                                                                                                         |
+| 分类                 | 插件 / 组件                               | 作用                                                                                                                                       |
+| -------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| 服务端核心           | Leaf 26.3                                 | 高性能服务端内核                                                                                                                           |
+| 外置登录             | YggdrasilOfficialProxy + authlib-injector | 外置登录、皮肤认证                                                                                                                         |
+| 跨端互通             | Geyser-Spigot + Floodgate                 | Java/基岩同服；基岩免正版                                                                                                                  |
+| 跨版本               | ViaVersion                                | 1.8 ~ 最新客户端直连                                                                                                                       |
+| 权限                 | LuckPerms                                 | 分组、继承、上下文权限管理                                                                                                                 |
+| 经济                 | Vault + EconomyShop/AuctionHouse          | 统一经济 API、商店、拍卖行                                                                                                                 |
+| 领地                 | Residence                                 | 圈地、Flags 权限、子区域                                                                                                                   |
+| 方块审计             | CoreProtect                               | 记录 / 查询 / 回滚（SQLite 可转 MySQL）                                                                                                    |
+| 皮肤                 | SkinsRestorer                             | 外置登录下皮肤加载                                                                                                                         |
+| 指令整合             | EssentialsX                               | 传送 / 经济 / 管理 150+ 命令                                                                                                               |
+| 死亡信息             | CustomDeathMessages                       | 整活死亡播报（音效 / 粒子 / 标题，扣费已关闭）                                                                                             |
+| 宠物                 | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                                                                                            |
+| 摸头互动             | PatPat（CurseForge / Modrinth）           | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用                                                                                     |
+| NPC 系统             | FancyNpcs 2.12.1（Modrinth）              | 数据包 NPC：向导 / 交互动作 / 皮肤与装备，已部署 `FancyNpcs-2.12.1+382.jar`                                                                |
+| 小游戏               | BedWars 0.2.44                            | 起床战争竞技场（22:33 重新加入实跑 `plugins/`）                                                                                            |
+| 玩家骑乘             | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                                                                                             |
+| 网页地图             | BlueMap 5.29                              | 3D 网页地图，本地 `http://127.0.0.1:8100/`                                                                                                 |
+| 季节 / 怪物          | EzSeasons 2.1.2 · MythicMobs 5.14.0       | 季节更替、自定义怪物与技能                                                                                                                 |
+| 附魔 / 模型          | ExcellentEnchants · FreeMinecraftModels   | 额外附魔、自定义模型物品                                                                                                                   |
+| 玩法扩展             | EvenMoreFish · GSit · ClickMobs           | 钓鱼、坐下、点击收纳生物、玩家头颅掉落                                                                                                     |
+| 实体清理             | ClearLag++ 2.0.0                          | 掉落物清理、每区块实体上限、TPS/MSPT 监控                                                                                                  |
+| 世界编辑             | WorldEdit 7.4.6                           | 选区、复制、schematic                                                                                                                      |
+| PVP 机器人           | VexBot 3.1.0                              | 智能 PVP 机器人与战斗风格                                                                                                                  |
+| 任务 / 税收          | Quests 5.3.2 · EzTax 2.0.0                | 每日任务、周持有税                                                                                                                         |
+| 菜单（自研）         | QuickMenu                                 | 整合全部插件的快捷菜单（32 套菜单 / 267 个菜单项，以服务器实跑配置为基线，含新人指南、每日任务、南瓜飞入口与管理面板）                     |
+| 邮箱（自研）         | PumpkinMail 1.1.0                        | 南瓜邮箱：活动奖励批量发放（管理）与玩家领取（`/mailbox`）；发放 / 领取 / 失败全量审计（`reward_log`），`/mailbox log` 查流水、`verify` 对账 |
+| 传送阵（自研）       | SpacePortal                               | 地面法阵长途传送（本服特色）                                                                                                               |
+| 账本（自研）         | MoneyLedger 1.1.0                        | 南瓜账本：Essentials 余额变动**事件同步落盘** + `trade.log` **幂等回填**双保险，金额精确、来源/类别可追溯；`/moneyledger verify` 对账、`backfill` 补记、`export` 导出 CSV |
+| 每日收购（自研）     | DailySell                                 | 物品池 110 种；每天抽 8 种候选、每人自选 5 种出售换币（`/ds choose`，基岩端按序号），**900 币/日封顶（单人每日收益上限）**                 |
+| 在线排行（自研）     | PlanTop                                   | 基于 Plan 的玩家在线时间排行榜                                                                                                             |
+| 飞行（自研）         | PumpkinFly                                | 10 万买永久 / 100 币一分钟，仅飞行中扣秒，限自己领地与主城；限时体验奖励（天/时/分）、全服与单人飞行管理、快捷菜单领取与管理面板（`/pfly`） |
+| 在线离线奖励（自研） | OfflineReward                             | 离线 15 币/小时；在线改**阶段发放**：间隔 5→10→15→之后每 30 分钟一档，奖励逐档递增（10…100 币），累计 3 小时领完 8 档、**全天最多 300 币**当天毕业，发到南瓜邮箱（PumpkinMail） |
+| 基岩 GUI             | BedrockPlayerSupport                      | 基岩玩家免敲指令的表单界面                                                                                                                 |
+| 数据展示             | Plan / TAB                                | 玩家行为分析、炫彩称号、坐标轨迹                                                                                                           |
+| 运维                 | OPanel / spark / MCSM / EasyBot           | Web 面板、性能分析、进程管理、QQ 联动                                                                                                      |
+| 依赖库               | CMILib / nightcore / ProtocolLib / bStats | 多插件共享底层库、协议库、匿名统计                                                                                                         |
 
 > 注：`plugins/EasyBot-2.4.0.jar.bak` 为已停用备份，数据目录保留；恢复 QQ 联动需去掉 `.bak` 后缀并重启。
 > 自研 PumpkinFly 源码与 jar 在 `自研/南瓜飞-PumpkinFly/`；实跑 `plugins/` 中已有同版 `PumpkinFly-1.0.0.jar`（与项目 jar 字节一致）。升级时停服替换 jar 并完整重启，不要用 `/reload`。
@@ -517,7 +517,7 @@ Minecraft-Server-Build/
 │   ├── 自定义死亡信息/             自定义死亡信息customdeathmessages.md
 │   ├── 宠物系统/                   宠物系统simplepets.md / SimplePets-Vault-Addon经济联动.md / 汉化配置/
 │   ├── RideOnHead玩家骑乘/         RideOnHead玩家骑乘.md
-│   ├── 自定义模型Free Minecraft Models/  Free Minecraft Models.md
+│   ├── 自定义模型-Free Minecraft Models/  Free Minecraft Models.md
 │   ├── 自定义附魔-ExcellentEnchants/     ExcellentEnchants自定义附魔.md
 │   ├── 坐下插件-GSit/              GSit.md
 │   ├── 点击收纳生物-ClickMobs/    ClickMobs.md
@@ -560,14 +560,14 @@ Minecraft-Server-Build/
     ├── lib/                          共享编译依赖 jar
     ├── 传送阵/                       SpacePortal 使用说明 + 项目分析
     ├── 传送阵-SpacePortal/           SpacePortal 源码 + jar
-    ├── 南瓜账本-MoneyLedger/         MoneyLedger
+    ├── 南瓜账本-MoneyLedger/         MoneyLedger 1.1.0（全量流水 + trade.log 回填对账）
     ├── 南瓜邮箱-PumpkinMail/         PumpkinMail
     ├── 南瓜飞-PumpkinFly/          PumpkinFly（付费限时/永久飞行，含 build.py）
     ├── 在线时间排行-PlanTop/         PlanTop
     ├── 建筑评分-BuildRate/           BuildRate
     ├── 快捷菜单系统-QuickMenu/       QuickMenu（主文档 + 与通用菜单对比）
     ├── 每日随机收购-DailySell/       DailySell（使用说明 + config.yml）
-    ├── 在线离线奖励-OfflineReward/       OfflineReward（离线 15 币/小时 + 在线 25 币/小时）
+    ├── 在线离线奖励-OfflineReward/       OfflineReward（离线 15 币/小时；在线 8 档递增，3 小时封顶 300 币毕业）
     ├── 附魔商店-EnchantShop/         EnchantShop
     └── disabled/                     停用项目
 ```

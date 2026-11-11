@@ -11,6 +11,11 @@
 > 暂不需要分区玩法，可跳过本章；一旦要分服（生存/空岛/RPG 并存），本方案是 PaperMC
 > 官方推荐的现代替代（Waterfall 已 EOL，官方建议全部迁移到 Velocity）。
 
+> 📌 **2026-11-10 落地校订**：本章方案已在 `leaf-26.3-多服` 副本实装验证，
+> 实测版本为 **Velocity 4.3.1-45 / Java 25**（非下文历史示例的 3.3.x / JDK 21）。
+> 4.x 新增开关、Floodgate 转发配置、玩家数据与 UUID 影响，以及全部版本差异，
+> 统一收录在 **§5.5（原理）**、**§14（落地校订与差异对照）** 与 **§16（资源包策略）**。正文已按实测结果同步修订。
+
 ### 0. 先厘清：Velocity 与 Multiverse 是两层，不是二选一
 
 本文档标题是「Velocity + Multiverse」，但两者**不是同类、不是替代关系**。很多人误以为"多世界就要上代理"或"上代理就不用多世界"，先对齐认知：
@@ -49,7 +54,7 @@
 2. **modern 转发**：玩家信息用二进制 + MAC 密钥加密，后端校验密钥后才接受连接，
    彻底杜绝"绕过代理直连后端、伪造管理员名字"的攻击。BungeeCord 的 legacy
    转发是明文，这是历史最大的安全漏洞。
-3. **Java 17+ 即可跑**（官方推荐 Java 21），你的 JDK 21 完全满足。
+3. **Java 25**（Velocity 4.x 最低要求；3.3/3.4 时代才是 Java 17+ / 推荐 21），本机已装 Java 25，与 §0 表格一致。
 4. 单代理即可承载数千在线，天然支持负载均衡与分区隔离——重启某个子服不影响其他人。
 
 ### 1.1 为什么你的场景特别适合用 Velocity
@@ -73,21 +78,23 @@
 
 ### 2.1 下载 Velocity
 
-从 PaperMC 官方下载页获取稳定版（当前主流 **3.3.x / 3.4.x**，默认端口 25565）：
+从 PaperMC 官方下载页获取稳定版（**2026-11 实测：Velocity 4.3.1-45**，默认端口 25565）：
 
 - 官网：<https://papermc.io/downloads/velocity>
-- API 直链（自动取最新构建）：`https://api.papermc.io/v2/projects/velocity/versions/<版本>/builds/latest/downloads`
+- **下载 API 已迁到 Fill v3**：`https://fill.papermc.io/v3/projects/velocity/versions/<版本>/builds/latest`
+  （响应 JSON 的 `downloads` 段给出 jar 直链）。⚠️ 旧文里的
+  `api.papermc.io/v2/projects/velocity/...` 自 2026-07 起返回 **410 Gone**，脚本里别再用。
 - 项目文档：<https://docs.papermc.io/velocity/>
 
 **务必下载 `velocity-x.y.z.jar`（代理端），不要下成其余构建产物。**
-Velocity 要求 Java 17+，推荐 Java 21。
+Velocity **4.x 要求 Java 25**（3.x 才是 Java 17+）。
 
 ### 2.2 目录规划（建议独立文件夹）
 
 ```
 C:\mc_serve\
 ├── velocity\                  ← 新建：Velocity 代理（本章主角）
-│   ├── velocity-3.3.0.jar
+│   ├── velocity-4.3.1-45.jar
 │   ├── start.bat
 │   ├── velocity.toml          ← 首次启动自动生成
 │   ├── forwarding.secret      ← 自动生成，需复制给所有子服
@@ -105,7 +112,7 @@ C:\mc_serve\
 # start.bat
 @echo off
 title Velocity
-java -Xms512M -Xmx512M -XX:+UseG1GC -jar velocity-3.3.0.jar
+java -Xms512M -Xmx512M -XX:+UseG1GC -jar velocity-4.3.1-45.jar
 pause
 ```
 
@@ -138,7 +145,13 @@ show-max-players = 500
 # 后端全部交由 forwarding 密钥校验，不再各自验证。
 online-mode = true
 
+# ★★★ Velocity 4.x 新增：外置登录必须设为 false ★★★
+# 4.x 默认强制校验 Mojang 公钥签名，而 Yggdrasil 外置登录没有该签名，
+# 开着会把玩家全部踢掉。3.x 无此选项；从 3.x 升级到 4.x 时务必补上。
+force-key-authentication = false
+
 # ★ 转发模式：modern 最安全，Leaf/Paper 原生支持
+# ⚠️ 绝不能改成 "none"：那样后端拿到的是离线模式 UUID，全体玩家数据"换号"。
 player-info-forwarding-mode = "modern"
 
 # forwarding.secret 的路径
@@ -175,7 +188,7 @@ announce-proxy-commands = true
 |---|---|---|
 | `bind` | velocity.toml | 代理对外端口（玩家连这个） |
 | 子服 `server-port` | 各子服 server.properties | 代理连接子服用，**改到不冲突的内网端口** |
-| Geyser `port` | velocity/plugins/geyser/config.yml | 基岩监听 UDP 端口（沿用 19132） |
+| Geyser `port` | velocity/plugins/Geyser-Velocity/config.yml | 基岩监听端口（沿用 19132；纯 NetherNet 信令走 TCP、媒体走 UDP，**两个都要放行**） |
 
 > ⚠️ **最常见翻车点**：改造后所有子服的 `server.properties` 要**改成非代理占用、
 > 且彼此不重复**的端口（如 30001/30002/30003），再在 velocity.toml 里按这个填。
@@ -192,13 +205,19 @@ announce-proxy-commands = true
 | 端口 | 协议 | 绑定 | 是否公开 | 用途 |
 |---|---|---|---|---|
 | **55551** | TCP | `0.0.0.0` | ✅ | Velocity 对外（Java 版入口） |
-| **19132** | UDP | `0.0.0.0` | ✅ | Geyser 基岩入口（装在代理） |
+| **19132** | **TCP + UDP** | `0.0.0.0` | ✅ | Geyser 基岩入口（装在代理）。纯 NetherNet：信令 TCP、媒体 UDP，缺一不可 |
 | **24454** | UDP | 视方案 | ⚠️ | Simple Voice Chat 语音（见 §8.7） |
 | 30001/30002… | TCP | `127.0.0.1` | ❌ | 各子服（仅代理可达） |
+| 32217 / 32218 | TCP | 本机 | ❌ | YggdrasilOfficialProxy：后端 32217 / 代理 32218，**双进程必须错开** |
+| 25595 | TCP | 本机 | ❌ | 后端 RCON（Multiverse 资源世界重置用，见 §13.4） |
 
 **安全铁律**：所有子服的 `server.properties` 设 `server-ip=127.0.0.1`（或内网 IP），
 并把它们**从云安全组 / 防火墙的对外放行里移除**。否则一旦有人直连 30002，
 配合 `online-mode=false` 就能伪造任意玩家（含 OP）进入——这是最致命的安全漏洞。
+
+> ⚠️ **双进程 YOP 端口冲突**：代理与后端都加载 YggdrasilOfficialProxy javaagent 时，
+> 两者默认都抢 32217，后启动的进程会起不来。必须把 `velocity/YggdrasilOfficialProxy.conf`
+> 里的 `server.port` 改成 **32218**（后端保留 32217），只改代理端即可。
 
 ### 4.2 迁移后的连通性变化
 
@@ -246,9 +265,12 @@ proxies:
     secret: '<粘贴 forwarding.secret 的完整内容>'
 ```
 
-> **为什么这里是 true**：虽然子服 `server.properties` 是 `online-mode=false`，
-> 但 paper-global.yml 的 `velocity.online-mode` 要**镜像代理端**的 `online-mode=true`，
-> 这样后端才会信任来自 Velocity 的"已认证玩家"信息。两个值必须一致。
+> **为什么这里是 true**（Paper 官方定义）："Instructs the server how to handle
+> player UUIDs and data when behind Velocity. Always set to match your proxy's
+> online-mode setting." 即它**镜像的是代理端 `velocity.toml` 的 `online-mode=true`**，
+> 告诉后端按在线模式处理 UUID 与玩家数据；不是让后端再做一次认证（后端认证已由
+> `server.properties` 的 `false` 关闭）。后端是否信任转发数据由 `secret` 的 MAC 验签决定，
+> 与这个开关无关。两者取值不同源，并不矛盾。三个 `online-mode` 的完整对照见 **§5.5**。
 
 ### 5.3 每个子服都加 Yggdrasil agent（外置登录关键）
 
@@ -265,18 +287,91 @@ proxies:
 ```powershell
 java "-Dauthlibinjector.disableHttpd" -Xms512M -Xmx512M ^
   -javaagent:YggdrasilOfficialProxy-2.3.0-paperclip.jar ^
-  -jar velocity-3.3.0.jar
+  -jar velocity-4.3.1-45.jar
 ```
 
 **每个子服（Leaf）启动脚本**：在现有 `-javaagent:YggdrasilOfficialProxy...` 基础上
 原样保留即可（你现有 02 章已把 YggdrasilOfficialProxy 打包成可注入的 jar），
 代理端也加同一个 agent。
 
+> ⚠️ 别忘把 `velocity/YggdrasilOfficialProxy.conf` 的 `server.port` 改成 **32218**（见 §4.1）。
+> 实测 **Velocity 4.3.1 + YOP 2.3.0 + authlib-injector 1.2.8** 可正常启动，
+> 但**真实外置登录认证流程尚未实测**。若 4.x 下认证异常，可备一个走原生
+> authlib-injector 直连 LittleSkin 的启动脚本作为兜底。
+
 ### 5.4 换服指令
 
 Velocity 自带 `/server <子服名>`，权限节点 `velocity.command.server`。
 玩家输入 `/server survival` 即从大厅瞬移到生存服，不掉线。
 可用 `velocity.command.list` 查看子服列表，`velocity.command.send` 管理用。
+
+### 5.5 为什么后端 `online-mode=false`，以及玩家数据会不会变
+
+这是迁移时最容易误解、后果也最严重的一节。
+
+#### 认证只能发生一次
+
+客户端登录时只与 **Velocity** 做一次加密握手：Velocity 生成 `serverId`，客户端拿它向
+Mojang / LittleSkin 的 session server 换认证，Velocity 自己也查一次 `hasJoined` 拿到
+UUID 和皮肤属性。等 Velocity 把连接代理到后端时，客户端**早已进入 Play 状态**，
+不会再为后端做第二次加密响应，后端也没有自己的 `serverId`。此时后端若仍开
+`online-mode=true`，就会去查一个不存在的 session → 玩家被踢
+（`Failed to verify username!`）。
+
+[Velocity 官方原文](https://docs.papermc.io/velocity/player-information-forwarding/)：
+> First, you need to disable the `online-mode` setting in the `server.properties` file.
+> **This prevents the server from authenticating players, which the proxy will do instead.**
+
+#### 关掉认证 ≠ 变成离线服
+
+`modern` 转发在登录阶段用 `forwarding.secret` 做 MAC 签名，把代理认证得到的
+**UUID、用户名、IP、皮肤属性**一起注入后端；Paper 验签后直接采用，跳过 Mojang 查询。
+所以后端拿到的仍是**认证后的真实 UUID**，不是
+`UUID.nameUUIDFromBytes("OfflinePlayer:" + name)` 派生出来的离线 UUID。
+
+反证就在 `velocity.toml` 的默认注释里——只有 `none` 模式才写：
+> `none`: No forwarding will be done. All players will appear to be connecting
+> from the proxy and **will have offline-mode UUIDs**.
+
+**真正会让玩家数据全变的是把转发改成 `none`（或 secret 不符导致转发未生效），
+不是后端 `online-mode=false`。**
+
+#### 三个 `online-mode` 分别指什么
+
+| 位置 | 值 | 含义 |
+|---|---|---|
+| `velocity/velocity.toml` | `true` | 唯一真正做认证的地方 |
+| 后端 `server.properties` | `false` | 后端不再自己查 session server |
+| 后端 `config/paper-global.yml` → `proxies.velocity.online-mode` | `true` | 镜像**代理端**的 online-mode；告诉后端按在线模式处理 UUID / 数据，见 §5.2 |
+
+前两个不矛盾，因为说的是两个进程；第三个是镜像配置，不是"后端是否在线"。
+
+#### UUID 与玩家数据影响
+
+| 账号类型 | UUID 来源 | 迁移后 |
+|---|---|---|
+| 正版 Mojang | Velocity 认证结果 | 不变 |
+| LittleSkin 外置登录 | YOP 从 `littleskin.cn/api/yggdrasil` 返回 | 理论不变；代理 / 后端 conf 需完全一致（`edited=true`、`official-first=true`、同一 api） |
+| 基岩 Floodgate | `key.pem` + Xbox XUID → `00000000-0000-0000-0009-*` | 不变，前提是**前后端同一份 key.pem、同版本 Floodgate、`username-prefix` 一致** |
+
+数据核查清单（按 UUID 索引的文件，只要 UUID 不变就不会"换号"）：
+
+- `plugins/Essentials/userdata/<uuid>.yml` —— 余额 / 家 / 传送点（南瓜币真源）
+- `usercache.json`、`ops.json`、`banned-players.json` —— 均按 UUID 存
+- `world/players/data`、`advancements`、`stats`（Leaf 26.3 的新路径，**不是**旧的 `world/playerdata/`）—— 背包 / 进度 / 统计
+- LuckPerms、Residence、Plan、CoreProtect、SkinsRestorer —— 按 UUID 或用户名存
+- ⚠️ **复制项目做改造时最容易漏掉 `world/` 目录**。只复制 `plugins/` 会让所有
+  原版存档"消失"，后端启动后生成一个全新空世界——这不是 UUID 变了，是数据没带过来。
+
+> ⚠️ `UuidMigrate` 一类插件若仍启用且 `operation: COPY`，检测到新 UUID 时会自动
+> 把旧存档复制一份。它既是安全网，也可能产生重复数据，上线前确认其行为。
+
+#### 上线前验证
+
+1. 从原服把 `world/`（含 `world_nether` / `world_the_end` 等）完整复制过来。
+2. 记下某玩家旧服 `Essentials/userdata/<uuid>.yml` 的文件名。
+3. 连代理 55551 登录一次，确认后端**没有**新冒出一个 UUID 文件，余额 / 背包 / 领地对得上。
+4. Java 外置登录、正版、基岩各测一次；基岩重点看 `.` 前缀与 Floodgate UUID 是否一致。
 
 ---
 
@@ -300,9 +395,17 @@ Velocity 自带 `/server <子服名>`，权限节点 `velocity.command.server`�
 
 放入 `velocity/plugins/`。**注意是 velocity 版，不要下成 spigot/bungee 版。**
 
-### 6.3 Geyser 配置（velocity/plugins/geyser/config.yml）
+### 6.3 Geyser 配置（velocity/plugins/Geyser-Velocity/config.yml）
 
-首次启动生成后编辑关键项：
+> ✅ **2026-11-10 实测推荐做法：整份复用，不要按下面的模板重写。**
+> Geyser 的 Velocity 版与 Spigot 版 `config.yml` **键集合完全一致**（78 键 /
+> `config-version: 12`）。直接把后端 `plugins/Geyser-Spigot/config.yml` 复制过来，
+> 确认 `java.auth-type: floodgate` 即可，这样能保留你调过的全部自定义项：
+> `transport: nethernet`、`webrtc-port: 19132`、`default-locale: zh_cn`、
+> `forward-player-ping` 等。按简化模板重写会丢掉这些调优。
+> ⚠️ 实际目录名是 `Geyser-Velocity`（首字母大写）；新版认证段已由 `remote:` 更名为 `java:`。
+
+首次从零生成时，最小化关键项如下（复用旧配置时仅作对照）：
 
 ```yaml
 bedrock:
@@ -324,14 +427,25 @@ passthrough-player-counts: true
 ### 6.4 Floodgate 配置（velocity/plugins/floodgate/config.yml）
 
 ```yaml
-# 非绑定基岩玩家的名字前缀（用". "避免与 Java 玩家撞名）
+# 非绑定基岩玩家的名字前缀（用"."避免与 Java 玩家撞名）
 username-prefix: "."
+
+# ★★★ 后端装了 floodgate-spigot 时必须开（实测）★★★
+# 把基岩玩家的 Floodgate 数据经 Velocity 转发给后端，否则
+# BedrockPlayerSupport / QuickMenu 依赖的 isFloodgatePlayer 判定失效，玩家可能被踢。
+send-floodgate-data: true
 
 # 账号绑定：让基岩玩家的 UUID 与 Java 外置登录一致，跨子服保持同一身份
 player-link:
   enable-own-linking: false   # false = 用 Floodgate 官方全局绑定
   # enable-own-linking: true  # 若走本地绑定数据库再开，并装 floodgate-sqlite
 ```
+
+> ⚠️ **key 必须同源**：`velocity/plugins/floodgate/key.pem` 与后端
+> `plugins/floodgate/key.pem` 必须是**同一份文件**（不是各生成一份），且前后端
+> Floodgate 版本一致（实测同为 `2.2.5-SNAPSHOT b141-81b65cc`）。
+> Floodgate UUID 由 key + XUID 推导，**key 不同 = 全体基岩玩家 UUID 全变 =
+> 背包 / 余额 / 领地全部对不上**。详见 §5.5。
 
 ### 6.5 基岩玩家如何被后端识别
 
@@ -356,6 +470,11 @@ LuckPerms **天然支持多服**，关键是所有子服 + 代理共用**同一�
    与子服权限数据同源。
 
 同步机制：改动后执行 `/lp sync`（或开 `sync-minutes` 定时拉取）即可在所有服生效。
+
+> 📌 **2026-11-10 落地状态**：本次部署**尚未切换 MySQL**，LuckPerms 仍是
+> `storage-method: h2` 单服存储。当前只有 survival 一个子服，所以权限暂时没有跨服问题；
+> **一旦加入第二个子服，必须先完成本节迁移**，否则各服权限各自为政。
+> 同理，Essentials 余额 / 家 / 领地目前也都只在 survival 本地，加子服前按 §7.2 / §7.3 规划。
 
 ### 7.2 Vault 经济跨服
 
@@ -411,7 +530,8 @@ Vault 只是 API，真正的经济实现要选**支持跨服**的：
    的"基岩走原生表单、Java 走箱子"会退化成全走 Java 分支。
 
 > 结论：QuickMenu（26 章）与 BPS（25 章）要在多服下继续按客户端分流，
-> 后端子服必须装 **floodgate-bukkit** 并保持与代理 Floodgate 同一 key。
+> 后端子服必须装 **floodgate-bukkit**、保持与代理同一 key，且代理端要开
+> `send-floodgate-data: true`（见 §6.4）——三者缺一，后端都收不到基岩数据。
 
 ### 8.6 EasyBot（QQ 联动）
 
@@ -447,8 +567,11 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 | 项 | 必须 | 说明 |
 |---|---|---|
 | 子服绑 `127.0.0.1` + 从安全组移除 | ✅ | 防直连伪造 |
-| `velocity-support.enabled=true` + secret 一致 | ✅ | modern 转发密钥 |
-| `paper-global.yml` 的 `online-mode` 镜像代理 | ✅ | 值必须一致 |
+| `proxies.velocity.enabled=true` + secret 一致 | ✅ | modern 转发密钥（1.18.2+ 的配置名；旧文 `velocity-support.enabled` 已废弃） |
+| `paper-global.yml` 的 `online-mode` 镜像代理 | ✅ | 值必须一致，见 §5.2 |
+| `force-key-authentication=false`（4.x 外置登录） | ✅ | 开着会踢掉所有外置登录玩家，见 §3.1 |
+| `send-floodgate-data=true` + 前后端同一 key.pem | ✅ | 后端 floodgate API 生效前提，见 §6.4 |
+| YOP 端口代理 / 后端错开（32218 / 32217） | ✅ | 双进程抢 32217 会让后起的 agent 失败 |
 | 全端加载 Yggdrasil agent | ✅ | 外置登录识别 |
 | `minecraft.command.op` 不给任何组 | ✅ | 见 05 章 |
 | forwarding.secret 保密 | ✅ | 泄露等同能伪造玩家 |
@@ -456,8 +579,11 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 ### 9.3 常见性能/配置误配
 
 - 子服仍开 `spigot.yml bungeecord: true` → 与 modern 转发冲突，登录异常。应 `false`。
+- Velocity 4.x 忘关 `force-key-authentication` → 外置登录玩家被公钥签名校验踢出。应 `false`。
+- 把 `player-info-forwarding-mode` 设成 `none` → 后端拿到离线 UUID，全体玩家"换号"。必须 `modern`。
+- 前后端 Floodgate key.pem 不是同一份 → 基岩玩家 UUID 全变，背包 / 余额 / 领地全丢。
 - 代理内存给太大没意义；代理吃的是网络吞吐不是内存。
-- 忘了在安全组放行 UDP 19132 → 基岩连不上（Java 正常）。
+- 忘了在安全组放行 **19132 TCP + UDP** → 基岩连不上（纯 NetherNet 两条都要；Java 走 55551 不受影响）。
 
 ---
 
@@ -469,9 +595,13 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 |---|---|---|
 | 连代理显示"无法验证用户名/离线" | velocity `online-mode` 或 agent 没配好 | 确认 `online-mode=true` 且代理加载 Yggdrasil agent |
 | 进子服被踢 "requires you to connect with Velocity" | 子服没开 velocity 支持或 secret 不符 | 改 paper-global.yml `enabled:true` + secret 与 forwarding.secret 一致 |
-| 玩家名字对但 UUID 全变 | 子服 properties 与 paper velocity 段 online-mode 不一致 | 统一：properties=false，paper velocity online-mode=true |
+| 玩家名字对但 UUID 全变 | forwarding 未生效（`none` 模式 / secret 不符 / paper velocity 段没开） | 确认 `modern` + secret 一致 + `proxies.velocity.enabled=true`；见 §5.5 |
 | 基岩能进代理进不了子服 | 后端没装 floodgate-bukkit 或 key 不一致 | 后端装 floodgate-bukkit 并指到代理同 key |
 | `/server` Tab 无补全 | `announce-proxy-commands=false` | 设 true |
+| 外置登录玩家被踢 "invalid public key signature" | 4.x `force-key-authentication` 仍为 true | 设 `false` |
+| 基岩玩家 UUID 全变 / 数据丢失 | 前后端 key.pem 不同源，或 Floodgate 版本不一致 | 同步同一 key + 同版本，见 §6.4 |
+| 代理起不来，报 32217 端口占用 | 后端与代理的 YOP 抢同一端口 | 代理 conf 改 32218 |
+| 进服后背包是空的、世界是新的 | 复制项目时漏了 `world/` 目录 | 从原服补齐世界数据，见 §5.5 |
 | 从子服换服后物品/背包乱 | 各子服数据独立属正常 | 用跨服背包插件按需 |
 
 ### 10.2 备选：MultiLogin 统一登录
@@ -500,6 +630,7 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 | [端口与网络架构总览](../端口与网络架构总览/README.md) | 端口表需按本章重规划（对外仅 Velocity+Geyser） |
 | [快捷菜单系统](../../自研/快捷菜单系统-QuickMenu/快捷菜单系统-QuickMenu.md) | 后端需装 floodgate-bukkit 才能继续按客户端分流 |
 | Multiverse 多世界 | 见 §13：单服加资源世界 / 每个后端子服内部再用 Multiverse 管多世界 |
+| 本次实装记录 | 副本 `.workbuddy/memory/2026-11-10.md`（部署日志）与本章 **§14**（落地校订与差异对照） |
 
 > **演进路线图**（对齐 README §15）：单服 → 本章 Velocity → 多子服分区 →
 > 共享 MySQL 数据层。本章是"单服 → 网络"的桥。
@@ -510,18 +641,21 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 
 按序执行可把翻车率降到最低：
 
-1. [ ] 下载 Velocity 稳定版 + Velocity 版 Geyser / Floodgate jar
-2. [ ] 建 `velocity/` 目录，首次启动生成配置后关闭
-3. [ ] 改 velocity.toml：`online-mode=true`、`player-info-forwarding-mode="modern"`
-4. [ ] 复制 `forwarding.secret` 备用
+1. [ ] 下载 Velocity 4.x 稳定版（Fill v3 API）+ Velocity 版 Geyser / Floodgate jar
+2. [ ] 确认 **Java 25**，建 `velocity/` 目录，首次启动生成配置后关闭
+3. [ ] 改 velocity.toml：`online-mode=true`、**`force-key-authentication=false`**、`modern` 转发
+4. [ ] 复制 `forwarding.secret` 备用；把代理 `YggdrasilOfficialProxy.conf` 端口改 **32218**
 5. [ ] 改现有 Leaf：`online-mode=false`、`server-port=30002`、`server-ip=127.0.0.1`
-6. [ ] 改 Leaf 的 paper-global.yml：开 velocity 支持 + secret
+6. [ ] 改 Leaf 的 paper-global.yml：`proxies.velocity.enabled=true` + `online-mode=true` + secret
 7. [ ] 给 Velocity 与 Leaf 的启动脚本都加 Yggdrasil agent
-8. [ ] 从 Leaf 移除内嵌 Geyser/Floodgate（迁到代理）
-9. [ ] 配置代理端 Geyser(`auth-type:floodgate`)+Floodgate
+8. [ ] 从 Leaf 移除内嵌 Geyser（改 `.jar.disabled` 便于回滚），后端 floodgate 按 §8.5 保留
+9. [ ] 配置代理端 Geyser（**优先整份复用后端 config.yml**，`auth-type: floodgate`）+ Floodgate（`send-floodgate-data: true`、**同一 key.pem**）
 10. [ ] 若用 QuickMenu/BPS，给后端装 floodgate-bukkit 并同 key
-11. [ ] 启动 Velocity → 启动子服 → Java/基岩各测一次进入与 `/server` 换服
-12. [ ] 端口：安全组只留 Velocity TCP + Geyser UDP；子服全部移除
+11. [ ] **补齐 `world/` 世界数据**（复制项目时最容易漏），按 §5.5 比对 UUID
+12. [ ] 后端装 Multiverse-Core 5.8.2（见 §13），按需建资源世界
+13. [ ] 启动 Velocity → 启动子服 → Java 外置登录 / 正版 / 基岩各测一次进入与 `/server` 换服
+14. [ ] 端口：安全组只留 55551 TCP + **19132 TCP/UDP**；子服与 RCON 全部移除对外放行
+15. [ ] 加第二个子服前，先完成 §7 的 LuckPerms / 经济共享 MySQL 迁移
 
 ---
 
@@ -621,3 +755,203 @@ Multiverse-Core 权限粒度细，常用节点（给对应玩家/组）：
 - **装法**：Multiverse 装后端子服；Velocity 是独立代理进程，不碰 Multiverse。
 - **换服 vs 换世界**：跨子服用 `/server`（Velocity）；同服内跨世界用 `/mv tp`（Multiverse）。两条命令各管一层，不冲突。
 - **数据**：Multiverse 的世界数据在各子服本地 `worlds/` 目录；跨服共享数据请走 §7 的 MySQL 方案，与 Multiverse 无关。
+
+---
+
+## 14. 落地校订与差异对照（2026-11-10 实测）
+
+> 本章方案已在 `F://game//pc//MC//开服//服务器数据备份//leaf-26.3//leaf-26.3-多服`
+> （从 26.3 单服复制出的副本）完整实装。本节记录**文档规划 vs 实际落地**的差异，
+> 作为以后再次部署或新增子服时的校订依据。逐日执行日志见该副本
+> `.workbuddy/memory/2026-11-10.md`。
+
+### 14.1 实测环境与端口
+
+| 项 | 文档规划 | 实际落地 |
+|---|---|---|
+| Velocity | 3.3.x / 3.4.x | **4.3.1-45**（Fill v3 API，config-version 2.9） |
+| Java | 17+ / 推荐 21 | **Java 25**（4.x 最低要求） |
+| Geyser / Floodgate | Velocity 版 | Geyser 2.12.1-b1298 / Floodgate 2.2.5-SNAPSHOT b141-81b65cc |
+| Multiverse-Core | 5.8.2 | 5.8.2（装入后端 `plugins/`） |
+| 对外 Java | 55551 TCP | 55551 TCP（沿用原端口） |
+| 对外基岩 | 19132 UDP | **19132 TCP + UDP**（NetherNet 信令 / 媒体各一路） |
+| 后端 survival | 127.0.0.1:30002 | 同左 |
+| YOP | 未提 | 后端 32217 / 代理 **32218**（必须错开） |
+| RCON | 未提 | 25595（保留，供 §13.4 资源世界重置） |
+| 子服数量 | lobby / survival / minigames | **仅 survival**，`try = ["survival"]`；另两个在 toml 里注释预留 30001 / 30003 |
+
+### 14.2 关键差异逐项
+
+| # | 差异点 | 文档原写法 | 实测结论 |
+|---|---|---|---|
+| 1 | `force-key-authentication` | 未提 | 4.x 新增，外置登录必须 `false`，否则玩家被公钥签名校验踢出（已补 §3.1） |
+| 2 | Floodgate `send-floodgate-data` | 未提 | 后端保留 floodgate-spigot 时必须 `true`（已补 §6.4） |
+| 3 | Geyser 配置 | 按简化模板重写 | **整份复用后端 config.yml**（78 键 / cv12 完全一致），保住 NetherNet、zh_cn、ping 调优（已改 §6.3） |
+| 4 | Floodgate key | 只说"同一 key" | 前后端必须**同一份文件**且**同版本**；副本 167 份 Essentials 数据里 139 份属基岩玩家，key 错 = 全体换号（已补 §6.4 / §5.5） |
+| 5 | paper-global 配置项名 | `velocity-support.enabled` | 1.18.2+ 实为 `proxies.velocity.enabled`（已改 §9.2） |
+| 6 | `proxies.velocity.online-mode` 释义 | "后端才会信任" | 官方定义是"如何处理 UUID / 数据"，镜像代理端；信任由 secret 验签决定（已改 §5.2） |
+| 7 | LuckPerms | 规划共享 MySQL | 本次**仍是 h2 单服存储**；当前只有一个子服无影响，加第二个前必须切（已在 §7.1 标注） |
+| 8 | 玩家数据 / UUID | 全文未覆盖 | 新增 **§5.5**：认证只做一次、offline 不等于离线 UUID、三类账号判定、数据核查清单、验证方法 |
+| 9 | 下载 API | `api.papermc.io/v2` | 2026-07 起 **410 Gone**，改用 `fill.papermc.io/v3`（已改 §2.1） |
+| 10 | 19132 协议 | 只写 UDP | 纯 NetherNet 需 **TCP + UDP** 同时放行（已改 §4.1 / §9.3） |
+| 11 | Geyser-Velocity jar 下载 | 单连接 | 约 50MB 单连接 ~100KB/s 会超时，实测用 12 段 Range 并行拉取后校验 zip 完整性 |
+
+### 14.3 验证边界与回滚
+
+- **已验证**：31 项静态一致性校验全部 PASS；代理带全套插件试跑正常（55551 监听、Geyser 19132 信令启动、无 ERROR / Exception）。
+- **未验证**：真实玩家登录。Velocity 4.x + YOP 2.3.0 的外置登录认证流程、基岩 Floodgate 端到端、皮肤回退、`/server` 换服，都还需要客户端与账号实测。
+- **上线前必办**：补齐 `world/` 目录（副本里没有）、防火墙只放行 55551 TCP + 19132 TCP/UDP、按 §5.5 比对 UUID。
+- **回滚**：副本 `_backup_单服配置_20261110/` 内有 5 个原配置文件；覆盖回原位、把
+  `Geyser-Spigot.jar.disabled` 改回 `.jar`、删除 `velocity/` 与
+  `plugins/multiverse-core-5.8.2.jar`，即可退回单服。
+- **文档备份**：本次修订前的原文保存在同目录
+  `多服Velocity +Multiverse.md.bak_20261110`。
+
+
+---
+
+## 15. 小游戏子服落地（2026-11-10）
+
+> 承接 §14 的「仅 survival」架构，本次新增 `minigames` / `skyblock` 两个后端子服。
+> 生产环境为云端**同一台**机器：32G 内存 / Xeon Gold 6148（20C40T @ 2.4GHz）/ **12M 公网带宽**。
+> 本地副本为配置演练，上线时按同一套规则同步。
+
+### 15.1 架构决策与资源预算
+
+| 进程 | 端口 | 绑定 | 堆内存 | 视距 / 模拟 | 玩法 |
+|---|---|---|---|---|---|
+| Velocity | 55551 TCP、19132 TCP+UDP | `0.0.0.0` | 512M | — | Geyser / Floodgate / YOP 32218 |
+| survival | 30002 | `127.0.0.1` | **10G / 4G**（原 24G） | **8** / 4（原 12） | 生存主服，YOP 32217 |
+| minigames | **30003** | `127.0.0.1` | 3G / 1G | 6 / 4 | 起床战争 + 幸运之柱，YOP 32219 |
+| skyblock | **30004** | `127.0.0.1` | 3G / 1G | 6 / 4 | 空岛 / 单方块，YOP 32220 |
+
+合计约 **16.5G / 32G**；磁盘新增约 0.9G（每服精简复制 core + libraries + versions + cache，不带 bluemap 与日志）。
+
+**为什么是「折中 2 服」而不是单服多世界、也不是 3 服 + 大厅**：
+
+- BedWars / FortunePillars 是短局玩法，会频繁重建竞技场；BSkyBlock 是持久岛屿资产。同一进程下一次竞技场重建占满主线程会连带卡住空岛玩家。Xeon 6148 单核仅 2.4GHz（比本机 i5-13600KF 弱 40–50%），主线程竞争比高主频机器更明显，所以隔离是必要的。
+- 多个 JVM 主线程可分散到不同物理核；**代理 → 后端全走 `127.0.0.1` 回环，不增加公网带宽**。
+- 没拆到 3 服 + 大厅：12M 带宽把总在线锁在 20–30 人，继续拆的吞吐收益有限，却要多付 4 套 secret / 端口 / key 与跨服 MySQL 成本。`lobby 30001` 继续注释预留，将来可一行加上。
+
+### 15.2 带宽是唯一硬瓶颈（与架构无关）
+
+12 Mbps ≈ **1.5 MB/s 出方向**。服务器发给玩家的数据走公网，按 MC 经验值估算（非实测）：
+
+| 视距 | 每玩家稳态下行 | 12M 理论上限 | 扣 20% 给网页 / 资源包 / Geyser |
+|---|---|---|---|
+| 12（原值） | 50–150 KB/s | 15–30 人 | **12–20 人** |
+| 8（survival 现值） | 25–60 KB/s | 30–60 人 | 25–45 人 |
+| 6（子服现值） | 15–40 KB/s | 40–100 人 | 35–70 人 |
+
+进服 / 跨世界 / 跨服时区块爆发 1–3 MB/s/人，12M 下同时两三人换场景即打满。跨服与跨世界的**带宽差 <5%**（都要重载区块），差别只在多一次 TCP 握手的 1–2 秒体感卡顿。
+
+必做优化：① 子服 `view-distance=6`、survival 降到 8；② BlueMap / Plan 只在 survival 开，小游戏服不装；③ 资源包保持 RPM `autoHost` 远程托管（实测本来就不占这 12M），但必须把 `selfHostPort` 固定为 **30005**，否则本地兜底会抢占 minigames 的 30003 —— 详见 **§16**；④ 公网只放行 55551 TCP + 19132 TCP/UDP。
+
+### 15.3 插件选型与 MC 26.3 实测
+
+| 玩法 | 实现 | 26.3 实测 |
+|---|---|---|
+| 起床战争 | Screaming BedWars **0.2.44**（原服已有） | ✅ enable；⚠️ 警告「26.3 newer than latest supported (26.2)」，走 26.2 fallback NMS，属未声明支持 |
+| 幸运之柱 | **FortunePillars 4.6.0**（Paper 插件，0.7MB） | ✅ 完整 enable（SQLite / 命令 / 监听器），自称只兼容 1.21.1–1.21.8，实测 26.3 可用 |
+| 空岛 / 单方块 | BentoBox **3.23.6** + BSkyBlock **1.20.0** + AOneBlock **1.28.0** | ✅ 两个 addon 均加载，官方明确支持 Paper 1.21.5–26.3 / Java 25+ |
+| 世界管理 | Multiverse-Core 5.8.2 | ✅ |
+| 共存 | 四套插件同一进程 | ✅ `Done (129s)`，无 Exception / 插件冲突 |
+
+> **幸运之柱的坑**：国内原版「幸运之柱」（Lucky-Pillar / JK's Pillars of Fortune）是 **Fabric / 数据包**（1.21.11），不是 Bukkit 插件；Modrinth 上的 Paper 插件版 FortunePillars 也只声明到 1.21.9。本机隔离试跑确认插件版在 26.3 可加载，故采用插件版，无需另起 Fabric 服或把全服数据包挂进 `world/datapacks`。
+> BentoBox 首启会通过 SpigotLibraryLoader 拉 10 个 JDBC 驱动与约 100 个 `.pom`（耗时约 1分44秒）；已全部缓存进 `skyblock/libraries/`，二次启动免联网。
+
+### 15.4 配置要点
+
+- 两个子服一律 `online-mode=false` + modern 转发 + 只绑 `127.0.0.1`；`paper-global.yml` 的 secret 与 `velocity/forwarding.secret` 完全一致。
+- YOP 四进程端口错开：32217 survival / 32218 velocity / 32219 minigames / 32220 skyblock。
+- **四端 Floodgate `key.pem` 是同一份**（md5 `902d4f90…`），基岩玩家 UUID 不会换号。
+- 两个子服 `level-name` 独立（`mg_hub` / `skyblock_hub`），不共享 survival 任何玩家存档；子服关闭 RCON。
+- `try` 仍只指向 `survival`，玩家用 `/server minigames` / `/server skyblock` 进入；`bungee-plugin-message-channel = true` 已开，BedWars 的 Velocity 集成可直接用。
+- ⚠️ Leaf 首启会规范化 `paper-global.yml`（去掉 secret 多余引号与自定义注释），**secret 值本身不变**，校验时应按解析值比对而非字符串全等。
+
+### 15.5 验证边界与待办
+
+- **已验证**：25 项一致性校验全 PASS；minigames 试跑 `Done (13.1s)`、skyblock `Done (108.4s)`、Velocity 解析新 toml `Done (1.23s)`，三者均无 ERROR / Exception。
+- **未验证 / 需人工**：
+  1. 三个玩法都还没建场地：BedWars `/bw admin add`、FortunePillars `/tof`、BSkyBlock `/island`（或 `/is`）。
+  2. 真实玩家登录（外置登录 / 正版 / 基岩）、`/server` 跨服、皮肤回退。
+  3. 各子服玩家数据 / Essentials 余额 / 背包互相独立；LuckPerms 仍是 `h2`，加更多子服前按 §7 切共享 MySQL。
+  4. 子服未装 ViaVersion / PlaceholderAPI / LuckPerms，按需补。
+  5. BedWars `bungee.enabled` 默认 false；若要「进服自动开局 + 结束送回 survival」，按知识库 `尖叫起床-BedWars/官方文档汉化/BungeeCord模式` 配置。
+  6. 副本仍缺 survival 的 `world/` 目录，上线前从原服补齐（见 §5.5）。
+
+### 15.6 回滚
+
+`_backup_小游戏部署前_20261110/` 内 6 个文件覆盖回原位（含 `velocity.toml`、`start.bat`、`server.properties`）；删除 `minigames/` 与 `skyblock/`；即可退回单 survival 架构。本次修订前的文档备份为同目录 `多服Velocity +Multiverse.md.bak_小游戏部署前_20261110`。
+
+
+---
+
+## 16. 资源包策略：玩家可选择删除（2026-11-11）
+
+> 需求：玩家可以选择拒绝 / 删除资源包，不做强制。
+> 涉及代理端 Geyser、survival 的 ResourcePackManager（RPM），以及 Velocity 迁移后断开的基岩资源包链路。
+
+### 16.1 改前现状
+
+| 端 | 控制点 | 改前 | 玩家能删 |
+|---|---|---|---|
+| Java · 三个后端 | `server.properties` | `require-resource-pack=false`、`resource-pack=` 空 | ✅ 后端不推 |
+| Java · survival | `ResourcePackManager/config.yml` | `forceResourcePack: false`、提示语 `Use recommended resource pack?` | ✅ 可拒绝、可删客户端缓存 |
+| Java · minigames / skyblock | 未装 RPM / FMM | 不推包 | ✅ 天然无包 |
+| **基岩（全局）** | `velocity/plugins/Geyser-Velocity/config.yml` | `force-resource-packs: true` + `enable-integrated-pack: true` | ❌ **拒绝下载即断线** |
+
+Geyser 配置注释明说：`If enabled [integrated pack], force-resource-packs will be enabled.` 所以**只改 `force-resource-packs` 无效**，必须两项一起关。
+
+### 16.2 落地改动
+
+| 文件 | 项 | 改前 → 改后 | 说明 |
+|---|---|---|---|
+| `velocity/plugins/Geyser-Velocity/config.yml` | `force-resource-packs` | `true` → **`false`** | 基岩玩家可拒绝下载也能进服 |
+| 同上 | `enable-integrated-pack` | `true` → **`false`** | 关掉 Geyser 自带的强制包；否则会顶回上一项 |
+| 同上 | `enable-custom-content` | 保持 `true` | Velocity 用 transfer packet，Geyser 官方建议保留 |
+| `plugins/ResourcePackManager/config.yml` | `selfHostPort` | `-1` → **`30005`** | 见 §16.4 |
+| 同上 | `networkHttpOffset-v2` | `1` → **`3`** | 即使日后改回 `-1`，推导仍是 30005 |
+| `plugins/ResourcePackManager/.rspm-geyser-mapping-target` | 内容 | 原服路径 → 副本内路径 | 见 §16.3 |
+
+Java 端的 `forceResourcePack: false` / `autoHost: true` / 三个后端的 `require-resource-pack=false` **均未改动**——它们本来就是可选的。注意「删缓存」≠「不再提示」：RPM 每次进服仍弹一次提示，选「否」即可；要彻底不弹得停用 RPM 推送。
+
+### 16.3 迁移断点：RPM 的基岩产物没送到代理端
+
+Geyser 从后端搬到代理后，`Geyser-Spigot.jar` 改名为 `.jar.disabled`，但 RPM 自动部署的产物仍全部留在**已停用的后端目录**里，代理端 `packs/` 是空的：
+
+| 源（后端 survival） | 目标（代理端 Geyser-Velocity） | 大小 |
+|---|---|---|
+| `plugins/Geyser-Spigot/extensions/ResourcePackManager.jar` | `velocity/plugins/Geyser-Velocity/extensions/` | 10.8 MB |
+| `plugins/Geyser-Spigot/custom_mappings/rspm_geyser_mappings.json` | `velocity/plugins/Geyser-Velocity/custom_mappings/` | 28 KB |
+| `plugins/ResourcePackManager/output/ResourcePackManager_Bedrock.zip` | `velocity/plugins/Geyser-Velocity/packs/` | 84 KB |
+
+三件已同步（md5 全一致）。按 [Geyser 官方 wiki](https://geysermc.org/wiki/geyser/packs/)，`packs/` 里的 `.zip` / `.mcpack` 在 Geyser 重启后下发给连接玩家；配合 `force-resource-packs: false`，就成了「可拒绝的自定义模型包」。
+
+新增根目录 **`sync-bedrock-pack.bat`**：每次 `/rspm reload`、RPM 更新扩展或改动自定义模型后跑一次，然后**重启 Velocity**（Geyser 只在启动时加载 extension 与 `custom_mappings`）。脚本已实测跑通。
+
+> ⚠️ 没有把 `bedrockGeyserFolder` 改成指向代理端的绝对路径：RPM 的 `GeyserDeployer` 有 `invalidPath` / `Refusing to record invalid Geyser mapping target` 校验，只认同目录树 `plugins/Geyser-*` 下的目标，跨树路径不可靠。改用幂等同步脚本，不赌插件内部行为。
+> `.rspm-geyser-mapping-target` 原本指向**另一个项目** `leaf-26.3\plugins\...`（复制项目时带过来的陈旧记录，RPM 启动时会尝试清理旧目标，有误删原服 mappings 的风险），已改指副本自身。
+
+### 16.4 带宽结论更正与端口冲突
+
+§15.2 原写「资源包走 CDN 不占这 12M」。实测 RPM `autoHost: true` **已把 96KB 的 Java 包托管在 magmaguy.com**，本来就不走云端出口。真正的风险是 `selfHostEnabled: true` 在远程托管失败时回退到本地 HTTP：
+
+```
+selfHostPort: -1  +  networkHttpOffset-v2: 1  →  30002 + 1 = 30003
+```
+
+而 **30003 正是 minigames 子服端口**。目前没触发（`preferSelfHost` 的公网可达验证在后端绑 `127.0.0.1` 时会失败、自动回退远程托管），但一旦显式设了 `selfHostExternalHost` 或 magmaguy.com 不可用，就会抢占 30003 导致 minigames 起不来。已固定为 30005，并把 offset 改为 3 作双保险。
+
+### 16.5 代价与限制
+
+- 关掉 integrated pack 后，基岩玩家若拒绝 / 删除资源包，自定义方块 / 物品 / 头颅映射失去贴图支撑，冷却指示器可能出现黑块（可在基岩「辅助功能 → 文本背景不透明度 = 0」缓解）。
+- Geyser 官方明确：**代理模式下无法按后端子服分别下发资源包**（Bedrock 只在初次连接时添加 / 移除 pack）。想按服区分需 transfer packet + GeyserPackSync 之类扩展。所以「进 minigames 不加载、进 survival 才加载」做不到；好在跨服时已加载的 pack 会保留、不重复弹窗。
+- 小游戏两子服不装 RPM / FMM，天然不推包。
+- Geyser **不会**把 Java 资源包转成基岩包，这正是 RPM `bedrockConversionEnabled` 的价值。
+
+### 16.6 验证边界与回滚
+
+- **已验证**：27 项一致性校验全 PASS；Velocity 试跑 `Done (3.17s)`、监听 55551、Geyser 加载扩展 `ResourcePackManagerGeyserBridge`、`Registered 128 custom items`（自定义映射生效）、无 ERROR / Exception；`sync-bedrock-pack.bat` 实测 `[OK]` 三项。
+- **未验证**：真实基岩客户端拒绝下载后能否正常进服、自定义模型端到端显示。试跑日志里扩展 health 为 `loadedDefinitions=0 packUuid=none`，模型定义是否推送需要玩家登录后才能确认。
+- **回滚**：`_backup_资源包修复前_20261111/` 内 3 个文件覆盖回原位；删除代理端 `extensions/ResourcePackManager.jar`、`custom_mappings/rspm_geyser_mappings.json`、`packs/ResourcePackManager_Bedrock.zip` 与根目录 `sync-bedrock-pack.bat`。文档修订前原文为 `.bak_资源包修复前_20261111`。

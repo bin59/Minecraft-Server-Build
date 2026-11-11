@@ -16,9 +16,12 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -29,7 +32,9 @@ import java.util.UUID;
  *   /mailbox preset list / remove <ID>
  *   /mailbox admin                       打开批量发放 GUI
  *   /mailbox list <玩家>                  查看某玩家奖励
- *   /mailbox stats                       发放统计
+ *   /mailbox stats                       发放统计（总数 / 待领 / 已领 / 审计事件）
+ *   /mailbox log [玩家] [条数]            审计流水（发放 / 领取 / 失败，默认全服 20 条）
+ *   /mailbox verify                      对账：流水完整性、金额一致性、必填字段
  *   /mailbox reload                      重载
  * 名单 target：@online / @whitelist / @file:路径 / 逗号分隔的玩家名
  */
@@ -58,7 +63,7 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
             case "give" -> {
                 if (!checkAdmin(sender)) return true;
                 if (args.length < 3) { sender.sendMessage(usage("give <奖品ID> <@online|@whitelist|@file:路径|玩家,玩家>")); return true; }
-                giveAsync(sender, args[1], args[2], sender.getName());
+                giveAsync(sender, args[1], args[2], sender.getName(), "COMMAND");
             }
             case "preset" -> {
                 if (!checkAdmin(sender)) return true;
@@ -73,27 +78,53 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
             case "stats" -> {
                 if (!checkAdmin(sender)) return true;
                 long[] s = plugin.storage().stats();
-                sender.sendMessage(msg("&e南瓜邮箱统计：待领 &f" + s[0] + " &7/ 已领 &f" + s[1]));
+                Map<String, Long> lg = plugin.storage().logStats();
+                sender.sendMessage(msg("&e南瓜邮箱统计：&f邮件共 &e" + s[0] + " &f条（&a待领 &e" + s[2]
+                        + " &f/ &7已领 &e" + s[1] + "&f）"));
+                sender.sendMessage(msg("&7审计事件共 &e" + lg.getOrDefault("TOTAL", 0L)
+                        + " &f条：&7发放 &e" + lg.getOrDefault("ISSUE", 0L)
+                        + " &f/ 领取 &e" + lg.getOrDefault("CLAIM", 0L)
+                        + " &f/ 领取失败 &c" + lg.getOrDefault("CLAIM_FAIL", 0L)
+                        + " &f/ 重复 &e" + (lg.getOrDefault("ISSUE_DUP", 0L) + lg.getOrDefault("CLAIM_DUP", 0L))));
+            }
+            case "log" -> {
+                if (!checkAdmin(sender)) return true;
+                String who = args.length >= 2 ? args[1] : null;
+                int n = 20;
+                if (args.length >= 3) {
+                    try { n = Integer.parseInt(args[2]); } catch (NumberFormatException ignored) { }
+                }
+                List<String> lines = plugin.storage().listLog(who, n);
+                sender.sendMessage(msg("&e南瓜邮箱审计流水&7（" + (who == null ? "全服" : who) + "，最近 " + lines.size() + " 条）"));
+                if (lines.isEmpty()) sender.sendMessage(msg("&7暂无记录。"));
+                for (String line : lines) sender.sendMessage(msg(line));
+            }
+            case "verify" -> {
+                if (!checkAdmin(sender)) return true;
+                for (String line : plugin.storage().verify().split("\n")) sender.sendMessage(msg(line));
             }
             case "reload" -> {
                 if (!checkAdmin(sender)) return true;
                 plugin.reloadConfig();
                 sender.sendMessage(msg("&a已重载配置文件。"));
             }
-            default -> sender.sendMessage(msg("&c未知子命令。&7" + label + " admin / give / preset / list / stats"));
+            default -> sender.sendMessage(msg("&c未知子命令。&7" + label + " admin / give / preset / list / stats / log / verify"));
         }
         return true;
     }
 
     /**
-     * 异步批量发放（命令与 GUI 共用）。名单解析 + 玩家 UUID + SQLite 写入全部放在
-     * 异步线程执行，不再阻塞服务端主线程；完成后回到主线程提示结果。
-     * 修复：原实现在主线程对每个玩家执行 getOfflinePlayer(联网查档) + SQLite 写入，
-     * 批量时主线程被网络阻塞和数据库锁卡死，导致服务器无响应。
+     * 异步批量发放（命令与 GUI 共用）。名单解析 + UUID 解析 + SQLite 写入全部放在
+     * 异步线程执行，不阻塞服务端主线程；完成后回到主线程提示结果。
+     * channel 仅用于审计流水区分渠道（COMMAND / GUI）。
      */
     public void giveAsync(CommandSender sender, String presetId, String target, String senderName) {
+        giveAsync(sender, presetId, target, senderName, "COMMAND");
+    }
+
+    public void giveAsync(CommandSender sender, String presetId, String target, String senderName, String channel) {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            int n = giveBlocking(presetId, target, senderName);
+            int n = giveBlocking(presetId, target, senderName, channel);
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (n > 0) {
                     sender.sendMessage(msg("&a已向 &e" + n + " &a名玩家发放 &e" + presetId + " &a（上线后 /mailbox 领取）"));
@@ -104,8 +135,8 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
         });
     }
 
-    /** 主发放逻辑（仅在异步线程调用）。返回成功发放人数。 */
-    private int giveBlocking(String presetId, String target, String senderName) {
+    /** 主发放逻辑（仅在异步线程调用）。返回**实际写入**条数（去重/失败不计入）。 */
+    private int giveBlocking(String presetId, String target, String senderName, String channel) {
         Storage storage = plugin.storage();
         Preset preset = storage.getPreset(presetId);
         if (preset == null) return 0;
@@ -116,16 +147,26 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
         for (String raw : names) {
             String name = raw == null ? "" : raw.trim();
             if (name.isEmpty()) continue;
-            // 不再联网 getOfflinePlayer 查 Mojang/Yggdrasil 档案：改用本地确定性离线 UUID，
-            // 彻底消除主线程/异步线程的网络阻塞（玩家名匹配领取不受影响）。
-            UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + name).getBytes(StandardCharsets.UTF_8));
-            storage.addReward(new Reward(
-                    UUID.randomUUID().toString(), uuid.toString(), name,
+            // 真实 UUID：在线玩家精确匹配；离线玩家只认本服已有档案；
+            // 拿不到就留 null（按名字仍可领取），绝不写伪造的离线模式 UUID。
+            String uuid = resolveRealUuid(name);
+            boolean ok = storage.addRewardLogged(new Reward(
+                    UUID.randomUUID().toString(), uuid, name,
                     preset.id(), preset.rewardType(), preset.data(), preset.desc(),
-                    senderName, now, false));
-            n++;
+                    senderName, now, false), channel + ":" + senderName);
+            if (ok) n++;
         }
         return n;
+    }
+
+    private static String resolveRealUuid(String name) {
+        Player online = Bukkit.getPlayerExact(name);
+        if (online != null) return online.getUniqueId().toString();
+        try {
+            OfflinePlayer off = Bukkit.getOfflinePlayer(name);
+            if (off != null && off.hasPlayedBefore()) return off.getUniqueId().toString();
+        } catch (Throwable ignored) { }
+        return null;
     }
 
     private void preset(CommandSender sender, String[] args) {
@@ -176,13 +217,24 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
     }
 
     private void list(CommandSender sender, String player) {
-        List<Reward> rs = plugin.storage().listForPlayer(player);
+        Player online = Bukkit.getPlayerExact(player);
+        UUID uuid = online == null ? null : online.getUniqueId();
+        List<Reward> rs = plugin.storage().listForPlayer(player, uuid);
         sender.sendMessage(msg("&e玩家 &f" + player + " &e的奖励记录（共 " + rs.size() + " 条）："));
         for (Reward r : rs) {
             String state = r.claimed() ? "&a已领" : "&e待领";
-            sender.sendMessage(msg("&7 - " + state + " &f" + (r.desc() == null ? r.rewardType() : r.desc())));
+            sender.sendMessage(msg("&7 - " + state + " &f" + brief(r)
+                    + " &8| " + (r.desc() == null || r.desc().isBlank() ? r.rewardType() : r.desc())
+                    + " &7发放人=" + (r.issuedBy() == null ? "系统" : r.issuedBy())
+                    + " 时间=" + FMT.format(new Date(r.issuedTime()))));
         }
     }
+
+    private static String brief(Reward r) {
+        return "money".equals(r.rewardType()) ? r.data() + " 南瓜币" : r.rewardType() + " " + r.data();
+    }
+
+    private static final SimpleDateFormat FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     // ---------- 名单解析 ----------
 
@@ -246,7 +298,10 @@ public class MailboxCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (!sender.hasPermission("pumpkinmail.admin")) return Collections.emptyList();
         if (args.length == 1) {
-            return filter(args[0], List.of("give", "preset", "admin", "list", "stats", "reload"));
+            return filter(args[0], List.of("give", "preset", "admin", "list", "stats", "log", "verify", "reload"));
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("log")) {
+            return filter(args[1], Bukkit.getOnlinePlayers().stream().map(Player::getName).toList());
         }
         if (args.length == 2 && args[0].equalsIgnoreCase("give")) {
             return filter(args[1], plugin.storage().listPresets().stream().map(Preset::id).toList());

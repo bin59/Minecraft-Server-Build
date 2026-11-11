@@ -11,14 +11,14 @@
 | 目录                      | 产物 jar                  | 功能                                                                | 运行时依赖                             | 说明文档                                                                      |
 | ------------------------- | ------------------------- | ------------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------- |
 | `传送阵-SpacePortal/`     | `SpacePortal-1.0.0.jar`   | 空间传送阵：建阵 / 双向连接 / 踩阵充能传送 / GUI / 随行宠物         | Geyser + Floodgate（互通服）           | `传送阵/空间传送阵使用说明.md`、`传送阵/SpacePortal 空间传送阵 — 项目分析.md` |
-| `南瓜账本-MoneyLedger/`   | `MoneyLedger-1.0.0.jar`   | 南瓜币每笔变动按类别自动记账，可查、可导出 CSV                      | EssentialsX / Vault                    | —                                                                             |
-| `南瓜邮箱-PumpkinMail/`   | `PumpkinMail-1.0.0.jar`   | 活动奖励批量发放与玩家领取（`/mailbox`）                            | SQLite（随 jar 打入）                  | —                                                                             |
+| `南瓜账本-MoneyLedger/`   | `MoneyLedger-1.1.0.jar`   | **全量准确流水**：余额变动事件同步落盘（不再走内存队列）+ Essentials `trade.log` 幂等回填补齐漏记；BigDecimal 精确金额、真实 UUID、来源/类别修正；`/moneyledger backfill` / `verify` / `stats`，导出 CSV | EssentialsX（`UserBalanceUpdateEvent` + `trade.log`） | `config.yml`（回填开关/周期/起始日） |
+| `南瓜邮箱-PumpkinMail/`   | `PumpkinMail-1.1.0.jar`   | 活动奖励批量发放与玩家领取（`/mailbox`）；**1.1.0 起全量审计**：发放/去重/领取/失败写入 `reward_log`，与发放同事务提交，旧库自动迁移并幂等回填历史；`/mailbox log` / `verify` 可查可对账 | SQLite（sqlite-jdbc 由 Leaf 服务端 libraries 提供） | `config.yml`（含审计说明）、`plugin.yml` |
 | `南瓜飞-PumpkinFly/`      | `PumpkinFly-1.0.0.jar`    | 付费 / 限时 / 永久飞行，仅飞行中扣秒，限自己领地与主城；限时体验奖励（天/时/分）、全局与单人飞行管理 | Vault、Residence、EssentialsX          | `使用说明.md`、`CHANGELOG.md`                                                 |
 | `在线时间排行-PlanTop/`   | `PlanTop-1.0.0.jar`       | 基于 Plan 数据的在线时间排行榜                                      | PlaceholderAPI、Plan MySQL             | `PlanTop.md`                                                                  |
 | `建筑评分-BuildRate/`     | `BuildRate-1.0.0.jar`     | 建筑评分与榜单                                                      | PumpkinMail                            | `使用说明.md`                                                                 |
 | `快捷菜单系统-QuickMenu/` | `QuickMenu-1.0.0.jar`     | 32 套菜单 / 267 个菜单项（以服务器实跑配置为基线，含南瓜飞入口与管理面板），Java 箱子 GUI / 基岩原生 Form 双轨 | Geyser、Floodgate、Residence（软依赖） | `config.yml`（实跑基线副本）、`快捷菜单系统-QuickMenu.md`、`快捷菜单系统-QuickMenu-与通用菜单对比.md` |
 | `每日随机收购-DailySell/` | `DailySell-1.2.3.jar`     | 物品池 110 种；今日 8 种候选、每人自选 5 种出售（选择按日期持久化），单人每日收益上限 900 币，Java 箱子 GUI / 基岩原生表单（免打字）双端可用 | Vault、Floodgate（软依赖） | `使用说明.md`、`config.yml`（实跑基线副本）、`build.py` |
-| `在线离线奖励-OfflineReward/` | `OfflineReward-1.1.0.jar` | 离线 15 币/小时 + 在线 25 币/小时（在线高于离线，鼓励在线），上线/在线定期结算到南瓜邮箱（PumpkinMail） | PumpkinMail                            | —                                                                             |
+| `在线离线奖励-OfflineReward/` | `OfflineReward-1.1.3.jar` | 离线 15 币/小时；在线**阶段发放**：间隔 5/10/15/30… 共 8 档、奖励逐档递增 10→100 币，累计 3 小时发完、**全天封顶 300 币**毕业；阶段表全在 config（改完 reload 即生效），`max-per-day: 300` 硬封顶；1.1.1 修 admin 组 `*` 通配误豁免；`mode: cycle` 可回退 1.1.2 循环模式 | PumpkinMail                            | `config.yml`（实跑基线副本）、`build.py`                                          |
 | `附魔商店-EnchantShop/`   | `EnchantShop-1.0.0.jar`   | 读取 ExcellentEnchants 配置，用经验等级购买附魔                     | ExcellentEnchants（只读其配置）        | `使用说明.md`                                                                 |
 
 `disabled/` 存放已停用的项目，不参与部署；`传送阵/` 是 SpacePortal 的文档目录（源码在 `传送阵-SpacePortal/`）。
@@ -77,7 +77,7 @@ javac --release 21 -encoding UTF-8 -d out -cp "<leaf-api>;<外置依赖>;<advent
 | PumpkinFly  | `/pfly`（`buy` / `claim` / `trial` / `global` / `player` / `hud` / `status` / `records` / `give` / `take` / `setperm` / `reload`；时长支持 `30m` / `2h` / `3d`） | `南瓜飞-PumpkinFly/使用说明.md`                    |
 | QuickMenu   | `/qm`（`open` / `reload` / `give` …）                                                           | `快捷菜单系统-QuickMenu/快捷菜单系统-QuickMenu.md` |
 | DailySell  | `/ds`（`choose` / `today` / `sell` / `sellall` / `reload` / `reroll`）                            | `每日随机收购-DailySell/使用说明.md`                |
-| PumpkinMail | `/mailbox`                                                                                      | 见插件目录源码                                     |
+| PumpkinMail | `/mailbox`；管理 `log` / `verify` / `stats`                                            | 见插件目录源码                                     |
 | 其余        | 见各自 `plugin.yml` 与使用文档                                                                  | 见上表                                             |
 
 ---

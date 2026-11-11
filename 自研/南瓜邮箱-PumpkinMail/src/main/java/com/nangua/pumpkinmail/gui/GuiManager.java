@@ -186,20 +186,23 @@ public class GuiManager implements Listener {
     }
 
     private void claimReward(Player p, Reward r, MailboxSession ms) {
-        boolean ok = applier.apply(p, r);
-        if (ok) {
-            plugin.storage().markClaimed(r.id());
+        RewardApplier.ApplyResult res = applier.applyDetailed(p, r);
+        if (res.ok()) {
+            // 成功：记录真实领取人（UUID + 名字），写 CLAIM 审计
+            plugin.storage().markClaimed(r.id(), p.getUniqueId().toString(), p.getName());
             p.sendMessage(C("&a已领取奖励：" + (r.desc() == null || r.desc().isBlank() ? "奖品" : r.desc())));
             p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
         } else {
-            p.sendMessage(C("&c领取失败，请联系管理员。"));
+            // 失败：不改状态，但必须留痕，否则「没发成功」这件事就查不到
+            plugin.storage().logClaimFailed(r.id(), p.getUniqueId().toString(), p.getName(), res.detail());
+            p.sendMessage(C("&c领取失败，请联系管理员。&7(" + res.detail() + ")"));
         }
         refreshMailbox(p, ms);
     }
 
     private void give(Player admin, String presetId, String target) {
         // 异步发放（主线程不再阻塞），结果提示由 giveAsync 回到主线程后发送
-        new com.nangua.pumpkinmail.cmd.MailboxCommand(plugin).giveAsync(admin, presetId, target, admin.getName());
+        new com.nangua.pumpkinmail.cmd.MailboxCommand(plugin).giveAsync(admin, presetId, target, admin.getName(), "GUI");
     }
 
     // ================= 辅助 =================
@@ -227,6 +230,9 @@ public class GuiManager implements Listener {
         meta.setDisplayName(C("&6" + head));
         List<String> lore = new ArrayList<>();
         if (r.desc() != null && !r.desc().isBlank()) lore.add(C("&f" + r.desc()));
+        lore.add(C("&7内容：" + brief(r)));
+        lore.add(C("&7来源：" + (r.presetId() == null || r.presetId().isBlank()
+                ? (r.issuedBy() == null ? "系统" : r.issuedBy()) : r.presetId())));
         lore.add(C("&7发放人：" + (r.issuedBy() == null ? "系统" : r.issuedBy())));
         lore.add(C("&7时间：" + fmt(r.issuedTime())));
         lore.add(C("&a左键点击领取"));
@@ -277,6 +283,17 @@ public class GuiManager implements Listener {
         p.sendMessage(C(msg));
         p.sendMessage(C("&7（输入内容后回车；输入 &ccancel &7取消）"));
         com.nangua.pumpkinmail.ChatInput.await(p, consumer);
+    }
+
+    private static String brief(Reward r) {
+        String t = r.rewardType() == null ? "" : r.rewardType();
+        String d = String.valueOf(r.data());
+        return switch (t) {
+            case "money" -> d + " 南瓜币";
+            case "item" -> "物品 " + d;
+            case "command" -> "命令 " + d;
+            default -> d;
+        };
     }
 
     private static final SimpleDateFormat FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm");

@@ -13,3 +13,16 @@ hint:
 reward:
   money-command: "eco give {player} {amount}"   # 货币奖励（EssentialsX/Vault 加钱 = 南瓜币）
   item-command: "give {player} {material} {amount}"   # 备用：不再实际使用，见上方说明
+
+# ============================================================
+#  全量审计（1.1.0 起，强制开启，无开关）
+# ============================================================
+# 每一笔发放 / 去重 / 领取 / 领取失败都写入 mailbox.db 的 reward_log 表（只追加，不删除）：
+#   事件  ISSUE（发放成功）、ISSUE_DUP（id 重复被忽略）、CLAIM（领取成功）、
+#         CLAIM_DUP（重复点击）、CLAIM_FAIL（命令/物品发放失败）、CLAIM_MISSING（记录不存在）
+#   字段  reward_id、event、event_time、player_uuid（真实 UUID，取不到则留空）、
+#         player_name、issued_by、source、reward_type、data（金额/物品）、desc、detail
+# rewards 表自动新增 source / claimed_by / claimed_name 三列；旧库首次启动自动迁移，
+# 并把迁移前的历史发放/领取幂等回填进 reward_log（原有字段一条都不改写）。
+# 发放与审计在同一事务提交，任一失败整体回滚，杜绝「发了币却没记录」。
+# 查询：/mailbox log [玩家] [条数]、/mailbox verify（对账）、/mailbox stats（含事件计数）

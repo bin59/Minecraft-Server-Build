@@ -1,17 +1,17 @@
 name: PumpkinMail
-version: 1.0.0
+version: 1.1.0
 main: com.nangua.pumpkinmail.PumpkinMail
 api-version: 26.3
 authors:
   - 南瓜服
-description: 南瓜邮箱 - 活动奖励一键批量发放与玩家领取系统（长期复用）
+description: 南瓜邮箱 - 活动奖励批量发放、玩家领取与全量审计流水（长期复用）
 commands:
   mailbox:
-    description: 打开南瓜邮箱 / 管理发放
-    usage: /mailbox [give|preset|admin|list|stats|reload]
+    description: 打开南瓜邮箱 / 管理发放 / 审计对账
+    usage: /mailbox [give|preset|admin|list|stats|log|verify|reload]
     aliases:
       - pmail
 permissions:
   pumpkinmail.admin:
-    description: 南瓜邮箱管理（发放/预设/查看/面板）
+    description: 南瓜邮箱管理（发放/预设/查看/面板/审计流水/对账）
     default: op

@@ -32,7 +32,7 @@
 | BedrockPlayerSupport      | 传送（表单）                                                                          | —                                                                             |
 | EvenMoreFish              | 更多鱼（钓鱼中心/卖鱼/鱼饵/日记）                                                     | 更多鱼管理（比赛控制）                                                        |
 | **PumpkinMail（自研）**   | 南瓜邮箱（/mailbox，领活动奖励）                                                      | 南瓜邮箱管理（/mailbox admin 发放面板，权限 `pumpkinmail.admin`）             |
-| **OfflineReward（自研）** | 离线奖励自动发放到邮箱（玩家无独立入口，上线后在邮箱领取；**管理员/管理组同样适用**） | 离线奖励管理（`/offlinereward reload` / `check`，权限 `offlinereward.admin`） |
+| **OfflineReward（自研）** | 离线 / 在线奖励自动发放到邮箱（玩家无独立入口，上线后在邮箱领取；**管理员/管理组同样适用**） | 在线离线奖励管理（`/offlinereward reload` / `check`，权限 `offlinereward.admin`） |
 
 ---
 
@@ -377,7 +377,7 @@ actions:
 
 | 菜单 id               | 名称         | 对接插件                                                     | 主要内容                                                                                                                                                                                                 |
 | --------------------- | ------------ | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `admin`               | 管理面板     | —                                                            | 一级入口，10 个分类 + 返回玩家菜单；含**南瓜邮箱管理**（slot 18，`/mailbox admin` 发放面板，权限 `pumpkinmail.admin`）、**离线奖励管理**（slot 25，`/offlinereward reload`，权限 `offlinereward.admin`） |
+| `admin`               | 管理面板     | —                                                            | 一级入口，10 个分类 + 返回玩家菜单；含**南瓜邮箱管理**（slot 18，`/mailbox admin` 发放面板，权限 `pumpkinmail.admin`）、**在线离线奖励管理**（slot 25，`/offlinereward reload`，权限 `offlinereward.admin`） |
 | `admin-player`        | 玩家管理     | **OpenInv** + EssentialsX                                    | 看背包、传送/拉人、切模式、治疗、飞行、无敌、喂食、隐身、清背包、查信息、修复、发物品                                                                                                                    |
 | `gamemode`            | 切换游戏模式 | EssentialsX                                                  | `admin-player` 的子菜单：生存/创造/冒险/旁观四种模式，选模式后再从在线列表选玩家执行                                                                                                                     |
 | `admin-punish`        | 处罚管理     | EssentialsX                                                  | 踢出、封禁、临时封禁、解封、封 IP、禁言、解禁、关押、释放、广播、私信监视                                                                                                                                |
@@ -389,7 +389,7 @@ actions:
 | `admin-perm`          | 权限管理     | **LuckPerms**                                                | 网页编辑器、同步、重载、权限树、信息、查玩家权限、实时追踪                                                                                                                                               |
 | `admin-qm`            | 菜单管理     | QuickMenu 自身                                               | 重载配置、菜单列表、客户端诊断、发放触发物品                                                                                                                                                             |
 | `admin-economy`       | 经济管理     | EssentialsX + AuctionHouse + EconomyShop + EzTax + DailySell | 财富榜、查余额（选人）、发钱/扣钱/设余额（指引）、拍卖行管理、系统商店管理、税务统计、每日收购重生成/重载                                                                                                |
-| `admin-offlinereward` | 离线奖励管理 | **OfflineReward**                                            | 位于 `admin` 菜单内（非独立菜单），点击重载配置；查询时间戳 `/offlinereward check 玩家名`                                                                                                                |
+| `admin-offlinereward` | 在线离线奖励管理 | **OfflineReward**                                            | 位于 `admin` 菜单内（非独立菜单），点击重载配置；查询在线奖励阶段进度 `/offlinereward check 玩家名`                                                                                                                |
 
 > **南瓜飞管理支线**：`pumpkinfly-admin` 不挂在 `admin` 面板下，而是从玩家菜单 `pumpkinfly` 的 slot 24 进入（`back-menu: pumpkinfly`），因此未计入上表 12 套主线管理菜单。它需要 `pumpkinfly.admin` 权限，详见 5.1 的南瓜飞入口说明与 `自研/南瓜飞-PumpkinFly/使用说明.md` 第六节。
 
@@ -801,7 +801,7 @@ lp group default permission set voicechat.listen true
 lp group default permission set voicechat.groups true
 
 # ---- PumpkinMail：南瓜邮箱（玩家侧 /mailbox 领奖励，无需额外权限）----
-# 管理子命令（admin/give/preset/list/stats）需要 pumpkinmail.admin，见 8.3
+# 管理子命令（admin/give/preset/list/stats/log/verify）需要 pumpkinmail.admin，见 8.3
 ```
 
 ### 8.3 管理组（admin / owner）
@@ -932,7 +932,7 @@ lp group admin permission set dailysell.admin true
 # ---- PumpkinMail：南瓜邮箱管理（管理面板「南瓜邮箱管理」入口）----
 lp group admin permission set pumpkinmail.admin true
 
-# ---- OfflineReward：离线奖励管理（管理面板「离线奖励管理」入口）----
+# ---- OfflineReward：在线离线奖励管理（管理面板「在线离线奖励管理」入口）----
 lp group admin permission set offlinereward.admin true
 
 # ---- LuckPerms：日常查询（危险项不给，见 8.4）----

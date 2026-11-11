@@ -41,28 +41,45 @@ public class RewardApplier {
      *         任何异常都会被捕获，不会向外抛出。
      */
     public boolean apply(Player player, Reward reward) {
+        return applyDetailed(player, reward).ok();
+    }
+
+    /** 发放结果：ok=是否成功，detail=结果说明（会原样写入审计流水，便于排查漏发）。 */
+    public record ApplyResult(boolean ok, String detail) { }
+
+    public ApplyResult applyDetailed(Player player, Reward reward) {
         if (player == null || reward == null) {
             plugin.getLogger().warning("[PumpkinMail] 发放奖励失败：玩家或奖励为空");
-            return false;
+            return new ApplyResult(false, "玩家或奖励为空");
         }
         String type = reward.rewardType() == null ? "" : reward.rewardType().trim();
-        setLedgerReason(reward.desc());
+        String reason = (reward.desc() == null || reward.desc().isBlank())
+                ? type + "：" + reward.data() : reward.desc();
+        setLedgerReason(reason);
         try {
             return switch (type) {
-                case "money" -> dispatch(player, "eco give " + player.getName() + " " + reward.data());
-                case "item" -> giveItem(player, reward.data());
-                case "command" ->
-                        dispatch(player, String.valueOf(reward.data()).replace("{player}", player.getName()));
+                case "money" -> {
+                    boolean ok = dispatch(player, "eco give " + player.getName() + " " + reward.data());
+                    yield new ApplyResult(ok, ok ? "eco give 执行成功" : "eco give 执行失败（金额=" + reward.data() + "）");
+                }
+                case "item" -> {
+                    boolean ok = giveItem(player, reward.data());
+                    yield new ApplyResult(ok, ok ? "物品已放入背包" : "物品解析/发放失败：" + reward.data());
+                }
+                case "command" -> {
+                    boolean ok = dispatch(player, String.valueOf(reward.data()).replace("{player}", player.getName()));
+                    yield new ApplyResult(ok, ok ? "命令执行成功" : "命令执行失败：" + reward.data());
+                }
                 default -> {
                     plugin.getLogger().warning("[PumpkinMail] 未知的奖励类型: " + type + " (id=" + reward.id() + ")");
-                    yield false;
+                    yield new ApplyResult(false, "未知奖励类型：" + type);
                 }
             };
         } catch (Throwable t) {
             plugin.getLogger().severe("[PumpkinMail] 发放奖励异常: id=" + reward.id()
                     + " type=" + type + " data=" + reward.data() + " player=" + player.getName());
             t.printStackTrace();
-            return false;
+            return new ApplyResult(false, "发放异常：" + t);
         } finally {
             clearLedgerReason();
         }

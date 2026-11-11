@@ -246,9 +246,9 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `GSit-3.8.0.jar` | 坐下 | `GSit/` |
 | `Geyser-Spigot.jar` | Java ↔ 基岩互通 | `Geyser-Spigot/` |
 | `LuckPerms-Bukkit-5.5.91.jar` | 权限管理 | `LuckPerms/`（config.yml + libs/） |
-| `MoneyLedger-1.0.0.jar` | 自研·南瓜账本 | `MoneyLedger/` |
+| `MoneyLedger-1.1.0.jar` | 自研·南瓜账本（1.1.0 事件同步落盘 + `trade.log` 幂等回填 + `/moneyledger verify` 对账；首次启动自动迁移 `ledger.db` 并补齐历史漏记） | `MoneyLedger/`（`ledger.db`、`config.yml`） |
 | `MythicMobs-5.14.0.jar` | 自定义怪物与技能 | `MythicMobs/` |
-| `OfflineReward-1.1.0.jar` | 自研·在线离线奖励（离线 15 币/小时 + 在线 25 币/小时，在线高于离线） | `OfflineReward/` |
+| `OfflineReward-1.1.3.jar` | 自研·在线离线奖励（离线 15 币/小时；在线阶段发放：8 档递增 10→100 币、3 小时发完，全天封顶 300 币毕业；阶段表全在 config，`max-per-day: 300` 硬封顶；`mode: cycle` 可回退 25 币/小时循环） | `OfflineReward/` |
 | `OpenInv.jar` | 离线背包查看 | `OpenInv/` |
 | `PlaceholderAPI-2.12.3.jar` | 占位符 API | `PlaceholderAPI/`（expansions/） |
 | `Plan-5.9-dev-build-3786.jar` | 玩家/服务器数据分析 | `Plan/`（database.db/libraries/） |
@@ -256,7 +256,7 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `PlayerHeadDrops-2.0.0.jar` | 玩家头颅掉落 | `PlayerHeadDrops/` |
 | `ProtocolLib-Spigot.jar` | 协议库 | `ProtocolLib/` |
 | `PumpkinFly-1.0.0.jar` | 自研·南瓜飞（付费 / 限时 / 永久飞行、限时体验奖励、全服与单人管理） | `PumpkinFly/`（config.yml + data/） |
-| `PumpkinMail-1.0.0.jar` | 自研·南瓜邮箱 | `PumpkinMail/` |
+| `PumpkinMail-1.1.0.jar` | 自研·南瓜邮箱（1.1.0 全量审计：`reward_log` 表；旧库自动迁移 + 历史回填） | `PumpkinMail/` |
 | `Quests-5.3.2.jar` | 任务系统 | `Quests/` |
 | `QuickMenu-1.0.0.jar` | 自研·快捷菜单 | `QuickMenu/`（config.yml） |
 | `Residence6.0.4.2.jar` | 领地系统 | `Residence/` |

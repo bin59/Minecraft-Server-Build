@@ -2,7 +2,7 @@
 # 每天零点从 pool 随机抽 items-per-day 种物品，作为全服共享的"今日候选清单"：
 #   - 每种当天额度随机 [min-per-item, max-per-item] 个（每人当天最多卖这么多个）
 #   - 每种单价 = 基础价 × 当日随机浮动系数（price-float-min ~ price-float-max），取整
-#   - 生成时保证 8 种合计（单价×额度）不超过 daily-budget（默认 800），超了自动缩减额度
+#   - 生成时保证 8 种合计（单价×额度）不超过 daily-budget（默认 900），超了自动缩减额度
 # 每位玩家用 /ds choose 从今日 8 种里自选 5 种，只有选中的 5 种可以出售；
 # 选择按日期存在 data.yml 的 choices 段，重登 / 重启不变，跨天自动失效需重选。
 # 玩家 /ds sell（卖1个）/ /ds sellall（卖满额度）获得南瓜币；每人每天每种额度上限 + 总收益上限 = 防刷。
@@ -25,7 +25,7 @@ price-float-min: 0.6
 price-float-max: 1.4
 
 # 每人每日收购总收益上限（南瓜币，防刷 Faucet 封顶）
-daily-budget: 800
+daily-budget: 900
 
 # 生成/跨天时是否全服广播今日清单
 broadcast: true

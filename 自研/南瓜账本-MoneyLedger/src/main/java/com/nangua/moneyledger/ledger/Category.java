@@ -2,6 +2,9 @@ package com.nangua.moneyledger.ledger;
 
 /**
  * 南瓜币变动类别。
+ *
+ * 1.1.0：新增 FLIGHT / RESIDENCE / BACKFILL / ADJUST。
+ * 枚举顺序只追加不改，数据库中保存的是 name()，历史数据不受影响。
  */
 public enum Category {
     TRANSFER("转账"),
@@ -15,7 +18,11 @@ public enum Category {
     SELL("出售"),
     SPECIAL("特殊"),
     OTHER("其他"),
-    UNKNOWN("未知");
+    UNKNOWN("未知"),
+    FLIGHT("飞行消费"),
+    RESIDENCE("领地"),
+    BACKFILL("日志回填"),
+    ADJUST("余额校正");
 
     public final String label;
 
