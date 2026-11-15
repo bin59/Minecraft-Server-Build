@@ -8,6 +8,20 @@ Vault 是连接本服各玩法插件与经济、权限核心的 API 桥，本文
 
 ---
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/Vault.jar`，`version: 1.7.3-b131` |
+| 官方最新 | **1.7.3**（2020-07-17 最后正式版，官方多年未更新）；本地构建号 `b131` 已是最新 |
+| 官方文档站 | <https://github.com/MilkBowl/Vault>（README / 源码；官方仅此一处文档） |
+| 官方下载 | [GitHub Releases](https://github.com/MilkBowl/Vault/releases) · [SpigotMC 资源页](https://www.spigotmc.org/resources/vault.34315/) |
+| 主要页面 | [README](https://github.com/MilkBowl/Vault) · [VaultAPI](https://github.com/MilkBowl/VaultAPI) · [JavaDocs](http://milkbowl.github.io/VaultAPI) · [Releases](https://github.com/MilkBowl/Vault/releases) · [SpigotMC 资源页](https://www.spigotmc.org/resources/vault.34315/) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
+
+---
+
 ## 一、核心原理与安装顺序
 
 你的服务器现状是：有「门禁系统」（LuckPerms，管权限）和一堆「功能插件」（Residence、宠物、菜单…），但缺了「银行」（EssentialsX，实际存钱）和「通讯线路」（Vault，把大家连到银行）。
@@ -133,7 +147,7 @@ Vault 把权限请求统一转发给 LuckPerms。各经济指令权限需手动�
 # 基础经济指令
 lp group default permission set essentials.balance
 lp group default permission set essentials.pay
-lp group default permission set essentials.money
+lp group default permission set essentials.balancetop
 
 # Residence 经济相关权限 (买卖/租赁)
 lp group default permission set residence.rent true
@@ -141,9 +155,6 @@ lp group default permission set residence.unrent true
 lp group default permission set residence.sell true
 lp group default permission set residence.buy true
 lp group default permission set residence.price true
-
-# 管理员组无限金钱 (可选)
-lp group admin permission set essentials.money.unlimited true
 ```
 
 ### 4.3 自定义死亡信息 CustomDeathMessages（Vault 收费）

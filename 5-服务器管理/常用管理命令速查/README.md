@@ -2,6 +2,17 @@
 
 本页汇总南瓜生存服日常管理中高频使用的游戏内与控制台命令，按性能监控、玩家管理、方块操作审计、经济、基岩版 Geyser、皮肤与领地分类排列。每条命令附带简要说明，供管理员线上操作时快速查阅，详细说明请回到对应插件文档。
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `LuckPerms 5.5.91` · `CoreProtect 24.1（CE）` · `OpenInv 5.3.5` · `ClearLag 2.0.0` |
+| 官方最新 | 官网持续更新，当前按官方 wiki 口径 |
+| 官方文档站 | <https://luckperms.net/wiki/Command-Usage> · <https://docs.coreprotect.net/commands/> · <https://github.com/Jikoo/OpenInv/wiki/Commands> |
+| 主要页面 | LuckPerms `/wiki/Command-Usage` · CoreProtect `/commands/` · OpenInv `/wiki/Commands` |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
+
 ## 性能监控
 
 ```bash

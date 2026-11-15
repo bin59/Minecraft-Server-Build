@@ -1,5 +1,17 @@
 TAB 是 Minecraft 插件服中最经典、最广泛使用的 TAB 列表自定义插件，支持 1.7 ~ 1.21+ 全版本，几乎所有服务器都会用到它。以下是详细的使用教程。
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/TAB_v6.2.1.jar`，`version: 6.2.1` |
+| 官方最新 | 官方 GitHub Wiki 以 6.2.1 为现行口径，与本地一致；独立站 tab-wiki.pages.dev 未能验证 |
+| 官方文档站 | https://github.com/NEZNAMY/TAB/wiki （6.x 现行主文档站，仍是 GitHub Wiki，未迁到独立站） |
+| 官方下载 | https://github.com/NEZNAMY/TAB （官网 / Releases） · https://www.spigotmc.org/resources/tab-1-7-1-21.57806/ |
+| 主要页面 | https://github.com/NEZNAMY/TAB/wiki · https://github.com/NEZNAMY/TAB/wiki/Feature-guide:-Nametags · https://github.com/NEZNAMY/TAB/wiki/Developer-API · https://github.com/NEZNAMY/TAB/wiki/Quick-PlaceholderAPI-startup-guide · https://github.com/NEZNAMY/TAB/releases/ |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ### 🚀 安装
 
 1. **下载插件**
@@ -47,18 +59,17 @@ footer: # TAB列表底部（尾部）
 
 ### 👤 玩家显示配置
 
-在 `config.yml` 中，你可以定义每个玩家在 TAB 列表中的显示格式：
+TAB v6.2.1：格式值写在 `plugins/TAB/groups.yml`（或 `users.yml`），`config.yml` 只放功能开关。
 
 ```yaml
-tablist-name-formatting:
-  # 玩家名称的显示格式
-  # 支持前缀、后缀、排序权重等
-  default:
-    tabprefix: '&7[&f玩家&7] ' # 名称前的前缀
-    tabsuffix: ' &7| %ping%ms' # 名称后的后缀
-    tagprefix: '&7[&f玩家&7] ' # 头顶名牌前缀
-    tagsuffix: '' # 头顶名牌后缀
+# plugins/TAB/groups.yml
+default:
+  tabprefix: '&7[&f玩家&7] '      # Tab 列表前缀
+  tagprefix: '&7[&f玩家&7] '      # 头顶名牌前缀
+  tagsuffix: '&7 | &b总在线 &f%math_0:_{plan_player_time_total_raw}/60000%&7分'
 ```
+
+`tablist-name-formatting` 管 Tab 列表，头顶名牌由 `scoreboard-teams` 渲染；`\n` 在 v6 名牌里不换行。详见 [09-头顶名牌显示在线时长.md](./09-头顶名牌显示在线时长.md)。
 
 ---
 
@@ -160,11 +171,13 @@ footer:
 
 #### 显示在线时长
 
-结合在线时长统计插件（如 PlaytimeStats），在 TAB 中显示每位玩家的在线时长：
+头顶名牌显示**历史总在线分钟数**：`groups.yml` 的组里写 `tagsuffix`（TAB v6 单行，`\n` 不换行）：
 
 ```yaml
-tabsuffix: ' &7| %playertime_time%'
+  tagsuffix: '&7 | &b总在线 &f%math_0:_{plan_player_time_total_raw}/60000%&7分'
 ```
+
+详见 [09-头顶名牌显示在线时长.md](./09-头顶名牌显示在线时长.md)。
 
 #### 动态排序
 
@@ -238,8 +251,13 @@ scoreboard:
 | --------------------------- | --------------- | --------------------- |
 | `%online%` / `%maxplayers%` | TAB 内置        | 在线人数 / 最大人数   |
 | `%tps%`                     | TAB 内置        | 服务器 TPS（满 20.0） |
-| `%clearlag_entity_total%`   | ClearLag++ 扩展 | 全服已加载实体总数    |
+| `%clearlag_entity_total%`   | ClearLag++ 扩展 | 全服实体总数（含生物、掉落物、玩家） |
+| `%clearlag_mobs_total%`     | ClearLag++ 扩展 | 全服生物总数（实体的子集）           |
+| `%clearlag_dropped_items_total%` | ClearLag++ 扩展 | 全服掉落物总数（实体的子集）     |
+| `%clearlag_loaded_chunks%`  | ClearLag++ 扩展 | 已加载区块数          |
 | `%clearlag_ram%`            | ClearLag++ 扩展 | 内存使用情况          |
+
+> `实体` 与 `生物` / `掉落物` 是包含关系，不是并列：公告栏分行显示各自数值，不会相加，也不算重复计数。口径详见 `5-服务器管理/ClearLag++-清理与优化/README.md` 占位符表。
 
 **为什么不用 PAPI 官方 Server 扩展（`%server_total_entities%`）？** 该扩展在请求时**同步遍历 chunk 取实体**，而 TAB 在**异步线程**刷新占位符，Leaf/Paper 的 AsyncCatcher 会拦截并**周期性刷屏报错**。
 

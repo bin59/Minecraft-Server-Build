@@ -1,5 +1,17 @@
 # 13. 自定义死亡信息 — CustomDeathMessages
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/customdeathmessages-1.7.0-modern.jar`，`version: 1.7.0` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（Modern 构建覆盖 MC 1.21–26.3，Legacy 覆盖 1.8–1.20.x） |
+| 官方文档站 | <https://github.com/SicklySurgeon/customdeathmessages/wiki>（命令与权限 / config.yml / messages.yml / 占位符 / FAQ） |
+| 官方下载 | <https://modrinth.com/plugin/customdeathmessages> |
+| 主要页面 | `modrinth.com/plugin/customdeathmessages`（总览 / Highlights）、`modrinth.com/plugin/customdeathmessages/versions`、`modrinth.com/plugin/customdeathmessages/changelog`、`github.com/SicklySurgeon/customdeathmessages/wiki`（命令与权限 / 配置 / 占位符） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 本文介绍 CustomDeathMessages（简称 CDM），它把原版单调的死亡提示替换成可自定义、可随机抽取的彩色整活播报，并支持史诗死亡特效、分范围广播和 Vault 收费。文档按安装、config.yml 与 messages.yml、占位符、/cdm 命令、权限和实战示例展开，是 Paper 服调节聊天氛围的实用参考。
 
 **MC 要求**: Java 1.18 – 26.3（含 1.21.11、26.x；Modern 构建覆盖 1.21–26.3）

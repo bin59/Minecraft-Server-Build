@@ -4,6 +4,18 @@
 
 **文件**: `plugins/floodgate-spigot.jar` (11.03 MB)
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/floodgate-spigot.jar`，`version: 2.2.5-SNAPSHOT (b141)` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（与 Geyser 同一发布体系） |
+| 官方文档站 | <https://geysermc.org/wiki/floodgate/>（旧 `wiki.geysermc.org` 已迁到 `geysermc.org/wiki/`） |
+| 官方下载 | <https://geysermc.org/download>（GeyserMC 官方下载页） |
+| 主要页面 | [Floodgate](https://geysermc.org/wiki/floodgate/) · [Geyser](https://geysermc.org/wiki/geyser/) · [安装](https://geysermc.org/wiki/geyser/setup) · [其他项目](https://geysermc.org/wiki/other/) · [REST API](https://geysermc.org/wiki/api/) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 功能说明
 
 Floodgate 是 Geyser 的配套认证插件。它允许基岩版玩家**绕过 Java 版的正版验证**，使用基岩版的 Xbox Live 账号直接加入开启了 `online-mode=true` 的服务器。Floodgate 使用加密密钥对来确保只有经过 Geyser 代理的合法基岩版连接才能绕过认证。

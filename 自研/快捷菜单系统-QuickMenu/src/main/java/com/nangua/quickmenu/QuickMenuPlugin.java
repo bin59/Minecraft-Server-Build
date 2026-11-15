@@ -43,9 +43,13 @@ public final class QuickMenuPlugin extends JavaPlugin {
         this.settings = new PluginSettings();
         this.configLoader = new ConfigLoader(this);
         this.actionExecutor = new ActionExecutor(this);
+
+        // 必须先探测 Floodgate 再构造 MenuManager：后者会据此决定是否实例化
+        // BedrockFormRenderer（延迟加载 Cumulus 类）。顺序颠倒会导致 formRenderer
+        // 恒为 null，基岩端全部静默回退到箱子界面。
+        detectFloodgate();
         this.menuManager = new MenuManager(this);
 
-        detectFloodgate();
         loadConfiguration();
 
         getServer().getPluginManager().registerEvents(new TriggerItemListener(this), this);

@@ -3,16 +3,20 @@
 > **一句话**：玩家右键一个触发物品，Java 端弹出箱子 GUI，基岩端弹出原生 Form 表单，
 > 一套配置同时驱动两端，菜单项点击后执行的动作完全一致。
 >
-> **菜单已整合本服全部插件**：按服务器实跑 `config.yml` 统计共 **32 套菜单 / 274 个菜单项**，
-> 其中主线 28 套（玩家线 16 套 + 管理线 12 套）、支线 4 套；管理入口靠权限门控，普通玩家看不到。
-> **2026-11-10 配置基线**：以服务器实跑 `plugins/QuickMenu/config.yml` 为底合并南瓜飞菜单，
-> 实跑独有内容零删除；服务器配置、项目源码、`target/classes`、项目根副本与 jar 内配置五处字节级一致。
+> **菜单已整合本服全部插件**：共 **33 套菜单 / 279 个菜单项**，
+> 其中主线 28 套（玩家线 16 套 + 管理线 12 套）、支线 5 套（含 2026-11-15 新增 `worldmenu`）；管理入口靠权限门控，普通玩家看不到。
+> **上游基线**：`服务器数据备份/leaf-26.3-多服/plugins/QuickMenu/config.yml`（118992 字节 / md5 `22e211bc` / 3800 行）。
+> **本仓库 r5（2026-11-15）**：在该基线上增补基岩按钮 UI，`config.yml` 为 136162 字节 / md5 `fadd6c2a` / 4431 行，
+> 新增 `bedrock-form:` 与 `input-forms:` 两段、38 个菜单项改用 `[form-input]`，菜单/菜单项数量仍是 33 / 279。
+> 项目根、`src/main/resources`、`target/classes` 与两个 jar 内嵌配置共 5 处字节级一致；jar 为 97333 字节 / md5 `cb761b14`。
+> **实跑服与多服目录未改动**：启用需在服务器备份后覆盖 `plugins/QuickMenu/config.yml`、替换 jar，再 `/qm reload`。
+> 本地 26.3 主服 `plugins/QuickMenu/config.yml` 是**另一分支**（32 套 / 267 项、无 worldmenu），不参与本次同步。
 
 插件 jar：`target/QuickMenu-1.0.0.jar`，复制到服务器 `plugins/` 即可部署。
 
 > 相关文档：`快捷菜单系统-QuickMenu-与通用菜单对比.md`（为什么不用 DeluxeMenus 等通用插件、不可替代点与边界）
 >
-> ⚠️ **2026-11-09 状态**：配置中仍保留 `voice`（Simple Voice Chat）与 `admin-world` 里的 Chunky 区块预生成按钮，但这两个插件**已不在 26.3 实跑 `plugins/` 清单**，对应按钮当前无效。本表按实跑 `config.yml` 如实列出，待下一版清理菜单后同步删除。
+> ⚠️ **插件有效性**：最新基线里 `voice` 子菜单仍在（可用 `/qm open voice` 打开），但**主菜单一级入口已于 2026-11-15 换成「世界切换」**；`admin-world` 里的 Chunky 区块预生成按钮仍在。Simple Voice Chat 与 Chunky 均**不在 26.3 实跑 `plugins/` 清单**，这些按钮点了不会有效果，本表按最新配置如实列出。
 
 **插件与菜单的对应关系**（本菜单已覆盖的后端）：
 
@@ -20,7 +24,7 @@
 | ------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | EssentialsX               | 传送 / 经济 / 工具包 / 社交 / 信息                                                    | 玩家管理 / 处罚 / 传送管理                                                    |
 | Residence                 | 我的领地                                                                              | 领地管理                                                                      |
-| Simple Voice Chat         | 语音聊天                                                                              | 服务器监控（语音管理）                                                        |
+| Simple Voice Chat         | 语音聊天（仅 `voice` 子菜单，主菜单入口已移除）                  | 服务器监控（语音管理）                                                       |
 | EasyBot                   | 社交（绑定 QQ）                                                                       | 服务器监控（重载）                                                            |
 | CoreProtect               | —                                                                                     | 审计与回滚                                                                    |
 | OpenInv                   | —                                                                                     | 玩家管理（查背包）                                                            |
@@ -51,7 +55,7 @@
     Java 玩家               基岩玩家
         ↓                       ↓
    箱子 GUI                原生 SimpleForm
-  （物品图标排版）          （按钮列表）
+  （物品图标排版）          （带图标的两行按钮）
         └───────────┬───────────┘
                     ↓
          共用同一套动作执行器
@@ -70,10 +74,15 @@ if (api.isFloodgatePlayer(uuid)) {
 }
 ```
 
-基岩端两个内置处理：
+基岩端三个内置处理：
 
 1. **表单回调在 Netty 网络线程触发**，直接在回调里操作背包会崩溃 → `ActionExecutor.runAsyncSafe()` 统一切回主线程。
-2. **原生 Form 按钮不支持 `&` / `§` 颜色码**（会显示乱码）→ 按钮文本统一经 `stripColor()` 去色；表单标题保留颜色。配置项 `button-label` 可单独指定基岩端按钮文本。
+2. **原生 Form 按钮不支持 `&` / `§` 颜色码**（会显示乱码）→ 按钮文本统一经 `stripColor()` 去色；表单标题与正文保留颜色。配置项 `button-label` 可单独指定基岩端按钮文本。
+3. **r5 起按钮统一带图标、两行文本、分隔线与返回按钮**；纯说明项自动弹说明表单，需要参数的项弹输入表单 → 见 [§5.7 基岩按钮 UI](#57-基岩按钮-ui100-r5)。
+
+> ⚠️ **r5 顺带修复**：`QuickMenuPlugin.onEnable()` 原先先构造 `MenuManager` 再探测 Floodgate，
+> 导致基岩表单渲染器恒为 `null`、所有玩家静默回退箱子界面。现已把 `detectFloodgate()` 提前，
+> 纯 Java 服（无 Floodgate）仍会正常回退，行为不变。
 
 ---
 
@@ -83,19 +92,19 @@ if (api.isFloodgatePlayer(uuid)) {
 自研/快捷菜单系统-QuickMenu/
 ├── 快捷菜单系统-QuickMenu.md              ← 本文档
 ├── 快捷菜单系统-QuickMenu-与通用菜单对比.md
-├── config.yml                             ← ★ 服务器实跑配置基线副本（五处字节一致）
+├── config.yml                             ← ★ r5 配置（5 处字节一致，含 bedrock-form / input-forms）
 ├── pom.xml                                ← 可选：Maven / IDE 用
 ├── src/main/
 │   ├── java/com/nangua/quickmenu/
 │   │   ├── QuickMenuPlugin.java           主类，装配与 Floodgate 探测
 │   │   ├── command/QuickMenuCommand.java /qm 命令与 Tab 补全
 │   │   ├── config/                        YAML → 内存对象（启动时一次）
-│   │   ├── gui/                           Java 箱子渲染 / 基岩表单渲染 / 界面持有者
+│   │   ├── gui/                           Java 箱子渲染 / 基岩表单渲染 + 外观样式 / 界面持有者
 │   │   ├── listener/                     物品右键 / 进服发放 / 防丢弃 / 点击处理
 │   │   └── menu/                         两端分发决策中枢 / 动作执行 / 菜单与动作模型
 │   └── resources/
 │       ├── plugin.yml                    插件描述（命令与权限）
-│       └── config.yml                    ★ 菜单配置（32 套：28 主线 + 4 支线，实跑基线）
+│       └── config.yml                    ★ r5 菜单配置（33 套：28 主线 + 5 支线 + 两段表单配置）
 └── target/
     ├── QuickMenu-1.0.0.jar                ← ★ 部署用成品，复制这个
     └── classes/                           构建中间产物
@@ -166,12 +175,14 @@ lp group owner permission set quickmenu.admin true
 
 `plugins/QuickMenu/config.yml` 分四块：
 
-| 节点                 | 作用                                 |
-| -------------------- | ------------------------------------ |
-| `platform`           | 两端策略开关                         |
-| `trigger-item`       | 触发物品的材质、名称、描述、发放方式 |
-| `sound` / `messages` | 音效与全部提示文本（可本地化）       |
-| `menus`              | **菜单定义**（核心）                 |
+| 节点                 | 作用                                       |
+| -------------------- | ------------------------------------------ |
+| `platform`           | 两端策略开关                               |
+| `bedrock-form`       | 基岩按钮图标 / 两行文本 / 标题样式（r5）  |
+| `trigger-item`       | 触发物品的材质、名称、描述、发放方式       |
+| `sound` / `messages` | 音效与全部提示文本（可本地化）             |
+| `input-forms`        | 基岩参数输入表单定义（r5）                 |
+| `menus`              | **菜单定义**（核心）                       |
 
 ### 4.3 菜单项字段说明
 
@@ -199,6 +210,7 @@ menus:
                               # 支持 MON/WED/... 三字缩写或 MONDAY 完整名；跨天后
                               # 重新打开菜单即生效。两端（箱子/基岩表单）同步过滤。
         button-label: '' # 基岩按钮文本，留空=自动用 display-name 去色
+                         # r5：按钮第二行自动取 lore 首行；图标按 material 推导
         actions: # 点击后执行的动作
           - '[menu] home'
 ```
@@ -233,6 +245,12 @@ menus:
 | `[item-selector] 命令模板`      | 点击后列出背包物品（自动排除触发物品、同材质合并），`{item}` 替换为材质名（小写）                                                                                                                                                                          |
 | `[ah-sell] 价格 材质名`         | 拍卖行上架：自动把背包中该材质物品换到主手执行 `/ah sell 价格`，再还原主手（解决触发物品占主手无法直接上架），如 `[ah-sell] 5000 elytra`                                                                                                                   |
 | `[residence-selector] 命令模板` | 点击后列出玩家自己名下的所有领地（基于 Residence 插件的 `ResidenceApi` 软依赖，反射访问），`{residence}` 替换为所点领地名称。典型：`res tp {residence}` 传送、`res info {residence}` 查看信息；玩家无领地时给出提示。需 Residence 插件在线，否则选择器为空 |
+
+**参数输入表单**（r5，基岩端点按钮填参数、Java 端降级文本提示）：
+
+| 前缀                    | 作用                                                                                                                     |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `[form-input] 表单id`  | 打开 `input-forms:` 段里定义的表单；字段值替换 `command` 的 `{key}` 后以玩家权限执行，Java 端逐行发送 `fallback`。见 §5.7 |
 
 动作可叠加，按列表顺序执行。常见组合：先 `[close]` 关界面，再执行指令，避免指令输出被界面遮挡。
 
@@ -285,17 +303,17 @@ actions:
 
 ---
 
-## 5. 菜单结构总览（32 套：28 主线 + 4 支线）
+## 5. 菜单结构总览（33 套：28 主线 + 5 支线）
 
-`config.yml` 已配好 **32 套菜单**（28 套主线 + 4 套支线），把本服所有插件的常用功能全部收进菜单。
+`config.yml` 已配好 **33 套菜单**（28 套主线 + 5 套支线），把本服所有插件的常用功能全部收进菜单。
 
-> 按 `config.yml` 的 `menus:` 实际统计是 **32 个菜单键 / 274 个菜单项**，42 处 `[menu]` 跳转、
-> 30 个 `back-menu` 全部有效。上表按 28 套主线列出，多出的 4 套是 `fishing`、`buildrate-admin`、
-> `admin-fishing` 与 `pumpkinfly-admin` 支线菜单。
-> 2026-11-10 起本配置以**服务器实跑 `plugins/QuickMenu/config.yml` 为基线**：完整保留实跑独有的
-> `quests-daily` 每日任务菜单、`admin` 面板 `postracker` 按钮与每日任务文案，只增量合入
-> `main.items.pumpkinfly`（slot 28）、`pumpkinfly`（11 按钮）与 `pumpkinfly-admin`（12 按钮）。
-> 五处 `config.yml` 字节级一致，统一 LF 行尾。
+> 按 `config.yml` 的 `menus:` 用 SnakeYAML 2.6 实际解析：**33 个菜单键 / 279 个菜单项**，
+> 43 处 `[menu]` 跳转、30 个 `back-menu` 全部有效，槽位重复 0、越界 0。上表按 28 套主线列出，
+> 多出的 5 套是 `fishing`、`buildrate-admin`、`admin-fishing`、`pumpkinfly-admin` 与 2026-11-15 新增的 `worldmenu`。
+> 配置基线为 `leaf-26.3-多服/plugins/QuickMenu/config.yml`（2026-11-15）：完整保留
+> `quests-daily` 每日任务菜单、`admin` 面板 `postracker` 按钮与每日任务文案，
+> 并新增独立「世界切换」菜单 `worldmenu`（跨服走 Velocity `/server`，见 §5.1a）。
+> 项目根、`src/main/resources`、`target/classes`、两个 jar 内嵌配置共 5 处字节级一致，统一 CRLF 行尾。
 
 ### 5.1 玩家菜单（16 套）
 
@@ -309,7 +327,7 @@ actions:
 | `kit`           | 工具包     | EssentialsX                                                           | 新手包 `starter`（一次性）+ 每日包 `daily`（面包×2 + 南瓜币×5，6 小时一次，一天 4 次）                                                                                                                                                                                 |
 | `social`        | 社交设置   | EssentialsX + **EasyBot**                                             | 私信、快速回复、屏蔽、改昵称、查信息、在线列表、绑定 QQ                                                                                                                                                                                                                |
 | `info`          | 服务器信息 | EssentialsX                                                           | 在线列表、公告、规则、互通说明、指令帮助                                                                                                                                                                                                                               |
-| `voice`         | 语音聊天   | **Simple Voice Chat**                                                 | 说话方式、群组语音、音量设置、故障排查                                                                                                                                                                                                                                 |
+| `voice`         | 语音聊天   | **Simple Voice Chat**（未安装）                                       | 说话方式、群组语音、音量设置、故障排查；子菜单保留，主菜单入口已移除      |
 | `guide`         | 新人指南   | —（说明书）                                                           | 游戏内说明书首页：新人必做 3 件事、赚钱 / 领地 / 出行 / 玩法分册入口、常用指令速查、服务器规则                                                                                                                                                                         |
 | `guide-economy` | 怎么赚钱   | EssentialsX + DailySell + Quests + EconomyShop + AuctionHouse + EzTax | 每日任务、每日收购、玩家商店、拍卖行、转账、余额与财富榜、周持有税                                                                                                                                                                                                     |
 | `quests-daily`  | 每日任务   | **Quests 5.3.2**                                                       | **14 个日常任务按星期轮换**（挖矿 / 猎手 / 渔夫 / 伐木工 / 厨师 / 驯养师 / 农夫 / 远行者 / 采石匠 / 讨伐者 / 牧羊人 / 挤奶工 / 工匠 / 附魔师），每个任务一周出现 3 天，**每天恰好 6 个可选、天天换一批**（`days:` 条件过滤），按钮直连 `/quests take`，奖励 40~50 南瓜币、全天约 250~260，24 小时冷却。弃用了原 DailyQuestPick 限领网关方案 |
@@ -317,6 +335,19 @@ actions:
 | `guide-move`    | 传送出行   | EssentialsX + SpacePortal                                             | 回主城、公共传送点、申请传送、接受/拒绝传送、传送阵                                                                                                                                                                                                                    |
 | `guide-play`    | 玩法大全   | SimplePets + RideOnHead + SVC + PatPat + EssentialsX                  | 宠物、骑玩家、语音、摸头、工具包、服务器信息                                                                                                                                                                                                                           |
 | `pumpkinfly`    | 南瓜飞     | **PumpkinFly** + Vault + Residence                                    | 固定档位购买（1 / 5 / 30 分钟 + 永久，价格随 `prices.per-minute: 100` 计算）、领取限时体验奖励、状态查询、开关飞行、购买记录、飞行记录、界面显示；管理员可见「飞行管理」入口（slot 24）。共 11 个按钮，详见 `自研/南瓜飞-PumpkinFly/使用说明.md`                                               |
+
+#### 5.1a 世界切换（2026-11-15 新增，仅多服基线）
+
+独立菜单 `worldmenu`，**不挂在主菜单上功能堆叠**，用 `/qm open worldmenu` 直接打开；主菜单 `main` 的 slot 22「世界切换」按钮与 `teleport` 菜单的 slot 16 按钮都跳到这里（`[menu] worldmenu`）。
+
+| 按钮 id        | 显示名     | slot | 动作                                        |
+| -------------- | ---------- | ---- | ------------------------------------------- |
+| `to-survival`  | 生存主服   | 11   | `[player] server survival`                  |
+| `to-minigames` | 小游戏服   | 13   | `[player] server minigames`                 |
+| `to-skyblock`  | 空岛服     | 15   | `[player] server skyblock`                  |
+| `to-jkpof`     | 幸运之柱   | 17   | `[player] server minigames`（到达后再次打开菜单进入） |
+
+> 跨服本质是执行 Velocity 的 `/server <子服>`；SpacePortal 只支持单服内传送，做不了跨服。四个按钮都带 `glowing: true`，Java / 基岩双端通用（基岩走原生表单按钮）。**单服环境没有 Velocity，这四个按钮不会传送**——本地 26.3 主服那份配置因此没有 `worldmenu`。
 
 > **维护提醒**：EssentialsX 新增传送点（/setwarp）后，需同步在 config.yml 的
 > `warps:` 子菜单里手动添加对应菜单项。拍卖行（/ah，slot 9）、玩家商店（/shop，slot 11）
@@ -336,7 +367,7 @@ actions:
 - 主菜单 `main.items.pumpkinfly` 占 **slot 28**（ELYTRA，`permission: pumpkinfly.use`，动作 `[menu] pumpkinfly`）；`menus.pumpkinfly` 是 size 27、`back-menu: main` 的子菜单，现共 **11 个按钮**
 - 新增 slot 20「领取体验奖励」（`[player] pfly claim`，`permission: pumpkinfly.use`）与 slot 24「飞行管理」（`[menu] pumpkinfly-admin`，`permission: pumpkinfly.admin`）
 - **管理支线** `menus.pumpkinfly-admin`：size 27、`back-menu: pumpkinfly`，12 个按钮，全部要求 `pumpkinfly.admin`。全局按钮走 `[player] pfly global ...`（总开关 / 免费飞行 / 30 分钟 / 2 小时 / 1 天全服体验 / 清除）；单人按钮走 `[player-selector] pfly player {target} ...`（发体验、禁用、解禁、查状态、设永久），点选在线玩家后 `{target}` 自动替换
-- 菜单**没有输入框**，所以购买与体验时长只能做成固定按钮（1 / 5 / 30 / perm、30m / 2h / 1d）；改 `PumpkinFly` 的价格或奖励时长时同步改按钮文案与命令参数。当前 `prices.per-minute: 100`，故按钮显示「1 分钟 100 / 5 分钟 500 / 30 分钟 3000 / 永久 100000」（详见 `自研/南瓜飞-PumpkinFly/使用说明.md` 第六节）。
+- 菜单用的是**固定档位按钮**（1 / 5 / 30 / perm、30m / 2h / 1d），r5 起也可改 `[form-input]` 做自定义时长输入；改 `PumpkinFly` 的价格或奖励时长时同步改按钮文案与命令参数。当前 `prices.per-minute: 100`，故按钮显示「1 分钟 100 / 5 分钟 500 / 30 分钟 3000 / 永久 100000」（详见 `自研/南瓜飞-PumpkinFly/使用说明.md` 第六节）。
 - **「飞行界面显示」按钮（slot 23）动作是 `[player] pfly hud on`**（原 `toggle` 会被误关成 `false`，导致玩家点一下界面消失）；玩家仍可用 `/pfly hud off` 主动关闭。
 - **部署注意**：替换 jar 不会更新服务器上已有的 `plugins/QuickMenu/config.yml`。要么备份后删除该文件让插件按新默认重建，要么手动把 `claim` / `admin` 两个按钮与整段 `pumpkinfly-admin` 合并进去再 `/qm reload`
 - 管理员菜单 `admin-player` 里原有的 `[player] fly` 按钮**保留**，普通玩家走 `/pfly`，两者不冲突
@@ -404,16 +435,19 @@ actions:
 | ----------- | ---------------------------- | --------------------- | --------------------------- |
 | `baltop`    | 财富排行榜                   | `/baltop`             | `essentials.balancetop`     |
 | `balance`   | 查询玩家余额（在线列表选人） | `/balance <玩家>`     | `essentials.balance.others` |
-| `eco-give`  | 给玩家发钱（文字指引）       | `/eco give 玩家 金额` | `essentials.eco`            |
-| `eco-take`  | 扣回玩家余额（文字指引）     | `/eco take 玩家 金额` | `essentials.eco`            |
-| `eco-set`   | 设置玩家余额（文字指引）     | `/eco set 玩家 金额`  | `essentials.eco`            |
+| `eco-give`  | 给玩家发钱（r5 输入表单）   | `/eco give 玩家 金额` | `essentials.eco`            |
+| `eco-take`  | 扣回玩家余额（r5 输入表单）  | `/eco take 玩家 金额` | `essentials.eco`            |
+| `eco-set`   | 设置玩家余额（r5 输入表单）  | `/eco set 玩家 金额`  | `essentials.eco`            |
 | `ahadmin`   | 拍卖行管理（删单/查记录）    | `/ahadmin`            | `auction.admin`             |
 | `shopadmin` | 系统商店管理（加物品/定价）  | `/shop admin`         | `economyshop.admin`         |
 | `eztax`     | 税务统计                     | `/eztax stats`        | `eztax.stats`               |
 | `ds-reroll` | 每日收购·重抽（当天需重选）  | `/ds reroll`          | `dailysell.admin`           |
 | `ds-reload` | 每日收购·重载配置            | `/ds reload`          | `dailysell.admin`           |
 
-> **部署注意**：服务器上 `plugins/QuickMenu/config.yml` 已存在时替换 jar 不会更新它——需手动插入以下两段（段一进 `admin` 菜单，段二追加到 `menus:` 末尾），再 `/qm reload` 生效。完整 YAML 亦可解压 jar 内嵌 config.yml 复制 `admin-economy` 相关段。
+> ⚠️ `ahadmin` 项是实跑配置原样（`[player] ahadmin`）：AuctionHouse 1.1.4 的 `plugin.yml` 只注册 `/ah`（管理子命令 `/ah admin ...`），**该菜单项当前点不动**。修法是把 `actions` 改为 `[player] ah admin` 后 `/qm reload`；本次只修文档，未动实跑配置。
+
+> **部署注意**：r5 起建议直接用仓库 `config.yml` 整体覆盖服务器配置（先备份），下面是需要手工合并旧配置时的片段。
+> 片段里 `[form-input]` 引用的表单定义在 `input-forms:` 段，需一并复制。替换 jar 不会更新已有 `plugins/QuickMenu/config.yml`。
 
 **段一：admin 面板入口（加在 `admin` 菜单 items 里 `admin-qm` 按钮项之后，即管理面板「菜单管理」下方；源码中紧随其后的是backmain）**
 
@@ -474,8 +508,7 @@ admin-economy:
       permission: essentials.eco
       actions:
         - '[close]'
-        - '[message] &7发钱：&e/eco give 玩家名 金额'
-        - '[message] &7例：&e/eco give Steve 500'
+        - '[form-input] eco-give'
 
     eco-take:
       material: BARRIER
@@ -487,7 +520,7 @@ admin-economy:
       permission: essentials.eco
       actions:
         - '[close]'
-        - '[message] &7扣钱：&e/eco take 玩家名 金额'
+        - '[form-input] eco-take'
 
     eco-set:
       material: DIAMOND
@@ -499,7 +532,7 @@ admin-economy:
       permission: essentials.eco
       actions:
         - '[close]'
-        - '[message] &7设余额：&e/eco set 玩家名 金额'
+        - '[form-input] eco-set'
 
     ahadmin:
       material: GOLD_INGOT
@@ -591,26 +624,43 @@ admin-economy:
 > 会执行一个不存在的指令，客户端提示「未知指令」，不崩溃但无效果。若不打算装 BPS，
 > 把这些项改回无条件动作即可（如 `[player] warp`、`[player] homes`）。
 
-### 5.5 为什么很多项是「文字指引」而不是直接执行
+### 5.5 需要参数的项怎么处理（r5 起）
 
-菜单只有「按钮列表」，**没有输入框**（Bukkit 箱子界面与基岩 SimpleForm 纯按钮都无法
-在点击后弹出输入框填参数）。因此：
+Bukkit 箱子界面没有输入框，但基岩原生 CustomForm 有。按参数类型分成四条路：
 
-| 指令类型       | 例子                                                   | 菜单里的做法               |
-| -------------- | ------------------------------------------------------ | -------------------------- |
-| **不需要参数** | `/fly` `/heal` `/spark tps` `/res list`                | ✅ 直接执行 `[player] fly` |
-| **需要参数**   | `/kick 玩家名` `/ban 玩家名 原因` `/res create 领地名` | ⚠️ 关闭界面 + 发送用法提示 |
+| 指令类型                 | 例子                                                   | 菜单里的做法                                                |
+| ------------------------ | ------------------------------------------------------ | ----------------------------------------------------------- |
+| **不需要参数**           | `/fly` `/heal` `/spark tps` `/res list`                | ✅ `[player] fly` 点击即执行                                |
+| **从列表选目标**         | `/tpa 玩家` `/res tp 领地名` `/worth 物品`            | ✅ `[player-selector]` / `[residence-selector]` / `[item-selector]` 点选 |
+| **需要自由填参数**       | `/pay 玩家 金额` `/broadcast 内容` `/res create 领地名` | ✅ **`[form-input]`**：基岩弹输入框/下拉框，提交即执行        |
+| **纯教学 / 危险操作说明** | 新人指南分册、语音说明、`/co purge` 警告               | ✅ `[close]` + `[message]`：基岩端自动渲染成说明表单          |
 
-后者动作形如：
+`[form-input]` 项的配置形如（Java 端自动降级为 `fallback` 的完整提示，与旧版逐字一致）：
 
 ```yaml
+# menus.admin-economy.items.eco-give.actions
 actions:
   - '[close]'
-  - '[message] &7踢出玩家：&e/kick 玩家名 原因'
+  - '[form-input] eco-give'
+
+# input-forms.eco-give
+input-forms:
+  eco-give:
+    title: '&6给玩家发钱'
+    command: 'eco give {player} {amount}'
+    fallback:
+      - '&7发钱：&e/eco give 玩家名 金额'
+    fields:
+      - key: player
+        type: player       # 在线玩家下拉
+        label: '&7给谁'
+      - key: amount
+        type: input
+        label: '&7金额'
+        placeholder: '500'
 ```
 
-需要从在线列表选目标的项（踢人/封禁/传送/查背包等）已改用 `[player-selector]`；
-需要开放文本输入的项（领地名/金额/物品/消息/广播）与离线玩家操作（unban/seen）仍保留文字指引。
+> 危险操作（`/co purge`、`/chunky trim`、清库类）仍**只给说明**，不做成可一键执行的表单，避免误触。
 
 ### 5.6 权限过滤示范
 
@@ -618,6 +668,56 @@ actions:
 - `teleport.tpahere` 配 `permission: essentials.tpahere` —— 需额外授权
 - `admin-inspect.purge` 配 `permission: coreprotect.purge` —— 危险操作仅供服主
 - `admin-world.ctrim` 配 `permission: chunky.trim` —— 会删区块，单独隔离
+
+### 5.7 基岩按钮 UI（1.0.0-r5）
+
+所有基岩端界面统一成一套带图标的按钮 UI，不再有「点完只在聊天栏弹一行用法」的项：
+
+| 界面                    | 呈现                                                                                     |
+| ----------------------- | ---------------------------------------------------------------------------------------- |
+| 菜单（33 套）           | 每个按钮 = 图标 + 两行文本（名称 / lore 首行）；标题加 `✦` 前缀，正文带分隔线与按钮数量   |
+| 说明表单                | 纯 `[close]` + `[message]` 的 17 个说明项，基岩端弹一张说明页，底部「返回菜单 / 关闭」   |
+| 输入表单（34 套）       | 38 个需要参数的项改用 `[form-input]`，弹 CustomForm 输入框 / 下拉框，提交即以玩家权限执行 |
+| 三个选择器              | 玩家 / 背包物品 / 我的领地，按钮同样带图标与两行说明，空列表显示统一提示按钮             |
+| 返回 / 关闭 / 空态      | 统一文案、图标与位置；返回按钮始终在列表末尾                                             |
+
+**图标实现**：Cumulus `FormImage.of(FormImage.Type.PATH, ...)`，路径由基岩客户端自带资源包解析。
+`BedrockFormStyle` 内置约 90 个 Java 材质 → 基岩贴图的别名映射，其余按
+「方块 → `textures/blocks/<材质小写>`、物品 → `textures/items/<材质小写>`」自动推导；
+`bedrock-form.icon-paths` 可逐个覆盖，写空字符串表示该项不加图标。
+
+> ⚠️ **图标需实机验证**：26.3 基岩客户端的贴图路径与旧版不完全一致，个别按钮可能显示空白方块。
+> 把 `bedrock-form.icons` 设为 `false` 即可一键回退纯文字按钮；或在 `icon-paths` 里把对应材质改成正确路径。
+> 两条都只改 `config.yml` + `/qm reload`，不需要换 jar。
+
+`bedrock-form` 配置项：
+
+| 键                   | 默认              | 作用                                       |
+| -------------------- | ----------------- | ------------------------------------------ |
+| `icons`              | `true`            | 按钮是否带图标；`false` = 纯文字按钮        |
+| `auto-path`          | `true`            | 未显式映射的材质是否自动推导贴图路径        |
+| `two-line-buttons`   | `true`            | 按钮第二行显示 lore 首行（自动去色、限长）  |
+| `title-prefix`       | `&b✦ `           | 所有表单标题前缀                           |
+| `separator` / `hint` | 分隔线 / 数量提示 | 正文排版                                   |
+| `icon-paths`         | 8 条显式修正      | 材质 → 基岩贴图路径                        |
+
+`input-forms` 字段类型：
+
+| `type`     | 渲染               | 取值                       |
+| ---------- | ------------------ | -------------------------- |
+| `input`    | 文本框             | 玩家填写的字符串           |
+| `dropdown` | 固定下拉           | `options` 列表里选中项      |
+| `player`   | 在线玩家下拉       | 在线玩家名（排除自己）      |
+
+`command` 里的 `{字段key}` 会被替换后执行；表单响应在 Netty 线程回调，插件先按
+`getComponentTypes()` 算出各字段真实索引（label 组件会占位），再切回主线程执行指令。
+
+**统计**：33 菜单 / 279 菜单项 / 43 处 `[menu]` 跳转 0 失效 / 30 个 `back-menu` / 槽位重复 0 / 越界 0；
+34 个输入表单 / 58 个字段 / 38 处 `[form-input]`；配置 136162 字节、md5 `fadd6c2a`，5 处字节一致。
+
+**生效**：本仓库已改好全部源码、配置、文档与两个 jar；**实跑服、多服目录、云端均未改动**。
+服主需自行备份后覆盖 `plugins/QuickMenu/config.yml`、替换 `QuickMenu-1.0.0.jar`，**完整重启**服务器。
+之后只调 `bedrock-form` / `input-forms` 段时执行 `/qm reload` 即可，无需重启。
 
 ---
 
@@ -676,6 +776,9 @@ powershell -ExecutionPolicy Bypass -File build.ps1 -SkipDeps
 | 某个菜单项不显示                           | 配了 `permission` 且玩家无权，被过滤跳过                         | 属正常行为；要显示就去掉该项的 permission                                                          |
 | 基岩玩家也看到箱子界面                     | Floodgate 未装 / `bedrock-native-form: false` / 表单发送失败回退 | 执行 `/qm info` 诊断；检查控制台回退警告                                                           |
 | 基岩表单按钮显示乱码                       | 在 `button-label` 里写了 `&` 颜色码                              | 原生按钮不支持颜色码，删掉即可（插件会自动去除 `display-name` 的色码）                             |
+| 基岩按钮图标是空白方块                     | 26.3 基岩客户端贴图路径与推导值不一致                            | `bedrock-form.icons: false` 一键回退纯文字按钮，或在 `icon-paths` 里对该材质填正确路径后 `/qm reload` |
+| 基岩端说明项仍在聊天栏刷文字               | 服务器跑的还是 r4 及更早的 jar                                  | 替换为 r5 jar 并完整重启；说明表单是渲染层改动，配置不变也会生效                                   |
+| 点按钮没弹输入表单 / 弹了提交没反应        | 表单 id 不存在、缺 `command`/`fields`，或玩家缺对应插件权限      | 开 `debug: true` 看控制台；检查 `input-forms` 定义与 `fallback`（Java 端只会发文本提示）            |
 | 返回按钮不显示                             | 右下角槽位（`size-1`）被其他菜单项占用                           | 控制台会有警告；把该物品的 slot 改开                                                               |
 | 改配置不生效                               | 未热重载                                                         | 执行 `/qm reload`；若改的是 `plugin.yml` 需重启                                                    |
 | 物品被玩家丢弃后丢失                       | `strict-match: true` 时插件会阻止丢弃                            | 若被丢（如死亡掉落），用 `/qm give` 补发                                                           |
@@ -987,67 +1090,6 @@ lp group owner permission set openinv.override true
 /lp tree coreprotect
 ```
 
-### 8.6 安全检测记录（2026-10-01）
-
-**检测方法**：源码逻辑审阅 + 运行服 config 全量扫描（2863 行 / 213 按钮）+ LuckPerms H2 数据库直查（三组权限实测）。
-
-#### ✅ 确认安全
-
-| 检测项                                  | 结果                                                                          |
-| --------------------------------------- | ----------------------------------------------------------------------------- |
-| `[console]` 动作（玩家点击→控制台执行） | 运行服 config 中 **0 个**                                                     |
-| 管理菜单门控                            | 入口 `quickmenu.admin` + 各按钮具体管理权限                                   |
-| 渲染过滤 + 点击二次校验                 | Java 箱子 / 基岩表单均过滤无权限按钮，点击时 `hasItemPermission` 再验         |
-| default 组管理权限                      | **无** quickmenu.admin / luckperms.\* / essentials.ban/kick/give/eco/gamemode |
-| build/打开箱子按钮                      | 全是教学 message（`/res set 领地名 build true` 仅为提示文字，不执行）         |
-
-**结论**：快捷菜单**不可能**给玩家打开全局权限；`residence.flags.build/destroy` 是领地 flag 管理权限，仅领地内生效。
-
-#### 三组权限实测（H2 直查）
-
-| 组              | 权限                                                                           | 成员                  |
-| --------------- | ------------------------------------------------------------------------------ | --------------------- |
-| **admin**       | `*`（**通配全权限**）+ residence.admin.setowner + residence.group.admin + 前缀 | 1 人（UUID 8e682ed5） |
-| **default**     | 65 条玩家权限（无任何管理权限）                                                | 163 人（全部玩家）    |
-| **guildmaster** | 仅 residence.create + residence.use                                            | **0 人（残留空组）**  |
-
-> ⚠️ 文档 8.3/8.4 写的 **owner 组实际不存在**（H2 里没有），服主目前靠 admin 组的 `*` 通配或 OP 身份。
-
-#### 发现并解决的问题
-
-**① default 组残留印钞口权限（essentials.sell / essentials.worth = TRUE）**
-已确认存在（ID=59/60），命令级 `disabled-commands` 已挡、权限层未清。**在运行服执行**：
-
-```bash
-lp group default permission unset essentials.sell
-lp group default permission unset essentials.worth
-```
-
-**② default 组有 essentials.setwarp = TRUE**
-玩家可创建公共传送点，与管理菜单「创建公共传送点」按钮（管理专用）设计不符。**在运行服执行**：
-
-```bash
-lp group default permission unset essentials.setwarp
-```
-
-**③ guildmaster 组残留**
-0 成员 + 仅 2 条弱权限，确认为废弃组（非"服主"组）。确认无玩家使用后**在运行服执行**：
-
-```bash
-lp deletegroup guildmaster
-```
-
-**④ 源码 config 落后运行服**
-✅ 已解决：运行服最新 config.yml（2863 行）已同步到 `plugin-src/src/main/resources/config.yml`，sell/worth 按钮残留 0。下次重新构建打包即生效。
-
-**附带清理**（无害但建议清）：default 组脏数据 `essentials.compass`（contexts 是 lp 命令打错残留）：
-
-```bash
-lp group default permission unset essentials.compass
-```
-
----
-
 ## 9. 与 BedrockPlayerSupport 的关系
 
 两者都给基岩玩家提供表单，但定位不同：
@@ -1063,3 +1105,4 @@ lp group default permission unset essentials.compass
 （收到传送请求、死亡重生时主动弹出，这类场景菜单插件无法覆盖）。本配置已把
 `teleport.warps`、`teleport.tpa`、`social.msg` 三项配成两端分发（`home.listhomes` 随家园功能一并禁用，2026-09-30），
 基岩玩家点击后直接进入 BPS 原生表单，Java 玩家走 EssentialsX 指令。
+

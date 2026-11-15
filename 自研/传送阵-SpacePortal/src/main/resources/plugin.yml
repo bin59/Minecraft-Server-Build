@@ -6,7 +6,10 @@ description: 空间传送阵 - Java/基岩（Geyser）互通两点传送，特�
 commands:
   spaceportal:
     description: 空间传送阵指令
-    aliases: [csz, portal]
+    # 不要注册 portal 别名：Advanced Portals 2.8.0 的主命令就是 /portal
+    # （别名 portals / aportals / advancedportals），两插件同服会互相抢命令。
+    # 本插件只保留 /spaceportal、/csz、/spportal。
+    aliases: [csz, spportal]
     usage: /spaceportal help
 permissions:
   spaceportal.use:

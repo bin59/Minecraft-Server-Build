@@ -8,6 +8,18 @@
 
 ---
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/PlaceholderAPI-2.12.3.jar`，`version: 2.12.3` |
+| 官方最新 | 官网持续更新，当前按 wiki.placeholderapi.com 口径；本地 2.12.3 |
+| 官方文档站 | https://wiki.placeholderapi.com/ （现行主站；GitHub Wiki 已声明迁出） |
+| 官方下载 | https://spigotmc.org/resources/6245 （SpigotMC 资源页） · https://github.com/PlaceholderAPI/PlaceholderAPI |
+| 主要页面 | https://wiki.placeholderapi.com/users/commands/ · https://wiki.placeholderapi.com/users/using-placeholders/ · https://wiki.placeholderapi.com/users/placeholder-list/ · https://wiki.placeholderapi.com/developers/expansion-cloud/ · https://wiki.placeholderapi.com/faq/ |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 一、简介
 
 PlaceholderAPI 本身**不提供任何占位符**，它只是一个"字典"：各插件把自己的数据注册成占位符，其他插件通过 PAPI 查询。

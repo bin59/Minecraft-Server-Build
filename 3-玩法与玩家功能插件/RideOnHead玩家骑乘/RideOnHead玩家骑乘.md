@@ -1,5 +1,17 @@
 # 16. 玩家骑乘 — RideOnHead
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/RideOnHead-1.1.3.jar`，`version: 1.1.3` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（官方页支持 26.3 / 26.2 / 26.1.x / 1.21.x / 1.20.x，平台 Paper / Purpur） |
+| 官方文档站 | <https://modrinth.com/plugin/rideonhead>（命令 / 权限 / 配置集中在项目页） |
+| 官方下载 | <https://modrinth.com/plugin/rideonhead/versions> |
+| 主要页面 | `modrinth.com/plugin/rideonhead`（Description：命令与权限表）、`modrinth.com/plugin/rideonhead/changelog`、`modrinth.com/plugin/rideonhead/versions`、`github.com/DeelTer/RideOnHead`（源码，MIT） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 本文介绍 RideOnHead 这款轻量社交互动插件：让玩家**空手右键别的玩家**就骑到其头顶，潜行下车，支持多人叠罗汉。本服 1.21.11 双端互通（Java + 基岩）已安装 v1.1.3。文档覆盖玩法、命令与权限、配置要点、基岩端注意事项。
 
 **当前版本**: RideOnHead 1.1.3 | **MC 要求**: 1.21 – 26.3

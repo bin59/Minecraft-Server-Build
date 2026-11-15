@@ -2,17 +2,19 @@
 
 Quests 是本服每日任务插件，作为经济体系的**合规 Faucet（水龙头）**：玩家完成每日任务获得南瓜币，是新手获取初始资金的主要渠道之一。本文档说明任务配置、条件类型、奖励、命令与权限，适用于管理员维护任务文件与排查任务发放。
 
-## 版本与来源
+## 0. 版本与官方文档（2026-11-14 核对）
 
-| 项目 | 值 |
-|---|---|
-| 插件 | **Quests Classic 5.3.2-b570**（PikaMug，`Quests-5.3.2.jar`） |
-| 主类 | `me.pikamug.quests.BukkitQuestsPlugin` |
-| 项目地址 | https://github.com/PikaMug/Quests |
-| 下载 | https://modrinth.com/plugin/quests.classic |
-| 文档 | https://pikamug.gitbook.io/quests |
-| 软前置 | Vault（发放 `rewards.money`）、PlaceholderAPI、Citizens 等可选 |
-| 语言 | 内置多语，`config.yml` 的 `language` 切换（自带 `zh-TW`） |
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/Quests-5.3.2.jar`，`version: 5.3.2-b570`，主类 `me.pikamug.quests.BukkitQuestsPlugin` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（README 不列确切版本号） |
+| 官方文档站 | <https://pikamug.gitbook.io/quests/> |
+| 官方下载 | [Modrinth](https://modrinth.com/plugin/quests.classic) · [CurseForge](https://www.curseforge.com/minecraft/bukkit-plugins/quests/) |
+| 主要页面 | [GitHub](https://github.com/PikaMug/Quests) · [文档站](https://pikamug.gitbook.io/quests/) · [Modrinth](https://modrinth.com/plugin/quests.classic) · [CurseForge](https://www.curseforge.com/minecraft/bukkit-plugins/quests/) · [文档源码 QuestsDoc](https://github.com/PikaMug/QuestsDoc) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
+
+> 软前置 Vault（发放 `rewards.money`）、PlaceholderAPI、Citizens 等可选；内置多语，`config.yml` 的 `language` 切换（自带 `zh-TW`）。
 
 > Quests 有两个同名但完全不同的插件：本服使用 **PikaMug / Quests Classic**（配置集中在 `storage/quests.yml`，任务 ID 如 `default1`），不是 LMBishop Quests 3.x（`quests/` 每任务一文件）。两者配置、数据、命令、权限互不兼容。
 

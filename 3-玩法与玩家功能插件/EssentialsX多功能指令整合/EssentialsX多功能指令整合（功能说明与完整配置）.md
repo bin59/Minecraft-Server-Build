@@ -4,6 +4,20 @@ EssentialsX 是 Spigot/Paper 服务器装机量最大的经典指令套件，本
 
 ---
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/EssentialsX-2.22.1-dev+28-f8724e2.jar`，`version: 2.22.1-dev+28-f8724e2` |
+| 官方最新 | 官网持续更新（release 与 dev 构建并行），当前按官方文档口径，[更新日志](https://github.com/EssentialsX/Essentials/releases)；官方要求升级时把所有 EssentialsX 模块一起升到同一版本，并重命名旧 `config.yml` 生成新配置 |
+| 官方文档站 | <https://essentialsx.net/wiki/> |
+| 官方下载 | <https://essentialsx.net/downloads.html> |
+| 主要页面 | [命令表](https://essentialsx.net/commands) · [权限表](https://essentialsx.net/permissions) · [模块说明](https://essentialsx.net/wiki/modules) · [命令冷却](https://essentialsx.net/wiki/command-cooldowns) · [颜色权限](https://essentialsx.net/wiki/color-permissions) · [最新 config.yml](https://github.com/EssentialsX/Essentials/blob/2.x/Essentials/src/main/resources/config.yml) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
+
+---
+
 ## 第一部分：功能说明
 
 **EssentialsX 是 Minecraft 服务器生态中最经典、装机量最大的插件套件**，为 Spigot/Paper 服务器提供超过 150 个核心命令和完整的服务器管理功能。以下是其完整详细的功能说明：

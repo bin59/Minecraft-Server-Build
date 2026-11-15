@@ -1,3 +1,15 @@
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | 外部面板 / 守护进程（Panel 23333 / Daemon 24444），非服务端插件，不硬编版本号 |
+| 官方最新 | 官网持续更新，当前按官方 docs 口径；外部工具，不硬编版本号 |
+| 官方文档站 | https://docs.mcsmanager.com/ （现行 Quick start 文档站） · https://mcsmanager.com/ （官网） |
+| 官方下载 | https://github.com/MCSManager/MCSManager/releases/latest/download/mcsmanager_windows_release.zip （Windows 绿色版） |
+| 主要页面 | https://docs.mcsmanager.com/#quick-start · https://docs.mcsmanager.com/#windows-installation · https://docs.mcsmanager.com/#linux-installation-script · https://mcsmanager.com/ |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## windows环境配置MCSM实例
 
 在 Windows 环境下配置 MCSM 比 Linux 更简单，因为它提供了无需额外安装 Node.js 的“绿色版”程序。

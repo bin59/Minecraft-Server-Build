@@ -9,6 +9,18 @@
 > 升级与版本自检提示见 §六；升级 jar 后需**完整重启**，不要用 `/reload`。
 
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/ProtocolLib-Spigot.jar`，`version: 5.5.0-SNAPSHOT`（Spigot 兼容 artifact） |
+| 官方最新 | 官方仓库 README：正式版 `5.4.0`，`5.5.0-SNAPSHOT` 为开发快照；官网持续更新，当前按官方文档口径 |
+| 官方文档站 | <https://github.com/dmulloy2/ProtocolLib>（官方仓库 README 与资源入口） |
+| 官方下载 | [GitHub Releases](https://github.com/dmulloy2/ProtocolLib/releases) · [SpigotMC](https://www.spigotmc.org/resources/protocollib.1997/) · [Dev Builds](https://ci.dmulloy2.net/job/ProtocolLib/) |
+| 主要页面 | [仓库 README](https://github.com/dmulloy2/ProtocolLib) · [Releases](https://github.com/dmulloy2/ProtocolLib/releases) · [Dev Builds](https://ci.dmulloy2.net/job/ProtocolLib/) · [Spigot 页](https://www.spigotmc.org/resources/protocollib.1997/) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 一、简介
 
 ProtocolLib 在 Netty 网络层与 Bukkit 事件系统之间架了一座桥：
@@ -26,7 +38,7 @@ ProtocolLib 在 Netty 网络层与 Bukkit 事件系统之间架了一座桥：
 | 插件 | 用 ProtocolLib 做什么 |
 |---|---|
 | **EssentialsX 2.22.1** | 部分数据包级功能（如假方块、背包查看底层） |
-| **CoreProtect CE 24.1（26.3 自编译开发版）** | 方块改动的数据包级记录 |
+| **CoreProtect CE 24.1** | 方块改动的数据包级记录 |
 | **Residence 6.0.4.2** | 领地 flag 的数据包级交互检测 |
 
 > 装 ProtocolLib 后，这些插件启动时会自动加载其 hook，无需手动配置。

@@ -6,6 +6,18 @@ SkinsRestorer 让玩家自由更换 Minecraft 皮肤，支持从正版账号获�
 
 **官方网站**: https://skinsrestorer.net | **文档**: https://skinsrestorer.net/docs
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/SkinsRestorer.jar`，`version: 15.12.6` |
+| 官方最新 | 官方文档站针对 15.12.6（Reviewed 2026-10-01）；官网持续更新，当前按官方文档口径 |
+| 官方文档站 | <https://skinsrestorer.net/docs/>（15.x 新文档站，已从 GitHub wiki 迁入；官方仓库 README 统一指向此站） |
+| 官方下载 | [Modrinth](https://modrinth.com/plugin/skinsrestorer) · [Hangar](https://hangar.papermc.io/SRTeam/SkinsRestorer) · [SpigotMC](https://www.spigotmc.org/resources/2124) |
+| 主要页面 | [Installation](https://skinsrestorer.net/docs/installation) · [Configuration](https://skinsrestorer.net/docs/configuration/player-access) · [Reference](https://skinsrestorer.net/docs/reference) · [Troubleshooting](https://skinsrestorer.net/docs/troubleshooting) · [Development](https://skinsrestorer.net/docs/development) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 功能说明
 
 SkinsRestorer 允许玩家自由更换 Minecraft 皮肤，支持从 Mojang 正版账号获取皮肤、使用 URL 自定义皮肤、以及使用内置的推荐皮肤库。对基岩版玩家和离线模式 Java 玩家尤为重要。

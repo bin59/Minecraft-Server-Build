@@ -5,6 +5,18 @@
 **主文件**: `YggdrasilOfficialProxy-2.3.0-paperclip.jar` (17.09 MB)
 **核心引擎**: `authlib-injector-1.2.7.jar` (336 KB)
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | 根目录 `YggdrasilOfficialProxy-2.3.0-paperclip.jar`（Java Agent，非 `plugins/` 目录 jar）+ 内置 `authlib-injector-1.2.7.jar` |
+| 官方最新 | 官方仓库标注 v2.3.0 并注明项目已弃用（建议转 YggdrasilGateway）；本服按实跑 2.3.0 记录 |
+| 官方文档站 | <https://github.com/YggdrasilOfficialProxy/YggdrasilOfficialProxy>（官方仓库 README） |
+| 官方下载 | <https://github.com/YggdrasilOfficialProxy/YggdrasilOfficialProxy>（README 指向 releases，提供 minecraft / paperclip / proxy 三种构建） |
+| 主要页面 | [仓库 README](https://github.com/YggdrasilOfficialProxy/YggdrasilOfficialProxy) · [后继项目 YggdrasilGateway](https://github.com/YggdrasilGateway/YggdrasilGateway) · [authlib-injector](https://github.com/yushijinhun/authlib-injector/) · [authlib-injector wiki](https://github.com/yushijinhun/authlib-injector/wiki) · [authlib-injector 下载](https://authlib-injector.yushi.moe/) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 功能说明
 
 YggdrasilOfficialProxy 是一个 Java Agent，通过修改服务端字节码，为服务器提供**外置登录（Yggdrasil 认证）**支持。它允许服务器使用第三方的 Yggdrasil 认证服务器来验证玩家身份，而不是仅依赖 Mojang 官方认证服务器。

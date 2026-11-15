@@ -12,6 +12,18 @@
 > **皮肤链路现状**：BedrockSkinRestorer 与自研 BedrockSkinRecorder **均已停用**（后者归档在 `自研/disabled/`）。基岩玩家皮肤由 Geyser 在线透传，Java 端皮肤由 SkinsRestorer 与外置登录 session 提供；详见 [3.3 基岩皮肤与皮肤头显示异常排查](03-基岩皮肤与皮肤头显示异常排查.md)。
 
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/Geyser-Spigot.jar`（`2.12.1-SNAPSHOT`）+ `plugins/floodgate-spigot.jar`（`2.2.5-SNAPSHOT (b141)`） |
+| 官方最新 | 官方下载页最新 Build #1302（2026-11-12，Java 26.3 / Bedrock 26.40-26.63）；官网持续更新，当前按官方文档口径 |
+| 官方文档站 | <https://geysermc.org/wiki/geyser/>（Geyser）· <https://geysermc.org/wiki/floodgate/>（Floodgate）；旧 `wiki.geysermc.org` 已迁到 `geysermc.org/wiki/` |
+| 官方下载 | <https://geysermc.org/download> |
+| 主要页面 | [Geyser 安装](https://geysermc.org/wiki/geyser/setup) · [Geyser](https://geysermc.org/wiki/geyser/) · [Floodgate](https://geysermc.org/wiki/floodgate/) · [其他项目](https://geysermc.org/wiki/other/) · [REST API](https://geysermc.org/wiki/api/) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ### 工作流程
 
 ```

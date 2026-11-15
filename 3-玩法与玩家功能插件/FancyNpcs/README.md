@@ -1,5 +1,17 @@
 # FancyNpcs（NPC 系统）
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/FancyNpcs-2.12.1+382.jar`，`version: 2.12.1+382` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（官方推荐 Modrinth Release 渠道，勿用 BETA/ALPHA） |
+| 官方文档站 | <https://fancyinnovations.com/docs/minecraft-plugins/fancynpcs> |
+| 官方下载 | <https://modrinth.com/plugin/fancynpcs/versions?c=release> |
+| 主要页面 | `fancyinnovations.com/docs/minecraft-plugins/fancynpcs/getting-started`、`fancyinnovations.com/docs/minecraft-plugins/fancynpcs/commands/npc`、`fancyinnovations.com/docs/minecraft-plugins/fancynpcs/api/getting-started`、`github.com/FancyMcPlugins/FancyNpcs`（源码） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 > **一句话**：基于**数据包（packet）**的轻量 NPC 插件。NPC 只存在于插件内存与客户端画面里，不注册成服务端实体，服务器不用为它跑 AI、碰撞、寻路和区块加载，因此大量 NPC 也几乎不占主线程。
 >
 > **实跑 jar**：`服务器数据备份/leaf-26.3/leaf-26.3/plugins/FancyNpcs-2.12.1+382.jar`（7.3 MB，版本 `2.12.1+382`）

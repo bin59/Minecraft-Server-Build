@@ -1,44 +1,31 @@
-# LuckPerms + TAB + PlaceholderAPI 炫彩多层称号
+# LuckPerms + TAB + PlaceholderAPI 炫彩称号
 
-用 **LuckPerms + TAB + PlaceholderAPI** 实现玩家头顶 / TAB 列表的多行炫彩称号（本服当前启用状态见文末）。
+用 **LuckPerms + TAB + PlaceholderAPI** 实现玩家头顶 / TAB 列表的炫彩称号（本服当前启用状态见文末）。
 
 ## 前置条件
 
 - **TAB**（列表 + 头顶名牌）、**LuckPerms**（权限组 + 前缀）、**PlaceholderAPI**（占位符解析）
 - LuckPerms 的 PAPI 扩展：`/papi ecloud download LuckPerms` → `/papi reload`
 
-## 一、LuckPerms 设置多行前缀
+## 一、LuckPerms 设置前缀
 
-TAB 支持用 `\n` 实现多行显示，在 LuckPerms 中给权限组设置前缀：
+TAB v6.2.1 头顶名牌为单行，`\n` 不换行（只显示字面字符）。多行称号需第三方名牌插件。
 
 ```bash
-# 管理员 - 三行炫彩称号
-/lp group admin meta setprefix "&4&l✦ 管理员 ✦\n&c&lSERVER\n&7"
-# 普通玩家 - 单行
+/lp group admin meta setprefix "&4&l✦ 管理员 ✦ &7"
 /lp group default meta setprefix "&7"
 ```
 
-## 二、TAB 头顶多行显示
+## 二、TAB 头顶显示
 
-`plugins/TAB/config.yml`：
+值写在 `plugins/TAB/groups.yml`：
 
 ```yaml
-tablist-name-formatting:
-  default:
-    tabprefix: '%luckperms_prefix%'
-    tabname: '&f%player_name%'
-    tabsuffix: ''
-    tagprefix: '%luckperms_prefix%'
-    tagname: '&f%player_name%'
-    tagsuffix: ''
-```
-
-头顶效果：
-
-```
-    ✦ 管理员 ✦
-    SERVER
-  Steve
+# plugins/TAB/groups.yml
+_DEFAULT_:
+  tabprefix: '%luckperms-prefix%'
+  customtabname: '%player%'
+  tagprefix: '%luckperms-prefix%'
 ```
 
 ## 三、渐变效果（1.16+ HEX 色）
@@ -53,17 +40,16 @@ TAB 支持 `&#RRGGBB` 十六进制颜色，逐字变色形成渐变：
 
 TAB 内置动态彩虹占位符，动画在 `animations.yml` 定义（键为 `change-interval` + `texts`，`change-interval` 单位毫秒），在 LuckPerms 前缀中组合使用即可。
 
-## 五、TAB 列表多行显示
+## 五、TAB 列表格式
 
 ```yaml
-tablist-name-formatting:
-  default:
-    tabprefix: '%luckperms_prefix%'
-    tabname: '&f%player_name%'
-    # tabsuffix: ' &7| &f%player_health%&c❤'
-    tagprefix: '%luckperms_prefix%'
-    tagname: '&f%player_name%'
-    tagsuffix: ''
+# plugins/TAB/groups.yml
+_DEFAULT_:
+  tabprefix: '%luckperms-prefix%'
+  customtabname: '%player%'
+  tabsuffix: '%luckperms-suffix%'
+  tagprefix: '%luckperms-prefix%'
+  tagsuffix: '%luckperms-suffix%'
 ```
 
 ## 常用命令速查
@@ -92,6 +78,13 @@ tablist-name-formatting:
 /lp user 00000000-0000-0000-0009-01f702bfe1ff meta setprefix "&d[魖飕(野人版)] &6"
 /lp user 00000000-0000-0000-0009-01f4c3b0ae33 meta setprefix "&d[nangua1896] &6"
 /lp user 00000000-0000-0000-0009-01f0f44e3cb2 meta setprefix "&d[镜寒火] &6"
+/lp user 00000000-0000-0000-0009-01f129f7ffea meta setprefix "&d[海虾] &6"
+/lp user 00000000-0000-0000-0009-01f6630347a2 meta setprefix "&d[派大星] &6"
+/lp user 00000000-0000-0000-0009-01f1c7110173 meta setprefix "&d[BAIQUE白雀] &6"
+/lp user 00000000-0000-0000-0009-01f4352179d9 meta setprefix "&d[余念本乐] &6"
+/lp user 00000000-0000-0000-0009-01fda5a6602e meta setprefix "&d[忧的郁] &6"
+/lp user 00000000-0000-0000-0009-01f077e6618e meta setprefix "&d[汽修二班 柳贯一] &6"
+/lp user 00000000-0000-0000-0009-01f46d426bce meta setprefix "&d[SB.ery] &6"
 
 ```
 
@@ -105,6 +98,8 @@ tablist-name-formatting:
 /lp user j4rvx meta setprefix "&d[j4rvx] &6"
 /lp user MatchaKing meta setprefix "&d[抹茶] &6"
 /lp user BambooLoveFlower meta setprefix "&d[花的眷属] &6"
+/lp user llbyz meta setprefix "&d[没良心] &6"
+/lp user zuie2778 meta setprefix "&d[䧜軬] &6"
 ```
 
 ### 2.活动专属
@@ -127,14 +122,10 @@ tablist-name-formatting:
 
 ## 注意事项
 
-- 多行前缀\*\*
-
-最后一行\*\*应为玩家名颜色前缀（如 `&7`），否则名字会继承上一行颜色
-
-- `\n` 换行在头顶名牌（tag）有效，TAB 列表中可能只显示第一行
+- TAB v6.2.1 头顶名牌（tag）为单行，`\n` 不换行、只显示字面字符；多行需第三方名牌插件
 - HEX 颜色 `&#RRGGBB` 仅 **1.16+** 生效，低版本自动降级为最近颜色码
 - 前缀不生效时执行 `/papi parse me %luckperms_prefix%` 验证占位符是否正常返回
 
 ## 本服实际状态
 
-`plugins/TAB/config.yml` 中 `tablist-name-formatting.enabled: false`——本服**未启用**该组件，头顶 / TAB 列表前缀实际由 `scoreboard-teams`（`enabled: true`）读取 LuckPerms 前缀渲染。若要启用本方案的多行炫彩称号，先把 `tablist-name-formatting.enabled` 改为 `true` 并 `/tab reload`。
+头顶名牌前缀由 `scoreboard-teams` 渲染，值写在 `plugins/TAB/groups.yml` / `users.yml` 的 `tagprefix` / `tagsuffix`；`tablist-name-formatting` 只管 Tab 列表。本地 26.3 两者 `enabled` 均为 `true`。改完 `/tab reload`。

@@ -1,5 +1,17 @@
 # 14. 宠物系统 — SimplePets
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/SimplePets.jar`，`version: R5-B321` |
+| 官方最新 | 官网持续更新，当前按官方文档口径；本服 R5-B321 为 26.3 自编译构建，官方 wiki 2026-08 仍有更新 |
+| 官方文档站 | <https://wiki.bsdevelopment.org/>（SimplePets 官方 Wiki）；Wiki 源仓库 <https://github.com/brainsynder-Dev/SimplePets-Wiki> |
+| 官方下载 | <https://modrinth.com/project/yNVORkCB>（沿用文档）；Polymart 官方店未能验证具体 URL |
+| 主要页面 | `wiki.bsdevelopment.org/command-information/commands/permissions-command`、`wiki.bsdevelopment.org/command-information/commands/regenerate-command`、`wiki.bsdevelopment.org/pet-addons/how-to-make-an-addon`、`github.com/brainsynder-Dev/SimplePets-Wiki/blob/main/SUMMARY.md`（命令 / 权限 / 配置 / Addon 目录） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 本文介绍 SimplePets 这款 GUI 管理的纯服务端宠物插件，支持 90 多种生物当跟随伙伴，可骑乘、戴头、多宠同出并存档重召，本服还已接入 Vault Addon 用主货币购买。文档覆盖安装、目录结构、界面汉化、config.yml、/pet 命令、权限与经济联动，末尾另附一起客户端猫模型错位的排查结论（与服务端无关，升级 Realistic Animals 资源包即可）。
 
 **当前版本**: SimplePets **R5-B321**（26.3 自编译版，`SimplePets.jar`） | **MC 要求**: 1.17 – 26.3
@@ -180,7 +192,7 @@ SimplePets 通过**经济 Addon** 接入经济系统，实现「花钱买宠物 
 | **Vault Addon**（本服选用） | Hook 进 Vault，用服务器主货币（EssentialsX 余额）购买，与 `/bal`、Residence、死亡收费**同一套账** | ✅ **已安装启用** |
 | GemsEconomy Addon | 用 GemsEconomy 独立货币，两套账 | ❌ 未装（不推荐，除非想分开货币） |
 
-### 运行服安装记录
+### 运行服安装
 
 - Addon jar：`plugins/SimplePets/Addons/VaultAddon.jar`（**0.4**，MC 1.18–1.19.4 兼容构建，来源 Modrinth 官方源 `spets-vault` 项目；`curl -k` 下载）
 - 重启后日志确认：`[SimplePets ADDON] Loading modules for the Vault addon`

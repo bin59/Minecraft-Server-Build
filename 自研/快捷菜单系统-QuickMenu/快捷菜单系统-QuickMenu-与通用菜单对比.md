@@ -8,6 +8,7 @@
 | 能力维度 | QuickMenu（本服自研） | DeluxeMenus（通用标杆） | Geyser 翻译箱子（基岩端视角） |
 |---|---|---|---|
 | 基岩端原生表单（SimpleForm） | ✅ 原生表单，基岩客户端渲染，点击/滚动/按钮反馈正常 | ❌ 仅 Java 箱子 GUI | ⚠️ 能显示，但物品可拖出、移动端高亮异常、部分环境打不开、只能左键 |
+| 基岩端带图标按钮 / 两行说明 / 参数输入表单（r5） | ✅ `FormImage` 图标 + lore 两行按钮 + CustomForm 输入表单，说明项也弹表单 | ❌ 无 | ❌ 无 |
 | 同一按钮按客户端类型分流指令 | ✅ 内置 `[bedrock-player]` / `[java-player]` / `[bedrock-console]` / `[java-console]` 四种平台动作 | ⚠️ 无平台判断，需条件表达式硬凑 | —（无此能力） |
 | 动态列出在线玩家选择（免输入玩家名） | ✅ `[player-selector]`，点击列出在线玩家，`{target}` 自动填命令 | ❌ 需手输玩家名或另装插件拼占位符 | —（无此能力） |
 | 动态列出背包物品选择 | ✅ `[item-selector]`，自动排除触发物品、同材质合并，`{item}` 填命令 | ❌ 无内置选择器 | —（无此能力） |
@@ -22,7 +23,8 @@
 
 - DeluxeMenus 只做 Java 箱子 GUI。基岩玩家看到的是 Geyser 翻译后的箱子界面，存在**功能性缺陷**：物品可被拖出、移动端高亮异常、特定环境打不开、只能左键交互。
 - QuickMenu 对 Floodgate 玩家直接发原生表单（Cumulus API），由基岩客户端自己渲染，点击/滚动/按钮反馈全部正常。
-- 对应配置：`config.yml` → `platform.bedrock-native-form: true`（默认，勿关）。
+- r5 起按钮统一带图标（`FormImage`）与两行说明；纯 `[message]` 说明项自动弹说明表单，需要参数的项走 `[form-input]` 弹 CustomForm 输入框/下拉框，基岩玩家全程不用打字。
+- 对应配置：`config.yml` → `platform.bedrock-native-form: true`（默认，勿关）；外观在 `bedrock-form:` 段，输入表单在 `input-forms:` 段。
 
 ### ② 动作级两端分流 + 动态选择器
 
@@ -32,7 +34,7 @@
 
 ### ③ 为这台服务器定制的完整体系（不是通用工具）
 
-- 28 套菜单（玩家 16 + 管理 12）把本服所有插件功能收编：EssentialsX / BPS / Residence / SkinsRestorer / EasyBot / SimplePets / 语音 / 传送阵 / 拍卖 / 玩家商店 / 每日收购 / 新人指南 / 管理线。
+- 33 套菜单（主线 28 = 玩家 16 + 管理 12，支线 5）把本服所有插件功能收编：EssentialsX / BPS / Residence / SkinsRestorer / EasyBot / SimplePets / 语音 / 世界切换 / 传送阵 / 拍卖 / 玩家商店 / 每日收购 / 新人指南 / 管理线。
 - 每按钮对应 LuckPerms 权限清单（文档第 8 章），两端指令差异（BPS `warpgui` vs EssentialsX `warp`）、已知坑（"菜单只是前端，真正干活的是后端插件"）全部绑定在配置与文档里。
 - 换通用插件 = 全部重新配置，且丢双端特性。
 

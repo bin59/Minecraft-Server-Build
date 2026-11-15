@@ -8,10 +8,17 @@
 - **纯回收设计**：上架费不退 + 成交税抽成，两笔钱都从玩家账本消失，用于对抗通胀。
 - **拍卖形式**：玩家上架物品并设定价格，其他玩家可竞价或按一口价购买。
 
-## 版本与来源
+## 0. 版本与官方文档（2026-11-14 核对）
 
-- 版本：**1.1.4（iliüs）**，从 Modrinth 官方下载，基于官方默认模板改写配置。
-- 配置文件：`plugins/AuctionHouse/config.yml`。
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/AuctionHouse-1.1.4.jar`，`version: 1.1.4`，配置文件 `plugins/AuctionHouse/config.yml` |
+| 官方最新 | **1.1.4**（2026-07-23 发布）；本地已是最新，配置基于官方默认模板改写 |
+| 官方文档站 | <https://www.spigotmc.org/resources/auctionhouse.133636>（ilus 版命令 / 权限说明） |
+| 官方下载 | [SpigotMC 资源页](https://www.spigotmc.org/resources/auctionhouse.133636) · [Modrinth](https://modrinth.com/plugin/auctionhouse-by-ilius) |
+| 主要页面 | [SpigotMC 资源页](https://www.spigotmc.org/resources/auctionhouse.133636) · [Modrinth 项目页](https://modrinth.com/plugin/auctionhouse-by-ilius) · [Modrinth 更新日志](https://modrinth.com/plugin/auctionhouse-by-ilius/changelog) · [作者 ilius](https://www.spigotmc.org/resources/authors/ilius.1438987) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
 
 ## 关键配置（当前值）
 
@@ -27,7 +34,7 @@
 | 命令 | 用途 |
 |---|---|
 | `/ah` | 玩家打开拍卖行界面（权限 `auction.*` 默认 true，无需授予） |
-| `/ahadmin` | 管理员管理拍卖行 |
+| `/ah admin` | 管理员管理拍卖行（如 `/ah admin reload` / `/ah admin stats`） |
 
 ## 权限
 

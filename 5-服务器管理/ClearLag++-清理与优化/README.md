@@ -11,6 +11,18 @@ ClearLag++ 是一款综合性能优化插件，自动清理地面掉落物、限
 
 ---
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/ClearLag-2.0.0-VER-1.18-26.3.jar`，`version: 2.0.0` |
+| 官方最新 | 官网持续更新，当前按官方 wiki 口径 |
+| 官方文档站 | <https://fhplugins.com/docs/clearlag/overview>（官方 wiki）· 项目页 <https://modrinth.com/plugin/clearlag++> |
+| 官方下载 | <https://modrinth.com/plugin/clearlag++> · <https://www.spigotmc.org/resources/clearlag.127506/> |
+| 主要页面 | wiki `/overview` · Modrinth `Description` · `Versions` · `Changelog` |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
+
 ## 一、自动清理系统
 
 | 功能                 | 状态    | 说明                                         |
@@ -373,10 +385,12 @@ excluded-mobs:
 | `%clearlag_lastclear_items%`     | 上次清理物品数     |
 | `%clearlag_lastclear_entities%`  | 上次清理生物数     |
 | `%clearlag_lastclear_total%`     | 上次清理总数       |
-| `%clearlag_entity_total%`        | 全服实体总数       |
+| `%clearlag_entity_total%`        | 全服实体总数（含生物、掉落物、玩家） |
 | `%clearlag_dropped_items_total%` | 全服掉落物总数     |
 | `%clearlag_mobs_total%`          | 全服生物总数       |
 | `%clearlag_ram%`                 | 当前内存使用       |
 | `%clearlag_loaded_chunks%`       | 已加载区块数       |
+
+> 三者是**包含关系**，不是并列：`entity_total` = 各世界 `getEntities()` 全量（含在线玩家）；`mobs_total` 只数 `LivingEntity` 且排除 `Player` / `ArmorStand` / `ItemFrame`；`dropped_items_total` 只数 `Item`。即 `实体 = 生物 + 掉落物 + 玩家 + 其他非生物实体`（矿车、船、箭、经验球、盔甲架、展示框、展示实体等）。后两者互斥。数值每 2 秒（40 ticks）刷新一次缓存，来源 ClearLag 2.0.0 `ClearLagExpansion` 字节码。公告栏分行显示不会重复计算，只是信息有重叠。
 
 ---

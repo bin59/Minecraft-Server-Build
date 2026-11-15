@@ -932,11 +932,24 @@ public class DailySell extends JavaPlugin implements CommandExecutor, Listener {
         }
         b.validResultHandler((CustomFormResponse resp) -> {
             List<String> picked = new ArrayList<>();
+            // Cumulus 的响应索引按「表单内全部元素」计，开头的 label 也占一位
+            // （label 位置返回 null / AbsentComponent）。旧代码用 getToggle(i) 直接对应
+            // 第 i 个候选，会整体错位一位：第一个候选永远选不中，其余读到上一个开关的值。
+            // 这里从组件类型表算出 TOGGLE 的真实起始索引，不写死 +1，兼容 Cumulus 各版本。
+            List<org.geysermc.cumulus.component.util.ComponentType> types = resp.getComponentTypes();
+            int base = 0;
+            while (base < types.size()
+                    && types.get(base) != org.geysermc.cumulus.component.util.ComponentType.TOGGLE) base++;
             for (int i = 0; i < n; i++) {
+                int idx = base + i;
+                if (idx >= types.size()
+                        || types.get(idx) != org.geysermc.cumulus.component.util.ComponentType.TOGGLE) {
+                    continue; // 响应结构与表单不一致时跳过该项
+                }
                 try {
-                    if (resp.getToggle(i)) picked.add(snapshot.get(i).mat.name());
+                    if (resp.getToggle(idx)) picked.add(snapshot.get(i).mat.name());
                 } catch (RuntimeException ignored) {
-                    // 响应结构与表单不一致时跳过该项
+                    // 单个开关读取失败不影响其余项
                 }
             }
             // Netty 线程 → 主线程

@@ -47,13 +47,14 @@
 #   ※ 另有 3 个功能子菜单：buildrate-admin / fishing / admin-fishing（不在两条主线内）
 #
 # ============================================================
-# 重要：为什么大量菜单项是「文字指引」而不是直接执行
+# 基岩端按钮 UI（1.0.0-r5）
 # ============================================================
-# 本插件只有「按钮列表」，没有输入框，无法在玩家点击后询问「对谁执行」。
-# 因此凡是需要带玩家名 / 领地名 / 金额等参数的指令（如 /kick 玩家名），
-# 统一做成：关闭界面 + 发送指令用法提示，让管理员手动补参数。
-# 这类项在 lore 里都标了「需手动补充参数」。
-# 不需要参数的（如 /fly /heal /spark tps）则直接执行。
+# 需要参数的指令统一走 [form-input]：点按钮 → 弹带输入框 / 下拉框的
+# 原生表单 → 提交即以玩家权限执行，全程不用打字（定义见 input-forms 段）。
+# 纯教学说明项（[close] + [message]）由基岩端自动渲染成「说明表单」，
+# 不再往聊天栏刷文字；Java 端仍按原样发消息。
+# 表单按钮统一带图标、两行文本与返回按钮，外观见 bedrock-form 段。
+# 不需要参数的（如 /fly /heal /spark tps）仍然点击即执行。
 ############################################################
 
 # ==================== 基础设置 ====================
@@ -74,6 +75,36 @@ platform:
 
   # Java 玩家是否使用箱子 GUI
   java-chest-gui: true
+
+# ==================== 基岩端表单外观（1.0.0-r5） ====================
+# 基岩原生表单按钮可带图标（Cumulus FormImage，路径由基岩客户端自带资源包解析）。
+# 若个别按钮显示空白图标，在 icon-paths 里改成正确路径，或直接 icons: false
+# 一键回退纯文字按钮。改动执行 /qm reload 即生效，无需重启。
+bedrock-form:
+  icons: true
+  # 未在 icon-paths 里列出的材质，按「方块→textures/blocks/，物品→textures/items/」推导
+  auto-path: true
+  # 按钮第二行显示 lore 首行（原生按钮不支持颜色码，故统一去色）
+  two-line-buttons: true
+  title-prefix: '&b✦ '
+  separator: '&8────────────────'
+  hint: '&7点按按钮执行 · 共 %d 项'
+  info-title-prefix: 'ℹ '
+  info-footer: '&7看完点下方按钮返回菜单'
+  back-label: '« 返回菜单'
+  close-label: '✕ 关闭'
+  submit-label: '&8填好后点右下角提交执行'
+  empty-label: '（暂无可选项）'
+  # 手动修正 / 扩充贴图路径；留空字符串 = 该材质不加图标
+  icon-paths:
+    CLOCK: 'textures/items/clock_item'
+    PLAYER_HEAD: 'textures/items/head_steve'
+    GRASS_BLOCK: 'textures/blocks/grass_side_carried'
+    BOOK: 'textures/items/book_normal'
+    WRITABLE_BOOK: 'textures/items/book_writable'
+    BARRIER: 'textures/items/barrier'
+    PAPER: 'textures/items/paper'
+    ARROW: 'textures/items/arrow'
 
 # ==================== 触发物品 ====================
 
@@ -165,6 +196,629 @@ item-selector:
   # 背包里没有可选择的物品时显示的提示
   no-items: '&c背包里没有可选择的物品'
 
+# ==================== 基岩端参数输入表单（1.0.0-r5） ====================
+# [form-input] <id> 打开这里定义的表单：玩家点按钮 → 填参数 → 提交执行。
+# fields 类型：input=文本框，dropdown=固定下拉，player=在线玩家下拉。
+# command 里的 {字段key} 会被替换成玩家填/选的值；Java 端发 fallback 文本。
+input-forms:
+  pay:
+    title: '&6转账给玩家'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'pay {player} {amount}'
+    fallback:
+      - '&7转账格式：&e/pay 玩家名 金额'
+      - '&7转账：&e/pay 玩家名 金额'
+      - '&7例：&e/pay Steve 500'
+    fields:
+      - key: player
+        type: player
+        label: '&7转账给谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: amount
+        type: input
+        label: '&7金额（南瓜币）'
+        placeholder: '500'
+        default: ''
+
+  msg:
+    title: '&d给玩家发私信'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'msg {player} {text}'
+    fallback:
+      - '&7私信格式：&e/msg 玩家名 消息内容'
+    fields:
+      - key: player
+        type: player
+        label: '&7发给谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: text
+        type: input
+        label: '&7消息内容'
+        placeholder: '你好'
+        default: ''
+
+  reply:
+    title: '&a快速回复'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'r {text}'
+    fallback:
+      - '&7回复格式：&e/r 消息内容'
+    fields:
+      - key: text
+        type: input
+        label: '&7回复内容'
+        placeholder: '收到'
+        default: ''
+
+  nick:
+    title: '&d修改昵称'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'nick {name}'
+    fallback:
+      - '&7修改昵称：&e/nick 你想要的昵称'
+    fields:
+      - key: name
+        type: input
+        label: '&7新昵称'
+        placeholder: '想显示的昵称'
+        default: ''
+
+  bind:
+    title: '&6绑定 QQ 账号'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'bind {code}'
+    fallback:
+      - '&7绑定 QQ：在群里发送「绑定」获取验证码'
+      - '&7然后在游戏内输入：&e/bind 验证码'
+    fields:
+      - key: code
+        type: input
+        label: '&7群内获取的验证码'
+        placeholder: '验证码'
+        default: ''
+
+  res-create:
+    title: '&e创建新领地'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'res create {name}'
+    fallback:
+      - '&7创建领地：&e/res create 领地名'
+      - '&7先对角选区：手持木斧左右键各点一次'
+      - '&7圈地步骤：'
+      - '&71) &f手持木锄'
+      - '&72) &f左键选第一个角、右键选第二个角'
+      - '&73) &f执行 &e/res create 领地名'
+      - '&7提示：选区越大收费越贵，按格子计费'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '我的家'
+        default: ''
+
+  res-remove:
+    title: '&c删除领地'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'res remove {name}'
+    fallback:
+      - '&7删除领地：&e/res remove 领地名'
+      - '&7先执行 &e/res list &7确认名称'
+    fields:
+      - key: name
+        type: input
+        label: '&7要删除的领地名'
+        placeholder: '先用 /res list 确认'
+        default: ''
+
+  res-tp:
+    title: '&b传送到领地'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'res tp {name}'
+    fallback:
+      - '&7传送到领地：&e/res tp 领地名'
+      - '&7查看自己的领地列表：&e/res list'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '我的家'
+        default: ''
+
+  res-flag:
+    title: '&6设置领地开关'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'res set {name} {flag} {value}'
+    fallback:
+      - '&7领地开关：&e/res set 领地名 build true'
+      - '&8可选：destroy use container pvp move fire tnt'
+      - '&7常用 flag：&ebuild &7建造 / &edestroy &7破坏 / &epvp &7玩家对战 / &emove &7进入'
+      - '&7例：禁止别人破坏 → &e/res set 领地名 destroy false'
+      - '&7全部开关可在菜单：我的领地 → 设置领地开关'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '我的家'
+        default: ''
+      - key: flag
+        type: dropdown
+        label: '&7要改哪个开关'
+        placeholder: ''
+        default: ''
+        options:
+          - 'build'
+          - 'destroy'
+          - 'use'
+          - 'container'
+          - 'pvp'
+          - 'move'
+          - 'fire'
+          - 'tnt'
+      - key: value
+        type: dropdown
+        label: '&7设为'
+        placeholder: ''
+        default: ''
+        options:
+          - 'true'
+          - 'false'
+
+  res-pset:
+    title: '&6给单个玩家授权'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'res pset {name} {player} {flag} {value}'
+    fallback:
+      - '&7玩家授权：&e/res pset 领地名 玩家名 build true'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '我的家'
+        default: ''
+      - key: player
+        type: player
+        label: '&7授权给谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: flag
+        type: dropdown
+        label: '&7权限类型'
+        placeholder: ''
+        default: ''
+        options:
+          - 'build'
+          - 'destroy'
+          - 'use'
+          - 'container'
+          - 'pvp'
+          - 'move'
+          - 'fire'
+          - 'tnt'
+      - key: value
+        type: dropdown
+        label: '&7设为'
+        placeholder: ''
+        default: ''
+        options:
+          - 'true'
+          - 'false'
+
+  res-trust:
+    title: '&6邀请玩家进领地'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'res pset {name} {player} trusted {value}'
+    fallback:
+      - '&7邀请好友：&e/res pset 玩家名 trusted true'
+      - '&7取消信任：&e/res pset 玩家名 trusted false'
+      - '&7更多成员管理可打开菜单：我的领地 → 玩家授权'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '我的家'
+        default: ''
+      - key: player
+        type: player
+        label: '&7邀请谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: value
+        type: dropdown
+        label: '&7信任状态'
+        placeholder: ''
+        default: ''
+        options:
+          - 'true'
+          - 'false'
+
+  res-subzone:
+    title: '&d创建子领地'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'res subzone {parent} {name}'
+    fallback:
+      - '&7子领地：&e/res subzone 父领地 子领地'
+      - '&7子领地：&e/res subzone 子领地名称'
+      - '&7子领地可单独设置权限（比如隔离自己的仓库区）'
+    fields:
+      - key: parent
+        type: input
+        label: '&7父领地名'
+        placeholder: '我的家'
+        default: ''
+      - key: name
+        type: input
+        label: '&7子领地名'
+        placeholder: '仓库区'
+        default: ''
+
+  res-message:
+    title: '&a设置进出提示语'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'res message {name} {type} {text}'
+    fallback:
+      - '&7进出提示：&e/res message 领地名 enter 欢迎来到'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '我的家'
+        default: ''
+      - key: type
+        type: dropdown
+        label: '&7进入还是离开'
+        placeholder: ''
+        default: ''
+        options:
+          - 'enter'
+          - 'leave'
+      - key: text
+        type: input
+        label: '&7提示语'
+        placeholder: '欢迎来到'
+        default: ''
+
+  tpa:
+    title: '&6申请传送到玩家'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'tpa {player}'
+    fallback:
+      - '&7申请传送到玩家：&e/tpa 玩家名'
+      - '&7对方同意后自动传送；也可在传送菜单选人'
+    fields:
+      - key: player
+        type: player
+        label: '&7传送到谁'
+        placeholder: '选择在线玩家'
+        default: ''
+
+  pat:
+    title: '&a摸摸头'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'pat {player}'
+    fallback:
+      - '&7摸头：&e/pat 玩家名'
+      - '&7对方会看到摸头提示，好友互动用'
+    fields:
+      - key: player
+        type: player
+        label: '&7摸谁的头'
+        placeholder: '选择在线玩家'
+        default: ''
+
+  seen:
+    title: '&7查看最后在线'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'seen {player}'
+    fallback:
+      - '&7最后在线：&e/seen 玩家名'
+    fields:
+      - key: player
+        type: input
+        label: '&7玩家名'
+        placeholder: '玩家名（可离线）'
+        default: ''
+
+  give:
+    title: '&6给玩家物品'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'give {player} {item} {amount}'
+    fallback:
+      - '&7给物品：&e/give 玩家名 物品 数量'
+    fields:
+      - key: player
+        type: player
+        label: '&7给谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: item
+        type: input
+        label: '&7物品 ID'
+        placeholder: 'diamond'
+        default: ''
+      - key: amount
+        type: input
+        label: '&7数量'
+        placeholder: '1'
+        default: ''
+
+  unban:
+    title: '&a解除封禁'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'unban {player}'
+    fallback:
+      - '&7解除封禁：&e/unban 玩家名'
+    fields:
+      - key: player
+        type: input
+        label: '&7玩家名'
+        placeholder: '被封玩家（可离线）'
+        default: ''
+
+  broadcast:
+    title: '&6全服广播'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'broadcast {text}'
+    fallback:
+      - '&7广播：&e/broadcast 你要广播的内容'
+    fields:
+      - key: text
+        type: input
+        label: '&7广播内容'
+        placeholder: '要发送的内容'
+        default: ''
+
+  setwarp:
+    title: '&a创建公共传送点'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'setwarp {name}'
+    fallback:
+      - '&7创建传送点：&e/setwarp 名字'
+    fields:
+      - key: name
+        type: input
+        label: '&7传送点名'
+        placeholder: '主城'
+        default: ''
+
+  delwarp:
+    title: '&c删除公共传送点'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'delwarp {name}'
+    fallback:
+      - '&7删除传送点：&e/delwarp 名字'
+    fields:
+      - key: name
+        type: input
+        label: '&7传送点名'
+        placeholder: '传送点名'
+        default: ''
+
+  resadmin-info:
+    title: '&b查看任意领地信息'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'resadmin info {name}'
+    fallback:
+      - '&7领地信息：&e/resadmin info 领地名'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '领地名'
+        default: ''
+
+  resadmin-remove:
+    title: '&c删除任意领地'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'resadmin remove {name}'
+    fallback:
+      - '&7删除领地：&e/resadmin remove 领地名'
+      - '&c删除后不可恢复，请先确认'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '删除后不可恢复'
+        default: ''
+
+  resadmin-setowner:
+    title: '&6转移领地归属'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'resadmin setowner {name} {owner}'
+    fallback:
+      - '&7转移领地：&e/resadmin setowner 领地名 新主人'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '领地名'
+        default: ''
+      - key: owner
+        type: player
+        label: '&7新主人'
+        placeholder: '选择在线玩家'
+        default: ''
+
+  resadmin-tp:
+    title: '&b传送到任意领地'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'resadmin tp {name}'
+    fallback:
+      - '&7传送到领地：&e/resadmin tp 领地名'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '领地名'
+        default: ''
+
+  resadmin-select:
+    title: '&e选取他人领地'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'resadmin select {name}'
+    fallback:
+      - '&7选取领地：&e/resadmin select 领地名'
+    fields:
+      - key: name
+        type: input
+        label: '&7领地名'
+        placeholder: '领地名'
+        default: ''
+
+  co-lookup:
+    title: '&e条件查询记录'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'co lookup u:{player} t:{time} r:{radius}'
+    fallback:
+      - '&7查询记录：&e/co lookup u:玩家名 t:24h r:10'
+      - '&8参数：u=玩家 t=时间 r=半径 a=动作 b=方块'
+    fields:
+      - key: player
+        type: input
+        label: '&7玩家名'
+        placeholder: '玩家名'
+        default: ''
+      - key: time
+        type: input
+        label: '&7时间范围'
+        placeholder: '24h'
+        default: ''
+      - key: radius
+        type: input
+        label: '&7半径'
+        placeholder: '10'
+        default: ''
+
+  co-rollback:
+    title: '&c回滚破坏'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'co rollback u:{player} t:{time} r:{radius}'
+    fallback:
+      - '&c回滚：&e/co rollback u:玩家名 t:24h r:10'
+      - '&c务必先用 /co lookup 确认范围'
+    fields:
+      - key: player
+        type: input
+        label: '&7玩家名'
+        placeholder: '玩家名'
+        default: ''
+      - key: time
+        type: input
+        label: '&7时间范围'
+        placeholder: '24h'
+        default: ''
+      - key: radius
+        type: input
+        label: '&7半径'
+        placeholder: '10'
+        default: ''
+
+  co-restore:
+    title: '&6撤销回滚'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'co restore u:{player} t:{time}'
+    fallback:
+      - '&7撤销回滚：&e/co restore u:玩家名 t:24h'
+    fields:
+      - key: player
+        type: input
+        label: '&7玩家名'
+        placeholder: '玩家名'
+        default: ''
+      - key: time
+        type: input
+        label: '&7时间范围'
+        placeholder: '24h'
+        default: ''
+
+  lp-tree:
+    title: '&7查看权限树'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'lp tree {keyword}'
+    fallback:
+      - '&7权限树：&e/lp tree 关键字'
+    fields:
+      - key: keyword
+        type: input
+        label: '&7关键字'
+        placeholder: 'essentials'
+        default: ''
+
+  lp-verbose:
+    title: '&e实时追踪权限判定'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'lp verbose on {player} {keyword}'
+    fallback:
+      - '&7开启追踪：&e/lp verbose on 玩家名 权限关键字'
+      - '&7关闭追踪：&e/lp verbose off'
+    fields:
+      - key: player
+        type: player
+        label: '&7追踪谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: keyword
+        type: input
+        label: '&7权限关键字'
+        placeholder: 'essentials'
+        default: ''
+
+  eco-give:
+    title: '&a给玩家发钱'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'eco give {player} {amount}'
+    fallback:
+      - '&7发钱：&e/eco give 玩家名 金额'
+      - '&7例：&e/eco give Steve 500'
+    fields:
+      - key: player
+        type: player
+        label: '&7给谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: amount
+        type: input
+        label: '&7金额'
+        placeholder: '500'
+        default: ''
+
+  eco-take:
+    title: '&c扣回玩家余额'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'eco take {player} {amount}'
+    fallback:
+      - '&7扣钱：&e/eco take 玩家名 金额'
+    fields:
+      - key: player
+        type: player
+        label: '&7扣谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: amount
+        type: input
+        label: '&7金额'
+        placeholder: '500'
+        default: ''
+
+  eco-set:
+    title: '&b设置玩家余额'
+    content: '&7填好后点右下角提交，指令以你的权限执行'
+    command: 'eco set {player} {amount}'
+    fallback:
+      - '&7设余额：&e/eco set 玩家名 金额'
+    fields:
+      - key: player
+        type: player
+        label: '&7设谁'
+        placeholder: '选择在线玩家'
+        default: ''
+      - key: amount
+        type: input
+        label: '&7金额'
+        placeholder: '500'
+        default: ''
+
 ############################################################
 # 菜单定义
 #
@@ -196,6 +850,7 @@ item-selector:
 #   [close]            关闭界面/表单
 #   [player-selector] 命令模板  打开在线玩家选择器，{target} 替换为所选玩家名
 #   [item-selector] 命令模板    打开背包物品选择器，{item} 替换为材质名（小写）
+#   [form-input] 表单id         打开基岩参数输入表单（Java 端降级为文本提示）
 #   [residence-selector] 命令模板  打开"我的领地"选择器，{residence} 替换为所点领地名
 #   [ah-sell] 价格 材质名        自动把背包中该材质物品换到主手执行 /ah sell 价格（解决触发物品占主手无法直接上架）
 #   不带前缀的命令      等同于 [player]
@@ -208,6 +863,66 @@ item-selector:
 ############################################################
 
 menus:
+  ##########################################################
+  # 独立「世界切换」菜单 worldmenu（不进主菜单，用 /qm open worldmenu 打开）
+  # 与 teleport 子菜单的跨服按钮并存；本菜单专做「小游戏 / 世界转换」入口
+  ##########################################################
+  worldmenu:
+    title: '&6&l世界切换 &8» &f选择你的去处'
+    bedrock-content: '&7点击按钮前往对应世界 / 子服'
+    size: 27
+    filler:
+      material: BLACK_STAINED_GLASS_PANE
+      name: '&8'
+    items:
+      to-survival:
+        material: GRASS_BLOCK
+        display-name: '&a&l生存主服'
+        lore:
+          - '&7回到生存主世界'
+          - '&8点击前往 survival'
+        slot: 11
+        glowing: true
+        actions:
+          - '[close]'
+          - '[player] server survival'
+      to-minigames:
+        material: DIAMOND_SWORD
+        display-name: '&b&l小游戏服'
+        lore:
+          - '&7起床战争 / 幸运之柱'
+          - '&8点击前往 minigames'
+        slot: 13
+        glowing: true
+        actions:
+          - '[close]'
+          - '[player] server minigames'
+      to-skyblock:
+        material: END_STONE
+        display-name: '&d&l空岛服'
+        lore:
+          - '&7BentoBox 空岛生存'
+          - '&8点击前往 skyblock'
+        slot: 15
+        glowing: true
+        actions:
+          - '[close]'
+          - '[player] server skyblock'
+
+      # ---------- 幸运之柱（小游戏地图 map-jkpof，在 minigames 服内） ----------
+      to-jkpof:
+        material: GOLDEN_CARROT
+        display-name: '&6&l幸运之柱'
+        lore:
+          - '&7JK 的幸运之柱小游戏（2~12 人）'
+          - '&7定时掉物品，活到最后获胜'
+          - '&8点击前往 minigames，到达后再次打开菜单进入'
+        slot: 17
+        glowing: true
+        actions:
+          - '[close]'
+          - '[player] server minigames'
+
   ##########################################################
   # ██████  玩 家 菜 单  ██████
   ##########################################################
@@ -379,16 +1094,19 @@ menus:
         actions:
           - '[player] pet gui'
 
-      # ---------- 语音聊天 ----------
-      voice:
-        material: NOTE_BLOCK
-        display-name: '&b&l语音聊天'
+      # ---------- 世界切换（直接打开独立 worldmenu，主菜单一级入口） ----------
+      worldswitch:
+        material: END_PORTAL_FRAME
+        display-name: '&d&l世界切换'
         lore:
-          - '&7 proximity 语音使用说明'
-          - '&8点击查看子菜单'
+          - '&7前往小游戏服 / 空岛服 / 幸运之柱'
+          - '&7也可在主城走传送门直达'
+          - '&8点击打开世界切换菜单'
         slot: 22
+        glowing: true
         actions:
-          - '[menu] voice'
+          - '[close]'
+          - '[menu] worldmenu'
 
       # ---------- 传送阵（SpacePortal） ----------
       portal:
@@ -538,6 +1256,22 @@ menus:
           - '[close]'
           - '[player] near'
 
+      # ---------- 世界切换（跳转独立菜单 worldmenu，不在主菜单堆功能） ----------
+      # 跨服本质 = 执行 Velocity /server <子服>；SpacePortal 仅支持单服内传送，做不了跨服
+      # 独立菜单 worldmenu 不进主菜单，从本处跳转进入，Java/基岩双端通用
+      worldswitch:
+        material: END_PORTAL_FRAME
+        display-name: '&d&l世界切换'
+        lore:
+          - '&7前往小游戏服 / 空岛服 / 返回主服'
+          - '&7也可在主城走传送门直达'
+          - '&8点击打开世界切换菜单'
+        slot: 16
+        glowing: true
+        actions:
+          - '[close]'
+          - '[menu] worldmenu'
+
   # ==================== 传送点子菜单（EssentialsX warp） ====================
   warps:
     title: '&b&l传送点'
@@ -614,8 +1348,7 @@ menus:
         permission: residence.create
         actions:
           - '[close]'
-          - '[message] &7创建领地：&e/res create 领地名'
-          - '[message] &7先对角选区：手持木斧左右键各点一次'
+          - '[form-input] res-create'
 
       resremove:
         material: BARRIER
@@ -628,8 +1361,7 @@ menus:
         permission: residence.delete
         actions:
           - '[close]'
-          - '[message] &7删除领地：&e/res remove 领地名'
-          - '[message] &7先执行 &e/res list &7确认名称'
+          - '[form-input] res-remove'
 
       restpset:
         material: RECOVERY_COMPASS
@@ -664,8 +1396,7 @@ menus:
         permission: residence.flags.build
         actions:
           - '[close]'
-          - '[message] &7领地开关：&e/res set 领地名 build true'
-          - '[message] &8可选：destroy use container pvp move fire tnt'
+          - '[form-input] res-flag'
 
       respset:
         material: WRITABLE_BOOK
@@ -677,7 +1408,7 @@ menus:
         permission: residence.flags.build
         actions:
           - '[close]'
-          - '[message] &7玩家授权：&e/res pset 领地名 玩家名 build true'
+          - '[form-input] res-pset'
 
       ressubzone:
         material: ITEM_FRAME
@@ -689,7 +1420,7 @@ menus:
         permission: residence.subzone
         actions:
           - '[close]'
-          - '[message] &7子领地：&e/res subzone 父领地 子领地'
+          - '[form-input] res-subzone'
 
       resmessage:
         material: OAK_SIGN
@@ -701,7 +1432,7 @@ menus:
         permission: residence.message
         actions:
           - '[close]'
-          - '[message] &7进出提示：&e/res message 领地名 enter 欢迎来到'
+          - '[form-input] res-message'
 
       reshelp:
         material: KNOWLEDGE_BOOK
@@ -754,7 +1485,7 @@ menus:
         permission: essentials.pay
         actions:
           - '[close]'
-          - '[message] &7转账格式：&e/pay 玩家名 金额'
+          - '[form-input] pay'
 
       eztax:
         material: WRITABLE_BOOK
@@ -1115,8 +1846,7 @@ menus:
         slot: 10
         actions:
           - '[close]'
-          - '[bedrock-player] msggui'
-          - '[message] &7私信格式：&e/msg 玩家名 消息内容'
+          - '[form-input] msg'
 
       reply:
         material: WRITABLE_BOOK
@@ -1127,7 +1857,7 @@ menus:
         slot: 11
         actions:
           - '[close]'
-          - '[message] &7回复格式：&e/r 消息内容'
+          - '[form-input] reply'
 
       ignore:
         material: BARRIER
@@ -1148,7 +1878,7 @@ menus:
         slot: 14
         actions:
           - '[close]'
-          - '[message] &7修改昵称：&e/nick 你想要的昵称'
+          - '[form-input] nick'
 
       whois:
         material: PLAYER_HEAD
@@ -1178,8 +1908,7 @@ menus:
         permission: easybot.command.bind
         actions:
           - '[close]'
-          - '[message] &7绑定 QQ：在群里发送「绑定」获取验证码'
-          - '[message] &7然后在游戏内输入：&e/bind 验证码'
+          - '[form-input] bind'
 
   # ==================== 服务器信息子菜单 ====================
   info:
@@ -1464,8 +2193,7 @@ menus:
         slot: 16
         actions:
           - '[close]'
-          - '[message] &7转账：&e/pay 玩家名 金额'
-          - '[message] &7例：&e/pay Steve 500'
+          - '[form-input] pay'
 
       balance:
         material: GOLD_INGOT
@@ -1734,11 +2462,7 @@ menus:
         slot: 10
         actions:
           - '[close]'
-          - '[message] &7圈地步骤：'
-          - '[message] &71) &f手持木锄'
-          - '[message] &72) &f左键选第一个角、右键选第二个角'
-          - '[message] &73) &f执行 &e/res create 领地名'
-          - '[message] &7提示：选区越大收费越贵，按格子计费'
+          - '[form-input] res-create'
 
       tp:
         material: ENDER_PEARL
@@ -1748,8 +2472,7 @@ menus:
         slot: 11
         actions:
           - '[close]'
-          - '[message] &7传送到领地：&e/res tp 领地名'
-          - '[message] &7查看自己的领地列表：&e/res list'
+          - '[form-input] res-tp'
 
       tpset:
         material: END_CRYSTAL
@@ -1772,9 +2495,7 @@ menus:
         slot: 13
         actions:
           - '[close]'
-          - '[message] &7邀请好友：&e/res pset 玩家名 trusted true'
-          - '[message] &7取消信任：&e/res pset 玩家名 trusted false'
-          - '[message] &7更多成员管理可打开菜单：我的领地 → 玩家授权'
+          - '[form-input] res-trust'
 
       flags:
         material: COMPARATOR
@@ -1785,9 +2506,7 @@ menus:
         slot: 14
         actions:
           - '[close]'
-          - '[message] &7常用 flag：&ebuild &7建造 / &edestroy &7破坏 / &epvp &7玩家对战 / &emove &7进入'
-          - '[message] &7例：禁止别人破坏 → &e/res set 领地名 destroy false'
-          - '[message] &7全部开关可在菜单：我的领地 → 设置领地开关'
+          - '[form-input] res-flag'
 
       subzone:
         material: OAK_FENCE
@@ -1798,8 +2517,7 @@ menus:
         slot: 15
         actions:
           - '[close]'
-          - '[message] &7子领地：&e/res subzone 子领地名称'
-          - '[message] &7子领地可单独设置权限（比如隔离自己的仓库区）'
+          - '[form-input] res-subzone'
 
       resmenu:
         material: DIAMOND_BLOCK
@@ -1863,8 +2581,7 @@ menus:
         slot: 12
         actions:
           - '[close]'
-          - '[message] &7申请传送到玩家：&e/tpa 玩家名'
-          - '[message] &7对方同意后自动传送；也可在传送菜单选人'
+          - '[form-input] tpa'
 
       tpaccept:
         material: GREEN_WOOL
@@ -1945,8 +2662,7 @@ menus:
         slot: 14
         actions:
           - '[close]'
-          - '[message] &7摸头：&e/pat 玩家名'
-          - '[message] &7对方会看到摸头提示，好友互动用'
+          - '[form-input] pat'
 
       kit:
         material: CHEST
@@ -2304,7 +3020,7 @@ menus:
         permission: essentials.seen
         actions:
           - '[close]'
-          - '[message] &7最后在线：&e/seen 玩家名'
+          - '[form-input] seen'
 
       repair:
         material: ANVIL
@@ -2325,7 +3041,7 @@ menus:
         permission: essentials.give
         actions:
           - '[close]'
-          - '[message] &7给物品：&e/give 玩家名 物品 数量'
+          - '[form-input] give'
 
   # ==================== 切换游戏模式（选模式后再选玩家） ====================
   gamemode:
@@ -2437,7 +3153,7 @@ menus:
         permission: essentials.unban
         actions:
           - '[close]'
-          - '[message] &7解除封禁：&e/unban 玩家名'
+          - '[form-input] unban'
 
       banip:
         material: IRON_BARS
@@ -2506,7 +3222,7 @@ menus:
         permission: essentials.broadcast
         actions:
           - '[close]'
-          - '[message] &7广播：&e/broadcast 你要广播的内容'
+          - '[form-input] broadcast'
 
       socialspy:
         material: SPYGLASS
@@ -2595,7 +3311,7 @@ menus:
         permission: essentials.setwarp
         actions:
           - '[close]'
-          - '[message] &7创建传送点：&e/setwarp 名字'
+          - '[form-input] setwarp'
 
       delwarp:
         material: BARRIER
@@ -2607,7 +3323,7 @@ menus:
         permission: essentials.delwarp
         actions:
           - '[close]'
-          - '[message] &7删除传送点：&e/delwarp 名字'
+          - '[form-input] delwarp'
 
       tpo:
         material: PURPUR_BLOCK
@@ -2662,7 +3378,7 @@ menus:
         permission: residence.admin.info
         actions:
           - '[close]'
-          - '[message] &7领地信息：&e/resadmin info 领地名'
+          - '[form-input] resadmin-info'
 
       remove:
         material: BARRIER
@@ -2675,8 +3391,7 @@ menus:
         permission: residence.admin.remove
         actions:
           - '[close]'
-          - '[message] &7删除领地：&e/resadmin remove 领地名'
-          - '[message] &c删除后不可恢复，请先确认'
+          - '[form-input] resadmin-remove'
 
       setowner:
         material: NAME_TAG
@@ -2688,7 +3403,7 @@ menus:
         permission: residence.admin.setowner
         actions:
           - '[close]'
-          - '[message] &7转移领地：&e/resadmin setowner 领地名 新主人'
+          - '[form-input] resadmin-setowner'
 
       tp:
         material: ENDER_PEARL
@@ -2700,7 +3415,7 @@ menus:
         permission: residence.admin.tp
         actions:
           - '[close]'
-          - '[message] &7传送到领地：&e/resadmin tp 领地名'
+          - '[form-input] resadmin-tp'
 
       select:
         material: DIAMOND_PICKAXE
@@ -2712,7 +3427,7 @@ menus:
         permission: residence.admin.select
         actions:
           - '[close]'
-          - '[message] &7选取领地：&e/resadmin select 领地名'
+          - '[form-input] resadmin-select'
 
   # ==================== 审计与回滚（CoreProtect） ====================
   admin-inspect:
@@ -2758,8 +3473,7 @@ menus:
         permission: coreprotect.lookup
         actions:
           - '[close]'
-          - '[message] &7查询记录：&e/co lookup u:玩家名 t:24h r:10'
-          - '[message] &8参数：u=玩家 t=时间 r=半径 a=动作 b=方块'
+          - '[form-input] co-lookup'
 
       rollback:
         material: CLOCK
@@ -2772,8 +3486,7 @@ menus:
         permission: coreprotect.rollback
         actions:
           - '[close]'
-          - '[message] &c回滚：&e/co rollback u:玩家名 t:24h r:10'
-          - '[message] &c务必先用 /co lookup 确认范围'
+          - '[form-input] co-rollback'
 
       restore:
         material: REPEATER
@@ -2785,7 +3498,7 @@ menus:
         permission: coreprotect.restore
         actions:
           - '[close]'
-          - '[message] &7撤销回滚：&e/co restore u:玩家名 t:24h'
+          - '[form-input] co-restore'
 
       purge:
         material: TNT
@@ -3195,7 +3908,7 @@ menus:
         permission: luckperms.tree
         actions:
           - '[close]'
-          - '[message] &7权限树：&e/lp tree 关键字'
+          - '[form-input] lp-tree'
 
       info:
         material: BOOK
@@ -3228,8 +3941,7 @@ menus:
         permission: luckperms.verbose
         actions:
           - '[close]'
-          - '[message] &7开启追踪：&e/lp verbose on 玩家名 权限关键字'
-          - '[message] &7关闭追踪：&e/lp verbose off'
+          - '[form-input] lp-verbose'
 
   # ==================== 菜单管理（QuickMenu 自身） ====================
   admin-qm:
@@ -3334,8 +4046,7 @@ menus:
         permission: essentials.eco
         actions:
           - '[close]'
-          - '[message] &7发钱：&e/eco give 玩家名 金额'
-          - '[message] &7例：&e/eco give Steve 500'
+          - '[form-input] eco-give'
 
       eco-take:
         material: BARRIER
@@ -3347,7 +4058,7 @@ menus:
         permission: essentials.eco
         actions:
           - '[close]'
-          - '[message] &7扣钱：&e/eco take 玩家名 金额'
+          - '[form-input] eco-take'
 
       eco-set:
         material: DIAMOND
@@ -3359,7 +4070,7 @@ menus:
         permission: essentials.eco
         actions:
           - '[close]'
-          - '[message] &7设余额：&e/eco set 玩家名 金额'
+          - '[form-input] eco-set'
 
       ahadmin:
         material: GOLD_INGOT

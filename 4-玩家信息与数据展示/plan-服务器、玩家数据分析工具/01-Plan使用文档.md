@@ -2,6 +2,18 @@
 
 Plan 是服务器数据分析工具：自动采集玩家活动、服务器性能、地理分布与留存率，内置 Web 仪表盘可视化展示（本服地址 `http://plan.mchappyhut.club:8804`）。
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/Plan-5.9-dev-build-3786.jar`，`version: 5.9 build 3786` |
+| 官方最新 | 官网持续更新，当前按官方 GitHub Wiki（5.x 口径）；本地为 5.9 dev 构建 |
+| 官方文档站 | https://github.com/plan-player-analytics/Plan/wiki （现行 GitHub Wiki，未迁移） |
+| 官方下载 | https://github.com/plan-player-analytics/Plan （GitHub Releases） · https://www.spigotmc.org/resources/player-analytics-plan.32536/ |
+| 主要页面 | https://github.com/plan-player-analytics/Plan/wiki/Bukkit-Configuration · https://github.com/plan-player-analytics/Plan/wiki/Commands-%26-Permissions · https://github.com/plan-player-analytics/Plan/wiki/PlaceholderAPI · https://github.com/plan-player-analytics/Plan/wiki/Database-management · https://github.com/plan-player-analytics/Plan/wiki/Database-Schema |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 安装
 
 1. GitHub Releases 下载 `Plan.jar` → 放入 `plugins/`
@@ -66,7 +78,10 @@ Analysis:
 
 | 占位符 | 说明 |
 | --- | --- |
-| `%plan_player_time_total%` | 玩家总在线时长 |
+| `%plan_player_time_total%` | 玩家总在线时长（格式化，如 `6d  10h 26m 43s`） |
+| `%plan_player_time_total_raw%` | 总在线时长原始值，**毫秒** |
+| `%math_0:_{plan_player_time_total_raw}/60000%` | 总在线**分钟**数（需 PAPI Math 扩展，头顶名牌采用） |
+| `%plan_player_current_session_length%` | 本次进服时长（非总时长） |
 | `%plan_player_kdr%` | 玩家 K/D |
 | `%plan_player_activity_index%` | 玩家活动指数（0-5） |
 | `%plan_server_players_online%` | 服务器当前在线人数 |

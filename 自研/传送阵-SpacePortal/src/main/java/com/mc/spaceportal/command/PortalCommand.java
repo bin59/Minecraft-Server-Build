@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * /spaceportal（别名 /csz、/portal）指令。
+ * /spaceportal（别名 /csz、/spportal）指令。
+ * 不注册 /portal 别名：Advanced Portals 2.8.0 的主命令就是 /portal，
+ * 同服注册会互相抢命令，导致 /portal create 等子指令落到本插件上。
  */
 public class PortalCommand implements CommandExecutor, TabCompleter {
 

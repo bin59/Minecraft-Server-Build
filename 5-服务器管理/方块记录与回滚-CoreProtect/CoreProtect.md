@@ -2,14 +2,26 @@
 
 本页是南瓜生存服方块记录与回滚插件 CoreProtect CE 的说明文档，涵盖当前版本、关键配置、MySQL 数据库搭建步骤、常用查询与回滚命令，以及第三方网页查询面板 CoLWI 的部署与安全要求，供服主排查 grief 破坏、追回被盗物品和审计玩家行为时使用。
 
-**当前版本**: CoreProtect **26.3 自编译开发版**（`CoreProtect-CE-24.1.jar`，基于 paper-api 26.3.build.38-alpha 编译） | **MC 要求**: 1.16.5+
+**当前版本**: CoreProtect **24.1（CE）**（`CoreProtect-CE-24.1.jar`，基于 paper-api 26.3.build.38-alpha 编译） | **MC 要求**: 1.16.5+
 
 **官方网站**: https://coreprotect.net | **GitHub**: https://github.com/PlayPro/CoreProtect
 
-**官方文档**: https://docs.coreprotect.net/
+**官方文档**: https://docs.coreprotect.net/（新版文档站，已取代旧 `coreprotect.net/wiki`；旧教程里的 wiki 链接请改到新站）
 **下载**: https://modrinth.com/plugin/coreprotect/versions
 
 > 📚 **同目录文档**：《一些操作.md》（完整命令/参数手册）、[CoreProtect插件：玩家的行为数据库过大](CoreProtect插件：玩家的行为数据库过大)（数据库清理与 MySQL 迁移专题）
+
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/CoreProtect-CE-24.1.jar`，`version: 24.1`（Community Edition） |
+| 官方最新 | 官网持续更新，当前按官方 wiki 口径 |
+| 官方文档站 | <https://docs.coreprotect.net/>（新站，已取代旧 `coreprotect.net/wiki`）· 官网 <http://coreprotect.net> |
+| 官方下载 | <https://modrinth.com/plugin/coreprotect/versions> · <https://github.com/PlayPro/CoreProtect> |
+| 主要页面 | `/commands/` · `/permissions/` · `/config/` · `/database-migration/` · `/auto-purge/` · `/api/` |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
 
 ## 功能说明
 

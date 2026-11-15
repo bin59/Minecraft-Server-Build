@@ -1,5 +1,5 @@
 name: DailySell
-version: 1.2.3
+version: 1.2.4
 main: com.hh.dailysell.DailySell
 api-version: 26.3
 softdepend: [Vault, floodgate]

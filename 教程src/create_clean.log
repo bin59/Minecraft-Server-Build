@@ -1,0 +1,14 @@
+[00:48:57] deleting stale doc BapHPvvGWnLP
+[00:48:57] delete resp: {"jsonrpc": "2.0", "id": 1, "result": {"content": [{"type": "text", "text": "{\"trace_id\":\"c1a44c251d4e4830879e6fef3099e582\"}"}], "structuredContent": {"trace_id": "c1a44c251d4e4830879e6fef3099e582
+[00:48:57] creating SMARTCANVAS doc title=南瓜国际服插件使用教程
+[00:48:58] created file_id=BMldstWkpCbP
+[00:48:58] create resp head: {"jsonrpc": "2.0", "id": 1, "result": {"content": [{"type": "text", "text": "{\"error\":\"\",\"file_id\":\"BMldstWkpCbP\",\"space_id\":\"\",\"title\":\"南瓜国际服插件使用教程\",\"trace_id\":\"b164400d66c14b3086cf5ac3f07dc923\",\"type\":\"smartcanvas\",\"url\":\"https://docs.qq.com/aio/DQk1sZHN0V2twQ2JQ\"}"}], "structuredContent": {"error": "", "file_id": "BMldstWkpCbP", "space_id": "", "title": "南瓜国际服插件使用教程"
+[00:49:20] appended 16 chunks (0..15)
+[00:49:20] waiting 5s then verify
+[00:49:49]   各章出现次数: {'核心与网络层': 2, '运维监控与面板': 2, '基础指令与经济系统': 2, '玩法与玩家功能': 2, '家园/地图/模型/附魔/死亡/皮肤': 1, '权限/数据/分析核心': 1, '服务器管理工具': 2, '自研插件': 19}
+[00:49:49]   重复章节: ['核心与网络层', '运维监控与面板', '基础指令与经济系统', '玩法与玩家功能', '服务器管理工具', '自研插件']
+[00:49:49]   缺失章节: 无
+[00:49:49]   表格<Table: 1985  单元格<TableCell: 1438
+[00:49:49]   真实损坏锚点([非URL]()): 0
+[00:49:49]   总块id=: 4373
+[00:49:49] VERIFY CHECK (pages=51) file_id=BMldstWkpCbP

@@ -8,7 +8,19 @@
 >
 > ℹ️ **Geyser-Spigot 与 Geyser-Velocity 的区别**：前者跑在后端（Bukkit/Spigot/Paper/Leaf 服务端），后者跑在 Velocity 代理层。本服只有 Leaf 后端，用前者；代理层版的配置项与此处基本一致，只是文件路径在 `velocity/plugins/Geyser-Velocity/`。
 
-**官方网站**: https://geysermc.org | **Wiki**: https://wiki.geysermc.org
+**官方网站**: https://geysermc.org | **Wiki**: https://geysermc.org/wiki/geyser/
+
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/Geyser-Spigot.jar`，`version: 2.12.1-SNAPSHOT` |
+| 官方最新 | 官方下载页最新 Build #1302（2026-11-12，支持 Java 26.3 / Bedrock 26.40-26.63）；官网持续更新，当前按官方文档口径 |
+| 官方文档站 | <https://geysermc.org/wiki/geyser/>（旧 `wiki.geysermc.org` 现仅作总览跳转，内容已迁到 `geysermc.org/wiki/`） |
+| 官方下载 | <https://geysermc.org/download>；Spigot/Paper 直链 <https://download.geysermc.org/v2/projects/geyser/versions/latest/builds/latest/downloads/spigot> |
+| 主要页面 | [安装](https://geysermc.org/wiki/geyser/setup) · [Geyser](https://geysermc.org/wiki/geyser/) · [Floodgate](https://geysermc.org/wiki/floodgate/) · [其他项目](https://geysermc.org/wiki/other/) · [REST API](https://geysermc.org/wiki/api/) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
 
 ## 功能说明
 

@@ -1,5 +1,17 @@
 # ExcellentEnchants —— 80+ 原版风格自定义附魔
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/ExcellentEnchants-5.4.3.jar`，`version: 5.4.3`；前置 `plugins/nightcore-2.16.6.jar` |
+| 官方最新 | 5.4.3（2026-06 更新，与本服一致）；NightCore 2.16.6 |
+| 官方文档站 | <https://wiki.nightexpress.dev/>（官方指定，本次访问未通）；现行官方页 <https://nightexpressdev.com/excellentenchants/> |
+| 官方下载 | <https://modrinth.com/plugin/excellentenchants>；<https://www.spigotmc.org/resources/excellentenchants-%E2%AD%90-80-vanilla-like-enchantments.61693/>；前置 <https://modrinth.com/plugin/nightcore> |
+| 主要页面 | `nightexpressdev.com/excellentenchants/commands`、`nightexpressdev.com/excellentenchants/permissions`、`nightexpressdev.com/excellentenchants/`（首页）、`modrinth.com/plugin/nightcore`（NightCore 下载） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 > 作者 NightExpress。新增 **80+ 与原版风格一致**的自定义附魔，完全融入附魔台 / 村民交易 / 战利品箱 / 钓鱼 / 铁砧 / 砂轮等原版机制，生存服体验无缝。开源免费。
 
 ## 下载与兼容
@@ -58,6 +70,26 @@ UnknownDependencyException: Unknown/missing dependency plugins: [nightcore]. Ple
 | 生物装备 | 怪物可携带附魔自定义附魔的装备生成（5.4+）        |
 | 铁砧合并 | 两本同附魔同等级书合并升下一级                    |
 | 砂轮     | 可拆书，与原版一致                                |
+
+### 只售卖附魔的产出隔离（本服：火焰行者）
+
+`flame_walker`（火焰行者）2026-11-14 已启用，并设为**仅能在附魔商店购买**：不进附魔台、战利品箱、钓鱼、村民交易、怪物装备。改的是 `plugins/ExcellentEnchants/enchants/flame_walker.yml`（只对该附魔生效，其他附魔不受影响）：
+
+| 字段 | 值 | 封掉的途径 |
+| --- | --- | --- |
+| `Tradeable` | `false` | 图书管理员出售附魔书 |
+| `TradeTypes` | `[]` | 村民交易重平衡的各群系交易标签 |
+| `On_Random_Loot` | `false` | 战利品箱 / 钓鱼 / 掠夺的随机附魔装备与书 |
+| `On_Mob_Spawn_Equipment` | `false` | 怪物自带装备 |
+| `On_Traded_Equipment` | `false` | 村民出售的附魔装备 |
+| `Discoverable` | `false` | 附魔台 + 战利品表按等级附魔 |
+| `Treasure` | `true` | 保留：宝藏附魔天然不进附魔台 |
+| `Hide_From_List` | `true` | 从 `/eenchants list` GUI 隐藏，避免玩家从 GUI 获取 |
+
+- `distribution.yml` 的 5 个全局开关**保持全开**：那是全体 ExcellentEnchants 附魔的总闸，关掉会连其他 80 个附魔一起断。插件在 26.x 由 `RegistryHack_26_1_2` 把上述字段映射到原版标签（`ON_RANDOM_LOOT` / `TRADEABLE` / `IN_ENCHANTING_TABLE` 等），`false` 时 `removeFromTag` 从标签摘除，按附魔单独关有效。
+- 自研 EnchantShop 遍历 `Registry.ENCHANTMENT` 后直接 `meta.addEnchant`，不走任何产出标签，**完全不受影响**：商店价格 `AnvilCost: 7`（每级 7 经验等级）、`SupportedItems: boots`、`MaxLevel: 2`。
+- 管理主动发放仍可用 `/eenchants book flame_walker 2 <玩家>`；`/eenchants randombook` 也可能抽到它，这两条属管理渠道，不算自然产出。
+- `Definition` / `Distribution` 段均标 `Reboot required`，需**完整重启**生效，`/eenchants reload` 不够。
 
 ## 基岩玩家附魔方案（自研 EnchantShop 附魔商店）
 
@@ -256,7 +288,7 @@ Java 玩家用物理铁砧完全正常，只有基岩玩家蹲物理铁砧附魔
 
 | 附魔                         | 效果                                                                 | 最大等级 | 获取权重 |
 | ---------------------------- | -------------------------------------------------------------------- | -------: | -------: |
-| **火焰行者**（Flame Walker） | 可在岩浆上行走，免疫岩浆块伤害。                                     |        2 |        1 |
+| **火焰行者**（Flame Walker） | 可在岩浆上行走，免疫岩浆块伤害。**本服已启用，仅附魔商店售卖**（见「只售卖附魔的产出隔离」） |        2 |        1 |
 | **高跳**（Jumping）          | 永久获得 %enchantment_potion_type% %enchantment_potion_level% 效果。 |        2 |        2 |
 | **轻盈**（Lightweight）      | 可安全踩踏海龟蛋、耕地与大型垂滴叶。                                 |        1 |       10 |
 | **回弹**（Rebound）          | 落地时获得粘液块般的弹跳效果。                                       |        1 |        2 |

@@ -3,7 +3,7 @@
 """DailySell 离线编译脚本：JDK 25 javac --release 21 + 26.3 实跑 jar。
 
 用法： python build.py
-产物： target/DailySell-1.2.2.jar
+产物： target/DailySell-1.2.4.jar
 
 依赖（全部本机已有，无网络）：
   - 自研/lib/leaf-api-26.3.build.13-alpha.jar（服务端 API）
@@ -24,7 +24,7 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src", "main", "java")
 RES = os.path.join(ROOT, "src", "main", "resources")
 CLASSES = os.path.join(ROOT, "target", "classes")
-JAR_NAME = "DailySell-1.2.3.jar"
+JAR_NAME = "DailySell-1.2.4.jar"
 TARGET = os.path.join(ROOT, "target", JAR_NAME)
 
 SHARED_LIB = os.path.normpath(os.path.join(ROOT, "..", "lib"))

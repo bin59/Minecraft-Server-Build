@@ -1,5 +1,17 @@
 # BedrockPlayerSupport 基岩版 GUI 表单界面
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/BedrockPlayerSupport-2.1.1-all.jar`，`version: 2.1.1` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（官方 GitHub Releases；本服 2.1.1） |
+| 官方文档站 | <https://docs.bps.dsnb.cc/>（在线文档：表单 / 命令与权限 / 插件兼容性表格） |
+| 官方下载 | <https://github.com/DongShaoNB/BedrockPlayerSupport/releases> |
+| 主要页面 | `github.com/DongShaoNB/BedrockPlayerSupport`（README：功能 / 安装 / Floodgate 前置）、`docs.bps.dsnb.cc/`（命令与权限）、`github.com/DongShaoNB/BedrockPlayerSupport/releases`（版本） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 > ⚠️ 注意区分同名插件：本文档是作者 **DongShao** 的 **BedrockPlayerSupport**（GUI 表单界面）；**BedrockPlayerManager**（ofunny）是另一个插件，别下错。
 
 ## 简介

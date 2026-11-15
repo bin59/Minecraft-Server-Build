@@ -1,5 +1,17 @@
 # PatPat [Plugin]（摸摸头）
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/patpat-plugin-1.2.5.jar`，`version: 1.2.5+0268419` |
+| 官方最新 | 插件版 1.2.5（2026-02-17）、客户端 mod 1.3.2+26.3（2026-09-23）；本服插件已是 1.2.5 |
+| 官方文档站 | <https://wiki.nik51.name/en/docs/patpat-plugin>（沿用文档，本次未能验证具体页面）；官方 GitHub <https://github.com/LopyMine/PatPat-Plugin> |
+| 官方下载 | <https://modrinth.com/plugin/patpat>（Modrinth 官方项目，含插件版）；<https://www.curseforge.com/minecraft/bukkit-plugins/patpat-plugin> |
+| 主要页面 | `github.com/LopyMine/PatPat-Plugin`（源码 / `doc/en/config.md` 配置文档）、`modrinth.com/plugin/patpat`（Overview / Wiki 入口）、`github.com/LopyMine/PatPat`（客户端 mod 源码） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 > **一句话**：服务端侧的摸头数据包中转插件。**玩家仍必须安装 Java 客户端 PatPat mod**，插件自己不产生摸头效果，只负责把装了 mod 的客户端之间的摸头动作互相转发，并在服务端做权限、限流与名单控制。
 >
 > **本服 jar**：`plugins/patpat-plugin-1.2.5.jar`（插件名 `PatPatPlugin`，版本 `1.2.5+0268419`）

@@ -8,6 +8,18 @@
 
 **官方网站**: https://viaversion.com | **文档**: https://docs.viaversion.com
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/ViaVersion-5.12.2.jar`，`version: 5.12.2-SNAPSHOT` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（jar 需与 ViaBackwards 同发布批次） |
+| 官方文档站 | <https://docs.viaversion.com/>（Via 系列官方 Wiki 主站，页面内容托管于 GitHub Wiki） |
+| 官方下载 | <https://viaversion.com/>（官网）· <https://hangar.papermc.io/ViaVersion>（Hangar 发布页） |
+| 主要页面 | [Installation](https://github.com/ViaVersion/ViaVersion/wiki/Installation) · [Configuration](https://github.com/ViaVersion/ViaVersion/wiki/Configuration) · [Java Requirements](https://github.com/ViaVersion/ViaVersion/wiki/Java-Requirements) · [Home](https://github.com/ViaVersion/ViaVersion/wiki/Home) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 功能说明
 
 ViaVersion 让**比服务端更新的客户端**连入服务器，同时是 Via 系列的协议基础层，其它 Via 插件都硬依赖它。本服在 ViaVersion 之外还装了 **ViaBackwards**，由后者把可加入的客户端范围向下扩展到旧版 Java 客户端（低至 1.9）；基岩端则走 Geyser + Floodgate，与 Via 系列无关。

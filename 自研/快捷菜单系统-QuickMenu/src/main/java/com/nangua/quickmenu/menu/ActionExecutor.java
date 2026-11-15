@@ -115,6 +115,14 @@ public final class ActionExecutor {
                 }
                 break;
 
+            case INPUT_FORM:
+                if (!value.isEmpty()) {
+                    // 基岩端弹参数输入表单；Java 端 / 表单不可用时
+                    // 由 MenuManager 降级为表单配置里的 fallback 文本提示
+                    plugin.getMenuManager().openInputForm(player, value);
+                }
+                break;
+
             case AH_SELL:
                 // 格式："价格 材质名"，如 "5000 elytra"
                 if (!value.isEmpty()) {

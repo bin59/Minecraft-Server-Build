@@ -236,6 +236,35 @@ public final class MenuManager {
     }
 
     /**
+     * 打开参数输入表单（CustomForm）。
+     *
+     * <p>基岩玩家优先原生表单；Java 玩家、Floodgate 不可用或表单发送失败时
+     * 自动降级为表单配置里的 {@code fallback} 文本提示，不弹箱子界面
+     * （箱子界面同样没有输入框，回退没有意义）。
+     */
+    public void openInputForm(Player player, String formId) {
+        com.nangua.quickmenu.menu.InputForm form = plugin.getSettings().findInputForm(formId);
+        if (form == null) {
+            player.sendMessage(ActionExecutor.color(
+                    "&c输入表单不存在：" + formId));
+            return;
+        }
+
+        boolean bedrockNative = plugin.getSettings().isBedrockUseNativeForm()
+                && isBedrockPlayer(player);
+        if (bedrockNative && formRenderer != null
+                && formRenderer.renderInputForm(player, form)) {
+            return;
+        }
+
+        for (String line : form.getFallback()) {
+            if (!line.isEmpty()) {
+                player.sendMessage(ActionExecutor.color(line));
+            }
+        }
+    }
+
+    /**
      * 关闭所有玩家打开中的菜单界面（服务器关闭时调用）。
      */
     public void closeAll() {

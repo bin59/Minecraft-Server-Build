@@ -3,12 +3,18 @@ package com.nangua.quickmenu.gui;
 import com.nangua.quickmenu.QuickMenuPlugin;
 import com.nangua.quickmenu.menu.Action;
 import com.nangua.quickmenu.menu.ActionExecutor;
+import com.nangua.quickmenu.menu.ActionType;
+import com.nangua.quickmenu.menu.InputForm;
 import com.nangua.quickmenu.menu.Menu;
 import com.nangua.quickmenu.menu.MenuItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.geysermc.cumulus.component.util.ComponentType;
+import org.geysermc.cumulus.form.CustomForm;
 import org.geysermc.cumulus.form.SimpleForm;
+import org.geysermc.cumulus.response.CustomFormResponse;
 import org.geysermc.cumulus.response.SimpleFormResponse;
+import org.geysermc.cumulus.util.FormImage;
 import org.geysermc.floodgate.api.FloodgateApi;
 import org.geysermc.floodgate.api.player.FloodgatePlayer;
 
@@ -18,38 +24,35 @@ import java.util.List;
 /**
  * 基岩端原生 Form 渲染器。
  *
- * <p>通过 Floodgate 提供的 Cumulus API 向基岩客户端发送原生 SimpleForm。
+ * <p>通过 Floodgate 提供的 Cumulus API 向基岩客户端发送原生表单。
  * 表单由基岩客户端自身渲染，具备完整的触屏滚动与点击反馈，
  * 不存在 Geyser 箱子界面的拖出物品、高亮异常、无法打开等缺陷。
  *
  * <p><b>线程模型</b>：Cumulus 的响应回调在 Netty 网络线程触发，
- * 因此所有动作执行都通过 {@link ActionExecutor#runAsyncSafe} 切回主线程。
- * 这是基岩端最容易踩的坑——直接在回调里操作背包会导致服务器崩溃。
+ * 因此所有动作执行都通过 {@link ActionExecutor#runAsyncSafe} 或
+ * {@code Bukkit.getScheduler().runTask} 切回主线程。
  *
- * <p><b>颜色码处理</b>：原生 Form 按钮不支持 Minecraft 颜色码（& 或 §），
- * 会显示为乱码字符。因此按钮文本统一使用 {@link ActionExecutor#stripColor} 去除颜色码。
- * 表单标题与正文则保留 § 形式（基岩客户端支持标题颜色）。
+ * <p><b>外观</b>：按钮图标、两行按钮文本、标题分隔线、返回/关闭/空态
+ * 全部由 {@link BedrockFormStyle} 统一提供；配置改动后 {@code /qm reload} 即生效。
  *
- * <p><b>依赖说明</b>：本类使用的 Geyser cumulus（{@code org.geysermc.cumulus.form.SimpleForm}）
- * 与 Floodgate（{@code org.geysermc.floodgate.api.*}）API，按当前实跑 jar 校验包名与类名
- * （cumulus 路径 {@code form.SimpleForm} 存在于 Geyser jar），二者均由服务器在运行时提供。
- * Geyser / Floodgate 以 systemPath 形式参与编译，不打进插件 jar。
- * 若后续 cumulus/Floodgate 调整包名或方法签名，按编译报错修正本类调用即可；
- * 未安装 Floodgate 时本类不会被触碰，全部玩家走箱子界面。
+ * <p><b>说明页</b>：动作只有 {@code [close]} + 若干 {@code [message]} 的菜单项
+ * （旧版会在聊天栏刷用法文字），基岩端改为弹一张说明表单：正文是整理后的说明，
+ * 底部两个按钮「返回菜单 / 关闭」。Java 端仍走原来的聊天提示，行为不变。
+ *
+ * <p><b>依赖说明</b>：cumulus 与 floodgate API 均由服务器运行时提供，
+ * 编译期以 systemPath 参与、不打进插件 jar。未安装 Floodgate 时本类不会被实例化。
  */
 public final class BedrockFormRenderer {
 
     private final QuickMenuPlugin plugin;
+    private final BedrockFormStyle style;
 
     public BedrockFormRenderer(QuickMenuPlugin plugin) {
         this.plugin = plugin;
+        this.style = new BedrockFormStyle(plugin);
     }
 
-    /**
-     * 判断玩家是否为基岩版玩家（通过 Floodgate 认证）。
-     *
-     * <p>Floodgate 未安装时恒返回 false，插件自动回退到箱子界面。
-     */
+    /** 判断玩家是否为基岩版玩家（通过 Floodgate 认证）。 */
     public boolean isBedrockPlayer(Player player) {
         if (!plugin.isFloodgateAvailable()) {
             return false;
@@ -58,7 +61,6 @@ public final class BedrockFormRenderer {
             FloodgateApi api = FloodgateApi.getInstance();
             return api.isFloodgatePlayer(player.getUniqueId());
         } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
-            // Floodgate 已卸载或初始化失败
             return false;
         }
     }
@@ -72,62 +74,43 @@ public final class BedrockFormRenderer {
         if (!isBedrockPlayer(player)) {
             return false;
         }
+        style.reload();
 
-        // 按顺序收集玩家有权限看到的菜单项。
-        // 必须维护这个列表：SimpleFormResponse.clickedButtonId() 返回的是
-        // 玩家点击的按钮序号，而非菜单项 id，若菜单项因权限被跳过则序号会错位。
-        //
-        // 这里刻意不使用 button(text, consumer) 的逐按钮回调，
-        // 而是统一在 validResultHandler 中按索引分发。原因：两种机制并存时
-        // 难以保证只触发一次，统一入口可避免动作被重复执行。
+        // 按顺序收集玩家有权限看到的菜单项。权限过滤会让按钮序号前移，
+        // 因此必须维护 visibleItems，SimpleFormResponse.clickedButtonId() 才能正确对应。
         List<MenuItem> visibleItems = new ArrayList<>();
         SimpleForm.Builder builder = SimpleForm.builder()
-                .title(ActionExecutor.color(menu.getTitle()));
+                .title(style.title(menu.getTitle()));
 
-        String content = menu.getBedrockContent();
-        if (content == null || content.isEmpty()) {
-            content = menu.getTitle();
-        }
-        builder.content(ActionExecutor.color(content));
+        String backMenu = menu.getBackMenu();
+        boolean hasBackButton = backMenu != null && !backMenu.isEmpty();
 
         for (MenuItem item : menu.getItems()) {
             if (!plugin.getActionExecutor().hasItemPermission(player, item)) {
                 continue;
             }
             if (!item.visibleToday()) {
-                // days 条件不满足：与 Java 端一致，今日不显示（每天轮换的任务菜单）
                 continue;
             }
             visibleItems.add(item);
-
-            String label = item.getButtonLabel();
-            if (label == null || label.isEmpty()) {
-                // 未配置专用按钮文本时，用显示名并去除颜色码
-                label = ActionExecutor.stripColor(item.getDisplayName());
-            } else {
-                label = ActionExecutor.stripColor(label);
-            }
-            builder.button(label);
+            style.itemButton(builder, item);
         }
 
-        // 返回按钮：有上级菜单时追加，固定位于列表末尾
-        String backMenu = menu.getBackMenu();
-        boolean hasBackButton = backMenu != null && !backMenu.isEmpty();
         if (hasBackButton) {
-            builder.button(ActionExecutor.stripColor("&c返回"));
+            style.backButton(builder);
         }
+
+        // 重新设置带准确按钮数量的正文（SimpleForm.Builder 允许重复调用 content）
+        builder.content(style.contentFor(menu, visibleItems.size() + (hasBackButton ? 1 : 0)));
 
         final int visibleCount = visibleItems.size();
 
-        // 统一的结果处理：区分正常点击、返回、关闭表单、无效响应
         builder.validResultHandler((SimpleFormResponse response) -> {
             int index = response.clickedButtonId();
 
-            // 返回按钮
             if (hasBackButton && index == visibleCount) {
                 List<Action> backAction = new ArrayList<>(1);
-                backAction.add(new Action(
-                        com.nangua.quickmenu.menu.ActionType.OPEN_MENU, backMenu));
+                backAction.add(new Action(ActionType.OPEN_MENU, backMenu));
                 plugin.getActionExecutor().runAsyncSafe(player, backAction);
                 return;
             }
@@ -140,8 +123,14 @@ public final class BedrockFormRenderer {
                 return;
             }
 
-            // 此回调在 Netty 网络线程执行，执行器内部会切回主线程
             MenuItem clicked = visibleItems.get(index);
+
+            // 纯说明项：不再往聊天栏刷文字，改成一张带按钮的说明表单
+            if (isInfoOnly(clicked)) {
+                Bukkit.getScheduler().runTask(plugin, () -> renderInfoForm(player, menu, clicked));
+                return;
+            }
+
             plugin.getActionExecutor().runAsyncSafe(player, clicked.getActions());
         });
 
@@ -151,42 +140,72 @@ public final class BedrockFormRenderer {
             }
         });
 
-        builder.invalidResultHandler(() -> {
-            plugin.getLogger().warning("玩家 " + player.getName()
-                    + " 的基岩表单响应无效，菜单: " + menu.getId());
-        });
+        builder.invalidResultHandler(() ->
+                plugin.getLogger().warning("玩家 " + player.getName()
+                        + " 的基岩表单响应无效，菜单: " + menu.getId()));
 
-        // 发送表单
-        try {
-            FloodgateApi api = FloodgateApi.getInstance();
-            FloodgatePlayer floodgatePlayer = api.getPlayer(player.getUniqueId());
-            if (floodgatePlayer == null) {
-                return false;
-            }
-            return floodgatePlayer.sendForm(builder);
-        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
-            plugin.getLogger().warning("Floodgate API 不可用，无法发送原生表单: " + ex.getMessage());
-            return false;
-        }
+        return send(player, builder);
     }
 
     /**
-     * 向基岩玩家发送"在线玩家选择器"表单。
-     *
-     * <p>动态为每个在线玩家（排除自己）添加一个按钮，玩家点击后
-     * 以玩家身份执行命令模板（{@code {target}} 替换为所点玩家名）。
-     * 回调在 Netty 网络线程触发，因此命令执行通过主线程调度。
-     *
-     * @return true 表示发送成功；false 表示玩家不是基岩玩家或发送失败
+     * 说明表单：把菜单项里所有 [message] 文本整理成一段正文，
+     * 底部给「返回菜单 / 关闭」两个按钮。原聊天提示不再发送。
      */
-    public boolean renderPlayerSelector(Player player, String commandTemplate) {
+    public boolean renderInfoForm(Player player, Menu parent, MenuItem item) {
         if (!isBedrockPlayer(player)) {
+            return false;
+        }
+        style.reload();
+
+        List<String> messages = new ArrayList<>();
+        for (Action action : item.getActions()) {
+            if (action.getType() == ActionType.MESSAGE && !action.getValue().isEmpty()) {
+                messages.add(action.getValue());
+            }
+        }
+        if (messages.isEmpty()) {
             return false;
         }
 
         SimpleForm.Builder builder = SimpleForm.builder()
-                .title(ActionExecutor.color(plugin.getSettings().getPlayerSelectorTitle()))
-                .content(ActionExecutor.color(plugin.getSettings().getPlayerSelectorContent()));
+                .title(style.infoTitle(ActionExecutor.stripColor(item.getDisplayName())))
+                .content(style.infoContent(messages));
+
+        style.backButton(builder);
+        style.closeButton(builder);
+
+        builder.validResultHandler((SimpleFormResponse response) -> {
+            if (response.clickedButtonId() == 0) {
+                List<Action> back = new ArrayList<>(1);
+                back.add(new Action(ActionType.OPEN_MENU, parent.getId()));
+                plugin.getActionExecutor().runAsyncSafe(player, back);
+            }
+            // index 1 = 关闭，不做任何事
+        });
+
+        builder.closedResultHandler(() -> {
+            if (plugin.getSettings().isDebug()) {
+                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了说明表单: "
+                        + parent.getId() + "." + item.getId());
+            }
+        });
+
+        builder.invalidResultHandler(() ->
+                plugin.getLogger().warning("玩家 " + player.getName()
+                        + " 的说明表单响应无效: " + parent.getId() + "." + item.getId()));
+
+        return send(player, builder);
+    }
+
+    /** 在线玩家选择器（带图标、两行按钮）。 */
+    public boolean renderPlayerSelector(Player player, String commandTemplate) {
+        if (!isBedrockPlayer(player)) {
+            return false;
+        }
+        style.reload();
+
+        SimpleForm.Builder builder = SimpleForm.builder()
+                .title(style.title(plugin.getSettings().getPlayerSelectorTitle()));
 
         List<String> targets = new ArrayList<>();
         for (Player online : Bukkit.getOnlinePlayers()) {
@@ -194,11 +213,18 @@ public final class BedrockFormRenderer {
                 continue;
             }
             targets.add(online.getName());
-            builder.button(online.getName());
         }
 
+        builder.content(style.content(plugin.getSettings().getPlayerSelectorContent(),
+                targets.isEmpty() ? 1 : targets.size()));
+
+        String sub = ActionExecutor.stripColor(plugin.getSettings().getPlayerSelectorLore());
+        FormImage icon = style.imageOf("PLAYER_HEAD");
+        for (String name : targets) {
+            style.button(builder, name + (sub.isEmpty() ? "" : "\n" + sub), icon);
+        }
         if (targets.isEmpty()) {
-            builder.button(ActionExecutor.stripColor(plugin.getSettings().getPlayerSelectorNoPlayers()));
+            style.emptyButton(builder, plugin.getSettings().getPlayerSelectorNoPlayers());
         }
 
         builder.validResultHandler((SimpleFormResponse response) -> {
@@ -207,78 +233,49 @@ public final class BedrockFormRenderer {
                 return;
             }
             String target = targets.get(index);
-            // Netty 线程 → 主线程
             Bukkit.getScheduler().runTask(plugin, () ->
                     player.performCommand(commandTemplate.replace("{target}", target)));
         });
 
-        builder.closedResultHandler(() -> {
-            if (plugin.getSettings().isDebug()) {
-                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了玩家选择器表单");
-            }
-        });
-
-        builder.invalidResultHandler(() -> {
-            plugin.getLogger().warning("玩家 " + player.getName()
-                    + " 的玩家选择器表单响应无效");
-        });
-
-        try {
-            FloodgateApi api = FloodgateApi.getInstance();
-            FloodgatePlayer floodgatePlayer = api.getPlayer(player.getUniqueId());
-            if (floodgatePlayer == null) {
-                return false;
-            }
-            return floodgatePlayer.sendForm(builder);
-        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
-            plugin.getLogger().warning("Floodgate API 不可用，无法发送玩家选择器表单: " + ex.getMessage());
-            return false;
-        }
+        attachDiagnostics(builder, player, "玩家选择器");
+        return send(player, builder);
     }
 
-    /**
-     * 向基岩玩家发送"背包物品选择器"表单。
-     *
-     * <p>动态为玩家背包中的每种物品（跳过触发物品，同材质去重）添加一个按钮，
-     * 玩家点击后以玩家身份执行命令模板（{@code {item}} 替换为材质名小写）。
-     * 回调在 Netty 网络线程触发，因此命令执行通过主线程调度。
-     *
-     * @return true 表示发送成功；false 表示玩家不是基岩玩家或发送失败
-     */
+    /** 背包物品选择器（按材质给出对应图标）。 */
     public boolean renderItemSelector(Player player, String commandTemplate) {
         if (!isBedrockPlayer(player)) {
             return false;
         }
+        style.reload();
 
         SimpleForm.Builder builder = SimpleForm.builder()
-                .title(ActionExecutor.color(plugin.getSettings().getItemSelectorTitle()))
-                .content(ActionExecutor.color("&7选择背包中的物品，点击后执行操作"));
+                .title(style.title(plugin.getSettings().getItemSelectorTitle()));
 
-        // 背包物品：跳过空位与触发物品，同材质去重，保持背包顺序稳定
         List<String> materials = new ArrayList<>();
-        java.util.LinkedHashMap<org.bukkit.Material, String> labels = new java.util.LinkedHashMap<>();
         for (org.bukkit.inventory.ItemStack stack : player.getInventory().getContents()) {
             if (stack == null || stack.getType() == org.bukkit.Material.AIR) {
                 continue;
             }
             if (plugin.getMenuManager().getChestRenderer().isTriggerItem(stack)) {
-                continue; // 触发物品（时钟）没有意义，排除
+                continue;
             }
             String matName = stack.getType().name().toLowerCase();
-            if (labels.containsKey(stack.getType())) {
-                continue; // 同材质只显示一次
+            if (materials.contains(matName)) {
+                continue;
             }
             materials.add(matName);
             org.bukkit.inventory.meta.ItemMeta meta = stack.getItemMeta();
             String display = (meta != null && meta.hasDisplayName())
                     ? ActionExecutor.stripColor(meta.getDisplayName())
                     : stack.getType().name();
-            labels.put(stack.getType(), display);
-            builder.button(display);
+            style.button(builder, display + "\n" + matName, style.imageOf(stack.getType().name()));
         }
 
+        builder.content(style.content(plugin.getSettings().getItemSelectorLore(),
+                materials.isEmpty() ? 1 : materials.size()));
+
         if (materials.isEmpty()) {
-            builder.button(ActionExecutor.stripColor(plugin.getSettings().getItemSelectorNoItems()));
+            style.emptyButton(builder, plugin.getSettings().getItemSelectorNoItems());
         }
 
         builder.validResultHandler((SimpleFormResponse response) -> {
@@ -287,137 +284,199 @@ public final class BedrockFormRenderer {
                 return;
             }
             String item = materials.get(index);
-            // Netty 线程 → 主线程
             Bukkit.getScheduler().runTask(plugin, () ->
                     player.performCommand(commandTemplate.replace("{item}", item)));
         });
 
-        builder.closedResultHandler(() -> {
-            if (plugin.getSettings().isDebug()) {
-                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了物品选择器表单");
-            }
-        });
-
-        builder.invalidResultHandler(() -> {
-            plugin.getLogger().warning("玩家 " + player.getName()
-                    + " 的物品选择器表单响应无效");
-        });
-
-        try {
-            FloodgateApi api = FloodgateApi.getInstance();
-            FloodgatePlayer floodgatePlayer = api.getPlayer(player.getUniqueId());
-            if (floodgatePlayer == null) {
-                return false;
-            }
-            return floodgatePlayer.sendForm(builder);
-        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
-            plugin.getLogger().warning("Floodgate API 不可用，无法发送物品选择器表单: " + ex.getMessage());
-            return false;
-        }
+        attachDiagnostics(builder, player, "物品选择器");
+        return send(player, builder);
     }
 
-    /**
-     * 向基岩玩家发送"我的领地"选择器表单。
-     *
-     * <p>动态为玩家自己名下的每个领地添加一个按钮，玩家点击后
-     * 以玩家身份执行命令模板（{@code {residence}} 替换为所点领地名）。
-     * 若玩家没有任何领地，显示一个提示按钮（点击无效）。
-     * 末尾追加"返回"按钮，点击回到配置的上一级菜单。
-     * 回调在 Netty 网络线程触发，因此命令执行通过主线程调度。
-     *
-     * @return true 表示发送成功；false 表示玩家不是基岩玩家或发送失败
-     */
+    /** 我的领地选择器（带图标、两行按钮、返回按钮）。 */
     public boolean renderResidenceSelector(Player player, String commandTemplate) {
         if (!isBedrockPlayer(player)) {
             return false;
         }
+        style.reload();
 
         SimpleForm.Builder builder = SimpleForm.builder()
-                .title(ActionExecutor.color(plugin.getSettings().getResidenceSelectorTitle()))
-                .content(ActionExecutor.color(plugin.getSettings().getResidenceSelectorContent()));
+                .title(style.title(plugin.getSettings().getResidenceSelectorTitle()));
 
         List<String> residences = com.nangua.quickmenu.hook.ResidenceHook.getOwnResidenceNames(player);
-        boolean hasBackButton = true; // 始终提供返回按钮，便于从领地列表退回
+        String sub = ActionExecutor.stripColor(plugin.getSettings().getResidenceSelectorLore());
+        FormImage icon = style.imageOf("GRASS_BLOCK");
+
+        builder.content(style.content(plugin.getSettings().getResidenceSelectorContent(),
+                residences.isEmpty() ? 2 : residences.size() + 1));
 
         if (residences.isEmpty()) {
-            builder.button(ActionExecutor.stripColor(plugin.getSettings().getResidenceSelectorNoResidences()));
+            style.emptyButton(builder, plugin.getSettings().getResidenceSelectorNoResidences());
         } else {
             for (String name : residences) {
-                builder.button(name);
+                style.button(builder, name + (sub.isEmpty() ? "" : "\n" + sub), icon);
             }
         }
+        style.backButton(builder);
 
-        if (hasBackButton) {
-            builder.button(ActionExecutor.stripColor("&c返回"));
-        }
-
-        final int resCount = residences.size();
+        // 空列表时按钮顺序为 [提示, 返回]，返回按钮的 index 是 1；
+        // 非空时返回按钮位于最后一个领地之后。
+        final int backIndex = residences.isEmpty() ? 1 : residences.size();
 
         builder.validResultHandler((SimpleFormResponse response) -> {
             int index = response.clickedButtonId();
 
-            // 返回按钮（始终位于列表末尾）
-            if (hasBackButton && index == resCount) {
+            if (index == backIndex) {
                 String backMenu = plugin.getSettings().getResidenceSelectorBackMenu();
                 if (backMenu != null && !backMenu.isEmpty()) {
                     List<Action> backAction = new ArrayList<>(1);
-                    backAction.add(new Action(
-                            com.nangua.quickmenu.menu.ActionType.OPEN_MENU, backMenu));
+                    backAction.add(new Action(ActionType.OPEN_MENU, backMenu));
                     plugin.getActionExecutor().runAsyncSafe(player, backAction);
                 }
                 return;
             }
 
-            if (index < 0 || index >= resCount) {
+            if (index < 0 || index >= residences.size()) {
                 return;
             }
             String residence = residences.get(index);
-            // Netty 线程 → 主线程
             Bukkit.getScheduler().runTask(plugin, () ->
                     player.performCommand(commandTemplate.replace("{residence}", residence)));
         });
 
-        builder.closedResultHandler(() -> {
-            if (plugin.getSettings().isDebug()) {
-                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了领地选择器表单");
-            }
-        });
-
-        builder.invalidResultHandler(() -> {
-            plugin.getLogger().warning("玩家 " + player.getName()
-                    + " 的领地选择器表单响应无效");
-        });
-
-        try {
-            FloodgateApi api = FloodgateApi.getInstance();
-            FloodgatePlayer floodgatePlayer = api.getPlayer(player.getUniqueId());
-            if (floodgatePlayer == null) {
-                return false;
-            }
-            return floodgatePlayer.sendForm(builder);
-        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
-            plugin.getLogger().warning("Floodgate API 不可用，无法发送领地选择器表单: " + ex.getMessage());
-            return false;
-        }
+        attachDiagnostics(builder, player, "领地选择器");
+        return send(player, builder);
     }
 
     /**
-     * 获取基岩玩家的客户端信息（用于 /qm info 调试）。
+     * 参数输入表单（CustomForm）：把需要参数的指令做成「点按钮 → 填参数 → 提交执行」。
      *
-     * <p>此处刻意只调用返回 String 的 API 方法。Floodgate 的
-     * getDeviceOs() / getInputMode() 返回的枚举类位于 geyser common 模块，
-     * 未随 floodgate-api 一同发布，直接调用会导致编译期缺少类文件。
-     * 因此改用 getVersion() 与 getLanguageCode()，二者均在 API jar 内。
-     *
-     * @return 客户端信息；无法获取时返回 null
+     * <p>第一个组件是说明 label（Cumulus 会让它占用一个响应索引），
+     * 因此字段索引通过 {@code getComponentTypes()} 逐项算出，不写死下标。
      */
+    public boolean renderInputForm(Player player, InputForm form) {
+        if (!isBedrockPlayer(player)) {
+            return false;
+        }
+        style.reload();
+
+        List<InputForm.Field> fields = form.getFields();
+        if (fields.isEmpty() || form.getCommand().isEmpty()) {
+            return false;
+        }
+
+        CustomForm.Builder builder = CustomForm.builder()
+                .title(style.title(form.getTitle()));
+        FormImage icon = style.imageOf("WRITABLE_BOOK");
+        if (icon != null) {
+            builder.icon(icon);
+        }
+
+        String notice = form.getContent().isEmpty()
+                ? style.submitLabel()
+                : ActionExecutor.color(form.getContent());
+        builder.label(notice);
+
+        // 与 fields 等长：INPUT 记 null，DROPDOWN / PLAYER 记可选项
+        List<List<String>> optionLists = new ArrayList<>();
+        for (InputForm.Field field : fields) {
+            switch (field.getType()) {
+                case DROPDOWN: {
+                    List<String> opts = new ArrayList<>(field.getOptions());
+                    if (opts.isEmpty()) {
+                        opts.add("");
+                    }
+                    optionLists.add(opts);
+                    builder.dropdown(ActionExecutor.color(field.getLabel()), opts, 0);
+                    break;
+                }
+                case PLAYER: {
+                    List<String> opts = new ArrayList<>();
+                    for (Player online : Bukkit.getOnlinePlayers()) {
+                        if (!online.getUniqueId().equals(player.getUniqueId())) {
+                            opts.add(online.getName());
+                        }
+                    }
+                    if (opts.isEmpty()) {
+                        opts.add(player.getName());
+                    }
+                    optionLists.add(opts);
+                    builder.dropdown(ActionExecutor.color(field.getLabel()), opts, 0);
+                    break;
+                }
+                default:
+                    optionLists.add(null);
+                    builder.input(ActionExecutor.color(field.getLabel()),
+                            ActionExecutor.stripColor(field.getPlaceholder()),
+                            ActionExecutor.stripColor(field.getDefaultValue()));
+            }
+        }
+
+        builder.validResultHandler((CustomFormResponse response) -> {
+            // label 组件会占位，逐类型扫描出各字段的真实响应索引
+            List<ComponentType> types = response.getComponentTypes();
+            int[] indices = new int[fields.size()];
+            int found = 0;
+            for (int i = 0; i < types.size() && found < fields.size(); i++) {
+                ComponentType type = types.get(i);
+                if (type == ComponentType.INPUT || type == ComponentType.DROPDOWN) {
+                    indices[found++] = i;
+                }
+            }
+            if (found != fields.size()) {
+                plugin.getLogger().warning("输入表单响应组件数不匹配: " + form.getId()
+                        + "（期望 " + fields.size() + "，实得 " + found + "）");
+                return;
+            }
+
+            String command = form.getCommand();
+            for (int j = 0; j < fields.size(); j++) {
+                InputForm.Field field = fields.get(j);
+                String value;
+                try {
+                    if (field.getType() == InputForm.FieldType.INPUT) {
+                        value = response.getInput(indices[j]);
+                    } else {
+                        int selected = response.getDropdown(indices[j]);
+                        List<String> opts = optionLists.get(j);
+                        value = (opts != null && selected >= 0 && selected < opts.size())
+                                ? opts.get(selected) : "";
+                    }
+                } catch (RuntimeException ex) {
+                    value = "";
+                }
+                if (value == null) {
+                    value = "";
+                }
+                command = command.replace("{" + field.getKey() + "}", value.trim());
+            }
+
+            final String finalCommand = command.trim();
+            if (finalCommand.isEmpty()) {
+                return;
+            }
+            Bukkit.getScheduler().runTask(plugin, () -> player.performCommand(finalCommand));
+        });
+
+        builder.closedResultHandler(() -> {
+            if (plugin.getSettings().isDebug()) {
+                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了输入表单: " + form.getId());
+            }
+        });
+
+        builder.invalidResultHandler(() ->
+                plugin.getLogger().warning("玩家 " + player.getName()
+                        + " 的输入表单响应无效: " + form.getId()));
+
+        return send(player, builder);
+    }
+
+    /** 获取基岩玩家的客户端信息（用于 /qm info 调试）。 */
     public String getDeviceInfo(Player player) {
         if (!isBedrockPlayer(player)) {
             return null;
         }
         try {
-            FloodgateApi api = FloodgateApi.getInstance();
-            FloodgatePlayer floodgatePlayer = api.getPlayer(player.getUniqueId());
+            FloodgatePlayer floodgatePlayer = floodgate(player);
             if (floodgatePlayer == null) {
                 return null;
             }
@@ -426,5 +485,50 @@ public final class BedrockFormRenderer {
         } catch (NoClassDefFoundError ex) {
             return null;
         }
+    }
+
+    // ==================== 内部工具 ====================
+
+    /** 动作里只有 [close] + [message] 时视为「说明项」。 */
+    private boolean isInfoOnly(MenuItem item) {
+        boolean hasMessage = false;
+        for (Action action : item.getActions()) {
+            if (action.getType() == ActionType.MESSAGE) {
+                hasMessage = true;
+            } else if (action.getType() != ActionType.CLOSE) {
+                return false;
+            }
+        }
+        return hasMessage;
+    }
+
+    private void attachDiagnostics(SimpleForm.Builder builder, Player player, String formName) {
+        builder.closedResultHandler(() -> {
+            if (plugin.getSettings().isDebug()) {
+                plugin.getLogger().info("玩家 " + player.getName() + " 关闭了" + formName + "表单");
+            }
+        });
+        builder.invalidResultHandler(() ->
+                plugin.getLogger().warning("玩家 " + player.getName()
+                        + " 的" + formName + "表单响应无效"));
+    }
+
+    private FloodgatePlayer floodgate(Player player) {
+        try {
+            return FloodgateApi.getInstance().getPlayer(player.getUniqueId());
+        } catch (NoClassDefFoundError | ExceptionInInitializerError ex) {
+            plugin.getLogger().warning("Floodgate API 不可用，无法发送原生表单: " + ex.getMessage());
+            return null;
+        }
+    }
+
+    private boolean send(Player player, SimpleForm.Builder builder) {
+        FloodgatePlayer floodgatePlayer = floodgate(player);
+        return floodgatePlayer != null && floodgatePlayer.sendForm(builder);
+    }
+
+    private boolean send(Player player, CustomForm.Builder builder) {
+        FloodgatePlayer floodgatePlayer = floodgate(player);
+        return floodgatePlayer != null && floodgatePlayer.sendForm(builder);
     }
 }

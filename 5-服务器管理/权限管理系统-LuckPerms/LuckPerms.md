@@ -8,6 +8,18 @@
 
 **官方网站**: https://luckperms.net | **Wiki**: https://luckperms.net/wiki
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/LuckPerms-Bukkit-5.5.91.jar`，`version: 5.5.91` |
+| 官方最新 | 官网持续更新，当前按官方 wiki 口径 |
+| 官方文档站 | <https://luckperms.net/wiki> · 首页 <https://luckperms.net/wiki/Home> |
+| 官方下载 | <https://luckperms.net/download> · Web 编辑器 <https://luckperms.net/editor> |
+| 主要页面 | `/wiki/Usage` · <https://luckperms.net/wiki/Command-Usage> · `/wiki/FAQ` · `/wiki/General-Commands` · `/wiki/Permission-Commands` |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
+
 ## 📁 本目录配置文件索引
 
 面向「南瓜生存服」当前插件组合的完整权限方案，按使用顺序阅读：

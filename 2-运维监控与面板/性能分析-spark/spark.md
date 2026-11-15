@@ -2,6 +2,18 @@
 
 spark 是 LuckPerms 作者开发的高性能服务器性能分析工具，实时监控 CPU、TPS、内存，profiler 生成报告定位卡顿。本文给出关键配置与常用命令。
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | 外部性能分析工具（`plugins/spark/config.json`），不硬编版本号 |
+| 官方最新 | 官网持续更新，当前按官方 docs 口径；外部工具，不硬编版本号 |
+| 官方文档站 | https://spark.lucko.me/docs/ |
+| 官方下载 | https://spark.lucko.me/ （项目主页 / 下载 / 报告在线查看） |
+| 主要页面 | https://spark.lucko.me/docs/ · https://spark.lucko.me/ · https://github.com/lucko/spark-docs |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 关键配置 (`plugins/spark/config.json`)
 
 ```json

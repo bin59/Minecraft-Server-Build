@@ -1,0 +1,10 @@
+# ClickMobsLogger 配置
+# 要记录的生物类型。填 ALL 表示记录所有（被 shift+右键 变成头颅收走的）动物；
+# 也可只写特定类型，如 [cow, pig, sheep]
+tracked-mobs:
+  - ALL
+
+# 手拿这些物品时 ClickMobs 不会触发变头颅，记录时跳过（与 ClickMobs 配置保持一致）
+blacklist-items-in-hand:
+  - LEAD
+  - SADDLE

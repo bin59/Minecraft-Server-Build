@@ -10,10 +10,17 @@
 - **防印钞核心**：关闭"卖物品给系统商店"和 `/sell` 类命令，堵住量产物品刷钱的漏洞（农场刷不出钱，见《经济系统设计手册》§4D）。
 - **Sink 设计**：开店收费 + 玩家间成交税，两处抽水。
 
-## 版本与来源
+## 0. 版本与官方文档（2026-11-14 核对）
 
-- 版本：**1.1.6（iliüs）**，从 Modrinth 官方下载，基于官方默认模板改写配置。
-- 配置文件：`plugins/EconomyShop/config.yml`。
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/EconomyShop-1.1.6.jar`，`version: 1.1.6`，配置文件 `plugins/EconomyShop/config.yml` |
+| 官方最新 | **1.1.6**（2026-07-14 发布）；本地已是最新，配置基于官方默认模板改写 |
+| 官方文档站 | <https://modrinth.com/plugin/economyshop>（ilus 版功能 / 命令 / 权限说明） |
+| 官方下载 | [Modrinth](https://modrinth.com/plugin/economyshop) · [SpigotMC 资源页](https://www.spigotmc.org/resources/economyshop.133827) |
+| 主要页面 | [Modrinth 项目页](https://modrinth.com/plugin/economyshop) · [更新日志](https://modrinth.com/plugin/economyshop/changelog) · [版本列表](https://modrinth.com/plugin/economyshop/versions) · [SpigotMC 资源页](https://www.spigotmc.org/resources/economyshop.133827) · [作者 ilius](https://www.spigotmc.org/resources/authors/ilius.1438987) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
 
 ## 关键配置（当前值）
 
@@ -62,7 +69,7 @@ lp group default permission unset essentials.signs.break.sell
 | 命令         | 用途                                  |
 | ------------ | ------------------------------------- |
 | `/shop`      | 打开/创建玩家商店（权限已授 default） |
-| `/chestshop` | 创建木牌商店（权限已授 default）      |
+| 木牌商店（无命令） | 官方无 `/chestshop`；放箱子 + 写 `[Shop]` 木牌即弹出设置界面（见方式 A） |
 
 ## 玩家开店步骤
 

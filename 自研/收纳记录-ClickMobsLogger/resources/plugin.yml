@@ -1,0 +1,14 @@
+name: ClickMobsLogger
+version: 1.0.0
+main: com.pumpkin.cml.ClickMobsLogger
+api-version: "1.21"
+author: 南瓜国际服
+description: 记录 ClickMobs 拾取动物的行为到本地文件
+commands:
+  cml:
+    description: 查看 ClickMobs 拾取记录
+    usage: /cml [玩家名]
+    permission: clickmobslogger.use
+permissions:
+  clickmobslogger.use:
+    default: op

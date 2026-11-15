@@ -2,16 +2,19 @@
 
 EzTax 是南瓜生存服经济体系的税务插件，作为**强制货币流动工具**征收周持有税、交易税、死亡费和闲置费，并支持按权限组分档税率。本文档说明配置文件、命令、权限与日常运维，适用于管理员对照配置、调整税率与排查启动问题。
 
-## 版本与依赖
+## 0. 版本与官方文档（2026-11-14 核对）
 
-| 项目         | 值                                              |
-| ------------ | ----------------------------------------------- |
-| 插件版本     | **EzTax 2.0.0**（`EzTax-2.0.0.jar`）            |
-| API / 服务端 | `api-version: 26.1`，Leaf 26.3 可运行           |
-| Java         | **JDK 25**                                      |
-| 硬依赖       | **EzSeasons 2.1.2**（`EzSeasons-2.1.2.jar`）    |
-| 软依赖       | Vault（经济结算）、EzEconomy                    |
-| 数据来源     | 26.3 测试服 `plugins/EzTax/config.yml` 实跑配置 |
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/EzTax-2.0.0.jar`，`version: 2.0.0`，`api-version: 26.1`，JDK 25 |
+| 官方最新 | **2.0.0**（2026-04-21 发布，MC 26.1 / Java 25）；本地已是最新 |
+| 官方文档站 | <https://www.spigotmc.org/resources/131133/>（SpigotMC 商店页，含命令 / 权限说明） |
+| 官方下载 | [SpigotMC 资源页](https://www.spigotmc.org/resources/131133/) · [Hangar](https://hangar.papermc.io/EzPlugins/EzTax) · [Modrinth 2.0.0](https://modrinth.com/plugin/eztax/version/2.0.0) |
+| 主要页面 | [SpigotMC 资源页](https://www.spigotmc.org/resources/131133/) · [Hangar](https://hangar.papermc.io/EzPlugins/EzTax) · [Hangar 2.0.0](https://hangar.papermc.io/EzPlugins/EzTax/versions/2.0.0) · [Modrinth 2.0.0](https://modrinth.com/plugin/eztax/version/2.0.0) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
+
+> 硬依赖 **EzSeasons 2.1.2**（`EzSeasons-2.1.2.jar`）；软依赖 Vault（经济结算）、EzEconomy。数据来源：26.3 测试服 `plugins/EzTax/config.yml` 实跑配置。
 
 > EzTax 2.0.0 在 bootstrap 阶段直接引用 `com.skyblockexp.lifesteal.seasons.api.SeasonsIntegration`（EzSeasons 的 API 类）。缺 EzSeasons 会抛 `NoClassDefFoundError` 导致插件无法启用，两者必须同时安装。
 

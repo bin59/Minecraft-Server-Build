@@ -1,5 +1,17 @@
 # EvenMoreFish — 更多鱼（钓鱼扩展）
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/EvenMoreFish-2.5.3.jar`，`version: 2.5.3` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（官方仓库声明支持 1.21.1+；本服 2.5.3） |
+| 官方文档站 | <https://evenmorefish.github.io/EvenMoreFish/>；文档入口 <https://evenmorefish.github.io/EvenMoreFish/docs/intro> |
+| 官方下载 | <https://modrinth.com/plugin/evenmorefish>；Hangar <https://hangar.papermc.io/EvenMoreFish/EvenMoreFish>；GitHub Releases <https://github.com/EvenMoreFish/EvenMoreFish/releases> |
+| 主要页面 | `evenmorefish.github.io/EvenMoreFish/docs/intro`、`evenmorefish.github.io/EvenMoreFish/docs/configuration/reward-types`、`evenmorefish.github.io/EvenMoreFish/docs/support/faq`、`github.com/EvenMoreFish/EvenMoreFish`（README：命令 / 权限 / 下载） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 > 把原版钓鱼变成有图鉴、稀有度、比赛和经济循环的玩法：钓上自定义鱼种、按尺寸/稀有度评分、参加定时钓鱼比赛、把鱼卖给商店换南瓜币。
 
 ## 基本信息

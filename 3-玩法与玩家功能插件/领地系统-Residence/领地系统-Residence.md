@@ -8,6 +8,18 @@ Residence 是 Minecraft 中流行的领地保护插件，允许玩家创建私�
 
 **文件**: 内置于 `plugins/Residence/` 目录
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/Residence6.0.4.2.jar`，`version: 6.0.4.2` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（SpigotMC 资源页需登录，未能核实确切最新版本号） |
+| 官方文档站 | <https://www.zrips.net/residence/> |
+| 官方下载 | [SpigotMC 资源页（付费发布）](https://www.spigotmc.org/resources/11480/) · [预编译构建](https://zrips.net/Residence/) |
+| 主要页面 | [官方 wiki](https://www.zrips.net/residence/) · [GitHub 源码](https://github.com/Zrips/Residence) · [SpigotMC 资源页](https://www.spigotmc.org/resources/11480/) · [更新日志](https://www.spigotmc.org/resources/11480/updates) · [预编译构建](https://zrips.net/Residence/) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方命令/权限表复核。
+
 ## 一、玩家使用指南（从零开始）
 
 > 本指南基于 Residence 插件编写，帮助你在服务器中圈地、保护家园、管理权限。
@@ -594,7 +606,7 @@ A 和 B 是长方体的两个对角点。
 ## 四、领地银行（Residence Bank）
 
 > **一句话结论**：领地银行是绑定到某个领地的「共享钱袋」，钱属于领地而非某个玩家，用于公会/团队公共基金、领地付租金/买地。
-> **本服状态**：经济系统（`EnableEconomy`）早已开启、圈地本来就扣钱，银行功能本身已可用；实际用起来只需确保领地 `bank` flag 已开启 + 玩家有对应权限。
+> **本服状态**：`EnableEconomy: true`、`Bank.Capacity: 0.0`（不限容量）都已就绪，但 **新建领地默认用不了银行**。`flags.yml` 的 `ResidenceDefault` / `CreatorDefault` 与 `groups.yml` 的 `Flags.*` 均未定义 `bank`，而代码用 `FlagCombo.OnlyTrue` 判定，未显式设 `true` 一律拒绝（2026-11-14 反编译 `Residence6.0.4.2.jar` 确认）。表现就是玩家看到「你没有权限使用银行」。**必须给领地显式开 `bank` flag**，见下方「如何开启」。
 >
 > **⚠️ 银行无利息**：Residence 领地银行是纯资金池，**不上利息**。官方 `config.yml` 的 `Bank` 段只有 `Capacity`（容量，当前 `0.0`=不限），没有任何利率配置项；所有版本（含新版）均不支持存款随时间增长。想做"公会存款生息"得另接经济插件或自写逻辑，光靠 Residence 做不到。
 
@@ -609,36 +621,58 @@ A 和 B 是长方体的两个对角点。
 | `/res resbank <领地名>`              | 站在领地内时省略领地名，等价操作 |
 | `/resadmin bank <领地名>`            | 管理员操作领地银行               |
 
-操作权限默认归领地拥有者/管理员；普通成员能否存取取决于对其设置的 `bank` 相关权限。
+存 / 取 / 查余额都走 `ResidencePermissions.playerHas(player, Flags.bank, FlagCombo.OnlyTrue)`：**必须显式 `true`**，默认或未定义都算拒绝，提示 `Bank.NoAccess`（`Language/Chinese.yml`：`你没有权限使用银行。`）。**连领地主人存 / 取也不豁免**（只有 `showBalance` 对 owner 豁免）。命令层 `residence.command.bank` / `.resbank` 在 `plugin.yml` 是 `default: true`，LuckPerms 库里也无显式 deny 节点，**不用动权限组**。
 
 ### 前置条件
 
-| 配置项                | 当前值    | 说明                            |
-| --------------------- | --------- | ------------------------------- |
-| `EnableEconomy`       | `true` ✅ | 经济已开启，银行可用            |
-| `Type`                | `Auto` ✅ | 自动走 Vault→Essentials，无需改 |
-| `Bank.Capacity`       | `0.0` ✅  | `0` = 不限容量，无需改          |
-| `flags.yml` 的 `bank` | `true` ✅ | 默认允许玩家用银行 flag，无需改 |
+| 配置项 | 当前值 | 说明 |
+| --- | --- | --- |
+| `EnableEconomy` | `true` ✅ | 经济已开启，银行可用 |
+| `Type` | `Auto` ✅ | 自动走 Vault→Essentials，无需改 |
+| `Bank.Capacity` | `0.0` ✅ | `0` = 不限容量，无需改 |
+| `flags.yml` → `Global.FlagPermission.bank` | `true` ✅ | 只表示「允许玩家**修改** bank flag」，**不等于默认可用**，别被这个值误导 |
+| `flags.yml` → `Global.ResidenceDefault` / `CreatorDefault` | 无 `bank` ⚠️ | 新建领地默认不带 `bank: true`，**这就是玩家报没权限的根因** |
+| `groups.yml` → `Groups.Default.Flags.*` | 全注释 ⚠️ | 同上，没有设默认 bank flag |
 
-### 如何开启（每个领地）
+### 如何开启
 
-银行无需额外的全局开关（经济已开）。每个领地默认就有 `bank` flag；若之前被人关过，恢复：
+#### ① 单个领地立即开（最常用，即时生效，不用 reload）
+
+领地主人站在领地内（或写明领地名）执行：
 
 ```mcfunction
 /res set <领地名> bank true
 ```
 
-玩家需有该领地 `bank` 权限（默认成员即可，具体看权限组设置）。
+只放行某个成员、不动领地全局 flag：
+
+```mcfunction
+/res pset <领地名> <玩家名> bank true
+```
+
+`flags.yml` 的 `FlagPermission.bank: true` 已允许改这个 flag；管理员代他人开需 `residence.admin`（本服 `/resadmin` 亦可）。
+
+#### ② 让新建领地默认可用（改配置，需 reload）
+
+`plugins/Residence/flags.yml` → `Global.CreatorDefault` 加一行，只给**领地创建者**：
+
+```yaml
+  CreatorDefault:
+    bank: true      # 主人可存取；访客仍不可用
+```
+
+`groups.yml` 的 `Groups.Default.Flags.CreatorDefault` 同理（仅对该组）。⚠️ **不要**往 `ResidenceDefault` 或 `Flags.Default` 写 `bank: true`：那是给所有进入领地的人，别人能取走你银行里的钱。改完 `/resadmin reload`（或重启）生效，且**只对之后新建的领地生效，已有领地仍要按 ① 逐条开**；改完用 `/res bank deposit <领地名> 1` 实跑验证。
+
+#### ③ 不要去改 LuckPerms
+
+玩家看到的「你没有权限使用银行」是 Residence 的 flag 提示，不是命令权限。确需显式兜底时才给：
+
+```mcfunction
+/lp group default permission set residence.command.bank true
+/lp group default permission set residence.command.resbank true
+```
 
 > **依赖说明（供其他服参考）**：银行是经济子系统，必须 `EnableEconomy: true` 才可用；若某服经济关闭，需先在 `config.yml` 打开经济（并注意 `ChargeWhen` 会同时决定是否对圈地/扩建扣钱）。本服已满足，无需改动。
-
-### 每个领地自己的开关
-
-领地银行 flag 默认 `true`，正常新建领地不用动。仅当之前被人关过时恢复：
-
-```mcfunction
-/res set <领地名> bank true
-```
 
 ### 验证
 
@@ -649,7 +683,13 @@ A 和 B 是长方体的两个对角点。
 
 ### 排错
 
-若 `/res bank` 报错或无反应，多半是：① 该领地 `bank` flag 被设为 false（用上面命令开）；② 玩家无此领地 bank 权限；③ 经济插件（Vault / Essentials）未正常挂钩。把报错原文发我即可定位。
+| 报错 | 原因 | 处理 |
+| --- | --- | --- |
+| `你没有权限使用银行`（`Bank.NoAccess`） | 领地 `bank` flag 未显式设 true（**本服默认如此**） | `/res set <领地名> bank true` |
+| `你没有权限设置 bank 权限` | 无 `FlagPermission.bank` 或非领地管理员 | 开 flag 权限 / 用 `/resadmin` |
+| `银行存款不足` | 领地银行余额不够，非权限问题 | 先存钱 |
+| `/res bank` 无反应 / 提示无效领地 | 人不在领地内且没写领地名 | 补齐领地名 |
+| 存钱后余额没变 | Vault / Essentials 未挂钩 | 本服已开，检查经济插件 |
 
 ---
 
@@ -705,7 +745,7 @@ Global:
   Sell.Subzone: false # 子区域出售
 ```
 
-> **经济开关实际值**：本服领地当前 `EnableEconomy: true`（经济已开启、圈地扣钱）、`Type: Vault`、`UseLeaseSystem: false`、`EnableRentSystem: false`——不可买卖/出租。领地银行功能已可用（详见上方「领地银行」章节）。
+> **经济开关实际值**：本服领地当前 `EnableEconomy: true`（经济已开启、圈地扣钱）、`Type: Vault`、`UseLeaseSystem: false`、`EnableRentSystem: false`——不可买卖/出租。领地银行的**经济前置已满足**，但每个领地仍需显式开 `bank` flag 才能存取（详见上方「领地银行」章节）。
 
 ## flags.yml 权限配置文件
 
@@ -724,7 +764,7 @@ Global:
 
 定义了哪些权限标志（Flags）默认对所有玩家组开放，除非在组权限中特别拒绝。
 
-- **玩家管理**：允许玩家管理自己的领地，如设置传送点 (`tp: true`)、修改旗帜 (`admin: true`)、使用领地银行 (`bank: true`)。
+- **玩家管理**：允许玩家管理自己的领地，如设置传送点 (`tp: true`)、修改旗帜 (`admin: true`)、**修改** `bank` flag (`bank: true`，只是允许改，不代表默认能用银行)。
 - **功能使用**：允许使用床 (`bed: true`)、酿造台 (`brew: true`)、附魔台 (`enchant: true`) 等大部分功能性方块。
 - **特殊限制**：禁止玩家飞行 (`fly: false`) 和保留物品栏 (`keepinv: false`)。
 

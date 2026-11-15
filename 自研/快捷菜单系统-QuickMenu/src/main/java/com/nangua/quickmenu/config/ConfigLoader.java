@@ -3,6 +3,7 @@ package com.nangua.quickmenu.config;
 import com.nangua.quickmenu.QuickMenuPlugin;
 import com.nangua.quickmenu.menu.Action;
 import com.nangua.quickmenu.menu.ActionType;
+import com.nangua.quickmenu.menu.InputForm;
 import com.nangua.quickmenu.menu.Menu;
 import com.nangua.quickmenu.menu.MenuItem;
 import org.bukkit.Material;
@@ -13,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -38,6 +40,8 @@ public final class ConfigLoader {
         settings.clearMenus();
         loadMenusFromConfig(config, settings);
         loadMenusFromFolder(settings);
+        settings.clearInputForms();
+        loadInputForms(config, settings);
 
         if (settings.getMenus().isEmpty()) {
             plugin.getLogger().warning("未加载到任何菜单，请检查 config.yml 的 menus 节点或 menus/ 目录");
@@ -137,6 +141,60 @@ public final class ConfigLoader {
         }
     }
 
+    /**
+     * 加载基岩端参数输入表单（config.yml 的 input-forms 段）。
+     *
+     * <p>每项结构：title / content / command（含 {字段key} 占位）/
+     * fallback（Java 端降级提示）/ fields（input、dropdown、player 三种）。
+     */
+    private void loadInputForms(FileConfiguration config, PluginSettings settings) {
+        ConfigurationSection root = config.getConfigurationSection("input-forms");
+        if (root == null) {
+            return;
+        }
+        for (String id : root.getKeys(false)) {
+            ConfigurationSection section = root.getConfigurationSection(id);
+            if (section == null) {
+                continue;
+            }
+            InputForm form = new InputForm(id);
+            form.setTitle(section.getString("title", id));
+            form.setContent(section.getString("content", ""));
+            form.setCommand(section.getString("command", ""));
+            form.setFallback(section.getStringList("fallback"));
+
+            for (Map<?, ?> raw : section.getMapList("fields")) {
+                String key = stringValue(raw.get("key"));
+                InputForm.FieldType type = InputForm.FieldType.parse(stringValue(raw.get("type")));
+                String label = stringValue(raw.get("label"));
+                String placeholder = stringValue(raw.get("placeholder"));
+                String defaultValue = stringValue(raw.get("default"));
+
+                List<String> options = new ArrayList<>();
+                Object rawOptions = raw.get("options");
+                if (rawOptions instanceof List<?>) {
+                    for (Object option : (List<?>) rawOptions) {
+                        if (option != null) {
+                            options.add(String.valueOf(option));
+                        }
+                    }
+                }
+                form.addField(new InputForm.Field(
+                        key, type, label, placeholder, defaultValue, options));
+            }
+
+            if (form.getFields().isEmpty() || form.getCommand().isEmpty()) {
+                plugin.getLogger().warning("输入表单 " + id + " 缺少 command 或 fields，已跳过");
+                continue;
+            }
+            settings.addInputForm(form);
+        }
+    }
+
+    private String stringValue(Object value) {
+        return value == null ? "" : String.valueOf(value);
+    }
+
     private Menu parseMenu(String id, ConfigurationSection section) {
         Menu menu = new Menu();
         menu.setId(id);
@@ -216,6 +274,7 @@ public final class ConfigLoader {
      *                                         点击玩家后执行 /tpa 玩家名
      *     "[item-selector] worth {item}"     打开背包物品选择器，
      *                                         点击物品后执行 /worth 材质名
+     *     "[form-input] 表单id"             打开基岩参数输入表单（Java 端降级为文本提示）
      *     "[ah-sell] 5000 elytra"            拍卖行上架：自动把背包里的
      *                                         该材质物品换到主手执行
      *                                         /ah sell 5000，再还原主手
@@ -259,6 +318,9 @@ public final class ConfigLoader {
             } else if (lower.startsWith("[residence-selector]")) {
                 actions.add(new Action(ActionType.RESIDENCE_SELECTOR,
                         strip(trimmed, "[residence-selector]")));
+            } else if (lower.startsWith("[form-input]")) {
+                actions.add(new Action(ActionType.INPUT_FORM,
+                        strip(trimmed, "[form-input]")));
             } else if (lower.startsWith("[ah-sell]")) {
                 actions.add(new Action(ActionType.AH_SELL,
                         strip(trimmed, "[ah-sell]")));

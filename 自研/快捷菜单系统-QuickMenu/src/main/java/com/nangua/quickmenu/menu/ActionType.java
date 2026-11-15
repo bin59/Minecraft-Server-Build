@@ -66,6 +66,13 @@ public enum ActionType {
      */
     RESIDENCE_SELECTOR,
 
+    /**
+     * 打开基岩端参数输入表单（value 为 config.yml {@code input-forms:} 段里的表单 id）。
+     * 基岩玩家点按钮后弹 CustomForm 填参数并提交执行；Java 玩家或未装 Floodgate 时
+     * 自动降级为该表单的 {@code fallback} 文本提示，行为与旧版「文字指引」一致。
+     */
+    INPUT_FORM,
+
     // ==================== 平台条件动作 ====================
 
     /** 仅基岩玩家：以玩家身份执行命令 */

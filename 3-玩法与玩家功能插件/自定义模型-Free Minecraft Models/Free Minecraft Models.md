@@ -1,8 +1,20 @@
 # Free Minecraft Models（FMM）—— 自定义模型加载插件
 
-> **状态**：✅ 已安装启用 | **版本**：**2.14.2**（2026-11 实测，已支持 26.3）| **基岩链路**：FMM + **ResourcePackManager 2.4.12** + Geyser/Floodgate 链路已通（Java 端实测显示 ✅）；基岩端 2026-11-10 排查结论：**缺一次重启激活 Geyser 桥**，见 §4.4
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/FreeMinecraftModels.jar`，`version: 2.15.0`；`plugins/ResourcePackManager.jar`，`version: 2.4.12` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（官方 GitHub README 与 wiki 持续更新；本服 2.15.0） |
+| 官方文档站 | <https://wiki.nightbreak.io/FreeMinecraftModels/>；源码 <https://github.com/MagmaGuy/FreeMinecraftModels>；官网 magmaguy.com |
+| 官方下载 | <https://modrinth.com/plugin/free-minecraft-models>；<https://www.spigotmc.org/resources/free-minecraft-models.111660/>；ResourcePackManager <https://nightbreak.io/plugin/resourcepackmanager/> |
+| 主要页面 | `wiki.nightbreak.io/FreeMinecraftModels/faq`、`/pets`、`/player_disguises`、`/magic_weapons`、`/api_and_developer_guide`、`nightbreak.io/plugin/resourcepackmanager/` |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
+> **状态**：✅ 已安装启用 | **版本**：**2.15.0**（2026-11-14 jar 实测，已支持 26.3）| **基岩链路**：FMM + **ResourcePackManager 2.4.12** + Geyser/Floodgate 链路已通（Java 端实测显示 ✅）；基岩端 2026-11-10 排查结论：**缺一次重启激活 Geyser 桥**，见 §4.4
 > **作者**：MagmaGuy（EliteMobs / BetterStructures / ResourcePackManager 同作者）| **协议**：GPL-3.0 | **定位**：服主提供模型库（家具 / 装饰 / 武器 / 宠物 / 伪装 / 活动道具），**Java 与基岩通吃**
-> 配套文档：[宠物系统 SimplePets](宠物系统simplepets.md)（FMM 宠物是第三方模型宠物，与 SimplePets 并存不冲突）、[经济系统](../经济系统/Vault.md)（南瓜币出口）
+> 配套文档：[宠物系统 SimplePets](../宠物系统/宠物系统simplepets.md)（FMM 宠物是第三方模型宠物，与 SimplePets 并存不冲突）、[经济系统](../经济系统/Vault.md)（南瓜币出口）
 
 ---
 
@@ -18,7 +30,7 @@
 
 | 项 | 值 |
 |---|---|
-| 最新版（本服） | **2.14.2**（实测支持 26.3；官方 2.13.0 起声明 26.3，2.14.x 为后续修复版） |
+| 最新版（本服） | **2.15.0**（2026-11-14 jar 实测，支持 26.3） |
 | 最低服务端 | **1.21.4**（`api-version: 1.21.4`）；实测 1.21.11 / 26.1 / 26.2 / **26.3** 均可 |
 | 依赖 | **无**（MagmaCore 已内置）；软依赖：WorldGuard / GriefPrevention / Vault / Floodgate / Geyser-Spigot |
 | **基岩硬性前置** | **ResourcePackManager（必装）** —— 没有它基岩玩家看不到任何自定义模型 |
@@ -29,7 +41,7 @@
 ## 3. 安装步骤（本服已部署，留档）
 
 1. `FreeMinecraftModels.jar` 与 `ResourcePackManager.jar` 放进 `plugins/`，**重启服务器**
-2. （可选）下载官方内容包 **不要解压**，整包丢进 `plugins/FreeMinecraftModels/imports/`，`/fmm reload`
+2. （可选）用 `/fmm setup` + `/nightbreaklogin` 装官方内容包；手动导入时只有**带 `pack.meta` 的规范内容包 zip**（不解压）或**单个 `.bbmodel`** 适合放 `plugins/FreeMinecraftModels/imports/`。带配套 `.yml`/`.json`/纹理的模型要直接放 `models/<包名>/`，再 `/fmm reload`。详见 [免费模型包清单](免费模型包清单.md)
 3. 首次 `/fmm setup` 走引导（会把 `setupDone` 置 true）
 4. 资源包由 FMM 自动生成于 `plugins/FreeMinecraftModels/output/FreeMinecraftModels.zip`，**ResourcePackManager 接管合并 + 基岩转换 + 经 Geyser 下发**
 
@@ -88,6 +100,23 @@ Java 与基岩玩家都看到模型（含动画 / 粒子）
 
 **注意**：`/fmm reload` 只重新生成 Java 包和转换产物，**不会**让 Geyser 重读 mappings——改完模型想让基岩生效，稳妥做法是 `reload + 重启`。
 
+### 4.5 玩家自行安装（手动分发）
+
+不依赖进服弹窗、由玩家自己装包时，分发的是 **RPM 合并产物**，不是 FMM 原始包：
+
+| 端 | 源文件 | 客户端可否识别 | 分发文件 |
+|---|---|---|---|
+| Java | `plugins/ResourcePackManager/output/ResourcePackManager_RSP.zip`（合并包，117 项，`pack_format: 97` + `min_format: 69` / `max_format: 999`） | ✅ 含 `pack.mcmeta`，适配 MC 26.3 | `南瓜服模型资源包-Java-20261113.zip` |
+| 基岩 | `plugins/ResourcePackManager/output/ResourcePackManager_Bedrock.zip`（含 `manifest.json` + `pack_icon.png`） | ✅ 改后缀 `.mcpack` 可双击导入 | `南瓜服模型资源包-基岩-20261113.mcpack` |
+| ~~Java（不推荐）~~ | `plugins/FreeMinecraftModels/output/FreeMinecraftModels.zip`（99 项，仅 FMM 自身） | ✅ | 缺 RPM 合并内容，单独发会少模型 |
+
+- 分发物与可直接转发给玩家的 [`资源包分发-ResourcePackManager/玩家安装说明.md`](资源包分发-ResourcePackManager/玩家安装说明.md) 已备在该目录；两个 zip 均从本地 26.3 主服产物复制，md5 一致（`a2c3fe7a` / `6fa0df71`）。
+- **`pack.mcmeta` 源头**：`plugins/ResourcePackManager/blueprint/pack.mcmeta`。原为 `pack_format: 34`（1.21~1.21.1），而 MC 26.3 资源包格式是 `97.1`（客户端 jar 内 `version.json` 的 `pack_version.resource_major/minor`），客户端因此显示红色「不兼容」。2026-11-14 改为 `pack_format: 97` + `supported_formats: 34–99` + `min_format: 69` / `max_format: 999`，并同步写回 mixer 缓存、output 合并包与分发包；1.21.9+ 只认 `min_format`/`max_format`，光改 `pack_format` 无效。RPM 重新合并时读取 blueprint，不会再退回 34。
+- 分发渠道任选：QQ 群文件 / 网盘直发；或丢到静态站点目录（本地 `D:\web\nginx-1.28.3\html\mchappyhut`、云端 Caddy 站点目录）取 HTTPS 直链给玩家下载。**不要**改 `server.properties` 的 `resource-pack=`——那是自动下发通道，当前为空。
+- **版本必须同步**：新增模型或 `/fmm reload` 后 FMM 与 RPM 会重新生成 zip，玩家要重新下载安装；文件名带日期便于识别旧包。客户端缓存旧包会表现为「看不到新家具」。
+- 现状：RPM `autoHost: true` / `bedrockAutoDeployToGeyser: true`、Geyser `force-resource-packs: true`，进服仍会自动推送**同一个 uuid 的包**，手动安装是备用/离线方案，两者不冲突。若要完全交给玩家自己装，需关掉 `bedrockAutoDeployToGeyser` 与 Geyser `force-resource-packs`，但**基岩玩家不装包就看不到模型**，且 Geyser 扩展 / `rspm_geyser_mappings.json` 链路必须保持正常（装包只解决客户端资源，模型实体仍由服务端下发）。
+- 基岩 FMM 最新包与 RPM mixer 缓存 md5 一致（`8c2f4861`），说明 2026-11-12 那次 `/fmm reload` 内容未变，2026-11-10 的 RPM 输出仍是当前有效版本。
+
 ## 5. 核心功能
 
 - **自定义家具 / 物品 / 交互道具（props）**：可坐、可睡、可储物，配 Lua 脚本自由扩展
@@ -122,16 +151,38 @@ plugins/FreeMinecraftModels/
 ├─ models/                 # 模型文件（.bbmodel 同名 .yml 配对）
 │   └─ fmm_default_magic/  #   默认：奥术魔杖、奇迹奥术法杖
 ├─ enchantments/           # 16 个自定义附魔（爆破半径、点火、 multicast 等）
-├─ content_packages/       # 第三方下载的内容包（含已导入的展示内容）
+├─ content_packages/       # 内容包清单/元信息（仅 .yml，非模型本体）
 ├─ pet_behaviors/          # 宠物行为 Lua 模块（跟随、聚营火、夜间发光等 15 个）
 ├─ scripts/                # 道具 Lua 脚本
 ├─ recipes/                # 合成配方 <model_id>.yml（可单独 shopEnabled / shopPrice）
-├─ imports/                # ⭐ 丢入内容包 zip（不解压），/fmm reload 生效
+├─ imports/                # 单个 .bbmodel，或带 pack.meta 的内容包 zip（不解压）
 ├─ output/                 # ⭐ FMM 生成的资源包（FreeMinecraftModels.zip）
 └─ resource_pack/          # 资源包中间产物
 ```
 
 > 资源包目录是 **`output/`**（单数），不是 `outputs`。
+
+### 7.1 当前实际内容（2026-11-13 本地 26.3 主服实测）
+
+**服务端只加载了 2 个模型**，就是 FMM 自带的默认示例，日志为证：`Loaded 2 custom item definition(s).`
+
+| 模型 ID | 显示名 | 材质 | 类型 |
+|---|---|---|---|
+| `fmm_default_arcane_wand` | 奥术魔杖 | `BLAZE_ROD` | WAND（左键自动瞄准魔法飞弹） |
+| `fmm_default_arcane_staff` | 奇迹奥术法杖 | `WOODEN_SPEAR` | STAFF（左键近战 / 右键范围火球） |
+
+| 目录 | 实际数量 | 说明 |
+|---|---|---|
+| `models/` | **2 个模型**（`fmm_default_magic/` 下 8 个文件） | 仅默认魔法示例 |
+| `content_packages/` | 6 个 `.yml` 清单 | `version: 0`、`contentFilePrefixes: []`，**只是元信息，模型本体未下载**；对应 `folderName`（Basic Furniture Pack、Craftenmine 武器/工具、Driftjelly 宠物、BetterStructures / EliteMobs 道具）在 `models/` 里都不存在 |
+| `imports/` | 0 | 从未手动导入内容包 |
+| `recipes/` | 0 | 无配方，`/fmm` 合成菜单为空 |
+| `enchantments/` | 16 个（32 文件） | 附魔 Lua 脚本，**不是模型**；要绑定物品才生效 |
+| `scripts/` / `pet_behaviors/` | 4 / 17 | 交互与宠物行为脚本，**不是模型**；无任何 `.pet.yml` 物种定义 |
+
+状态：`config.yml` 的 `setupDone: false`、日志 `No account token found. Run /nightbreaklogin...`，说明首次引导没走完、Nightbreak 未登录，所以官方内容包一直没下载；`shop_config.yml` 的 `enabled: false`，`pets.yml` 为 `COSMETIC` 但无物种。Java 合并包里 items 只有 `fmm_default_arcane_wand` / `fmm_default_arcane_staff` 两个 ID；基岩包的 7 个 `.geo.json` 与 30 个 attachables 是**这两个武器的骨骼拆分**，不代表有 30 个模型。
+
+可装的免费/付费包、下载源与导入方式见 [免费模型包清单](免费模型包清单.md)。装更多内容后资源包会重新生成，§4.5 的分发包随之过期、玩家需重新下载；基岩端还要按 §4.4 重启一次。
 
 ## 8. 命令速查
 
@@ -199,7 +250,35 @@ plugins/FreeMinecraftModels/
 | `sendCustomModelsToBedrockClientsV2` | **true** | **基岩端发送自定义模型**（旧键已废弃；需配合 Geyser/Floodgate + ResourcePackManager）。false 时基岩玩家看不到模型，但动态模型（Boss 等）会退化显示成它所基于的原版生物 |
 | `useDisplayEntitiesWhenPossible` | true | 优先 Display 实体渲染（性能好）；**基岩不存在 Display 实体，FMM 自动退回盔甲架显示**，无需手动干预 |
 | `modelViewersTrackHiddenBodies` | true | 隐藏实体的观者以隐形裸身追踪，使模型骨骼像坐骑一样随实体平滑移动；**基岩玩家保持原隐藏逻辑** |
-| `particleEffectsEnabled` | true | Blockbench 粒子是否在模型上播放（基岩随资源包重生同步） |
+| `particleEffectsEnabled` | 默认 true / **本服 false** | Blockbench 粒子是否在模型、道具与**手持物品**上播放；本服 2026-11-14 已关闭，见下方「本服配置变更记录」。基岩随资源包重生同步 |
+
+### 手持粒子（奥术魔杖，本服已关闭）
+
+`fmm_default_arcane_wand` 自带 Blockbench 粒子 `wand_particles`，绑定在 `.bbmodel` 的 `Effects` 关键帧（`bind_to_actor: true`），拿在手上会持续冒。FMM 2.12.6 起随默认魔杖一起加入（"Dali's arcane wand … with sparkles"）。每颗粒子都是服务端发给 Java 玩家的 packet entity，**客户端「视频设置 → 粒子」关不掉**。
+
+#### 本服配置（2026-11-14）
+
+| 项 | 内容 |
+|---|---|
+| 文件 | `服务器数据备份/leaf-26.3/leaf-26.3/plugins/FreeMinecraftModels/config.yml` |
+| 键 | `particleEffectsEnabled`：`true`（默认）→ **`false`** |
+| 配置片段 | `particleEffectsEnabled: false`（上一行注释：`Set to false to switch every particle effect off without editing models.`） |
+| 改前原件 | `.workbuddy/backup_配置_20261114/FreeMinecraftModels-config.yml.orig`（md5 `db0d9581`） |
+| 生效范围 | 关闭**全部** Blockbench 粒子：`models / props / held items`；模型显示、动画、Lua 技能不受影响 |
+| 实际影响 | 本服仅加载 2 个默认模型，只有奥术魔杖带 `.particle.json`（`fmm_default_arcane_staff` 没有），关总开关实际只影响魔杖，无误伤 |
+| 生效方式 | Java 端 `/fmm reload`；基岩端需资源包重新生成（`/fmm reload` 或重启）后跟随，玩家可能要重进服刷新包 |
+| 校验 | `grep -n particleEffectsEnabled <config.yml>` → `false` |
+| 回滚 | 改回 `true` 后 `/fmm reload`；或用改前原件覆盖（原件为改前快照，覆盖前先对比插件后来补的新键） |
+
+> 插件重载 / 升级会往 `config.yml` 自动补新配置键（2026-11-14 已补 `longIdleMinSeconds` / `longIdleMaxSeconds`），文件 md5 会变；**是否关闭粒子只看该键的值，不要用 md5 判断**。`/fmm reload` 会重新生成 Java / 基岩资源包，重发分发包前先核对分发物 md5 是否变化。
+
+其它可选做法：
+
+| 想怎么做 | 改法 |
+| --- | --- |
+| 全服关（本服采用） | `particleEffectsEnabled: false` |
+| 只调少、不关 | `maxParticlesPerEmitter`（默认 100，取粒子文件自身 `max_particles: 100` 的较小值）调到 20~30，或 `maxParticlesPerViewer`（默认 400）调小 |
+| 只关某一个模型 | 模型 `.yml` 里**没有** per-model 粒子开关；只能删 `.bbmodel` 的 Effects 关键帧或 `.particle.json`，会被 `/fmm reload` / 插件更新覆盖，不推荐 |
 
 ### 性能 / 动画调优
 
@@ -253,9 +332,9 @@ FMM 把任意模型变成可驯服 / 繁殖的宠物物种：
 
 按省事程度排序：
 
-1. **Nightbreak 内置商店（最推荐）**：游戏内 `/fmm setup` + `/nightbreaklogin`，官方维护、全基岩兼容、一键装，不用自己找包
-2. **`imports/` 丢 zip**：把下载的模型包（**整包不解压**）丢进 `plugins/FreeMinecraftModels/imports/`，`/fmm reload` 即生效
-3. **MCModels / BlackSpigot 等站**：挑带 **FMM 或 Blockbench 文件夹**的包；**别下 ItemsAdder / Nexo 专属包**（FMM 认不了）
+1. **Nightbreak 内置商店（最推荐）**：游戏内 `/fmm setup` + `/nightbreaklogin`，官方维护、全基岩兼容、一键装，不用自己找包。⚠️ **本服尚未走这条路**：`setupDone: false`、无账号 token，故目前只有默认 2 个模型（见 §7.1）；装完用 `/fmm downloadall` 拉取全部官方内容包，`/fmm reload` 生效
+2. **免费 `.bbmodel` 源**：Blockbench Workshop（898 个免费）、Spaleforce（1781+）、BuiltByBit 免费套装等。拿到 `.bbmodel` 后，**带配套 `.yml`/`.json`/纹理时直接放 `models/<包名>/`**；`imports/` 现在只可靠处理单个 `.bbmodel` 和带 `pack.meta` 的规范 zip。完整来源、许可证与导入方式见 [免费模型包清单](免费模型包清单.md)
+3. **别下 ItemsAdder / Nexo / Oraxen / MythicCrucible 专属包**（MCModels 免费区多数属此类）：FMM 只认 `.bbmodel` / `.fmmodel`，成品资源包 + 配置的格式用不了
 4. **自己用 BlockBench 做**：`.bbmodel` 建模 → FMM 免费转资源包，完全开源可控（最贴合南瓜主题）
 
 ## 14. 与南瓜服集成建议

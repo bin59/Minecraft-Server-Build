@@ -1,5 +1,17 @@
 # VexBot — 智能 PvP 机器人
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/vexbot-paper-3.1.0paper-mc26.3.jar`，`version: 3.1.0+paper-mc26.3` |
+| 官方最新 | 官网持续更新，当前按官方文档口径（官方 wiki 命令页标注 3.1；本服为 3.1.0 Paper / mc26.3 构建） |
+| 官方文档站 | <https://mods.icondice.org/vexbot/wiki>（官方 wiki，同目录 `官方文档汉化/` 已收录 20+ 篇） |
+| 官方下载 | <https://modrinth.com/plugin/vexbot>（主文档沿用 <https://modrinth.com/plugin/vexbot?loader=paper&version=26.3>） |
+| 主要页面 | `mods.icondice.org/vexbot/wiki/commands`、`/settings`、`/kits`、`/difficulty`、`/paper`、`/getting-started`（命令 / 设置 / 装备包 / 难度 / Paper 版 / 入门） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 > 在服务器里生成会真打架的假人，用于练 PvP、填场、FFA 陪练。机器人是完整的 Java 实体，基岩版玩家通过 Geyser 也能正常看到、攻击、被它攻击。
 
 ## 基本信息

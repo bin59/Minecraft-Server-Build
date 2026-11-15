@@ -1,10 +1,13 @@
 package com.nangua.quickmenu.config;
 
+import com.nangua.quickmenu.menu.InputForm;
 import com.nangua.quickmenu.menu.Menu;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 插件的运行时设置与菜单注册表。
@@ -73,6 +76,27 @@ public final class PluginSettings {
 
     // ===== 菜单注册表 =====
     private final List<Menu> menus = new ArrayList<>();
+
+    /** 基岩端参数输入表单（config.yml 的 input-forms 段），key 为表单 id */
+    private final Map<String, InputForm> inputForms = new LinkedHashMap<>();
+
+    public InputForm findInputForm(String id) {
+        return id == null ? null : inputForms.get(id);
+    }
+
+    public void clearInputForms() {
+        inputForms.clear();
+    }
+
+    public void addInputForm(InputForm form) {
+        if (form != null) {
+            inputForms.put(form.getId(), form);
+        }
+    }
+
+    public int getInputFormCount() {
+        return inputForms.size();
+    }
 
     public Menu findMenu(String id) {
         if (id == null) {

@@ -8,6 +8,18 @@
 >
 > **官方网站**：https://viaversion.com/backwards ｜ **文档**：https://docs.viaversion.com ｜ **源码**：https://github.com/ViaVersion/ViaBackwards
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/ViaBackwards-5.12.2.jar`，`version: 5.12.2`（配套 `plugins/ViaVersion-5.12.2.jar`） |
+| 官方最新 | 官网持续更新，当前按官方文档口径（jar 需与 ViaVersion 同发布批次） |
+| 官方文档站 | <https://docs.viaversion.com/>（Via 系列官方 Wiki） |
+| 官方下载 | <https://viaversion.com/backwards>（跳转 <https://hangar.papermc.io/ViaVersion/ViaBackwards>）· <https://github.com/ViaVersion/ViaBackwards> |
+| 主要页面 | [Installation](https://github.com/ViaVersion/ViaVersion/wiki/Installation) · [Configuration](https://github.com/ViaVersion/ViaVersion/wiki/Configuration) · [Hangar 产品页](https://hangar.papermc.io/ViaVersion/ViaBackwards) · [GitHub 源码](https://github.com/ViaVersion/ViaBackwards) |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 一、它解决什么问题
 
 Via 系列按「客户端版本相对服务端是更新还是更旧」分工，官方组合如下：

@@ -1,5 +1,17 @@
 # PlayerHeadDrops（玩家头颅掉落）
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/PlayerHeadDrops-2.0.0.jar`，`version: 2.0.0` |
+| 官方最新 | 2.0.0（2026-07-01，官方页支持 MC 1.13+，实测 26.1 / 26.2）；本服已是该版 |
+| 官方文档站 | <https://www.spigotmc.org/resources/playerheaddrops.135728/>（总览 / 配置 / 更新日志） |
+| 官方下载 | <https://www.spigotmc.org/resources/playerheaddrops.135728/>；Hangar <https://hangar.papermc.io/kasperoid/PlayerHeadDrops>；Modrinth <https://modrinth.com/mod/playerheaddrops> |
+| 主要页面 | `spigotmc.org/resources/playerheaddrops.135728/`（总览 / 配置）、`spigotmc.org/resources/playerheaddrops.135728/update?resource_update_id=648504`（2.0.0 更新日志：命令与权限）、`hangar.papermc.io/kasperoid/PlayerHeadDrops`、`modrinth.com/mod/playerheaddrops` |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 是什么
 
 玩家死亡时**掉落带有本人皮肤的头颅**（皮肤直接嵌入物品，重启/重进不丢）。掉落概率、一次性、冷却、仅 PvP、防刷头、世界黑白名单、自定义名字与 lore、生物头、Looting/权限加成、公告、Vault 经济奖励、音效粒子——全部可配。轻量无依赖（Vault 仅经济奖励可选）。
@@ -136,7 +148,7 @@ effects:
 |---|---|
 | `playerheaddrops.boost` | 掉落概率加成倍数（需在配置开启 `permission-boost`） |
 
-> 其他指令/权限（如重载）官方页未列出，以服内实际为准；装好后可实测 `/ph ...` 或 `playerheaddrops.reload` 是否存在。
+> 官方 2.0.0 更新日志已列出命令与权限：`/phd reload`（别名 `/phd`、`/headdrops`，取代旧 `/phdreload`）、`/phd give [接收者]`；权限另有 `playerheaddrops.bypass`（持有者永不掉头）。以官方资源页为准。
 
 ## 与现有玩法注意
 

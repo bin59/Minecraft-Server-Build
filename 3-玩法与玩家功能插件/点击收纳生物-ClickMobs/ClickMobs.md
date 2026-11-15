@@ -1,12 +1,23 @@
 # ClickMobs（点击收纳生物）
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/ClickMobs-paper-1.3.1.jar`，`version: 1.3.1` |
+| 官方最新 | 插件版 `paper-1.3.1`（2026-03-26，官方 Modrinth 正式版，支持 26.3 / 26.2 / 26.1.x / 1.21.x / 1.20.x，平台 Paper / Purpur / Spigot / Bukkit；另有 Fabric / NeoForge 模组版）；本服已是该版 |
+| 官方文档站 | <https://modrinth.com/plugin/clickmobs> |
+| 官方下载 | <https://modrinth.com/plugin/clickmobs>；paper-1.3.1 版本页 <https://modrinth.com/plugin/clickmobs/version/tte1UNeO> |
+| 主要页面 | `modrinth.com/plugin/clickmobs`（Overview：功能 / 黑白名单标签 / 配置）、`modrinth.com/plugin/clickmobs/version/tte1UNeO`（paper-1.3.1 版本页）、<https://clickism.de/docs/clickmobs/tags>（官方标签文档） |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 是什么
 
 shift+右键把生物**收进背包**（变成对应生物头颅），放回头颅即可恢复生物；可直接放进船/矿车，发射器可自动生成生物。轻量实用插件。
 
-- 版本：1.2.4（SpigotMC #121939）
-- 平台：Paper / Spigot（Leaf 可用）；官方实测 1.20 – 1.21，有用户确认 1.21.4 Paper 正常
-- **1.21.11 未官方声明**——api 大概率兼容，放入 plugins 实测加载
+- 版本：1.3.1（官方 Modrinth `paper-1.3.1` 正式版，2026-03-26；本服 `ClickMobs-paper-1.3.1.jar`）
+- 平台：Paper / Purpur / Spigot / Bukkit（Leaf 可用；另有 Fabric / NeoForge 模组版，别下混）；官方项目页列 26.3 / 26.2 / 26.1.x / 1.21.x / 1.20.x；本服 26.3 已实跑加载
 
 ## 功能
 
@@ -29,8 +40,8 @@ shift+右键把生物**收进背包**（变成对应生物头颅），放回头�
 
 ## 下载
 
-SpigotMC：https://www.spigotmc.org/resources/clickmobs.121939/
+官方 Modrinth：https://modrinth.com/plugin/clickmobs（插件版 `ClickMobs-paper-1.3.1.jar` 即本服所用；SpigotMC 旧页 https://www.spigotmc.org/resources/clickmobs.121939/ 仅作参考）
 
 ## 同名项目防混淆
 
-CurseForge / Modrinth 上的 **ClickMobs（作者 Clickism）** 是 **Fabric / NeoForge 模组**（支持 1.21.11 但不是插件），Leaf 装不了——认准 SpigotMC 插件版。
+Modrinth 上的 **Click Mobs（作者 Clickism）** 同时发布**插件版（Paper / Purpur）**与**模组版（Fabric / NeoForge）**；本服 `ClickMobs-paper-1.3.1.jar` 就是插件版，Leaf 可装。模组版才放 `mods/`，别把两种构建下混。

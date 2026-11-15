@@ -14,6 +14,18 @@
 
 > 状态：**本服现行网页地图（生产采用）**。曾在测试服用 5.16-paper 部署验证通过；现因 Dynmap 不支持 26.3，已正式切换为 BlueMap 作为生产地图。本文档为 BlueMap 的完整接入说明。
 
+## 0. 版本与官方文档（2026-11-14 核对）
+
+| 项 | 实测 / 结论 |
+| --- | --- |
+| 本地 26.3 主服 | `plugins/BlueMap-5.29-paper.jar`，`version: 5.29` |
+| 官方最新 | 官网持续更新，当前按 bluemap.bluecolored.de（5.x 口径）；本地 5.29 |
+| 官方文档站 | https://bluemap.bluecolored.de/wiki/ （5.x 现行主站，仍是该站；GitHub Wiki 已迁出） |
+| 官方下载 | https://github.com/BlueMap-Minecraft/BlueMap/releases · https://modrinth.com/plugin/bluemap · https://hangar.papermc.io/BlueMap/BlueMap |
+| 主要页面 | https://bluemap.bluecolored.de/wiki/getting-started/Installation.html · https://bluemap.bluecolored.de/3rdPartySupport.html · https://github.com/BlueMap-Minecraft/BlueMap/releases |
+
+> 以下正文以本服实跑配置为准；遇到与官方最新文档不一致的写法，以官方文档复核。
+
 ## 功能说明
 
 - **3D 网页地图**：浏览器用 Three.js 渲染，鼠标旋转/缩放/平移，保留地形高低、建筑立体结构、水面反光。
@@ -63,23 +75,47 @@ BlueMap **没有标记命令**（标记靠配置文件或第三方插件 API，�
 
 > 权限节点以官方为准；`admin`/`owner` 给 `bluemap.*` 即可。完整命令列表见官方 Wiki（Commands and Permissions）。
 > 玩家**查看地图无任何权限要求**（网页匿名访问）；上面只是管理命令。
-> 若要让特定玩家/组**不在地图上显示**，调整 `player-markers` 配置或相应权限（`/lp tree bluemap` 核对节点）。
+> 若要让特定玩家/组**不在地图上显示**，调整 `plugin.conf` 的 `live-player-markers` / `hide-*` 系列或相应权限（`/lp tree bluemap` 核对节点）。
 
-## 配置要点
+## 配置要点（BlueMap 5.29）
 
-首次启动生成 `plugins/BlueMap/` 配置，关键文件：
+首次启动生成 `plugins/BlueMap/`，HOCON 格式，配置分散在多个文件：
 
-- **`webserver.conf`**：`webserver.bind` + `webserver.port`（默认 **8100**）。需对外可达或走反代。
-- **`bluemap.conf`**：`data`（meshes 存储路径，随已探索区块增长）、`render-threads`（渲染线程数，默认 -1 自动）、`compression`、`metrics`。
-- **每世界设置**：`map-type`（正常 3D）、`player-markers`（开/关）、`marker-sets`（标记集）。
+| 文件 | 关键项 |
+| --- | --- |
+| `core.conf` | `data`、`render-thread-count`、`render-thread-priority`、`update-cooldown`、`full-update-interval`、`region-file-check-interval`、`scan-for-mod-resources`、`metrics` |
+| `plugin.conf` | `live-player-markers`、`player-render-limit`、`skin-download`、`write-markers-interval`、`write-players-interval` |
+| `webserver.conf` | `enabled`、`webroot`、`port`（默认 **8100**）、`sse-enabled`、缓存头 |
+| `webapp.conf` | `resolution-default`、视角开关、缩放滑块默认值 |
+| `maps/<id>.conf` | 一张地图一个文件：`enable-hires`、`render-mask`、`min-inhabited-time`、`render-edges`、`storage` |
+| `storages/file.conf` | `root: "bluemap/web/maps"`、`compression: gzip` |
 
-**隐私设置（重要）**：本服重视玩家隐私（信任传送都需对方同意）。公开网页若开 `player-markers`，等于把全员实时坐标暴露给任何人。建议：
+- 删掉 `maps/` 下某个 `.conf` 即移除该地图；重命名等于新建地图（渲染数据按 id 存储）。
+- **没有 `webserver.bind`**：限制监听地址走防火墙 / Caddy 反代，不要把 8100 直接暴露公网。
+- `render-thread-count` 官方建议 ≤ CPU 核数；4 核及以下的机器设为 `1`。
+- `player-render-limit` 注释明确：**在线人数 ≥ 该值即暂停渲染**，`0` / `-1` 为不暂停，默认 `-1`。
 
-- 关掉 `player-markers`；或
-- 仅内网 / 白名单访问地图；或
-- 仅对特定世界开启玩家标记。
+**隐私设置（重要）**：本服重视玩家隐私（信任传送都需对方同意）。公开网页若开 `live-player-markers`，等于把全员实时坐标暴露给任何人。建议：关掉 `live-player-markers`；或仅内网 / 白名单访问地图；或仅对特定世界开启玩家标记。
 
-**首渲很重**：第一次全量渲染大世界可能几十分钟~几小时，且占盘（meshes 随探索增长，几百 MB~数 GB）。务必低峰期执行；若已探索范围够大可直接渲染，无需额外预生成工具。
+**首渲很重**：第一次全量渲染大世界可能几十分钟~几小时，且占盘（瓦片随已生成区块增长，几百 MB~数 GB）。务必低峰期执行；若已探索范围够大可直接渲染，无需额外预生成工具。
+
+## 性能优化（5.29 实测，2026-11-13）
+
+本地 26.3 主服实测：主世界 **16,185 个瓦片 / 1231 MB**（zoom0 占 10,873 个 / 1070 MB），下界 604 个 / 23.9 MB，末地 24 个 / 0.1 MB；`world/` 下 region 文件 4,045 个（另有 entities 3,780、poi 2,198）；本机 20 逻辑核。当前配置已偏保守：2 渲染线程、`enable-hires: false`、`compression: gzip`、缓存头 `max-age=86400`。
+
+| 目标 | 改哪项 | 当前 → 建议 | 说明 |
+| --- | --- | --- | --- |
+| 地图及时更新 | `plugin.conf` `player-render-limit` | `1` → `-1`（或 3~5） | **当前只要 1 人在线就停渲**，地图只在空服时更新，是「地图不动」主因；改后配合 `render-thread-priority: 1` 降优先级，避免抢 TPS |
+| 渲染速度 | `core.conf` `render-thread-count` | `2` → 按云端核数 | 官方：≤4 核用 `1`，核多可给 2~4；渲染是异步的，CPU 没跑满就不卡主线程 |
+| 清理磁盘 | `maps/world.conf` `enable-hires` | `false` 保留 → `/bluemap purge world` 重渲 | 官方注释：关 hires **不会删除已有瓦片、只是不再更新**，那 1.07 GB zoom0 是冻结数据；要画质则改回 `true` 并重渲 |
+| 控制瓦片增长 | `render-mask` / `min-inhabited-time` | 空遮罩 / `0` → 设边界或 >0 | 当前渲染**所有已生成区块**；加 mask 限定主城范围，或调大 inhabited-time 跳过纯路过区块（远处会留空白） |
+| 减启动扫描 | `core.conf` `scan-for-mod-resources` | `true` → `false` | 本服无 mod，`world/datapacks` 只有 `bukkit/pack.mcmeta` 空包 |
+| 减外部请求 | `plugin.conf` `skin-download` / `core.conf` `metrics` | `true` → `false` | 外置登录 / 基岩玩家会向 Mojang 请求皮肤；收益小但零风险 |
+| 省内存 | `webserver.conf` `enabled` | `true` → `false` + Caddy 托管静态站 | 会失去 `sse-enabled` 的实时玩家标记，仅在不需要实时位置时才做 |
+
+**保持不动**：`region-file-check-interval: 5`（官方仅对 >10000 个 region 建议调大，本服 4045）、`update-cooldown: 60`、`full-update-interval: 1440`（只检查漏掉的变更，不重渲全图）、`compression: gzip`、`storage: file`（单服无需切 SQL）。`render-edges: true` 只在设置了 `render-mask` 时才生效，当前无遮罩，改它没用。
+
+改动 `enable-hires` / `render-mask` / `min-inhabited-time` / `render-edges` 都需 `/bluemap purge <map>` + 重渲才生效。渲染产物里还有 3 个 `.filepart` 残留（写入事务中断的临时文件），可直接删除。日志中 `minecraft:skull` 的 `custom_name` NBT 解析失败是 5.29 对 1.21.11 文本组件格式的兼容问题，不影响整体渲染，等新版修。
 
 ## 如何只渲染加载主世界?
 
@@ -273,10 +309,8 @@ BlueMap 有两种典型落地方式，按"地图谁来渲染、谁来访问"决�
 
 1. 取匹配目标 MC 版本的 `bluemap-<ver>-paper.jar` 放入服务端 `plugins/`（**1.21.11 用 `bluemap-5.16-paper.jar`；Leaf 26.3 用 `bluemap-5.29-paper.jar`**），**完整重启**（非 /reload）。
 2. 首启生成 `plugins/BlueMap/`。编辑 `core.conf` 把 `accept-download: false` → `true`（接受 Mojang EULA，允许下载 `minecraft-client-1.21.11.jar`，约 31 MB，否则 Web 不工作）。
-3. 编辑 `webserver.conf`：
-   - `webserver.port`：默认 `8100`（若被占用改别的）。
-   - `webserver.bind`：默认 `0.0.0.0`。**生产不要裸奔**——建议绑内网/回环，由下列反代对外。
-4. 编辑每世界 `map-<world>.conf`：`player-markers` 按隐私策略设 `false`（本服默认关）或仅特定世界开。
+3. 编辑 `webserver.conf`：`port` 默认 `8100`（被占用改别的）、`enabled: true`；**5.29 没有 `webserver.bind` 键**，别把 8100 直接开公网，用防火墙或下方反代限制。
+4. 编辑 `plugin.conf`：`live-player-markers` 按隐私策略开/关（公开网页开启等于暴露全员实时坐标）；每世界配置在 `maps/<id>.conf`（`enable-hires`、`render-mask` 等），删掉某维度的 `.conf` 即不渲染该地图。
 5. 低峰期先完成区块预生成（可选），再让 BlueMap 全量渲染（首渲几十分钟~数小时，占盘随探索增长）。
 6. 对外暴露：用 **nginx / Caddy 反代** `127.0.0.1:8100`，或把 `bluemap/web/` 作为静态站点托管；**切勿**直接把 8100 开到公网。
 
@@ -297,12 +331,12 @@ server {
 }
 ```
 
-> 反代场景下 `webserver.bind` 绑 `127.0.0.1` 即可，无需公网监听。如需访问控制（白名单/登录），在反代层加 basic auth 或 WAF。
+> 反代场景由 nginx / Caddy 监听公网、把 8100 留在内网（防火墙限制即可，5.29 无 `webserver.bind` 键）。如需访问控制（白名单/登录），在反代层加 basic auth 或 WAF。
 
 **权限**（仅管理命令需授权，查看网页匿名）：`admin`/`owner` 给 `bluemap.*`。
 
 **优点**：实时、玩家零门槛、增量渲染自动更新。
-**注意**：首渲吃 CPU/盘；`player-markers` 隐私；8100 不要裸公网。
+**注意**：首渲吃 CPU/盘；`live-player-markers` 隐私；8100 不要裸公网。
 
 ---
 
@@ -343,13 +377,13 @@ server {
 
 1. 准备 BlueMap CLI：从 [BlueMap 发布页](https://modrinth.com/plugin/bluemap/versions) 取 **`BlueMap-cli.jar`**（含依赖，Java 25；若渲染 1.21.11 存档可用 Java 21 版）。建一个工作目录（如 `D:\mc_maps\bluemap-cli\`）放 jar。
 2. 准备存档：把云端下载的 `world/` `world_nether/` `world_the_end/` 放到本机某目录（如 `D:\mc_maps\saves\`）。
-3. 生成配置：在该目录跑一次 `java -jar BlueMap-cli.jar`，会自动生成 `config/`（`core.conf` `webserver.conf` 与各 `map-<world>.conf`）。
+3. 生成配置：在该目录跑一次 `java -jar BlueMap-cli.jar`，会自动生成 `config/`（`core.conf`、`webserver.conf` 与 `maps/` 下各地图 `.conf`）；此处沿用旧版 CLI 记录，5.29 实际结构以生成结果和 §配置要点为准。
 4. 编辑 `config/core.conf`：`accept-download: true`（接受 Mojang EULA，首次自动下载 `minecraft-client-1.21.11.jar` 约 31 MB，离线渲染必需）。
 5. 编辑各 `map-<world>.conf`，把 `world` 指向**存档路径**而非游戏服目录：
    - `world:` `D:\mc_maps\saves\world`
    - `world-nether:` `D:\mc_maps\saves\world_nether`
    - `world-the-end:` `D:\mc_maps\saves\world_the_end`
-   - `player-markers: false`（离线无玩家，本就可关）。
+   - 离线渲染无在线玩家，无需配置玩家标记（插件模式的 `live-player-markers` 在 CLI 下不适用）。
 6. 离线渲染（`-r` = render，`-c` 指定配置目录）：
 
    ```bat
@@ -395,24 +429,8 @@ server {
 | ------------------------- | --------------------------------------------------------------------- |
 | 地图打不开                | 端口是否开放 / 反代是否正确；核对 `webserver.port` 与防火墙           |
 | 大片空白                  | 区块未渲染或未预生成；先预生成区块（可选）再全量渲染                  |
-| 首渲卡服                  | `render-threads` 调低、低峰期渲染，或用 `radiusrender` 限制范围       |
-| 玩家标记不显示 / 暴露隐私 | 核对 `player-markers` 配置；要隐藏给对应权限（/lp tree bluemap 核对） |
+| 首渲卡服                  | `render-thread-count` 调低（≤4 核用 `1`）并设 `render-thread-priority: 1`；低峰期渲染，或用 `render-mask` 限制范围 |
+| 玩家标记不显示 / 暴露隐私 | 核对 `plugin.conf` 的 `live-player-markers`、`hide-*` 系列；要隐藏给对应权限（`/lp tree bluemap` 核对） |
+| 有人在线时地图不更新      | `plugin.conf` 的 `player-render-limit: 1` 表示 1 人在线即停渲；改 `-1` 或调大（见「性能优化」） |
 | 更新慢 / 不动             | 确认未处于 `freeze` 状态；增量渲染需区块实际变化才更新                |
 
-## 部署验证记录（BlueMap）
-
-> 说明：**BlueMap 已为本服现行生产网页地图**（替换 Dynmap，因 Dynmap 无 26.x 构建）。下方记录测试服验证与 26.3 的版本/运行要求。
-
-- **已在测试服 `C:\mc_serve\1.21.11-test` 完成部署验证（5.16-paper）。**
-- 验证环境与结果：
-  1. **jar 加载**：`bluemap-5.16-paper.jar` 放入 `plugins/`，Leaf 1.21.11 在 36 插件列表中正常 `[BlueMap] Enabling BlueMap v5.16`。
-  2. **web 端口可达**：内置 WebServer `bound to all network interfaces on port 8100` 并 `started`；`http://127.0.0.1:8100/` 探测返回 `HTTP 200`、页面标题 `BlueMap`。
-  3. **首渲产出**：资源自动下载 `minecraft-client-1.21.11.jar`（约 31 MB）并 `Resources loaded`；`world` / `world_nether` / `world_the_end` 三张地图均 `Loading map` 成功，已生成大量 `.prbm.gz` 瓦片（位于 `bluemap/web/maps/<world>/tiles/`），证明 3D 渲染正常推进。
-  4. **关键配置**：`BlueMap/core.conf` 的 `accept-download` 已从 `false` 改为 **`true`**（接受 Mojang EULA，允许 BlueMap 下载 3D 渲染所需 client.jar），否则 Web 无法工作。这是离线/首次部署必改项。
-- **Leaf 26.3 运行要求**：
-  - **版本**：用 **BlueMap 5.29**（Paper/Folia/Purpur 构建从 26.1.1 起覆盖 26.3，已验证支持到 26.3）。
-  - **Java**：BlueMap 5.29 需 **Java 25**，与 26.3 服务端一致（若仍跑 1.21.11 可用 5.16-paper + Java 21）。
-  - 首次全量渲染耗时与 TPS 影响（建议低峰期执行，可按需提前预生成区块）。
-  - **Residence 领地图层**：当前**未部署** BlueMap Residence 桥接插件；如需领地标记，按上文「方案一」放入 jar 后完整重启并实测 26.3 兼容性。
-  - 玩家标记隐私：保持 `player-markers` 关闭，生产如需开启再评估是否仅内网可见。
-- 部署版本：**BlueMap 5.29**（paper 平台 jar）。
