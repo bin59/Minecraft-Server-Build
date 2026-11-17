@@ -85,6 +85,7 @@ _DEFAULT_:
 /lp user 00000000-0000-0000-0009-01fda5a6602e meta setprefix "&d[忧的郁] &6"
 /lp user 00000000-0000-0000-0009-01f077e6618e meta setprefix "&d[汽修二班 柳贯一] &6"
 /lp user 00000000-0000-0000-0009-01f46d426bce meta setprefix "&d[SB.ery] &6"
+/lp user 00000000-0000-0000-0009-01fa9c76aa41 meta setprefix "&d[布偶ovo] &6"
 
 ```
 
