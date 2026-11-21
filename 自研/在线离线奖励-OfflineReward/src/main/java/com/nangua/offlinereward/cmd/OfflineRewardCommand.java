@@ -39,8 +39,12 @@ public final class OfflineRewardCommand implements CommandExecutor {
             OnlineRewardCalculator calc = new OnlineRewardCalculator(plugin.getConfig());
             sender.sendMessage("§7[离线奖励] " + args[1] + " 最后退出:" + (last > 0 ? last : "无记录")
                     + "  上次发放:" + (reward > 0 ? reward : "无"));
+            var afk = plugin.afkChecker();
+            String afkText = !afk.enabled() ? "§7门控关闭"
+                    : !afk.available() ? "§cAPI未接入"
+                    : (afk.isAfk(target) ? "§cAFK（不计时长）" : "§a活跃");
             sender.sendMessage("§7[在线奖励] 豁免:" + (plugin.isExempt(target) ? "§c是（不发）" : "§a否（正常发放）")
-                    + "  今日已发:" + today + " 币  在线起点:" + (login > 0 ? login : "无"));
+                    + "  AFK:" + afkText + "  今日已发:" + today + " 币  在线起点:" + (login > 0 ? login : "无"));
             if (calc.isStages()) {
                 long total = (st == null ? 0 : st.getOnlineMinutesToday(target.getUniqueId()))
                         + (login > 0 ? Math.max(0, System.currentTimeMillis() - login) : 0);

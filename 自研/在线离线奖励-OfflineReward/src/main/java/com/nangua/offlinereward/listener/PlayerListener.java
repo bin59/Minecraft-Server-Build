@@ -76,7 +76,8 @@ public final class PlayerListener implements Listener {
         Player p = e.getPlayer();
         OnlineRewardCalculator calc = new OnlineRewardCalculator(plugin.getConfig());
         // 退出时结算本段：阶段模式累计时长并检查达标阶段；循环模式按真实时长发。均静默。
-        if (!plugin.isExempt(p)) {
+        // 1.1.4：AFK 退出不结算最后一段（挂机时长不计入）。
+        if (!plugin.isExempt(p) && !plugin.afkChecker().isAfk(p)) {
             if (calc.isStages()) settleStages(p, System.currentTimeMillis(), false, true);
             else settleCycle(p, false, true);
         }
@@ -99,6 +100,12 @@ public final class PlayerListener implements Listener {
         List<Player> online = List.copyOf(Bukkit.getOnlinePlayers());
         for (Player p : online) {
             if (plugin.isExempt(p)) continue;
+            // 1.1.4：AFK 玩家每分钟把计时锚点推进到 now —— 挂机时段不计入在线时长、不发奖。
+            // 恢复活跃后从新锚点重新累计，避免把整段 AFK 时长一次性算进来。
+            if (plugin.afkChecker().isAfk(p)) {
+                touchAfkAnchor(p, calc, now);
+                continue;
+            }
             if (calc.isStages()) {
                 settleStages(p, now, true, false);
             } else {
@@ -225,6 +232,23 @@ public final class PlayerListener implements Listener {
     }
 
     // ==================== 公共 ====================
+
+    /**
+     * 1.1.4：AFK 计时锚点推进。
+     * 把本段在线起点挪到 now，且不累计 onlineMinutesToday、不发奖——等价于丢弃这段 AFK 时长。
+     * 两种模式通用：stages 靠 segment=now-lastLogin 累计；cycle 靠 lastLogin 起算，
+     * 因此都只需推进 lastLogin。恢复活跃后从新锚点重新累计，AFK 时段被完整剔除。
+     */
+    private void touchAfkAnchor(Player p, OnlineRewardCalculator calc, long now) {
+        var storage = plugin.storage();
+        if (storage == null) return;
+        storage.setLastLogin(p.getUniqueId(), now);
+        // cycle 模式：AFK 期间越过结算点也不补发，顺延下次结算到「当前段间隔」之后
+        if (!calc.isStages()) {
+            int idx = storage.getOnlineCycleIndex(p.getUniqueId());
+            storage.setNextOnlineSettle(p.getUniqueId(), now + calc.cycleMinutesAt(idx) * 60000L);
+        }
+    }
 
     /** 跨天则重置在线每日累计、阶段进度与日期标记。 */
     private void resetDailyIfNeeded(Player p) {

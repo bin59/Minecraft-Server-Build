@@ -34,6 +34,12 @@ db: offline.db
 online-reward:
   enabled: true
   mode: stages             # stages = 阶段发放（默认） | cycle = 循环间隔发放（1.1.2 行为，可一键回退）
+  # 1.1.4：AFK（挂机）玩家不计在线时长、不发在线奖励。
+  # 通过反射接入 EssentialsX 的 User.isAfk()；EssentialsX 未装/未接入时自动降级为非 AFK（照常计时）。
+  # 依赖 EssentialsX 的 auto-afk（本服 300 秒 = 挂机 5 分钟后标记 AFK），这 5 分钟仍会计入。
+  # 注意：auto-afk 是「多久标记 AFK」，auto-afk-timeout 是「标记后多久踢人」(-1=不踢)，二者不同。
+  # 改完 /offlinereward reload 即生效；设 false 可关闭门控。
+  ignore-afk: true
   # 阶段表：今日累计在线达到 minutes 分钟 → 发 coins 币；逐档发放，最后一档后当天毕业。
   # 金额、档数、时间点全部在这里配置；改完 /offlinereward reload 即生效，无需重新编译。
   # 想改「一次比一次多」的幅度或毕业时长，直接改下面的 coins / minutes 即可；

@@ -4,6 +4,7 @@ import com.nangua.offlinereward.cmd.OfflineRewardCommand;
 import com.nangua.offlinereward.listener.PlayerListener;
 import com.nangua.offlinereward.reward.OnlineRewardCalculator;
 import com.nangua.offlinereward.storage.Storage;
+import com.nangua.offlinereward.util.AfkChecker;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,9 +21,15 @@ public final class OfflineReward extends JavaPlugin {
 
     private static OfflineReward instance;
     private Storage storage;
+    private AfkChecker afkChecker;
 
     public static OfflineReward get() {
         return instance;
+    }
+
+    /** AFK 判定器（1.1.4）：反射接入 EssentialsX，开关实时读配置。 */
+    public AfkChecker afkChecker() {
+        return afkChecker;
     }
 
     @Override
@@ -36,6 +43,16 @@ public final class OfflineReward extends JavaPlugin {
             getLogger().log(Level.SEVERE, "无法初始化数据库，插件停用。", e);
             getServer().getPluginManager().disablePlugin(this);
             return;
+        }
+
+        afkChecker = new AfkChecker(this);
+        if (afkChecker.enabled()) {
+            if (afkChecker.available()) {
+                getLogger().info("在线奖励 AFK 门控已启用（EssentialsX 已就绪，挂机不计在线时长）。");
+            } else {
+                getLogger().warning("在线奖励 AFK 门控已开启但未能接入 EssentialsX（getPlugin(\"Essentials\") 或反射失败）；"
+                        + "本次运行中 AFK 玩家仍会计时。请确认 EssentialsX 已安装并先于本插件启用。");
+            }
         }
 
         PlayerListener listener = new PlayerListener(this);

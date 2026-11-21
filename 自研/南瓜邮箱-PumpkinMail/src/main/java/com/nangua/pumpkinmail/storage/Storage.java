@@ -361,6 +361,79 @@ public class Storage {
         pendingCache.remove(cacheKey(row[1], row[0]));
     }
 
+    /**
+     * 原子占位（防重复领取核心）：只有 claimed=0 的行能被抢到并置 1，返回 true。
+     * 已领 / 不存在（幽灵邮件）返回 false，且绝不再发钱。
+     * 与真正发钱配套：调用方先 tryClaim，成功后再发奖；发奖失败必须 rollbackClaim。
+     * 二进制兼容：不改动旧 markClaimed 签名，供 OfflineReward/BuildRate 等旧插件继续调用。
+     */
+    public synchronized boolean tryClaim(String rewardId, String claimantUuid, String claimantName) {
+        String[] row = lookup(rewardId);
+        if (row == null) {
+            try {
+                insertLog(rewardId, "CLAIM_MISSING", System.currentTimeMillis(),
+                        claimantUuid, claimantName, null, null, null, null, null,
+                        "领取失败：rewards 中找不到该 id（幽灵邮件，拒绝发奖）");
+            } catch (SQLException e) { e.printStackTrace(); }
+            return false;
+        }
+        long now = System.currentTimeMillis();
+        boolean auto = true;
+        int affected = 0;
+        try {
+            auto = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE rewards SET claimed=1, claimed_time=?, claimed_by=?, claimed_name=? WHERE id=? AND claimed=0")) {
+                ps.setLong(1, now);
+                ps.setString(2, claimantUuid);
+                ps.setString(3, claimantName);
+                ps.setString(4, rewardId);
+                affected = ps.executeUpdate();
+            }
+            insertLog(rewardId, affected > 0 ? "CLAIM" : "CLAIM_DUP", now,
+                    claimantUuid != null ? claimantUuid : row[0],
+                    claimantName != null ? claimantName : row[1],
+                    row[2], row[3], row[4], row[5], row[6],
+                    affected > 0 ? "领取成功（先占位后发奖）" : "重复领取被拦截：该奖励此前已标记已领");
+            conn.commit();
+        } catch (SQLException e) {
+            try { conn.rollback(); } catch (SQLException ignored) { }
+            e.printStackTrace();
+            return false;
+        } finally {
+            try { conn.setAutoCommit(auto); } catch (SQLException ignored) { }
+        }
+        if (affected > 0) pendingCache.remove(cacheKey(row[1], row[0]));
+        return affected > 0;
+    }
+
+    /** 发奖失败后回滚占位，让玩家可以重试；写 CLAIM_ROLLBACK 留痕，不清 claimed_time 以外字段语义。 */
+    public synchronized void rollbackClaim(String rewardId) {
+        String[] row = lookup(rewardId);
+        boolean auto = true;
+        try {
+            auto = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE rewards SET claimed=0, claimed_time=NULL, claimed_by=NULL, claimed_name=NULL WHERE id=? AND claimed=1")) {
+                ps.setString(1, rewardId);
+                ps.executeUpdate();
+            }
+            insertLog(rewardId, "CLAIM_ROLLBACK", System.currentTimeMillis(),
+                    null, null, row == null ? null : row[2], row == null ? null : row[3],
+                    row == null ? null : row[4], row == null ? null : row[5], row == null ? null : row[6],
+                    "发奖失败，占位已回滚，玩家可以重试");
+            conn.commit();
+        } catch (SQLException e) {
+            try { conn.rollback(); } catch (SQLException ignored) { }
+            e.printStackTrace();
+        } finally {
+            try { conn.setAutoCommit(auto); } catch (SQLException ignored) { }
+        }
+        if (row != null) pendingCache.remove(cacheKey(row[1], row[0]));
+    }
+
     /** 领取失败（命令发放失败 / 物品解析失败 / 未知类型）同样留痕，便于排查漏发。 */
     public synchronized void logClaimFailed(String rewardId, String playerUuid, String playerName, String reason) {
         String[] row = lookup(rewardId);

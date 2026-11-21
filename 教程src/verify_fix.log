@@ -1,8 +1,0 @@
-[21:07:34] start; initial cooldown 1200s
-[21:27:34] cooldown done; reading doc
-[21:27:34] read rate-limited 400007 (retry 1, wait 30s)
-[21:28:04] read rate-limited 400007 (retry 2, wait 60s)
-[21:29:04] read rate-limited 400007 (retry 3, wait 120s)
-[21:31:04] read rate-limited 400007 (retry 4, wait 180s)
-[21:34:05] read rate-limited 400007 (retry 5, wait 240s)
-[21:38:05] read rate-limited 400007 (retry 6, wait 300s)

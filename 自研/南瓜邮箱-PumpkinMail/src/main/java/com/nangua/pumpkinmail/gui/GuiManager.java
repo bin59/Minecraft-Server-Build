@@ -186,15 +186,25 @@ public class GuiManager implements Listener {
     }
 
     private void claimReward(Player p, Reward r, MailboxSession ms) {
+        String uuid = p.getUniqueId().toString();
+        String name = p.getName();
+
+        // 1) 先原子占位：仅 claimed=0 的真邮件能抢到；幽灵邮件/已领一律拒绝，绝不发钱。
+        //    这堵住了「界面缓存旧图标、数据库记录已不在」时反复点击反复得币的漏洞。
+        if (!plugin.storage().tryClaim(r.id(), uuid, name)) {
+            p.sendMessage(C("&c领取失败：该邮件已领取或已失效，请关闭邮箱重开。"));
+            refreshMailbox(p, ms);
+            return;
+        }
+
+        // 2) 占位成功才真正发奖；失败必须回滚占位，允许玩家重试。
         RewardApplier.ApplyResult res = applier.applyDetailed(p, r);
         if (res.ok()) {
-            // 成功：记录真实领取人（UUID + 名字），写 CLAIM 审计
-            plugin.storage().markClaimed(r.id(), p.getUniqueId().toString(), p.getName());
             p.sendMessage(C("&a已领取奖励：" + (r.desc() == null || r.desc().isBlank() ? "奖品" : r.desc())));
             p.playSound(p.getLocation(), org.bukkit.Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
         } else {
-            // 失败：不改状态，但必须留痕，否则「没发成功」这件事就查不到
-            plugin.storage().logClaimFailed(r.id(), p.getUniqueId().toString(), p.getName(), res.detail());
+            plugin.storage().rollbackClaim(r.id());
+            plugin.storage().logClaimFailed(r.id(), uuid, name, res.detail());
             p.sendMessage(C("&c领取失败，请联系管理员。&7(" + res.detail() + ")"));
         }
         refreshMailbox(p, ms);

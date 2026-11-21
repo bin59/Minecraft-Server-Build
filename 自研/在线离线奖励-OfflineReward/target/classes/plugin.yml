@@ -1,5 +1,5 @@
 name: OfflineReward
-version: 1.1.3
+version: 1.1.4
 main: com.nangua.offlinereward.OfflineReward
 api-version: 26.3
 authors:
@@ -8,6 +8,7 @@ description: 在线/离线奖励 - 按在线、离线时长发南瓜币到南瓜
 softdepend:
   - PumpkinMail
   - Vault
+  - Essentials          # 1.1.4：AFK 门控读取 EssentialsX 的 isAfk()；缺失时自动降级为非 AFK
 commands:
   offlinereward:
     description: 在线/离线奖励管理
