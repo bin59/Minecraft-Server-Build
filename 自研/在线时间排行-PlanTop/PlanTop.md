@@ -34,15 +34,19 @@ LIMIT ?
 
 ```
 自研\在线时间排行-PlanTop\
-├── PlanTop-1.0.0.jar       # 成品（已内置 MySQL 驱动，直接部署）
-├── PlanTop.md              # 本文档
-└── src\
-    ├── plugin.yml
-    ├── config.yml          # 默认配置（首次启动自动导出到 plugins/PlanTop/）
-    └── com\plantop\
-        ├── PlanTopPlugin.java      # 主类：加载配置、注册占位符、调度
-        ├── PlaytimeCache.java      # 异步聚合 + 内存缓存 + 格式化
-        └── PlanTopExpansion.java   # PAPI 占位符
+├── PlanTop.md                       # 本文档
+├── pom.xml                          # IDE / Maven 依赖声明（leaf-api + PlaceholderAPI + adventure）
+├── src\main\java\com\plantop\
+│   ├── PlanTopPlugin.java           # 主类：加载配置、注册占位符、调度
+│   ├── PlaytimeCache.java           # 异步聚合 + 内存缓存 + 格式化
+│   └── PlanTopExpansion.java        # PAPI 占位符（identifier = ptop）
+├── src\main\resources\
+│   ├── plugin.yml                   # version 1.0.0 / api-version 26.3 / softdepend: [PlaceholderAPI]
+│   └── config.yml                   # 出厂默认（首次启动导出到 plugins/PlanTop/config.yml）
+└── target\PlanTop-1.0.0.jar         # 成品（已 shade 内置 MySQL 驱动），直接复制进 plugins/
+
+> 本插件**根目录不放 jar**，产物只在 `target/`（与仓库其他自研插件一致）。旧版本文档把 jar 与 `src/` 布局写错，2026-11-19 已按实际目录纠正。
+> 运行服实跑：`leaf-26.3-多服/plugins/PlanTop-1.0.0.jar`，与 `target/` 同为 1.0.0，无版本落差。
 ```
 
 ## 占位符
@@ -70,17 +74,21 @@ top-size: 30                # 排行人数
 query-timeout-seconds: 15   # 单次查询超时
 ```
 
-> 连接参数每 5 分钟用一次，属于低频；JDBC 直连 + 每次新建连接（用完关闭），不占连接池。`useSSL=false&serverTimezone=Asia/Shanghai&connectTimeout=5000` 已内置 URL。
+> 连接参数每 5 分钟用一次，属于低频；JDBC 直连 + 每次新建连接（用完关闭），不占连接池。URL 已内置 `useSSL=false&serverTimezone=Asia/Shanghai&connectTimeout=5000&socketTimeout=<query-timeout-seconds × 1000>`（末项由配置换算，见 `PlaytimeCache` 构造器）。
 
 ## 编译打包（重建用）
 
-前置：`leaf-api.jar`、`PlaceholderAPI-*.jar`、`adventure-api.jar`、`adventure-key.jar`（编译期）；`mysql-connector-j-*.jar`（shade 进产物）。
+前置：`leaf-api.jar`（`自研/lib/leaf-api-26.3.build.13-alpha.jar`）、`PlaceholderAPI-*.jar`、`adventure-api.jar`、`adventure-key.jar`（编译期）；`mysql-connector-j-*.jar`（shade 进产物）。
 
-```
-javac -encoding UTF-8 -cp "leaf-api.jar;PlaceholderAPI.jar;adventure-api.jar;adventure-key.jar" -d build src\com\plantop\*.java
+按仓库总则用 **JDK 25 的 `javac --release 21`** 编译（leaf-api 是 Java 25 字节码，低版本 JDK 读不了；`--release 21` 保证产物仍可被服务端加载）：
+
+```powershell
+javac --release 21 -encoding UTF-8 -cp "lib\leaf-api-26.3.build.13-alpha.jar;PlaceholderAPI.jar;adventure-api.jar;adventure-key.jar" -d build (Get-ChildItem src\main\java\com\plantop\*.java)
 ```
 
-打包：`plugin.yml` + `config.yml` + `com/plantop/*.class` + **mysql-connector 全部 class**（保留 `META-INF/services/java.sql.Driver`，去掉签名/MANIFEST/module-info）→ `PlanTop-1.0.0.jar`。驱动已内置，运行服不需要额外装驱动。
+打包：`src/main/resources/plugin.yml` + `src/main/resources/config.yml` + `com/plantop/*.class` + **mysql-connector 全部 class**（保留 `META-INF/services/java.sql.Driver`，去掉签名/MANIFEST/module-info）→ `target/PlanTop-1.0.0.jar`。驱动已内置，运行服不需要额外装驱动。
+
+> `pom.xml` 仅用于 IDE 代码补全与依赖声明；日常部署以 `target/` 已编译 jar 为准。改源码后若重打包，记得同步 `plugin.yml` 的 `version`。
 
 ## 部署
 
@@ -103,3 +111,15 @@ javac -encoding UTF-8 -cp "leaf-api.jar;PlaceholderAPI.jar;adventure-api.jar;adv
 - 活跃时长排行：`SUM(session_end - session_start - afk_time)`（减 AFK），新增 `%ptop_<N>_active_time%`
 - 按日/月排行：`WHERE s.session_start >= ?` 加时间窗
 - 显示名映射：从 LuckPerms/称号插件取玩家前缀
+
+## 版本
+
+| 版本              | 说明                                                                                     |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| `1.0.0`（当前唯一发布版，主服在跑） | Top 30 异步聚合缓存 + `%ptop_*` 占位符（identifier `ptop`，author `hh`）+ MySQL 驱动 shade 内置。无命令、无权限节点、无 reload 指令——改配置需重启 |
+
+> **没有命令也没有 `/plantop reload`**：`plugin.yml` 的 `commands` 与 `permissions` 段都是空的，改 `config.yml`（含密码、`server-id`、`top-size`、`refresh-seconds`）后必须重启，或 `/reload` 后重进（不推荐）。想立刻验证结果就查 `%ptop_updated%` / `%ptop_error%`。
+
+---
+
+*文档于 2026-11-19 按源码（`PlanTopPlugin` / `PlaytimeCache` / `PlanTopExpansion`）、`plugin.yml`、`config.yml`、`pom.xml`、`target/` 产物与运行服 `plugins/` 核对更新：纠正 jar 与 `src/` 目录结构、编译命令对齐仓库 JDK 25 `--release 21` 总则、补 `socketTimeout` 换算说明与版本节。第 9 行的 157 名玩家 / 6656 条会话为当时Plan 库快照，非实时数据。*

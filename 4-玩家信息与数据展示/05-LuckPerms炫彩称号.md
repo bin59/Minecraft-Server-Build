@@ -86,6 +86,10 @@ _DEFAULT_:
 /lp user 00000000-0000-0000-0009-01f077e6618e meta setprefix "&d[汽修二班 柳贯一] &6"
 /lp user 00000000-0000-0000-0009-01f46d426bce meta setprefix "&d[SB.ery] &6"
 /lp user 00000000-0000-0000-0009-01fa9c76aa41 meta setprefix "&d[布偶ovo] &6"
+/lp user 00000000-0000-0000-0009-01f6a136fe07 meta setprefix "&d[新手小镇镇长] &6"
+/lp user 00000000-0000-0000-0009-01f8db1aa75e meta setprefix "&d[洛九九] &6"
+/lp user 00000000-0000-0000-0009-01f85d450077 meta setprefix "&d[火兰宙石头] &6"
+
 
 ```
 
@@ -101,6 +105,8 @@ _DEFAULT_:
 /lp user BambooLoveFlower meta setprefix "&d[花的眷属] &6"
 /lp user llbyz meta setprefix "&d[没良心] &6"
 /lp user zuie2778 meta setprefix "&d[䧜軬] &6"
+/lp user rudolf_luna meta setprefix "&d[牢易者] &6"
+/lp user Fangmianyang meta setprefix "&d[㐂㐂] &6"
 ```
 
 ### 2.活动专属

@@ -7,7 +7,7 @@ description: 每日随机收购 - 每天 8 种候选、每人自选 5 种出售�
 commands:
   ds:
     description: 每日随机收购（/ds 打开收购界面，基岩端自动弹原生表单）
-    usage: "/ds [gui|choose <1-8|clear>|sell|sellall|today|reload|reroll]"
+    usage: "/ds [gui|menu|choose|pick <1-8|clear>|sell|sellall|today|reload|reroll]"
     permission: dailysell.use
 permissions:
   dailysell.use:

@@ -4,7 +4,9 @@ package com.nangua.buildrate.storage;
 public final class Models {
     private Models() {}
 
-    /** 一场评分活动。status: 1=进行中 0=已截止 */
+    /** 一场评分活动。status 三态：0=待开始（可报名、不可打分） / 1=进行中（可打分） / 2=已截止。
+     *  流转：create 写入 0 → start 置 1 → stop 置 2；创建新活动时会把旧的 status=1 一律刷成 2。
+     *  isActive() 只认 status==1，所以报名类查询用 getOpenEvent(IN 0,1)、打分/统计用 getActiveEvent(=1)。 */
     public record Event(int id, String name, int status, long createdAt) {
         public boolean isActive() { return status == 1; }
     }

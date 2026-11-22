@@ -1,5 +1,5 @@
 name: PumpkinMail
-version: 1.1.0
+version: 1.1.1
 main: com.nangua.pumpkinmail.PumpkinMail
 api-version: 26.3
 authors:

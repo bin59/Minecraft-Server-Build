@@ -10,7 +10,7 @@ softdepend: [Residence, Essentials, QuickMenu, PlaceholderAPI]
 commands:
   pfly:
     description: 南瓜飞主命令（时长支持 30m / 2h / 3d / 1d2h30m，纯数字按分钟）
-    usage: /pfly <buy|claim|on|off|toggle|hud|status|records|trial|global|player|give|take|setperm|reload>
+    usage: /pfly <buy|claim|on|off|toggle|hud|status|records|trial|global|player|give|take|setperm|reload|help>
     aliases: [pumpkinfly, pf]
 
 permissions:

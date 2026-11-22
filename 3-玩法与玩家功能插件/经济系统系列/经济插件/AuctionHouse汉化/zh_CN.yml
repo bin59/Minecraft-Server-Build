@@ -1,0 +1,363 @@
+# ============================================
+# AuctionHouse 语言文件 — 简体中文 (zh_CN)
+# ============================================
+#
+# 格式：MiniMessage 标签（<red>、<green>、<gold>、<gray>、<white> 等）
+# 兼容旧版 '&' 颜色代码。占位符用 {name} 格式。
+# 在 config.yml 里设置 "language: zh_CN" 切换语言。
+# 缺失的 key 会自动回退到 en_US。
+#
+# 声音：在任意消息 key 旁加 "-sound" key 可播放音效。
+# 示例：auction-bought-sound: ENTITY_EXPERIENCE_ORB_PICKUP
+# 设为 "" 或 "NONE" 关闭，使用 Bukkit Sound 枚举名。
+# ============================================
+
+# ─── 前缀 ─────────────────────────────────────────────
+prefix: "<dark_gray>[<gold>拍卖行<dark_gray>] "
+
+# ─── 通用错误 ───────────────────────────────────────────
+no-permission: "<red>你没有权限这么做。"
+player-only: "<red>此命令只能由玩家使用。"
+invalid-args: "<red>参数无效。输入 <white>/ah help<red> 查看命令。"
+invalid-price: "<red>价格无效，必须是数字。"
+invalid-id: "<red>拍卖 ID 无效，必须是数字。"
+invalid-number: "<red>数字无效。"
+invalid-amount: "<red>数量无效，必须在 1 到 <white>{max}<red> 之间。"
+hold-item: "<red>你必须手持要出售的物品。"
+inventory-full: "<red>你的背包已满！"
+module-disabled: "<red>此功能当前已关闭。"
+no-economy: "<red>未找到经济插件，拍卖行已禁用。"
+world-restricted: "<red>此世界不能使用拍卖行。"
+invalid-material: "<red>物品类型无效：<white>{item}"
+no-auctions: "<gray>当前没有上架的拍卖。"
+items-dropped-at-feet: "<gold>溢出的物品已掉落在你脚边。"
+item-blacklisted: "<red>此物品不能上架拍卖行。"
+item-blacklisted-container: "<red>此容器含有黑名单物品（<white>{item}<red>），不能上架。"
+creative-blocked: "<red>创造模式下不能出售物品。"
+
+# ─── 用法提示 ───────────────────────────────────────────
+usage-sell: "<red>用法：<white>/ah sell <价格> [数量]"
+usage-cancel: "<red>用法：<white>/ah cancel <ID>"
+usage-search: "<red>用法：<white>/ah search <关键词>"
+usage-admin: "<red>用法：<white>/ah admin [reload|transactions|lookup|purge|stats|forcecancel|return|import]"
+
+# ─── 拍卖流程 ───────────────────────────────────────────
+auction-created: "<green>已上架 <white>{item}<green>，售价 <green>{price}<gray>。<dark_gray>(#{id})"
+auction-created-sound: "BLOCK_NOTE_BLOCK_PLING"
+auction-bought: "<green>成功购入 <white>{item}<green>，花费 <green>{price}<green>！"
+auction-bought-sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+auction-cancelled: "<green>拍卖 <white>#{id}<green> 已取消，物品已退回。"
+auction-cancelled-sound: "ENTITY_VILLAGER_NO"
+auction-sold: "<green>你的 <white>{item}<green> 已售出，成交价 <green>{price}<gray>。税费：<gold>{tax}<gray>，实际到账：<green>{received}<gray>。"
+auction-sold-no-tax: "<green>你的 <white>{item}<green> 已售出，成交价 <green>{price}<green>！"
+auction-sold-sound: "BLOCK_NOTE_BLOCK_PLING"
+auction-not-found: "<red>未找到拍卖 <white>#{id}<red>。"
+auction-not-active: "<red>此拍卖已不在进行中。"
+auction-expired: "<red>此上架已过期。"
+auction-not-owner: "<red>你只能取消自己的拍卖。"
+auction-cannot-cancel: "<red>此拍卖无法取消。"
+cancel-inventory-full: "<red>背包已满！取消上架前请先腾出空间。"
+auction-cannot-buy-own: "<red>你不能购买自己的拍卖。"
+auction-not-enough-money: "<red>余额不足，需要：<green>{price}"
+auction-not-enough-money-fee: "<red>余额不足，无法支付上架费：<green>{fee}"
+auction-transaction-failed: "<red>交易失败，请重试。"
+auction-db-error: "<red>数据库错误，你的物品已退回，请重试。"
+auction-inventory-full: "<red>你的背包已满！"
+auction-price-too-low: "<red>价格至少为 <green>{min}<red>。"
+auction-price-too-high: "<red>价格不能超过 <green>{max}<red>。"
+auction-price-invalid: "<red>价格必须在 <green>{min}<red> 到 <green>{max}<red> 之间。"
+auction-max-listings-reached: "<red>你已达上架上限，最多 <white>{max}<red> 条在售。"
+auction-expired-returned: "<gold>拍卖 <white>#{id}<gold>（<white>{item}<gold>）已过期，物品已退回。"
+auction-expired-returned-sound: "ENTITY_ITEM_PICKUP"
+auction-expired-no-space: "<red>拍卖 <white>#{id}<red>（<white>{item}<red>）已过期，但你的背包已满！"
+auction-expired-login-returned: "<green>你有 <white>{count}<green> 件过期物品已退回背包！"
+auction-expired-login-returned-sound: "ENTITY_ITEM_PICKUP"
+no-active-auctions: "<gray>你当前没有在售拍卖。"
+search-no-results: "<gray>没有找到匹配 '<white>{query}<gray>' 的拍卖。"
+
+# ─── 价格建议 ──────────────────────────────────────────
+price-suggestion: "<gray><white>{item}<gray> 的建议售价：<green>{price}<gray>（根据近期成交）"
+
+# ─── 防刷屏 ────────────────────────────────────────────
+anti-spam-cooldown: "<red>请等待 <white>{seconds}<red> 秒后再使用。"
+
+# ─── 列表 / 搜索信息 ────────────────────────────────────
+auction-list-header: "<gold><bold>--- 拍卖行 <gray>(第 {page}/{pages} 页) <gold><bold>---"
+auction-list-entry: "<gray>#{id} <white>{item}<gray> x{amount} - <green>{price}<gray> 卖家 <white>{seller}<gray>（剩余 {time}）"
+auction-list-footer: "<gold><bold>--- <gray>输入 /ah help 查看命令 <gold><bold>---"
+active-auctions-header: "<gold><bold>你的在售拍卖（{count} 条）："
+active-auctions-entry: "<gray>#{id} <white>{item}<gray> x{amount} - <green>{price}<gray>（剩余 {time}）"
+search-results-header: "<gold><bold>搜索结果（<white>{query}<gold><bold>，共 {count} 条）："
+
+# ─── 帮助信息 ────────────────────────────────────────────
+help-header: "<gold><bold>--- 拍卖行帮助 ---"
+help-open: "<gold>/ah<gray> - 打开拍卖行浏览"
+help-sell: "<gold>/ah sell <价格> [数量]<gray> - 上架手持物品"
+help-cancel: "<gold>/ah cancel <ID><gray> - 取消你的上架"
+help-search: "<gold>/ah search <关键词><gray> - 搜索拍卖"
+help-active: "<gold>/ah active<gray> - 查看你的在售拍卖"
+help-admin: "<gold>/ah admin<gray> - 管理命令"
+help-help: "<gold>/ah help<gray> - 显示本帮助"
+
+# ─── 管理员信息 ───────────────────────────────────────────
+admin-reload: "<green>拍卖行配置已重载。"
+# ─── 管理员交易记录 ──────────────────────────────────────
+admin-transactions-header: "<gold><bold>--- <white>{player}<gold><bold> 的交易记录（第 {page} 页）---"
+admin-transactions-header-global: "<gold><bold>--- 近期交易（第 {page} 页）---"
+admin-transactions-entry: "<gray>[{time}] {action} #{id} <white>{item}<gray> 操作人 <white>{actor}<gray> - <green>{price}"
+admin-transactions-none: "<gray>未找到交易记录。"
+
+# ─── 管理员拍卖查询 ───────────────────────────────────────
+admin-lookup-header: "<gold><bold>--- 拍卖 #{id} --- <white>{item}<gray> | 卖家 <white>{seller}<gray> | <green>{price}<gray> | {status}"
+admin-lookup-entry: "<gray>  [{time}] <white>{action}<gray> 操作人 <white>{actor}"
+admin-lookup-no-history: "<gray>此拍卖无交易记录。"
+admin-lookup-seller: "<gray>卖家：<white>{seller}"
+admin-lookup-buyer: "<gray>买家：<white>{buyer}"
+admin-lookup-status: "<gray>状态：<white>{status}"
+admin-lookup-price: "<gray>价格：<green>{price}"
+admin-lookup-tax: "<gray>税费：<gold>{tax}"
+admin-lookup-created: "<gray>创建时间：<white>{time}"
+admin-lookup-expires: "<gray>过期时间：<white>{time}"
+admin-lookup-item: "<gray>物品：<white>{item}<gray> x{amount}"
+
+# ─── 管理员清理 ───────────────────────────────────────────
+admin-purge-done: "<green>已清理 {days} 天前的 <white>{transactions}<green> 条交易和 <white>{auctions}<green> 条拍卖。"
+admin-purge-success: "<green>已清理 <white>{count}<green> 条旧记录。"
+
+# ─── 管理员统计 ───────────────────────────────────────────
+admin-stats-header: "<gold><bold>--- 市场统计 ---"
+admin-stats-active: "<gray>在售上架：<white>{count}"
+admin-stats-sold-today: "<gray>今日成交：<white>{count}"
+admin-stats-revenue-today: "<gray>今日成交额：<green>{amount}"
+admin-stats-top-sellers: "<gray>顶级卖家："
+admin-stats-top-seller-entry: "<gray>  <white>{player}<gray> - {count} 笔售出"
+
+# ─── 管理员强制取消 ────────────────────────────────────────
+admin-forcecancel-done: "<green>已强制取消拍卖 <white>#{id}<green>（<white>{item}<green>），物品已退回卖家。"
+admin-forcecancel-notify: "<red>你的拍卖 <white>#{id}<red> 已被管理员 <white>{admin}<red> 强制取消。"
+admin-forcecancel-success: "<green>拍卖 <white>#{id}<green> 已强制取消。"
+
+# ─── 管理员退回过期物品 ─────────────────────────────────────
+admin-return-done: "<green>已向 <white>{player}<green> 退回 <white>{count}<green> 件过期物品。"
+admin-return-nothing: "<gray>未找到 <white>{player}<gray> 的未退回物品。"
+admin-return-success: "<green>已向 <white>{player}<green> 退回 <white>{count}<green> 件过期物品。"
+admin-return-none: "<gray>未找到 <white>{player}<gray> 的未退回物品。"
+admin-return-not-found: "<red>未找到该玩家。"
+
+# ─── 管理员用法 ────────────────────────────────────────────
+usage-admin-lookup: "<red>用法：<white>/ah admin lookup <拍卖ID>"
+usage-admin-purge: "<red>用法：<white>/ah admin purge <天数>"
+usage-admin-forcecancel: "<red>用法：<white>/ah admin forcecancel <拍卖ID>"
+usage-admin-return: "<red>用法：<white>/ah admin return <玩家名>"
+
+# ─── 管理员帮助 ───────────────────────────────────────────
+help-admin-header: "<gold><bold>--- 管理命令 ---"
+help-admin-reload: "<gold>/ah admin reload<gray> - 重载配置与文案"
+help-admin-transactions: "<gold>/ah admin transactions [玩家] [页码]<gray> - 查看交易日志"
+help-admin-lookup: "<gold>/ah admin lookup <ID><gray> - 查看某条拍卖详情"
+help-admin-purge: "<gold>/ah admin purge <天数><gray> - 清理旧记录"
+help-admin-stats: "<gold>/ah admin stats<gray> - 查看市场统计"
+help-admin-forcecancel: "<gold>/ah admin forcecancel <ID><gray> - 强制取消任意拍卖"
+help-admin-return: "<gold>/ah admin return <玩家名><gray> - 向玩家退回过期物品"
+help-admin-import: "<gold>/ah admin import <来源><gray> - 从 CrazyAuctions 或 zAuctionHouse 导入数据"
+
+# ─── 界面标签 ─────────────────────────────────────────────
+gui-title: "<gold><bold>拍卖行"
+gui-next-page: "<gold>下一页 >>"
+gui-prev-page: "<gold><< 上一页"
+gui-close: "<red>关闭"
+gui-search: "<gold>搜索拍卖"
+gui-search-prompt: "<gray>在聊天框输入：<gold>/ah search <关键词>"
+gui-categories: "<aqua>分类：<white>{category}"
+gui-page-info: "<gray>第 {current}/{total} 页"
+gui-buy-lore: "<green>点击以 <green>{price}<green> 购买"
+gui-cancel-lore: "<red>点击取消此上架"
+gui-shift-click-history: "<gray>Shift+点击查看价格走势"
+gui-mailbox: "<gold>邮箱"
+gui-seller-lore: "<white>卖家：<yellow>{seller}"
+gui-price-lore: "<white>价格：<green>{price}"
+gui-lore-divider: "<dark_gray>────────────────"
+gui-unit-qty-lore: "<gold>{unitprice} <dark_gray>× <white>{qty}"
+gui-expires-lore: "<white>过期时间：<aqua>{time}"
+gui-my-listings: "<gold>我的上架"
+gui-my-listings-title: "<gold><bold>你的上架"
+gui-back-to-ah: "<gold>返回"
+gui-category-button: "<gold>分类"
+gui-category-title: "<gold><bold>选择分类"
+gui-category-name: "<aqua>{category}"
+gui-category-click: "<gray>点击按 <white>{category}<gray> 筛选"
+gui-category-all: "<green>全部分类"
+gui-category-all-lore: "<gray>点击显示全部分类"
+gui-category-lore: "<gray>点击按 {category} 筛选"
+gui-click-sound: "UI_BUTTON_CLICK"
+gui-back: "<gold>返回"
+gui-enchant-line: "<blue>{enchant} {level}"
+gui-refresh-name: "<gold>刷新"
+
+# ─── 筛选界面 ────────────────────────────────────────────
+gui-filter-title: "<gold><bold>筛选拍卖"
+gui-filter-category: "<aqua>分类：<white>{value}"
+gui-filter-category-lore: "<gray>点击更改分类筛选"
+gui-filter-min-price: "<gold>最低价：<white>{value}"
+gui-filter-min-price-lore: "<gray>点击设置最低价格"
+gui-filter-max-price: "<gold>最高价：<white>{value}"
+gui-filter-max-price-lore: "<gray>点击设置最高价格"
+gui-filter-price-range: "<gold>价格区间：<white>{min} <gray>- <white>{max}"
+gui-filter-price-range-lore: "<gray>点击设置最低与最高价格"
+gui-filter-sort: "<light_purple>排序：<white>{value}"
+gui-filter-sort-lore: "<gray>点击切换排序方式"
+gui-filter-seller: "<gold>卖家：<white>{value}"
+gui-filter-seller-lore: "<gray>点击按卖家筛选"
+gui-filter-search-name: "<gold>搜索：<white>{value}"
+gui-filter-search-lore: "<yellow>点击按关键词搜索"
+gui-filter-active-indicator: "<green>● <gray>筛选已启用"
+gui-filter-apply: "<green><bold>应用筛选"
+gui-filter-apply-lore: "<gray>点击应用并返回浏览"
+gui-filter-reset: "<red><bold>重置筛选"
+gui-filter-reset-lore: "<gray>点击清除所有筛选"
+gui-filter-chat-prompt-min: "<gray>在聊天框输入最低价格（或输入 '<white>取消<gray>'）："
+gui-filter-chat-prompt-max: "<gray>在聊天框输入最高价格（或输入 '<white>取消<gray>'）："
+gui-filter-chat-prompt-seller: "<gray>在聊天框输入卖家名（或输入 '<white>取消<gray>'）："
+gui-filter-chat-cancelled: "<gray>已取消筛选输入。"
+gui-filter-button: "<gold>筛选"
+gui-filter-button-lore: "<gray>点击打开筛选菜单"
+gui-filter-none: "<gray>无"
+gui-filter-active-dot: "<green>●"
+
+# ─── 排序方式显示名 ────────────────────────────────────────
+sort-price-asc: "价格：从低到高"
+sort-price-desc: "价格：从高到低"
+sort-newest: "最新优先"
+sort-oldest: "最早优先"
+sort-expiring-soon: "即将到期"
+
+# ─── 邮箱 ────────────────────────────────────────────────
+mailbox-new-item: "<green>邮箱有新物品：<white>{item}<green>！使用 <white>/ah claim<green> 领取。"
+mailbox-items-waiting: "<green>你有 <white>{count}<green> 件未领取的邮箱物品！使用 <gold>/ah claim<green> 领取。"
+mailbox-inventory-full: "<red>背包已满！请先腾出空间再使用 <white>/ah claim<red>。"
+mailbox-claimed: "<green>已从邮箱领取 <white>{count}<green> 件物品。"
+mailbox-claimed-one: "<green>已从邮箱领取 <white>{item}<green>。"
+mailbox-empty: "<gray>你的邮箱是空的。"
+mailbox-force-delivered: "<gold>邮箱已满！<green>已自动将 <white>{count}<green> 件物品发放到你的背包。"
+mailbox-gui-title: "<gold><bold>邮箱"
+mailbox-claim-lore: "<green>点击领取此物品"
+mailbox-source-purchase: "<gray>来源：<white>购买所得"
+mailbox-source-expired: "<gray>来源：<white>拍卖过期退回"
+mailbox-source-cancelled: "<gray>来源：<white>拍卖取消退回"
+mailbox-source-admin: "<gray>来源：<white>管理员操作"
+mailbox-source-unknown: "<gray>来源：<white>未知"
+mailbox-date-lore: "<gray>日期：<white>{date}"
+mailbox-claim-all-name: "<green><bold>全部领取"
+mailbox-claim-all-lore: "<gray>点击领取背包放得下的所有物品"
+mailbox-nav-back: "<gold>返回"
+
+# ─── 价格走势界面 ─────────────────────────────────────────
+price-history-gui-title: "<gold>市场行情：<white>{item}"
+price-history-loading: "<gray>正在加载价格走势..."
+price-history-no-data: "<gray>暂无价格数据"
+price-history-none: "<gray>无数据"
+price-history-day-label: "<gray>第 -{day} 天"
+price-history-day-avg: "<gold>均价：<white>{price}"
+price-history-day-count: "<gray>成交：<white>{count} 笔"
+price-history-info-name: "<gold>市场概览：<white>{item}"
+price-history-info-ath: "<gray>历史最高：<green>{price}"
+price-history-info-atl: "<gray>历史最低：<green>{price}"
+price-history-info-avg7: "<gray>7 日均价：<green>{price}"
+price-history-back: "<gold>返回"
+price-history-back-lore: "<gray>点击返回"
+price-history-stable: "<gold>平稳"
+price-history-up: "<green>↑ +{pct}%"
+price-history-down: "<red>↓ -{pct}%"
+price-history-date: "<gray>日期：<white>{date}"
+price-history-no-sales: "<gray>无成交记录"
+price-history-day-name: "<white>{date}<gray>（<green>{price}<gray>）"
+price-history-no-data-name: "<gray>{date} 无数据"
+
+# ─── 数据迁移 ────────────────────────────────────────────
+usage-admin-import: "<red>用法：<white>/ah admin import <crazyauctions|zauctionhouse> [数据目录]"
+migration-unknown-source: "<red>未知迁移来源：<white>{source}<red>。可选：crazyauctions、zauctionhouse"
+migration-started: "<aqua>开始从 <white>{source}<aqua> 导入..."
+migration-done: "<green>导入完成！上架：<white>{listings}<green> 条，邮箱：<white>{mailbox}<green> 件。"
+migration-failed: "<red>导入失败：<white>{error}"
+migration-file-not-found: "<red>未找到数据目录：<white>{path}"
+
+# ─── 邮箱锁定格 ───────────────────────────────────────────
+mailbox-locked-slot-name: "<red><bold>锁定格"
+mailbox-locked-slot-lore: "<gray>升级以解锁更多邮箱空间！"
+mailbox-slot-locked: "<red>此格已锁定，升级后可一次领取更多物品。"
+
+# ─── 幽灵物品 / 数据异常 ───────────────────────────────────
+auction-ghost-item: "<red>此上架存在数据完整性问题，无法处理。已通知管理员。"
+
+# ─── 拍卖流程（杂项）────────────────────────────────────────
+auction-unit-price-too-low: "<red>单价低于下限（$0.01），请调整价格。"
+auction-not-enough-items: "<red>你只有 <white>{have}<red> 个此物品，但需要 <white>{need}<red> 个。"
+auction-exceeds-bulk-limit: "<red>单次批量上架最多 <white>{max}<red> 个物品。"
+
+# ─── 数量 ──────────────────────────────────────────────
+gui-quantity-lore: "<aqua>数量：<white>{qty}"
+gui-right-click-preview: "<yellow>右键预览内容"
+gui-right-click-seller-info: "<yellow>右键查看卖家信息"
+
+# ─── 上架确认界面 ────────────────────────────────────────
+sell-confirm-gui-title: "<gold><bold>确认上架"
+sell-confirm-total-price: "<white>总价：<green>{price}"
+sell-confirm-unit-price: "<white>单价：<gold>{price}"
+sell-confirm-tax: "<white>市场税 <gray>({rate}%)：<red>-{tax}"
+sell-confirm-profit: "<white>最终到账：<green>{profit}"
+sell-confirm-button: "<green><bold>确认上架"
+sell-confirm-cancel-button: "<red><bold>取消"
+sell-confirm-cancelled: "<gold>已取消上架。"
+sell-confirm-item-changed: "<red>打开确认后手持物品发生了变化，请重试。"
+
+# ─── 购买确认界面 ──────────────────────────────────────────
+buy-confirm-gui-title: "<gold><bold>确认购买"
+buy-confirm-total-cost: "<white>总价：<green>{price}"
+buy-confirm-unit-price: "<white>单价：<gold>{price}"
+buy-confirm-seller: "<gray>卖家：<white>{seller}"
+buy-confirm-button: "<green><bold>确认购买"
+buy-confirm-cancel-button: "<red><bold>取消"
+
+# ─── 经验经济 ─────────────────────────────────────────────
+xp-offline-received: "<green>你收到离线销售的 <white>{amount}<green> 点经验！"
+
+# ─── 自动收取 ──────────────────────────────────────────────
+auto-collect-received: "<green>出售 <white>{item}<green> 自动收取 <white>{amount}<green>。"
+
+# ─── 卖家信息界面 ───────────────────────────────────────────
+seller-info-gui-title: "<gold>卖家：{seller}"
+seller-info-head-name: "<gold>{seller}"
+seller-info-online: "<green>在线"
+seller-info-offline: "<red>离线"
+seller-info-unknown: "<gray>未知"
+seller-info-now: "<green>当前"
+seller-info-online-now: "<green>当前在线"
+seller-info-uuid-lore: "<gray>UUID：<white>{uuid}"
+seller-info-status-lore: "<gray>状态：{status}"
+seller-info-member-since-lore: "<gray>注册时间：<white>{date}"
+seller-info-last-seen-lore: "<gray>最后在线：<white>{date}"
+seller-info-loading: "<gray>加载中..."
+seller-info-active-listings-name: "<gold>在售上架"
+seller-info-on-market-lore: "<gray>当前在售：<white>{count}"
+seller-info-completed-sales-name: "<gold>累计成交"
+seller-info-sold-alltime-lore: "<gray>历史售出：<white>{count} 笔"
+seller-info-total-revenue-name: "<gold>累计收入"
+seller-info-earned-lore: "<gray>已赚：<green>{amount}"
+seller-info-avg-sale-price-name: "<gold>平均成交价"
+seller-info-avg-per-sale-lore: "<gray>每笔均价：<green>{amount}"
+seller-info-section-selling: "<gold><bold>售卖"
+seller-info-total-purchases-name: "<gold>累计购买"
+seller-info-bought-alltime-lore: "<gray>历史购入：<white>{count} 笔"
+seller-info-total-spent-name: "<gold>累计花费"
+seller-info-spent-lore: "<gray>已花：<green>{amount}"
+seller-info-section-buying: "<gold><bold>购买"
+seller-info-first-played-name: "<gold>首次游戏"
+seller-info-last-seen-name: "<gold>最后在线"
+seller-info-online-status-name: "<gold>状态"
+seller-info-section-account: "<gold><bold>账号"
+
+# ─── Discord 机器人 ───────────────────────────────────────
+discord-webhook-test-sent: "<green>测试消息已发送到 Discord！"
+discord-webhook-test-failed: "<red>Discord 机器人测试失败，详情请查看控制台。"
+discord-webhook-invalid-url: "<red>配置中的 Discord Webhook 地址无效。"
+discord-webhook-not-enabled: "<red>配置中未启用 Discord 机器人。"

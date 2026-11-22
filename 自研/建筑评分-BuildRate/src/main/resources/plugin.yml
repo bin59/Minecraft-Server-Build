@@ -11,7 +11,7 @@ softdepend:
 commands:
   br:
     description: 建筑评分系统
-    usage: /br [create|list|join|add|remove|start|stop|open|score|result|stats|history]
+    usage: /br [create|list|join|add|remove|start|stop|admin|open|score|result|stats|history|help]
     aliases:
       - buildrate
 permissions:

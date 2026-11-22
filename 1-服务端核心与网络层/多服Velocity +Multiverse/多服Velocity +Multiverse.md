@@ -618,98 +618,15 @@ java -Xms2G -Xmx2G -XX:+UseG1GC -XX:+ParallelRefProcEnabled ^
 > **一句话**：Multiverse-Core 是一个服务端插件，让你在**同一个 Leaf 进程里**开多个独立世界（主世界 / 资源界 / 小游戏 / 建筑区），
 > 玩家用 `/mv tp` 或传送门在它们之间穿梭；它跟 Velocity 不冲突——Velocity 管"服与服"，Multiverse 管"世界与世界"。
 
-### 11.1 版本与 26.3 支持（已核实）
+**核心边界（速记）**：
 
-| 项         | 信息                                                                             |
-| ---------- | -------------------------------------------------------------------------------- |
-| 最新版     | **Multiverse-Core 5.8.2**（2026-10-26）                                          |
-| MC 版本    | 明确支持 **1.18.2 → 26.3**（Paper / Purpur / Spigot / Bukkit）                   |
-| 许可       | BSD-3-Clause                                                                     |
-| 热度       | Modrinth 89 万+ 下载，活跃维护                                                   |
-| 玩家要装吗 | 不用，纯服务端插件                                                               |
-| 依赖       | 无强依赖；可选 Multiverse-Portals / -Inventories / -NetherPortals / -SignPortals |
-
-> 你的 26.3 主服（Leaf 26.3-18 / Java 25）可直接装 5.8.2，无版本顾虑。
-
-### 11.2 与你的架构怎么配合
-
-| 你的现状                            | 怎么用 Multiverse                                                                                                                                              |
-| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **当前单 Leaf 服**（未上 Velocity） | 直接给 Leaf 装 Multiverse-Core，开资源世界/小游戏世界，**零架构改动**，不影响 Geyser/ViaVersion/Residence                                                      |
-| **已上 Velocity 多服**（见 §1–§10） | **Multiverse 装在"后端子服"里，不装代理**。每个子服内部用 Multiverse 管自己的多世界；跨子服换服用 Velocity 的 `/server`，世界内换世界用 Multiverse 的 `/mv tp` |
-
-> ⚠️ **Multiverse 永远装在子服（业务服务端），绝不装在 Velocity 代理进程**——代理只做转发，不加载游戏世界。
-
-### 11.3 安装与基础命令
-
-1. 下载 `multiverse-core-5.8.2.jar`（Modrinth / Hangar），丢进 Leaf 的 `plugins/`，重启。
-2. 首次启动自动生成 `plugins/Multiverse-Core/` 配置。
-3. 常用命令（权限节点见 §11.6）：
-
-```bash
-/mv create resource normal -t NORMAL     # 新建"资源世界"（normal 维度）
-/mv create games normal -t NORMAL         # 新建"小游戏世界"
-/mv tp resource                           # 传送到资源世界
-/mv list                                  # 列出所有世界
-/mv set spawn resource                    # 设置某世界出生点
-/mv remove <世界名>                        # 删除世界（谨慎）
-```
-
-> 资源世界建议单独生成一个干净维度，挖完即弃；小游戏世界可加载独立地形生成器。
-
-### 11.4 资源世界自动重置（重点）
-
-Multiverse-Core **本身不含"定时自动重置"**，需要外部触发。三种可行方案，按可靠度排序：
-
-**方案 A：系统计划任务 + RCON 命令（最稳，版本无关）**
-写一个重置脚本，在维护窗口由系统 cron（Linux）/ 任务计划程序（Windows）调用，经 RCON 对 Leaf 执行：
-
-```bash
-# reset_resource.sh （经 mcrcon 或类似工具）
-mv delete resource
-mv create resource normal -t NORMAL
-```
-
-> 前提：Leaf 开启 `enable-rcon=true` 并配 `rcon.password`。这是不受插件更新影响的兜底方案。
-
-**方案 B：加装"定时命令"插件**
-如支持 26.3 的定时任务插件（`TaskScheduler` / `ServerUtils` 等），在里面周期性执行控制台命令 `/mv delete resource` + `/mv create resource ...`。
-
-> ⚠️ 装前必须确认该插件声明支持 26.3（你现有插件清单里未列此类，需单独核查）。
-
-**方案 C：专用资源世界重置插件**
-社区有 `WorldReset` / `AutoReset` 类插件，但需逐一确认 26.3 兼容与维护状态，**不推荐作为首选**。
-
-> 推荐 **方案 A**：简单、可控、不受插件版本限制；重置频率（每日/每周）由你的维护窗口决定。
-
-### 11.5 配套插件
-
-| 插件                         | 作用                            | 多服注意                                                                          |
-| ---------------------------- | ------------------------------- | --------------------------------------------------------------------------------- |
-| **Multiverse-Portals**       | 用方块搭传送门在世界间穿梭      | 装子服，不装代理                                                                  |
-| **Multiverse-Inventories**   | 让不同世界有**独立背包/末影箱** | ⚠️ 这是"子服内分世界背包"，与 §7 的"跨服共享背包"是两码事；多服下仍按子服各自独立 |
-| **Multiverse-NetherPortals** | 地狱门自动分流到对应世界的下界  | 装子服                                                                            |
-| **Multiverse-SignPortals**   | 用牌子点击传送                  | 装子服                                                                            |
-
-### 11.6 权限节点（LuckPerms）
-
-Multiverse-Core 权限粒度细，常用节点（给对应玩家/组）：
-
-| 节点                         | 作用                  |
-| ---------------------------- | --------------------- |
-| `multiverse.*`               | 全部权限（管理员）    |
-| `multiverse.access.*`        | 进入所有世界          |
-| `multiverse.teleport.self.*` | 自己传送到各世界      |
-| `multiverse.create.*`        | 创建世界              |
-| `multiverse.core.manage`     | 管理世界（删除/重载） |
-
-> 高级权限模式（如 ClearLag 检测到 LuckPerms 后走的那种）下权限需显式授予，非 op 玩家默认拿不到；op 默认拥有。
-
-### 11.7 与 Velocity 共存要点（速记）
-
-- **装法**：Multiverse 装后端子服；Velocity 是独立代理进程，不碰 Multiverse。
+- **装法**：Multiverse 装在**后端子服**，绝不装 Velocity 代理进程。本服 survival / minigames 装了 5.8.2；skyblock 用 BentoBox，不装。
 - **换服 vs 换世界**：跨子服用 `/server`（Velocity）；同服内跨世界用 `/mv tp`（Multiverse）。两条命令各管一层，不冲突。
-- **数据**：Multiverse 的世界数据在各子服本地 `worlds/` 目录；跨服共享数据请走 §7 的 MySQL 方案，与 Multiverse 无关。
+- **数据**：世界数据在各子服本地目录；跨服共享数据走 §7 的 MySQL 方案，与 Multiverse 无关。
+
+> 📘 **Multiverse 的命令、导入地图、设出生点、资源世界重置、配套插件、权限节点等完整内容，唯一真源已拆到插件分册：[多世界-Multiverse/README.md](./多世界-Multiverse/README.md)**。本节只留定位概述，不再复制细节以免漂移。
+>
+> 两个 26.3 实测坑尤其要看分册 §3–§4：**导入地图只搬地形不搬 `datapacks/`（玩法失效）**、**`/mvsetspawn` 无参数（设出生点）**。
 
 ---
 
@@ -723,18 +640,6 @@ Multiverse-Core 权限粒度细，常用节点（给对应玩家/组）：
 - `已导入世界 'map-jkpof'!`
 - `传送 <玩家名> 到 map-jkpof 失败。位置被认为是不安全的！如果是有意为之，使用 --unsafe 强制执行。`
 
-**原因**：世界本身已成功导入，问题在于**目标世界未设置安全出生点（spawn）**。本服多世界由 **Multiverse-Core** 管理，切换世界底层走 `/tp`，传送前 EssentialsX/Multiverse 会做落点安全检查。当目标世界是**虚空世界**时，默认坐标处于高空，出生即坠落，落点被判定为危险，传送被拦截。
+**原因**：世界本身已成功导入，问题在于**目标世界未设置安全出生点（spawn）**——虚空世界默认坐标在高空，出生即坠落，被落点安全检查拦截。
 
-**解决（本服实测有效）**：
-
-1. 先用强制传送临时进入目标世界（`--unsafe` 仅跳过检查，不会把玩家挪到安全处，需确认坐标无误后再用）：
-   ```
-   /tp <玩家名> map-jkpof <x> <y> <z> --unsafe
-   ```
-2. 在该世界找到一块安全落点（脚下实心、头顶有空间、周围无岩浆/水/虚空），站定后执行 **Multiverse 的设出生点命令**（本服实测有效，EssentialsX 的 `/setspawn` 在此不生效）：
-   ```
-   /mvsetspawn map-jkpof
-   ```
-3. 设好后，快捷菜单 worldmenu 再进该世界，会落到这个安全点，安全检查不再拦截。
-
-> ⚠️ 设 spawn 需管理权限；`/mvsetspawn` 是 Multiverse 命令，`/setspawn` 是 EssentialsX 命令，两者不可混用，以本服实际部署的 Multiverse-Core 为准。
+**解决**：`/mvsetspawn`（**无参数**，作用于当前世界）——需先用 `--unsafe` 进图、站到安全落点再敲。**完整步骤与两个 26.3 实测坑见 [多世界-Multiverse/README.md](./多世界-Multiverse/README.md) §3–§4**；本册不再复制，避免漂移。

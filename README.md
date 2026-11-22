@@ -159,7 +159,7 @@
 | 宠物                 | SimplePets + Vault Addon                  | 跟随宠物、骑乘 / 帽子、经济联动                                                                                                            |
 | 摸头互动             | PatPat（CurseForge / Modrinth）           | Shift+右键摸任意生物，需 Java 客户端装 mod，基岩不可用                                                                                     |
 | NPC 系统             | FancyNpcs 2.12.1（Modrinth）              | 数据包 NPC：向导 / 交互动作 / 皮肤与装备，已部署 `FancyNpcs-2.12.1+382.jar`                                                                |
-| 小游戏               | BedWars 0.2.44                            | 起床战争竞技场（22:33 重新加入实跑 `plugins/`）                                                                                            |
+| 小游戏               | BedWars 0.2.44                            | 起床战争竞技场（22:33 重新加入实跑 `plugins/`）；可复用开蛋/蛋糕/锚战争变体                                                                                            |
 | 玩家骑乘             | RideOnHead                                | 空手右键骑头、潜行下车、叠罗汉                                                                                                             |
 | 网页地图             | BlueMap 5.29                              | 3D 网页地图，本地 `http://127.0.0.1:8100/`                                                                                                 |
 | 赛季 / 怪物          | EzSeasons 2.1.2 · MythicMobs 5.14.0       | **赛季重置调度**（本服 `season.enabled: false`，仅作 EzTax 硬依赖 API）、自定义怪物与技能 |
@@ -528,11 +528,12 @@ Minecraft-Server-Build/
 │   ├── 点击收纳生物-ClickMobs/    ClickMobs.md
 │   ├── 快捷潜影盒-OpenShulk/      OpenShulk.md（背包直开潜影盒 + 部署/限制）
 │   ├── 玩家头颅掉落-PlayerHeadDrops/     PlayerHeadDrops.md
+│   ├── 生物头颅-Mob Heads/        README.md（Mob Heads v4.5.0.1 已装·500+头颅；掉率经游戏内/trigger配置；与PlayerHeadDrops生物头区别）
 │   ├── pvp机器人/                  VexBot-智能pvp机器人.md + 官方文档汉化/
 │   ├── EvenMoreFish-更多鱼/        README.md
 │   ├── FancyNpcs/                     README.md（FancyNpcs 完整说明 + 皮肤贴图素材）
 │   ├── 摸摸头-PatPat/                 README.md（PatPat 完整说明 + patpat.webp）
-│   └── 尖叫起床-BedWars/              README.md + 官方文档汉化/（12 篇）
+│   ├── 尖叫起床-BedWars/              README.md + 新增玩法-EggWars蛋战争.md + 官方文档汉化/（12 篇）
 │
 ├── 4-玩家信息与数据展示/
 │   ├── 01-玩家信息收集与展示.md
@@ -837,7 +838,7 @@ Leaf 继承 Paper → Gale 配置体系，首次启动生成。配置优先级�
 | `LuckPerms-Bukkit-5.5.91.jar` | 权限管理 | `LuckPerms/`（config.yml + libs/） |
 | `MoneyLedger-1.1.0.jar` | 自研·南瓜账本（1.1.0 事件同步落盘 + `trade.log` 幂等回填 + `/moneyledger verify` 对账；首次启动自动迁移 `ledger.db` 并补齐历史漏记） | `MoneyLedger/`（`ledger.db`、`config.yml`） |
 | `MythicMobs-5.14.0.jar` | 自定义怪物与技能 | `MythicMobs/` |
-| `OfflineReward-1.1.3.jar` | 自研·在线离线奖励（离线 15 币/小时；在线阶段发放：8 档递增 10→100 币、3 小时发完，全天封顶 300 币毕业；阶段表全在 config，`max-per-day: 300` 硬封顶；`mode: cycle` 可回退 25 币/小时循环） | `OfflineReward/` |
+| `OfflineReward-1.1.4.jar` | 自研·在线离线奖励（离线 15 币/小时；在线阶段发放：8 档递增 10→100 币、3 小时发完，全天封顶 300 币毕业；阶段表全在 config，`max-per-day: 300` 硬封顶；`mode: cycle` 可回退 25 币/小时循环；1.1.4 起 AFK 挂机不计在线时长） | `OfflineReward/` |
 | `OpenInv.jar` | 离线背包查看 | `OpenInv/` |
 | `PlaceholderAPI-2.12.3.jar` | 占位符 API | `PlaceholderAPI/`（expansions/） |
 | `Plan-5.9-dev-build-3786.jar` | 玩家/服务器数据分析 | `Plan/`（database.db/libraries/） |
