@@ -73,7 +73,7 @@ _DEFAULT_:
 
 ```bash
 /lp user 00000000-0000-0000-0009-01f42087bd04 meta setprefix "&a[青蛙🐸] "
-/lp user 00000000-0000-0000-0009-01f068214d30 meta setprefix "&d[枣温] &6"
+/lp user 00000000-0000-0000-0009-01f068214d30 meta setprefix "&d[枣経] &6"
 /lp user 00000000-0000-0000-0009-01f9d96dcdd1 meta setprefix "&d[末] &6"
 /lp user 00000000-0000-0000-0009-01f702bfe1ff meta setprefix "&d[魖飕(野人版)] &6"
 /lp user 00000000-0000-0000-0009-01f4c3b0ae33 meta setprefix "&d[nangua1896] &6"
